@@ -1,0 +1,301 @@
+[
+  {
+    "title": "URECA: Unique Region Caption Anything",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05305",
+    "authors": [
+      "Sangbeom Lim",
+      "Junwan Kim",
+      "Heeji Yoon",
+      "Jaewoo Jung",
+      "Seungryong Kim"
+    ],
+    "snippet": "Region-level captioning aims to generate natural language descriptions for specific image regions while highlighting their distinguishing features. However, existing methods struggle to produce unique captions across multi-granularity, limiting their real-world applicability. To address the need for detailed region-level understanding, we introduce URECA dataset, a large-scale dataset tailored for multi-granularity region captioning. Unlike prior datasets that focus primarily on salient objects, URECA dataset ensures a unique and consistent mapping between regions and captions by incorporating a diverse set of objects, parts, and background elements. Central to this is a stage-wise data curation pipeline, where each stage incrementally refines region selection and caption generation. By leveraging Multimodal Large Language Models (MLLMs) at each stage, our pipeline produces distinctive and contextually grounded captions with improved accuracy and semantic diversity. Building upon this dataset, we present URECA, a novel captioning model designed to effectively encode multi-granularity regions. URECA maintains essential spatial properties such as position and shape through simple yet impactful modifications to existing MLLMs, enabling fine-grained and semantically rich region descriptions. Our approach introduces dynamic mask modeling and a high-resolution mask encoder to enhance caption uniqueness. Experiments show that URECA achieves state-of-the-art performance on URECA dataset and generalizes well to existing region-level captioning benchmarks.△ Less"
+  },
+  {
+    "title": "SmolVLM: Redefining small and efficient multimodal models",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05299",
+    "authors": [
+      "Andrés Marafioti",
+      "Orr Zohar",
+      "Miquel Farré",
+      "Merve Noyan",
+      "Elie Bakouch",
+      "Pedro Cuenca",
+      "Cyril Zakka",
+      "Loubna Ben Allal",
+      "Anton Lozhkov",
+      "Nouamane Tazi",
+      "Vaibhav Srivastav",
+      "Joshua Lochner",
+      "Hugo Larcher",
+      "Mathieu Morlon",
+      "Lewis Tunstall",
+      "Leandro von Werra",
+      "Thomas Wolf"
+    ],
+    "snippet": "Large Vision-Language Models (VLMs) deliver exceptional performance but require significant computational resources, limiting their deployment on mobile and edge devices. Smaller VLMs typically mirror design choices of larger models, such as extensive image tokenization, leading to inefficient GPU memory usage and constrained practicality for on-device applications.\n  We introduce SmolVLM, a series of compact multimodal models specifically engineered for resource-efficient inference. We systematically explore architectural configurations, tokenization strategies, and data curation optimized for low computational overhead. Through this, we identify key design choices that yield substantial performance gains on image and video tasks with minimal memory footprints.\n  Our smallest model, SmolVLM-256M, uses less than 1GB GPU memory during inference and outperforms the 300-times larger Idefics-80B model, despite an 18-month development gap. Our largest model, at 2.2B parameters, rivals state-of-the-art VLMs consuming twice the GPU memory. SmolVLM models extend beyond static images, demonstrating robust video comprehension capabilities.\n  Our results emphasize that strategic architectural optimizations, aggressive yet efficient tokenization, and carefully curated training data significantly enhance multimodal performance, facilitating practical, energy-efficient deployments at significantly smaller scales.△ Less"
+  },
+  {
+    "title": "Dion: A Communication-Efficient Optimizer for Large Models",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05295",
+    "authors": [
+      "Kwangjun Ahn",
+      "Byron Xu"
+    ],
+    "snippet": "Training large AI models efficiently requires distributing computation across multiple accelerators, but this often incurs significant communication overhead -- especially during gradient synchronization. We introduce Dion, a communication-efficient optimizer that retains the synchronous semantics of standard distributed training (e.g., DDP, FSDP) while substantially reducing I/O costs. Unlike conventional optimizers that synchronize full gradient matrices, Dion leverages orthonormalized updates with device-local momentum buffers, eliminating the need for full gradient exchange. It further supports an efficient sharding strategy that avoids reconstructing large matrices during training.△ Less"
+  },
+  {
+    "title": "The challenge of uncertainty quantification of large language models in medicine",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05278",
+    "authors": [
+      "Zahra Atf",
+      "Seyed Amir Ahmad Safavi-Naini",
+      "Peter R. Lewis",
+      "Aref Mahjoubfar",
+      "Nariman Naderi",
+      "Thomas R. Savage",
+      "Ali Soroush"
+    ],
+    "snippet": "This study investigates uncertainty quantification in large language models (LLMs) for medical applications, emphasizing both technical innovations and philosophical implications. As LLMs become integral to clinical decision-making, accurately communicating uncertainty is crucial for ensuring reliable, safe, and ethical AI-assisted healthcare. Our research frames uncertainty not as a barrier but as an essential part of knowledge that invites a dynamic and reflective approach to AI design. By integrating advanced probabilistic methods such as Bayesian inference, deep ensembles, and Monte Carlo dropout with linguistic analysis that computes predictive and semantic entropy, we propose a comprehensive framework that manages both epistemic and aleatoric uncertainties. The framework incorporates surrogate modeling to address limitations of proprietary APIs, multi-source data integration for better context, and dynamic calibration via continual and meta-learning. Explainability is embedded through uncertainty maps and confidence metrics to support user trust and clinical interpretability. Our approach supports transparent and ethical decision-making aligned with Responsible and Reflective AI principles. Philosophically, we advocate accepting controlled ambiguity instead of striving for absolute predictability, recognizing the inherent provisionality of medical knowledge.△ Less"
+  },
+  {
+    "title": "How to evaluate control measures for LLM agents? A trajectory from today to superintelligence",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05259",
+    "authors": [
+      "Tomek Korbak",
+      "Mikita Balesni",
+      "Buck Shlegeris",
+      "Geoffrey Irving"
+    ],
+    "snippet": "As LLM agents grow more capable of causing harm autonomously, AI developers will rely on increasingly sophisticated control measures to prevent possibly misaligned agents from causing harm. AI developers could demonstrate that their control measures are sufficient by running control evaluations: testing exercises in which a red team produces agents that try to subvert control measures. To ensure control evaluations accurately capture misalignment risks, the affordances granted to this red team should be adapted to the capability profiles of the agents to be deployed under control measures.\n  In this paper we propose a systematic framework for adapting affordances of red teams to advancing AI capabilities. Rather than assuming that agents will always execute the best attack strategies known to humans, we demonstrate how knowledge of an agents's actual capability profile can inform proportional control evaluations, resulting in more practical and cost-effective control measures. We illustrate our framework by considering a sequence of five fictional models (M1-M5) with progressively advanced capabilities, defining five distinct AI control levels (ACLs). For each ACL, we provide example rules for control evaluation, control measures, and safety cases that could be appropriate. Finally, we show why constructing a compelling AI control safety case for superintelligent LLM agents will require research breakthroughs, highlighting that we might eventually need alternative approaches to mitigating misalignment risk.△ Less"
+  },
+  {
+    "title": "Learning to Reason Over Time: Timeline Self-Reflection for Improved Temporal Reasoning in Language Models",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05258",
+    "authors": [
+      "Adrián Bazaga",
+      "Rexhina Blloshmi",
+      "Bill Byrne",
+      "Adrià de Gispert"
+    ],
+    "snippet": "Large Language Models (LLMs) have emerged as powerful tools for generating coherent text, understanding context, and performing reasoning tasks. However, they struggle with temporal reasoning, which requires processing time-related information such as event sequencing, durations, and inter-temporal relationships. These capabilities are critical for applications including question answering, scheduling, and historical analysis. In this paper, we introduce TISER, a novel framework that enhances the temporal reasoning abilities of LLMs through a multi-stage process that combines timeline construction with iterative self-reflection. Our approach leverages test-time scaling to extend the length of reasoning traces, enabling models to capture complex temporal dependencies more effectively. This strategy not only boosts reasoning accuracy but also improves the traceability of the inference process. Experimental results demonstrate state-of-the-art performance across multiple benchmarks, including out-of-distribution test sets, and reveal that TISER enables smaller open-source models to surpass larger closed-weight models on challenging temporal reasoning tasks.△ Less"
+  },
+  {
+    "title": "Adversarial KA",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05255",
+    "authors": [
+      "Sviatoslav Dzhenzher",
+      "Michael H. Freedman"
+    ],
+    "snippet": "Regarding the representation theorem of Kolmogorov and Arnold (KA) as an algorithm for representing or «expressing» functions, we test its robustness by analyzing its ability to withstand adversarial attacks. We find KA to be robust to countable collections of continuous adversaries, but unearth a question about the equi-continuity of the outer functions that, so far, obstructs taking limits and defeating continuous groups of adversaries. This question on the regularity of the outer functions is relevant to the debate over the applicability of KA to the general theory of NNs.△ Less"
+  },
+  {
+    "title": "Explaining Low Perception Model Competency with High-Competency Counterfactuals",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05254",
+    "authors": [
+      "Sara Pohland",
+      "Claire Tomlin"
+    ],
+    "snippet": "There exist many methods to explain how an image classification model generates its decision, but very little work has explored methods to explain why a classifier might lack confidence in its prediction. As there are various reasons the classifier might lose confidence, it would be valuable for this model to not only indicate its level of uncertainty but also explain why it is uncertain. Counterfactual images have been used to visualize changes that could be made to an image to generate a different classification decision. In this work, we explore the use of counterfactuals to offer an explanation for low model competency--a generalized form of predictive uncertainty that measures confidence. Toward this end, we develop five novel methods to generate high-competency counterfactual images, namely Image Gradient Descent (IGD), Feature Gradient Descent (FGD), Autoencoder Reconstruction (Reco), Latent Gradient Descent (LGD), and Latent Nearest Neighbors (LNN). We evaluate these methods across two unique datasets containing images with six known causes for low model competency and find Reco, LGD, and LNN to be the most promising methods for counterfactual generation. We further evaluate how these three methods can be utilized by pre-trained Multimodal Large Language Models (MLLMs) to generate language explanations for low model competency. We find that the inclusion of a counterfactual image in the language model query greatly increases the ability of the model to generate an accurate explanation for the cause of low model competency, thus demonstrating the utility of counterfactual images in explaining low perception model competency.△ Less"
+  },
+  {
+    "title": "PINNverse: Accurate parameter estimation in differential equations from noisy data with constrained physics-informed neural networks",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05248",
+    "authors": [
+      "Marius Almanstötter",
+      "Roman Vetter",
+      "Dagmar Iber"
+    ],
+    "snippet": "Parameter estimation for differential equations from measured data is an inverse problem prevalent across quantitative sciences. Physics-Informed Neural Networks (PINNs) have emerged as effective tools for solving such problems, especially with sparse measurements and incomplete system information. However, PINNs face convergence issues, stability problems, overfitting, and complex loss function design. Here we introduce PINNverse, a training paradigm that addresses these limitations by reformulating the learning process as a constrained differential optimization problem. This approach achieves a dynamic balance between data loss and differential equation residual loss during training while preventing overfitting. PINNverse combines the advantages of PINNs with the Modified Differential Method of Multipliers to enable convergence on any point on the Pareto front. We demonstrate robust and accurate parameter estimation from noisy data in four classical ODE and PDE models from physics and biology. Our method enables accurate parameter inference also when the forward problem is expensive to solve.△ Less"
+  },
+  {
+    "title": "LLM-based Automated Grading with Human-in-the-Loop",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05239",
+    "authors": [
+      "Hang Li",
+      "Yucheng Chu",
+      "Kaiqi Yang",
+      "Yasemin Copur-Gencturk",
+      "Jiliang Tang"
+    ],
+    "snippet": "The rise ofartificialintelligence(AI) technologies, particularly large language models (LLMs), has brought significant advancements to the field of education. Among various applications, automatic short answer grading (ASAG), which focuses on evaluating open-ended textual responses, has seen remarkable progress with the introduction of LLMs. These models not only enhance grading performance compared to traditional ASAG approaches but also move beyond simple comparisons with predefined \"golden\" answers, enabling more sophisticated grading scenarios, such as rubric-based evaluation. However, existing LLM-powered methods still face challenges in achieving human-level grading performance in rubric-based assessments due to their reliance on fully automated approaches. In this work, we explore the potential of LLMs in ASAG tasks by leveraging their interactive capabilities through a human-in-the-loop (HITL) approach. Our proposed framework, GradeHITL, utilizes the generative properties of LLMs to pose questions to human experts, incorporating their insights to refine grading rubrics dynamically. This adaptive process significantly improves grading accuracy, outperforming existing methods and bringing ASAG closer to human-level evaluation.△ Less"
+  },
+  {
+    "title": "Mapping biodiversity at very-high resolution in Europe",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05231",
+    "authors": [
+      "César Leblanc",
+      "Lukas Picek",
+      "Benjamin Deneu",
+      "Pierre Bonnet",
+      "Maximilien Servajean",
+      "Rémi Palard",
+      "Alexis Joly"
+    ],
+    "snippet": "This paper describes a cascading multimodal pipeline for high-resolution biodiversity mapping across Europe, integrating species distribution modeling, biodiversity indicators, and habitat classification. The proposed pipeline first predicts species compositions using a deep-SDM, a multimodal model trained on remote sensing, climate time series, and species occurrence data at 50x50m resolution. These predictions are then used to generate biodiversity indicator maps and classify habitats with Pl@ntBERT, a transformer-based LLM designed for species-to-habitat mapping. With this approach, continental-scale species distribution maps, biodiversity indicator maps, and habitat maps are produced, providing fine-grained ecological insights. Unlike traditional methods, this framework enables joint modeling of interspecies dependencies, bias-aware training with heterogeneous presence-absence data, and large-scale inference from multi-source remote sensing inputs.△ Less"
+  },
+  {
+    "title": "FinGrAct: A Framework for FINe-GRrained Evaluation of ACTionability in Explainable Automatic Fact-Checking",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05229",
+    "authors": [
+      "Islam Eldifrawi",
+      "Shengrui Wang",
+      "Amine Trabelsi"
+    ],
+    "snippet": "The field of explainable Automatic Fact-Checking (AFC) aims to enhance the transparency and trustworthiness of automated fact-verification systems by providing clear and comprehensible explanations. However, the effectiveness of these explanations depends on their actionability --their ability to empower users to make informed decisions and mitigate misinformation. Despite actionability being a critical property of high-quality explanations, no prior research has proposed a dedicated method to evaluate it. This paper introduces FinGrAct, a fine-grained evaluation framework that can access the web, and it is designed to assess actionability in AFC explanations through well-defined criteria and an evaluation dataset. FinGrAct surpasses state-of-the-art (SOTA) evaluators, achieving the highest Pearson and Kendall correlation with human judgments while demonstrating the lowest ego-centric bias, making it a more robust evaluation approach for actionability evaluation in AFC.△ Less"
+  },
+  {
+    "title": "Leveraging LLMs for Utility-Focused Annotation: Reducing Manual Effort for Retrieval and RAG",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05220",
+    "authors": [
+      "Hengran Zhang",
+      "Minghao Tang",
+      "Keping Bi",
+      "Jiafeng Guo",
+      "Shihao Liu",
+      "Daiting Shi",
+      "Dawei Yin",
+      "Xueqi Cheng"
+    ],
+    "snippet": "Retrieval models typically rely on costly human-labeled query-document relevance annotations for training and evaluation. To reduce this cost and leverage the potential of Large Language Models (LLMs) in relevance judgments, we aim to explore whether LLM-generated annotations can effectively replace human annotations in training retrieval models. Retrieval usually emphasizes relevance, which indicates \"topic-relatedness\" of a document to a query, while in RAG, the value of a document (or utility) depends on how it contributes to answer generation. Recognizing this mismatch, some researchers use LLM performance on downstream tasks with documents as labels, but this approach requires manual answers for specific tasks, leading to high costs and limited generalization. In another line of work, prompting LLMs to select useful documents as RAG references eliminates the need for human annotation and is not task-specific. If we leverage LLMs' utility judgments to annotate retrieval data, we may retain cross-task generalization without human annotation in large-scale corpora. Therefore, we investigate utility-focused annotation via LLMs for large-scale retriever training data across both in-domain and out-of-domain settings on the retrieval and RAG tasks. To reduce the impact of low-quality positives labeled by LLMs, we design a novel loss function, i.e., Disj-InfoNCE. Our experiments reveal that: (1) Retrievers trained on utility-focused annotations significantly outperform those trained on human annotations in the out-of-domain setting on both tasks, demonstrating superior generalization capabilities. (2) LLM annotation does not replace human annotation in the in-domain setting. However, incorporating just 20% human-annotated data enables retrievers trained with utility-focused annotations to match the performance of models trained entirely with human annotations.△ Less"
+  },
+  {
+    "title": "Unleashing the Power of LLMs in Dense Retrieval with Query Likelihood Modeling",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05216",
+    "authors": [
+      "Hengran Zhang",
+      "Keping Bi",
+      "Jiafeng Guo",
+      "Xiaojie Sun",
+      "Shihao Liu",
+      "Daiting Shi",
+      "Dawei Yin",
+      "Xueqi Cheng"
+    ],
+    "snippet": "Dense retrieval is a crucial task in Information Retrieval (IR) and is the foundation for downstream tasks such as re-ranking. Recently, large language models (LLMs) have shown compelling semantic understanding capabilities and are appealing to researchers studying dense retrieval. LLMs, as decoder-style generative models, are competent at language generation while falling short on modeling global information due to the lack of attention to tokens afterward. Inspired by the classical word-based language modeling approach for IR, i.e., the query likelihood (QL) model, we seek to sufficiently utilize LLMs' generative ability by QL maximization. However, instead of ranking documents with QL estimation, we introduce an auxiliary task of QL maximization to yield a better backbone for contrastively learning a discriminative retriever. We name our model as LLM-QL. To condense global document semantics to a single vector during QL modeling, LLM-QL has two major components, Attention Stop (AS) and Input Corruption (IC). AS stops the attention of predictive tokens to previous tokens until the ending token of the document. IC masks a portion of tokens in the input documents during prediction. Experiments on MSMARCO show that LLM-QL can achieve significantly better performance than other LLM-based retrievers and using QL estimated by LLM-QL for ranking outperforms word-based QL by a large margin.△ Less"
+  },
+  {
+    "title": "A moving target in AI-assisted decision-making: Dataset shift, model updating, and the problem of update opacity",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05210",
+    "authors": [
+      "Joshua Hatherley"
+    ],
+    "snippet": "Machine learning (ML) systems are vulnerable to performance decline over time due to dataset shift. To address this problem, experts often suggest that ML systems should be regularly updated to ensure ongoing performance stability. Some scholarly literature has begun to address the epistemic and ethical challenges associated with different updating methodologies. Thus far, however, little attention has been paid to the impact of model updating on the ML-assisted decision-making process itself, particularly in the AI ethics and AI epistemology literatures. This article aims to address this gap in the literature. It argues that model updating introduces a new sub-type of opacity into ML-assisted decision-making -- update opacity -- that occurs when users cannot understand how or why an update has changed the reasoning or behaviour of an ML system. This type of opacity presents a variety of distinctive epistemic and safety concerns that available solutions to the black box problem in ML are largely ill-equipped to address. A variety of alternative strategies may be developed or pursued to address the problem of update opacity more directly, including bi-factual explanations, dynamic model reporting, and update compatibility. However, each of these strategies presents its own risks or carries significant limitations. Further research will be needed to address the epistemic and safety concerns associated with model updating and update opacity going forward.△ Less"
+  },
+  {
+    "title": "Correcting Class Imbalances with Self-Training for Improved Universal Lesion Detection and Tagging",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05207",
+    "authors": [
+      "Alexander Shieh",
+      "Tejas Sudharshan Mathai",
+      "Jianfei Liu",
+      "Angshuman Paul",
+      "Ronald M. Summers"
+    ],
+    "snippet": "Universal lesion detection and tagging (ULDT) in CT studies is critical for tumor burden assessment and tracking the progression of lesion status (growth/shrinkage) over time. However, a lack of fully annotated data hinders the development of effective ULDT approaches. Prior work used the DeepLesion dataset (4,427 patients, 10,594 studies, 32,120 CT slices, 32,735 lesions, 8 body part labels) for algorithmic development, but this dataset is not completely annotated and contains class imbalances. To address these issues, in this work, we developed a self-training pipeline for ULDT. A VFNet model was trained on a limited 11.5\\% subset of DeepLesion (bounding boxes + tags) to detect and classify lesions in CT studies. Then, it identified and incorporated novel lesion candidates from a larger unseen data subset into its training set, and self-trained itself over multiple rounds. Multiple self-training experiments were conducted with different threshold policies to select predicted lesions with higher quality and cover the class imbalances. We discovered that direct self-training improved the sensitivities of over-represented lesion classes at the expense of under-represented classes. However, upsampling the lesions mined during self-training along with a variable threshold policy yielded a 6.5\\% increase in sensitivity at 4 FP in contrast to self-training without class balancing (72\\% vs 78.5\\%) and a 11.7\\% increase compared to the same self-training policy without upsampling (66.8\\% vs 78.5\\%). Furthermore, we show that our results either improved or maintained the sensitivity at 4FP for all 8 lesion classes.△ Less"
+  },
+  {
+    "title": "3D Universal Lesion Detection and Tagging in CT with Self-Training",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05201",
+    "authors": [
+      "Jared Frazier",
+      "Tejas Sudharshan Mathai",
+      "Jianfei Liu",
+      "Angshuman Paul",
+      "Ronald M. Summers"
+    ],
+    "snippet": "Radiologists routinely perform the tedious task of lesion localization, classification, and size measurement in computed tomography (CT) studies. Universal lesion detection and tagging (ULDT) can simultaneously help alleviate the cumbersome nature of lesion measurement and enable tumor burden assessment. Previous ULDT approaches utilize the publicly available DeepLesion dataset, however it does not provide the full volumetric (3D) extent of lesions and also displays a severe class imbalance. In this work, we propose a self-training pipeline to detect 3D lesions and tag them according to the body part they occur in. We used a significantly limited 30\\% subset of DeepLesion to train a VFNet model for 2D lesion detection and tagging. Next, the 2D lesion context was expanded into 3D, and the mined 3D lesion proposals were integrated back into the baseline training data in order to retrain the model over multiple rounds. Through the self-training procedure, our VFNet model learned from its own predictions, detected lesions in 3D, and tagged them. Our results indicated that our VFNet model achieved an average sensitivity of 46.9\\% at [0.125:8] false positives (FP) with a limited 30\\% data subset in comparison to the 46.8\\% of an existing approach that used the entire DeepLesion dataset. To our knowledge, we are the first to jointly detect lesions in 3D and tag them according to the body part label.△ Less"
+  },
+  {
+    "title": "Universal Lymph Node Detection in Multiparametric MRI with Selective Augmentation",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05196",
+    "authors": [
+      "Tejas Sudharshan Mathai",
+      "Sungwon Lee",
+      "Thomas C. Shen",
+      "Zhiyong Lu",
+      "Ronald M. Summers"
+    ],
+    "snippet": "Robust localization of lymph nodes (LNs) in multiparametric MRI (mpMRI) is critical for the assessment of lymphadenopathy. Radiologists routinely measure the size of LN to distinguish benign from malignant nodes, which would require subsequent cancer staging. Sizing is a cumbersome task compounded by the diverse appearances of LNs in mpMRI, which renders their measurement difficult. Furthermore, smaller and potentially metastatic LNs could be missed during a busy clinical day. To alleviate these imaging and workflow problems, we propose a pipeline to universally detect both benign and metastatic nodes in the body for their ensuing measurement. The recently proposed VFNet neural network was employed to identify LN in T2 fat suppressed and diffusion weighted imaging (DWI) sequences acquired by various scanners with a variety of exam protocols. We also use a selective augmentation technique known as Intra-Label LISA (ILL) to diversify the input data samples the model sees during training, such that it improves its robustness during the evaluation phase. We achieved a sensitivity of $\\sim$83\\% with ILL vs. $\\sim$80\\% without ILL at 4 FP/vol. Compared with current LN detection approaches evaluated on mpMRI, we show a sensitivity improvement of $\\sim$9\\% at 4 FP/vol.△ Less"
+  },
+  {
+    "title": "Resource-Efficient Beam Prediction in mmWave Communications with Multimodal Realistic Simulation Framework",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05187",
+    "authors": [
+      "Yu Min Park",
+      "Yan Kyaw Tun",
+      "Walid Saad",
+      "Choong Seon Hong"
+    ],
+    "snippet": "Beamforming is a key technology in millimeter-wave (mmWave) communications that improves signal transmission by optimizing directionality and intensity. However, conventional channel estimation methods, such as pilot signals or beam sweeping, often fail to adapt to rapidly changing communication environments. To address this limitation, multimodal sensing-aided beam prediction has gained significant attention, using various sensing data from devices such as LiDAR, radar, GPS, and RGB images to predict user locations or network conditions. Despite its promising potential, the adoption of multimodal sensing-aided beam prediction is hindered by high computational complexity, high costs, and limited datasets. Thus, in this paper, a resource-efficient learning approach is proposed to transfer knowledge from a multimodal network to a monomodal (radar-only) network based on cross-modal relational knowledge distillation (CRKD), while reducing computational overhead and preserving predictive accuracy. To enable multimodal learning with realistic data, a novel multimodal simulation framework is developed while integrating sensor data generated from the autonomous driving simulator CARLA with MATLAB-based mmWave channel modeling, and reflecting real-world conditions. The proposed CRKD achieves its objective by distilling relational information across different feature spaces, which enhances beam prediction performance without relying on expensive sensor data. Simulation results demonstrate that CRKD efficiently distills multimodal knowledge, allowing a radar-only model to achieve $94.62\\%$ of the teacher performance. In particular, this is achieved with just $10\\%$ of the teacher network's parameters, thereby significantly reducing computational complexity and dependence on multimodal sensor data.△ Less"
+  },
+  {
+    "title": "Lightweight and Direct Document Relevance Optimization for Generative Information Retrieval",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05181",
+    "authors": [
+      "Kidist Amde Mekonnen",
+      "Yubao Tang",
+      "Maarten de Rijke"
+    ],
+    "snippet": "Generative information retrieval (GenIR) is a promising neural retrieval paradigm that formulates document retrieval as a document identifier (docid) generation task, allowing for end-to-end optimization toward a unified global retrieval objective. However, existing GenIR models suffer from token-level misalignment, where models trained to predict the next token often fail to capture document-level relevance effectively. While reinforcement learning-based methods, such as reinforcement learning from relevance feedback (RLRF), aim to address this misalignment through reward modeling, they introduce significant complexity, requiring the optimization of an auxiliary reward function followed by reinforcement fine-tuning, which is computationally expensive and often unstable. To address these challenges, we propose direct document relevance optimization (DDRO), which aligns token-level docid generation with document-level relevance estimation through direct optimization via pairwise ranking, eliminating the need for explicit reward modeling and reinforcement learning. Experimental results on benchmark datasets, including MS MARCO document and Natural Questions, show that DDRO outperforms reinforcement learning-based methods, achieving a 7.4% improvement in MRR@10 for MS MARCO and a 19.9% improvement for Natural Questions. These findings highlight DDRO's potential to enhance retrieval effectiveness with a simplified optimization approach. By framing alignment as a direct optimization problem, DDRO simplifies the ranking optimization pipeline of GenIR models while offering a viable alternative to reinforcement learning-based methods.△ Less"
+  },
+  {
+    "title": "BRIDGES: Bridging Graph Modality and Large Language Models within EDA Tasks",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05180",
+    "authors": [
+      "Wei Li",
+      "Yang Zou",
+      "Christopher Ellis",
+      "Ruben Purdy",
+      "Shawn Blanton",
+      "José M. F. Moura"
+    ],
+    "snippet": "While many EDA tasks already involve graph-based data, existing LLMs in EDA primarily either represent graphs as sequential text, or simply ignore graph-structured data that might be beneficial like dataflow graphs of RTL code. Recent studies have found that LLM performance suffers when graphs are represented as sequential text, and using additional graph information significantly boosts performance. To address these challenges, we introduce BRIDGES, a framework designed to incorporate graph modality into LLMs for EDA tasks. BRIDGES integrates an automated data generation workflow, a solution that combines graph modality with LLM, and a comprehensive evaluation suite. First, we establish an LLM-driven workflow to generate RTL and netlist-level data, converting them into dataflow and netlist graphs with function descriptions. This workflow yields a large-scale dataset comprising over 500,000 graph instances and more than 1.5 billion tokens. Second, we propose a lightweight cross-modal projector that encodes graph representations into text-compatible prompts, enabling LLMs to effectively utilize graph data without architectural modifications. Experimental results demonstrate 2x to 10x improvements across multiple tasks compared to text-only baselines, including accuracy in design retrieval, type prediction and perplexity in function description, with negligible computational overhead (<1% model weights increase and <30% additional runtime overhead). Even without additional LLM finetuning, our results outperform text-only by a large margin. We plan to release BRIDGES, including the dataset, models, and training flow.△ Less"
+  },
+  {
+    "title": "Attention-Based Multi-Scale Temporal Fusion Network for Uncertain-Mode Fault Diagnosis in Multimode Processes",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05172",
+    "authors": [
+      "Guangqiang Li",
+      "M. Amine Atoui",
+      "Xiangshun Li"
+    ],
+    "snippet": "Fault diagnosis in multimode processes plays a critical role in ensuring the safe operation of industrial systems across multiple modes. It faces a great challenge yet to be addressed - that is, the significant distributional differences among monitoring data from multiple modes make it difficult for the models to extract shared feature representations related to system health conditions. In response to this problem, this paper introduces a novel method called attention-based multi-scale temporal fusion network. The multi-scale depthwise convolution and gated recurrent unit are employed to extract multi-scale contextual local features and long-short-term features. A temporal attention mechanism is designed to focus on critical time points with higher cross-mode shared information, thereby enhancing the accuracy of fault diagnosis. The proposed model is applied to Tennessee Eastman process dataset and three-phase flow facility dataset. The experiments demonstrate that the proposed model achieves superior diagnostic performance and maintains a small model size.△ Less"
+  },
+  {
+    "title": "SSLFusion: Scale & Space Aligned Latent Fusion Model for Multimodal 3D Object Detection",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05170",
+    "authors": [
+      "Bonan Ding",
+      "Jin Xie",
+      "Jing Nie",
+      "Jiale Cao"
+    ],
+    "snippet": "Multimodal 3D object detection based on deep neural networks has indeed made significant progress. However, it still faces challenges due to the misalignment of scale and spatial information between features extracted from 2D images and those derived from 3D point clouds. Existing methods usually aggregate multimodal features at a single stage. However, leveraging multi-stage cross-modal features is crucial for detecting objects of various scales. Therefore, these methods often struggle to integrate features across different scales and modalities effectively, thereby restricting the accuracy of detection. Additionally, the time-consuming Query-Key-Value-based (QKV-based) cross-attention operations often utilized in existing methods aid in reasoning the location and existence of objects by capturing non-local contexts. However, this approach tends to increase computational complexity. To address these challenges, we present SSLFusion, a novel Scale & Space Aligned Latent Fusion Model, consisting of a scale-aligned fusion strategy (SAF), a 3D-to-2D space alignment module (SAM), and a latent cross-modal fusion module (LFM). SAF mitigates scale misalignment between modalities by aggregating features from both images and point clouds across multiple levels. SAM is designed to reduce the inter-modal gap between features from images and point clouds by incorporating 3D coordinate information into 2D image features. Additionally, LFM captures cross-modal non-local contexts in the latent space without utilizing the QKV-based attention operations, thus mitigating computational complexity. Experiments on the KITTI and DENSE datasets demonstrate that our SSLFusion outperforms state-of-the-art methods. Our approach obtains an absolute gain of 2.15% in 3D AP, compared with the state-of-art method GraphAlign on the moderate level of the KITTI test set.△ Less"
+  },
+  {
+    "title": "RLBayes: a Bayesian Network Structure Learning Algorithm via Reinforcement Learning-Based Search Strategy",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05167",
+    "authors": [
+      "Mingcan Wang",
+      "Junchang Xin",
+      "Luxuan Qu",
+      "Qi Chen",
+      "Zhiqiong Wang"
+    ],
+    "snippet": "The score-based structure learning of Bayesian network (BN) is an effective way to learn BN models, which are regarded as some of the most compelling probabilistic graphical models in the field of representation and reasoning under uncertainty. However, the search space of structure learning grows super-exponentially as the number of variables increases, which makes BN structure learning an NP-hard problem, as well as a combination optimization problem (COP). Despite the successes of many heuristic methods on it, the results of the structure learning of BN are usually unsatisfactory. Inspired by Q-learning, in this paper, a Bayesian network structure learning algorithm via reinforcement learning-based (RL-based) search strategy is proposed, namely RLBayes. The method borrows the idea of RL and tends to record and guide the learning process by a dynamically maintained Q-table. By creating and maintaining the dynamic Q-table, RLBayes achieve storing the unlimited search space within limited space, thereby achieving the structure learning of BN via Q-learning. Not only is it theoretically proved that RLBayes can converge to the global optimal BN structure, but also it is experimentally proved that RLBayes has a better effect than almost all other heuristic search algorithms.△ Less"
+  },
+  {
+    "title": "Evaluating Knowledge Graph Based Retrieval Augmented Generation Methods under Knowledge Incompleteness",
+    "url": "https://arxiv.orghttps://arxiv.org/abs/2504.05163",
+    "authors": [
+      "Dongzhuoran Zhou",
+      "Yuqicheng Zhu",
+      "Yuan He",
+      "Jiaoyan Chen",
+      "Evgeny Kharlamov",
+      "Steffen Staab"
+    ],
+    "snippet": "Knowledge Graph based Retrieval-Augmented Generation (KG-RAG) is a technique that enhances Large Language Model (LLM) inference in tasks like Question Answering (QA) by retrieving relevant information from knowledge graphs (KGs). However, real-world KGs are often incomplete, meaning that essential information for answering questions may be missing. Existing benchmarks do not adequately capture the impact of KG incompleteness on KG-RAG performance. In this paper, we systematically evaluate KG-RAG methods under incomplete KGs by removing triples using different methods and analyzing the resulting effects. We demonstrate that KG-RAG methods are sensitive to KG incompleteness, highlighting the need for more robust approaches in realistic settings.△ Less"
+  }
+]

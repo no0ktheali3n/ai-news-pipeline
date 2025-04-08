@@ -4,6 +4,8 @@
 
 A serverless automation tool that scrapes AI-related news, summarizes it using large language models (LLMs), and automatically posts it to Twitter/X. Designed with modular AWS Lambda functions and a GitHub CI/CD pipeline.
 
+This project is open source for educational and non-commercial use.  For commercial licensing, please contact me directly.
+
 ## Tech Stack
 - **AWS Lambda** – Serverless compute for scraper, summarizer, and poster
 - **Amazon EventBridge** – Scheduled job triggering the pipeline
@@ -77,6 +79,19 @@ A sample GitHub Actions workflow (`.github/workflows/deploy.yml`) is included to
 ## License
 MIT
 
+## Citation Policy and Attribution
+This project scrapes and summarizes publicly available scientific content from platforms such as [arXiv.org](https://arxiv.org/). The original research belongs to the respective authors and institutions. We do not claim ownership of this work and include full citations or backlinks to the original articles.
+
+Every generated summary includes a reference URL to the source article to ensure attribution.
+
+## Ethics & Usage Disclaimer
+This project is open source and provided for educational, research, and informational purposes.
+
+- **Do not use this tool to plagiarize or misrepresent academic work.**
+- **Do not present AI-generated summaries as original research.**
+- We strongly encourage citing original authors and linking back to the source in all published outputs.
+
+For inquiries about commercial usage, please contact the project owner directly.
 ---
 Want to contribute or suggest improvements? Submit an issue or open a pull request!
 

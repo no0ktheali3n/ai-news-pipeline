@@ -37,9 +37,11 @@ class ScraperClient:
                 link_tag = result.find("p", class_="list-title").find("a")
                 # if title_tag and link_tag scraped, append to articles list
                 if title_tag and link_tag:
+                    href = link_tag.get("href", "")
+                    full_url = href if href.startswith("http") else base_url + href
                     articles.append({
                         "title": title_tag.get_text(strip=True),
-                        "url": base_url + link_tag["href"],
+                        "url": full_url,
                         "authors": [a.get_text(strip=True) for a in authors_tag.find_all("a")] if authors_tag else [],
                         "snippet": summary_tag.get_text(strip=True).replace("Abstract: ", "") if summary_tag else ""
                     })

@@ -4,6 +4,8 @@
 
 A serverless automation tool that scrapes AI-related news, summarizes it using large language models (LLMs), and automatically posts it to Twitter/X. Designed with modular AWS Lambda functions and a GitHub CI/CD pipeline.
 
+This project is open source for educational and non-commercial use.  For commercial licensing, please contact me directly.
+
 ## Tech Stack
 - **AWS Lambda** – Serverless compute for scraper, summarizer, and poster
 - **Amazon EventBridge** – Scheduled job triggering the pipeline

@@ -1,19 +1,23 @@
 # lambda/summarizer.py – AWS Bedrock + Claude 3.5 Sonnet
 
-import json
+# summarizer.py – Final version for production
+
 import os
+import json
 import time
 import random
 import boto3
 from datetime import datetime
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
+# AWS setup
 aws_access_key = os.getenv("AWS_ACCESS_KEY_ID")
 aws_secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
 aws_region = os.getenv("AWS_REGION", "us-east-1")
-model_id = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-sonnet-20240229")
+model_id = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
 
 bedrock = boto3.client(
     service_name="bedrock-runtime",
@@ -22,8 +26,13 @@ bedrock = boto3.client(
     aws_secret_access_key=aws_secret_key
 )
 
+# File paths
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+INPUT_FILE = os.path.join(PROJECT_ROOT, "test_output.json")
+OUTPUT_FILE = os.path.join(PROJECT_ROOT, "summarized_output.json")
 
-def build_prompt_v1(article):
+# Prompt builders
+def build_summary_prompt(article):
     return (
         f"Summarize the following AI research article in a fun and engaging way appropriate for social media using 3-4 sentences.\n"
         f"Title: {article['title']}\n"
@@ -31,21 +40,20 @@ def build_prompt_v1(article):
         f"Abstract: {article['snippet']}"
     )
 
-def build_prompt_v2(article):
+def build_hashtag_prompt(article):
     return (
-        f"You are an expert technical writer. Provide a concise, informative summary of this research paper.\n"
-        f"Focus on any novel methods, key findings, or real-world relevance.\n\n"
+        f"Suggest 3-5 short and relevant hashtags for this AI paper.\n"
+        f"Title: {article['title']}\n"
         f"Abstract: {article['snippet']}"
     )
 
-def summarize_with_claude(prompt, variant_label="v1"):
+# Claude Bedrock API call
+def summarize_with_claude(prompt):
     payload = {
         "anthropic_version": "bedrock-2023-05-31",
         "max_tokens": 300,
         "temperature": 0.7,
-        "messages": [
-            {"role": "user", "content": prompt}
-        ]
+        "messages": [{"role": "user", "content": prompt}]
     }
     response = bedrock.invoke_model(
         modelId=model_id,
@@ -54,8 +62,9 @@ def summarize_with_claude(prompt, variant_label="v1"):
         body=json.dumps(payload)
     )
     result = json.loads(response["body"].read())
-    return result["content"][0]["text"].strip()
+    return result["content"][0]["text"].strip(), len(prompt)
 
+# Retry with backoff + token tracking
 def retry_until_timeout(func, max_seconds=600, base_delay=3):
     start_time = time.time()
     attempt = 0
@@ -69,51 +78,40 @@ def retry_until_timeout(func, max_seconds=600, base_delay=3):
                 time.sleep(delay)
                 attempt += 1
             else:
-                print(f"[{datetime.utcnow().isoformat()}] Non-throttling error:", e)
-                return "[Summary unavailable]"
-    return "[Summary unavailable after max retry time]"
+                print(f"[{datetime.utcnow().isoformat()}] Error:", e)
+                return "[Summary unavailable]", 0
+    return "[Summary unavailable after max retry time]", 0
 
-def lambda_handler(event=None, context=None):
+# Main summarizer logic
+def summarize_articles():
+    total_tokens = 0
+    summarized = []
+
     try:
-        PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        fallback_path = os.path.join(PROJECT_ROOT, "test_output.json")
-        save_path = os.path.join(PROJECT_ROOT, "summarized_output.json")
+        with open(INPUT_FILE, "r", encoding="utf-8") as f:
+            articles = json.load(f)
+    except FileNotFoundError:
+        print(f"[ERROR] Could not find {INPUT_FILE}")
+        return []
 
-        if event and "articles" in event:
-            articles = event["articles"]
-        else:
-            with open(fallback_path, "r", encoding="utf-8") as f:
-                articles = json.load(f)
+    for article in articles:
+        sum_prompt = build_summary_prompt(article)
+        tag_prompt = build_hashtag_prompt(article)
 
-        summarized = []
+        summary, tokens_s = retry_until_timeout(lambda: summarize_with_claude(sum_prompt))
+        hashtags, tokens_h = retry_until_timeout(lambda: summarize_with_claude(tag_prompt))
 
-        for article in articles:
-            prompt_v1 = build_prompt_v1(article)
-            prompt_v2 = build_prompt_v2(article)
-
-            summary_v1 = retry_until_timeout(lambda: summarize_with_claude(prompt_v1, "v1"))
-            summary_v2 = retry_until_timeout(lambda: summarize_with_claude(prompt_v2, "v2"))
-
-            result = {
-                **article,
-                "v1_summary": summary_v1,
-                "v2_summary": summary_v2
-            }
-            summarized.append(result)
-
-            with open(save_path, "w", encoding="utf-8") as out:
-                json.dump(summarized, out, indent=2, ensure_ascii=False)
-
-        return {
-            "statusCode": 200,
-            "body": json.dumps(summarized, indent=2, ensure_ascii=False)
+        result = {
+            **article,
+            "summary": summary,
+            "hashtags": hashtags
         }
+        summarized.append(result)
+        total_tokens += tokens_s + tokens_h
 
-    except Exception as e:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": str(e)})
-        }
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        json.dump(summarized, f, indent=2, ensure_ascii=False)
 
-if __name__ == "__main__":
-    print(json.dumps(lambda_handler(), indent=2, ensure_ascii=False))
+    print(f"[✔] Summarized {len(summarized)} articles.")
+    print(f"[📊] Estimated total characters sent: {total_tokens}")
+    return summarized

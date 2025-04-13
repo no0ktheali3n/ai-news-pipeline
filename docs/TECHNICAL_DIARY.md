@@ -43,6 +43,26 @@ This file documents major technical decisions, fixes, lessons learned, and recur
 - Added `.env.example` and full `.gitignore` enforcement
 
 ---
+## 🖋 Phase 4 - Social Media Integration
+
+## Tweepy development (2025-04-12)
+
+Problems Encountered:
+🧱 Initial 403/404 Forbidden error despite valid credentials.
+🔍 Discovered missing app permissions (read/write not enabled).
+🔐 OAuth 1.0a user context required — OAuth 2.0 not sufficient for tweeting.
+🛠️ Misalignment between Twitter’s UI vs actual API capabilities caused confusion.
+
+Solutions:
+✔ Enabled read/write permissions in dev portal under project > app > settings.
+✔ Regenerated OAuth 1.0a access tokens and added to .env.
+✔ Used Tweepy’s Client.create_tweet() to verify tweet delivery.
+✔ Confirmed success via printed tweet URL and live post check.
+
+Recommendations:
+🔒 Store sensitive tokens only in .env, commit .env.example instead.
+🔁 Consider support for token rotation or Twitter app permissions audit as part of future hardening.
+🧪 Use if __name__ == "__main__": block for standalone local tests on every module.
 
 ## 💡 Roadmap
 - Migrate from `.env` to Secrets Manager for cloud usage

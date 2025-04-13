@@ -1,0 +1,58 @@
+[
+  {
+    "article_index": 1,
+    "thread_index": 1,
+    "tweet": "Sculpting Subspaces: Constrained Full Fine-Tuning in LLMs for Continual Learning\n🧠✨ Exciting AI breakthrough alert! 🚀 Scientists have cracked the code on making language models learn new tricks without forgetting old ones. It's like teaching an old dog new tricks, but the dog remembers ALL its tricks!",
+    "characters": 302,
+    "url": "https://arxiv.org/abs/2504.07097",
+    "hashtags": "#AI #ContinualLearning #LLM #CatastrophicForgetting"
+  },
+  {
+    "article_index": 1,
+    "thread_index": 2,
+    "tweet": "🐶🎓\n\nThis clever method, using some fancy math called \"adaptive SVD,\" lets AI models keep learning without getting brain freeze. 🧊🤯 The result? AI that's smarter, more flexible, and doesn't need a gazillion extra parts to keep growing. Now that's what we call a win-win! 🏆🎉",
+    "characters": 272,
+    "url": "https://arxiv.org/abs/2504.07097",
+    "hashtags": "#AI #ContinualLearning #LLM #CatastrophicForgetting"
+  },
+  {
+    "article_index": 1,
+    "thread_index": 3,
+    "tweet": "https://arxiv.org/abs/2504.07097\n#AI #ContinualLearning #LLM #CatastrophicForgetting",
+    "characters": 84,
+    "url": "https://arxiv.org/abs/2504.07097",
+    "hashtags": "#AI #ContinualLearning #LLM #CatastrophicForgetting"
+  },
+  {
+    "article_index": 2,
+    "thread_index": 1,
+    "tweet": "Are We Done with Object-Centric Learning?\n🤖📸 Object-centric learning just got a major upgrade! Researchers have found a way to separate objects in images more efficiently than ever before.",
+    "characters": 188,
+    "url": "https://arxiv.org/abs/2504.07092",
+    "hashtags": "#AI #ObjectCentricLearning #ComputerVision #AIRepresentation"
+  },
+  {
+    "article_index": 2,
+    "thread_index": 2,
+    "tweet": "🎉\n\nInstead of complex unsupervised methods, they're using cutting-edge segmentation models to isolate objects right in the pixel space.",
+    "characters": 135,
+    "url": "https://arxiv.org/abs/2504.07092",
+    "hashtags": "#AI #ObjectCentricLearning #ComputerVision #AIRepresentation"
+  },
+  {
+    "article_index": 2,
+    "thread_index": 3,
+    "tweet": "🧩✨\n\nThis breakthrough could revolutionize how AI understands and generalizes visual information, paving the way for more robust and adaptable computer vision systems. 🚀🔬 #AIResearch #ComputerVision",
+    "characters": 197,
+    "url": "https://arxiv.org/abs/2504.07092",
+    "hashtags": "#AI #ObjectCentricLearning #ComputerVision #AIRepresentation"
+  },
+  {
+    "article_index": 2,
+    "thread_index": 4,
+    "tweet": "https://arxiv.org/abs/2504.07092\n#AI #ObjectCentricLearning #ComputerVision #AIRepresentation",
+    "characters": 93,
+    "url": "https://arxiv.org/abs/2504.07092",
+    "hashtags": "#AI #ObjectCentricLearning #ComputerVision #AIRepresentation"
+  }
+]

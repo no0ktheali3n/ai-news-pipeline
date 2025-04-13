@@ -5,7 +5,25 @@
 **Purpose:** Version-controlled AI research scraper, summarizer, and social media poster pipeline
 
 ---
-## [0.4.0] - 2025-04-13
+## [0.4.1] - 2025-04-13
+### 🎉 Added
+- ✅ **Tweet threading fully operational** – Entire article summaries are now posted as threads via Tweepy.
+- ✅ **`post_to_twitter.py`** implemented for posting from `summarized_output.json`.
+- ✅ **`twitter_threading.py`** added to utils for generating properly chunked tweet threads.
+- ✅ Interactive preview with character counts and user prompt before posting.
+- ✅ Basic retry delay handling and graceful failure logging.
+
+### ✅ Validated
+- Full end-to-end test completed: single-thread article summary successfully posted to Twitter.
+- Verified that posting works for both first tweet and all replies using v2 API.
+
+### 🛠 Internal
+- Resolved `403 Forbidden` errors by switching fully to `Client.create_tweet()` in Tweepy v4+.
+- Updated Tweepy utility to use environment-loaded credentials correctly.
+- Fixed module import errors by modifying `sys.path` and restructuring import paths.
+
+
+## [0.4.0] - 2025-04-12
 ### Added
 - `utils/tweepy_client.py`: Modular Tweepy integration with support for tweet threading and test CLI.
 - `.env.example`: OAuth1.0a token variables required for Twitter posting.
@@ -47,7 +65,7 @@
 
 ✅ This version completes the **AI Summarization Layer** for the pipeline. The next milestone (`v0.4.0`) will finalize tweet formatting and prepare for Tweepy/X API integration.
 
-## ✅ v0.2.1 – (2025-04-10)  
+## ✅ [v0.2.1] – (2025-04-10)  
 ### Summary  
 Stabilized and security-hardened scraper pipeline. Removed secret key exposure, added `.env.example`, implemented auto-versioning, and tested summarizer + poster locally. Streamlined ArXiv article parsing and improved output consistency.
 
@@ -84,7 +102,7 @@ Stabilized and security-hardened scraper pipeline. Removed secret key exposure, 
 
 ---
 
-## 🧪 v0.2.0 – Initial Refactor Commit (Pre-Release)
+## 🧪 [v0.2.0] – Initial Refactor Commit (Pre-Release)
 
 ### Summary  
 Refactored `scraper-alpha` from a simple prototype into a modular pipeline. Introduced structure, utilities, and isolated web scraping logic into a dedicated `ScraperClient` class.
@@ -124,14 +142,10 @@ Refactored `scraper-alpha` from a simple prototype into a modular pipeline. Intr
 
 ---
 
-## 🔮 Next Steps
-
-| Version | Goals |
-|---------|-------|
-| `v0.3.0` | Merge summarizer + poster modules into a unified Lambda pipeline |
-| `v0.4.0` | Claude prompt tuning + editorial control features |
-| `v0.5.0` | Add Tweety integration for Twitter/X automation |
-| `v1.0.0` | Production release with CI/CD, Secrets Manager, and scheduling |
+## [v0.1.0] – 2023-10
+### 🛠 Prototype
+- Initial scraper built using BeautifulSoup.
+- First version very basic, manually developed to automate scraping general data 
 
 ---
 

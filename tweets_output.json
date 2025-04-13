@@ -1,0 +1,42 @@
+[
+  {
+    "index": 1,
+    "variant": "v1_summary",
+    "title": "Sculpting Subspaces: Constrained Full Fine-Tuning in LLMs for Continual Learning",
+    "summary": "🧠✨ Exciting AI breakthrough alert! 🚀 Scientists have cracked the code on making language models learn new tricks without forgetting old ones. It's like teaching an old dog new tricks, but the dog remembers ALL its tricks! 🐶🎓\n\nThis clever method, using some fancy math called \"adaptive SVD,\" lets AI models keep learning without getting brain freeze. 🧊🤯 The result? AI that's smarter, more flexible, and doesn't need a gazillion extra parts to keep growing. Now that's what we call a win-win! 🏆🎉",
+    "tweet": "Sculpting Subspaces: Constrained Full Fine-Tuning in LLMs for Continual Learning\n🧠✨ Exciting AI breakthrough alert! 🚀 Scientists have cracked the code on making...\nhttps://arxiv.org/abs/2504.07097\n#AI #ContinualLearning #LLM #CatastrophicForgetting #AdaptiveSVD #AIFineTuning",
+    "characters": 275,
+    "url": "https://arxiv.org/abs/2504.07097",
+    "hashtags": "Here are 3-5 short and relevant hashtags for this AI paper:\n\n1. #ContinualLearning\n2. #LLM\n3. #CatastrophicForgetting\n4. #AdaptiveSVD\n5. #AIFineTuning\n\nThese hashtags cover the key concepts and focus areas of the paper, including continual learning, large language models (LLMs), the problem of catastrophic forgetting, the novel adaptive SVD approach, and the broader topic of AI fine-tuning."
+  },
+  {
+    "index": 1,
+    "variant": "v2_summary",
+    "title": "Sculpting Subspaces: Constrained Full Fine-Tuning in LLMs for Continual Learning",
+    "summary": "This research paper introduces a novel approach to address catastrophic forgetting in continual learning for large language models (LLMs). Here are the key points:\n\n1. Novel Method: The researchers propose an adaptive singular value decomposition (SVD) approach for continual full fine-tuning of LLMs. This method dynamically identifies task-specific low-rank parameter subspaces and constrains updates to be orthogonal to critical directions associated with prior tasks.\n\n2. Key Advantages:\n   - Minimizes interference between tasks without additional parameter overhead\n   - Does not require storing previous task gradients\n   - Maintains the model's expressivity by allowing full fine-tuning\n\n3. Evaluation:\n   - Tested on standard continual learning benchmarks\n   - Used both encoder-decoder (T5-Large) and decoder-only (LLaMA-2 7B) models\n   - Covered diverse tasks including classification, generation, and reasoning\n\n4. Key Findings:\n   - Achieved state-of-the-art results, with up to 7% higher average accuracy than recent baselines like O-LoRA\n   - Maintained the model's general linguistic capabilities, instruction-following accuracy, and safety throughout the continual learning process\n   - Reduced forgetting to near-negligible levels\n\n5. Real-world Relevance:\n   - Provides",
+    "tweet": "Sculpting Subspaces: Constrained Full Fine-Tuning in LLMs for Continual Learning\nThis research paper introduces a novel approach to address catastrophic forgetting...\nhttps://arxiv.org/abs/2504.07097\n#AI #ContinualLearning #LLM #CatastrophicForgetting #AdaptiveSVD #AIFineTuning",
+    "characters": 278,
+    "url": "https://arxiv.org/abs/2504.07097",
+    "hashtags": "Here are 3-5 short and relevant hashtags for this AI paper:\n\n1. #ContinualLearning\n2. #LLM\n3. #CatastrophicForgetting\n4. #AdaptiveSVD\n5. #AIFineTuning\n\nThese hashtags cover the key concepts and focus areas of the paper, including continual learning, large language models (LLMs), the problem of catastrophic forgetting, the novel adaptive SVD approach, and the broader topic of AI fine-tuning."
+  },
+  {
+    "index": 2,
+    "variant": "v1_summary",
+    "title": "Are We Done with Object-Centric Learning?",
+    "summary": "🤖📸 Object-centric learning just got a major upgrade! Researchers have found a way to separate objects in images more efficiently than ever before. 🎉\n\nInstead of complex unsupervised methods, they're using cutting-edge segmentation models to isolate objects right in the pixel space. 🧩✨\n\nThis breakthrough could revolutionize how AI understands and generalizes visual information, paving the way for more robust and adaptable computer vision systems. 🚀🔬 #AIResearch #ComputerVision",
+    "tweet": "Are We Done with Object-Centric Learning?\n🤖📸 Object-centric learning just got a major upgrade! Researchers have found a way to separate objects in images...\nhttps://arxiv.org/abs/2504.07092\n#AI #ObjectCentricLearning #ComputerVision #AIRepresentation #OODGeneralization #OCCAM",
+    "characters": 276,
+    "url": "https://arxiv.org/abs/2504.07092",
+    "hashtags": "Here are 3-5 short and relevant hashtags for this AI paper:\n\n#ObjectCentricLearning\n#ComputerVision\n#AIRepresentation\n#OODGeneralization\n#OCCAM\n\nThese hashtags cover the main topic (object-centric learning), the field (computer vision, AI), key concepts (representation learning, out-of-distribution generalization), and the novel method introduced (OCCAM)."
+  },
+  {
+    "index": 2,
+    "variant": "v2_summary",
+    "title": "Are We Done with Object-Centric Learning?",
+    "summary": "This research paper introduces a novel approach to object-centric learning (OCL) and evaluates its effectiveness in addressing out-of-distribution (OOD) generalization challenges. The key points are:\n\n1. Novel method: The authors propose a training-free probe called Object-Centric Classification with Applied Masks (OCCAM), which uses segmentation-based encoding of individual objects.\n\n2. Key findings:\n   - OCCAM outperforms traditional slot-based OCL methods in OOD generalization tasks.\n   - Segmentation-based encoding achieves remarkable zero-shot performance on OOD object discovery benchmarks.\n   - The approach is scalable to foundation models and can handle a variable number of slots without additional training.\n\n3. Real-world relevance:\n   - The study addresses the challenge of spurious background cues in OOD generalization, which is crucial for robust AI systems in real-world applications.\n   - The authors provide a toolbox for the OCL community to use scalable object-centric representations, facilitating further research and practical applications.\n   - The findings have implications for understanding object perception in human cognition.\n\n4. Implications for OCL research:\n   - The paper suggests that the goal of obtaining object-centric representations has been largely achieved through recent advancements in sample-efficient segmentation models.\n   - It",
+    "tweet": "Are We Done with Object-Centric Learning?\nThis research paper introduces a novel approach to object-centric learning (OCL) and evaluates its effectiveness in...\nhttps://arxiv.org/abs/2504.07092\n#AI #ObjectCentricLearning #ComputerVision #AIRepresentation #OODGeneralization #OCCAM",
+    "characters": 280,
+    "url": "https://arxiv.org/abs/2504.07092",
+    "hashtags": "Here are 3-5 short and relevant hashtags for this AI paper:\n\n#ObjectCentricLearning\n#ComputerVision\n#AIRepresentation\n#OODGeneralization\n#OCCAM\n\nThese hashtags cover the main topic (object-centric learning), the field (computer vision, AI), key concepts (representation learning, out-of-distribution generalization), and the novel method introduced (OCCAM)."
+  }
+]

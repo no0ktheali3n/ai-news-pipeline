@@ -82,10 +82,10 @@ ai-news-poster-pipeline/
 │   ├── README.md                # Overview for contributors
 │   ├── CHANGELOG.md             # All project changes & version tags
 │   ├── SECURITY.md              # Incident reports, key protection, secret rotation
+│   ├── requirements.txt         # All Python dependencies
 │   └── TECHNICAL_DIARY.md       # Developer log, major decisions & rationale
 ├── .env.example                 # Safe template for AWS + model config
 ├── .gitignore                  # Prevents secrets and junk files from being tracked
-├── requirements.txt            # All Python dependencies
 ├── summarized_output.json      # Output from Claude summarizer (v1/v2 + hashtags)
 ├── test_output.json            # Output from initial scraper run
 └── sam-template.yaml           # AWS SAM deployment template
@@ -123,7 +123,7 @@ cp .env.example .env
 ```
 python -m venv venv
 venv\Scripts\activate  # Windows
-pip install -r requirements.txt
+pip install -r docs\requirements.txt
 ```
 
 ### 4. Run locally

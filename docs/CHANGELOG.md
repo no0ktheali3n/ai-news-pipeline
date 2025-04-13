@@ -5,6 +5,21 @@
 **Purpose:** Version-controlled AI research scraper, summarizer, and social media poster pipeline
 
 ---
+## [0.4.0] - 2025-04-13
+### Added
+- `utils/tweepy_client.py`: Modular Tweepy integration with support for tweet threading and test CLI.
+- `.env.example`: OAuth1.0a token variables required for Twitter posting.
+- Poster logic now exports tweet metadata to both JSON and CSV.
+- First successful tweet posted via Tweepy client.
+
+### Changed
+- Finalized poster formatting logic to prioritize clarity and character-efficient summaries.
+
+### Notes
+- Twitter posting currently uses OAuth1.0a with v2 endpoint (`create_tweet`).
+- Future upgrades may include OAuth2 flow and media/alt text support.
+- Future upgrades will move to integrate poster into AI summary pipeline.
+
 
 ## [v0.3.0] - (2025-04-11)
 ### ✨ Added

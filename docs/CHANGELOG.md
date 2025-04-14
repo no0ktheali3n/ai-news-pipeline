@@ -5,6 +5,33 @@
 **Purpose:** Version-controlled AI research scraper, summarizer, and social media poster pipeline
 
 ---
+## [0.4.2] - 2025-04-14
+### ✨ Enhancements & Polish
+- ✅ Added support for `--dry-run` flag to preview tweet threads without posting.
+- ✅ Added `--variant` CLI argument for summary style selection (defaults to `v1_summary`).
+- ✅ Integrated structured logging using Python’s `logging` module:
+  - Logs to both console and rotating file (`poster_pipeline.log`).
+  - Configurable log level via `.env` (`LOG_LEVEL=INFO`, `DEBUG`, etc.).
+- ✅ Implemented `.env` validation to check for required Twitter credentials before posting.
+- ✅ Archived `summarized_output.json` to timestamped file in `/archive/` after successful post.
+- ✅ Preserved user-facing `print()` statements for notebook/debug use, while logging in parallel.
+- ✅ Consistently separated CLI and Lambda logic.
+
+### 🧹 Cleanup
+- ✅ Moved logger setup into reusable `utils/logger.py` module.
+- ✅ Ensured `.env.example` is updated with `LOG_LEVEL`.
+
+### 📂 Files Affected
+- `utils/post_to_twitter.py`
+- `utils/logger.py`
+- `.env.example`
+- `CHANGELOG.md`
+
+---
+
+🎯 This version completes our local CLI polish sprint. Next up: Deployment, CI/CD, and Bedrock Secrets Manager integration.
+
+
 ## [0.4.1] - 2025-04-13
 ### 🎉 Added
 - ✅ **Tweet threading fully operational** – Entire article summaries are now posted as threads via Tweepy.

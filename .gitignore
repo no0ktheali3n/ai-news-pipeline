@@ -15,3 +15,11 @@ Thumbs.db
 
 # VSCode
 .vscode/
+
+# Output artifacts
+summarized_output.json
+test_output.json
+tweet_threads.csv
+tweet_threads.json
+tweets_output.json
+tweets_output.csv

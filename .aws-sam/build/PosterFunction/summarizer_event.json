@@ -1,0 +1,10 @@
+{
+    "articles": [
+      {
+        "title": "Example Title",
+        "url": "https://arxiv.org/abs/0000.00000",
+        "snippet": "This is a test abstract.",
+        "authors": ["Alice", "Bob"]
+      }
+    ]
+  }

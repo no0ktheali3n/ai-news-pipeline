@@ -5,28 +5,7 @@
 **Purpose:** Version-controlled AI research scraper, summarizer, and social media poster pipeline
 
 ---
-### 🚀 [v0.4.3] — AWS Deployment and IAM Architecture
-
-- 📦 Deployed full Lambda pipeline to AWS via SAM:
-  - `scraper_lambda.py`
-  - `summarizer_lambda.py`
-  - `poster_lambda.py`
-- 🔐 Created and attached IAM user groups for:
-  - `ai-pipeline-admin` with full Lambda/IAM/SecretsManager privileges
-  - `ai-pipeline-contributor` with scoped log and secrets access
-- 🧾 Refined `template.yaml` to define:
-  - All Lambda functions with separate roles
-  - Environment configuration (excluding reserved AWS keys)
-  - Outputs for live ARNs
-- 🧪 Verified working deployment with `sam build && sam deploy`
-- ✅ Rolled back and resolved permission errors related to:
-  - `iam:CreateRole`, `iam:AttachRolePolicy`, tagging constraints
-  - AWS reserved variable `AWS_REGION` conflict
-
-> This version marks the full lift of the local stack into a cloud-native structure and sets the foundation for unified orchestration in `v0.5.0`.
-
-
-## [v0.4.2] - 2025-04-14
+## [0.4.2] - 2025-04-14
 ### ✨ Enhancements & Polish
 - ✅ Added support for `--dry-run` flag to preview tweet threads without posting.
 - ✅ Added `--variant` CLI argument for summary style selection (defaults to `v1_summary`).
@@ -53,7 +32,7 @@
 🎯 This version completes our local CLI polish sprint. Next up: Deployment, CI/CD, and Bedrock Secrets Manager integration.
 
 
-## [v0.4.1] - 2025-04-13
+## [0.4.1] - 2025-04-13
 ### 🎉 Added
 - ✅ **Tweet threading fully operational** – Entire article summaries are now posted as threads via Tweepy.
 - ✅ **`post_to_twitter.py`** implemented for posting from `summarized_output.json`.
@@ -71,7 +50,7 @@
 - Fixed module import errors by modifying `sys.path` and restructuring import paths.
 
 
-## [v0.4.0] - 2025-04-12
+## [0.4.0] - 2025-04-12
 ### Added
 - `utils/tweepy_client.py`: Modular Tweepy integration with support for tweet threading and test CLI.
 - `.env.example`: OAuth1.0a token variables required for Twitter posting.

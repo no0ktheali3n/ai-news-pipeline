@@ -1,0 +1,32 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "aiPipelineAdminPolicy",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:*",
+        "bedrock:InvokeModel",
+        "bedrock:ListFoundationModels",
+        "secretsmanager:*",
+        "iam:GetRole",
+        "iam:ListRoles",
+        "iam:PassRole",
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:TagRole",
+        "iam:UntagRole",
+        "cloudwatch:*",
+        "cloudformation:*",
+        "logs:*",
+        "s3:*",
+        "events:*",
+        "sts:GetCallerIdentity"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

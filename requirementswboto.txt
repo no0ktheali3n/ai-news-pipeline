@@ -1,0 +1,12 @@
+boto3==1.37.29
+fqdn==1.5.1
+isoduration==20.11.0
+jsonpointer==3.0.0
+notebook==7.3.3
+pandas==2.2.3
+pip-chill==1.0.3
+python-dotenv==1.1.0
+tinycss2==1.4.0
+tweepy==4.15.0
+uri-template==1.3.0
+webcolors==24.11.1

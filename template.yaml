@@ -1,32 +1,112 @@
+# template.yaml – AI News Pipeline with environment parameters for Lambda
+
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Lambda deployment for AI News Poster Pipeline
+Description: Lambda deployment for AI Research Poster Pipeline
+
+Parameters:
+  S3OutputBucket:
+    Type: String
+    Description: S3 bucket used for storing output data
+
+  ScraperOutputPrefix:
+    Type: String
+    Default: ai-research-pipeline/output/scraper/
+    Description: Prefix for scraper output
+
+  SummarizerOutputPrefix:
+    Type: String
+    Default: ai-research-pipeline/output/summarizer/
+    Description: Prefix for summarizer output
+
+  PosterOutputPrefix:
+    Type: String
+    Default: ai-research-pipeline/output/poster/
+    Description: Prefix for poster output
+
+  BedrockModelId:
+    Type: String
+    Default: anthropic.claude-3-5-sonnet-20240620-v1:0
+    Description: Bedrock model to use for summarization
 
 Globals:
   Function:
-    Timeout: 30
+    Timeout: 600
     Runtime: python3.11
     MemorySize: 512
 
 Resources:
 
+  CommonUtilsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: common-utils
+      Description: Shared utility code for all AI pipeline Lambdas
+      ContentUri: lambda/layers/common
+      CompatibleRuntimes:
+        - python3.11
+      RetentionPolicy: Retain
+
+  OrchestratorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ai-research-summary-orchestrator
+      Handler: orchestrator_lambda.handler
+      CodeUri: lambda/orchestrator/
+      Layers:
+        - !Ref CommonUtilsLayer
+      Description: Orchestrates chunking and summarization of scraped data in parallel
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+                - s3:PutObject
+                - s3:GetObject
+                - s3:ListBucket
+              Resource:
+                - !Sub arn:aws:s3:::${S3OutputBucket}
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${SummarizerOutputPrefix}*
+                - !GetAtt SummarizerFunction.Arn  # Needed for invoking summarizer within orchestrator
+      Environment:
+        Variables:
+          S3_OUTPUT_BUCKET: !Ref S3OutputBucket
+          SCRAPER_OUTPUT_PREFIX: !Ref ScraperOutputPrefix
+          SUMMARIZER_OUTPUT_PREFIX: !Ref SummarizerOutputPrefix
+          SUMMARIZER_FUNCTION_NAME: !Ref SummarizerFunction
+
+
   ScraperFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: ai-news-scraper
-      Handler: lambda.scraper_lambda.handler
-      CodeUri: .
+      FunctionName: ai-research-scraper
+      Handler: scraper_lambda.handler
+      CodeUri: lambda/scraper/
+      Layers:
+        - !Ref CommonUtilsLayer
       Description: Scrapes articles
       Policies:
         - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action: [ "s3:PutObject" ]
+              Resource: !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
+      Environment:
+        Variables:
+          S3_OUTPUT_BUCKET: !Ref S3OutputBucket
+          SCRAPER_OUTPUT_PREFIX: !Ref ScraperOutputPrefix
 
   SummarizerFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: ai-news-summarizer
-      Handler: lambda.summarizer_lambda.handler
-      CodeUri: .
-      Description: Summarizes articles using Bedrock
+      FunctionName: ai-research-summarizer
+      Handler: summarizer_lambda.handler
+      CodeUri: lambda/summarizer/
+      Layers:
+        - !Ref CommonUtilsLayer
+      Description: Summarizes articles using Bedrock & FMs
       Policies:
         - AWSLambdaBasicExecutionRole
         - Statement:
@@ -34,30 +114,55 @@ Resources:
               Action:
                 - bedrock:InvokeModel
                 - bedrock:ListFoundationModels
-              Resource: "*"
+                - s3:GetObject
+                - s3:PutObject
+                - s3:ListBucket
+              Resource:
+                - !Sub arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
+                - !Sub arn:aws:s3:::${S3OutputBucket}
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${SummarizerOutputPrefix}*
+      Environment:
+        Variables:
+          S3_OUTPUT_BUCKET: !Ref S3OutputBucket
+          SCRAPER_OUTPUT_PREFIX: !Ref ScraperOutputPrefix
+          SUMMARIZER_OUTPUT_PREFIX: !Ref SummarizerOutputPrefix
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+      
 
   PosterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: ai-news-poster
-      Handler: lambda.poster_lambda.handler
-      CodeUri: .
+      FunctionName: ai-research-poster
+      Handler: poster_lambda.handler
+      CodeUri: lambda/poster/
       Description: Posts summaries to Twitter
+      Layers:
+        - !Ref CommonUtilsLayer
       Policies:
         - AWSLambdaBasicExecutionRole
         - Statement:
             - Effect: Allow
               Action:
                 - secretsmanager:GetSecretValue
-              Resource: "*" # Replace with real ARN in production
+                - s3:GetObject
+              Resource: !Sub arn:aws:s3:::${S3OutputBucket}/${PosterOutputPrefix}*
+      Environment:
+        Variables:
+          S3_OUTPUT_BUCKET: !Ref S3OutputBucket
+          POSTER_OUTPUT_PREFIX: !Ref PosterOutputPrefix
+      
 
 Outputs:
-  PosterFunction:
-    Description: "Poster Lambda Function ARN"
+  OrchestratorOutput:
+    Description: Orchestrator Lambda Function ARN
+    Value: !GetAtt OrchestratorFunction.Arn
+  PosterOutput:
+    Description: Poster Lambda Function ARN
     Value: !GetAtt PosterFunction.Arn
-  SummarizerFunction:
-    Description: "Summarizer Lambda Function ARN"
+  SummarizerOutput:
+    Description: Summarizer Lambda Function ARN
     Value: !GetAtt SummarizerFunction.Arn
-  ScraperFunction:
-    Description: "Scraper Lambda Function ARN"
+  ScraperOutput:
+    Description: Scraper Lambda Function ARN
     Value: !GetAtt ScraperFunction.Arn

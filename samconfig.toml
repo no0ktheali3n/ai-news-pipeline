@@ -1,9 +1,26 @@
+# samconfig.toml – Local configuration for SAM CLI
+
 version = 0.1
-[default.deploy.parameters]
-stack_name = "ai-news-pipeline"
-resolve_s3 = true
-s3_prefix = "ai-news-pipeline"
+
+[default]
+[default.deploy]
+stack_name = "ai-research-pipeline"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
+parameter_overrides = [
+  "S3OutputBucket=aws-sam-cli-managed-default-samclisourcebucket-k0ga8ni5vmbc",
+  "ScraperOutputPrefix=ai-research-pipeline/output/scraper/",
+  "SummarizerOutputPrefix=ai-research-pipeline/output/summarizer/",
+  "PosterOutputPrefix=ai-research-pipeline/output/poster/",
+  "BedrockModelId=anthropic.claude-3-5-sonnet-20240620-v1:0"
+]
+[default.deploy.parameters]
+stack_name = "ai-research-pipeline"
+resolve_s3 = true
+s3_prefix = "ai-research-pipeline"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "S3OutputBucket=\"aws-sam-cli-managed-default-samclisourcebucket-k0ga8ni5vmbc\" ScraperOutputPrefix=\"ai-research-pipeline/output/scraper/\" SummarizerOutputPrefix=\"ai-research-pipeline/output/summarizer/\" PosterOutputPrefix=\"ai-research-pipeline/output/poster/\" BedrockModelId=\"anthropic.claude-3-5-sonnet-20240620-v1:0\""
 image_repositories = []

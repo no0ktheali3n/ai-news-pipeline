@@ -5,6 +5,37 @@
 **Purpose:** Version-controlled AI research scraper, summarizer, and social media poster pipeline
 
 ---
+
+### 🟦 [v0.4.5] – Summarizer Lambda & Chunked Orchestration
+
+- 🧠 Introduced `summarizer_lambda.py`, receiving chunked input via Lambda events
+- 📚 Refactored summarizer to combine summary + hashtag into one Claude 3.5 Sonnet prompt
+- 🔁 Built `utils/orchestrator.py`:
+  - `split_into_chunks()` – divides full scrape dataset into discrete chunks
+  - `invoke_lambda_for_chunk()` – asynchronously triggers summarizer lambdas
+  - `reassemble_chunks_from_s3()` – rebuilds full article set from S3 output
+- 🧪 Implemented retry logic with jittered delay for Claude Bedrock throttling
+- ⚙️ Added `run_id` timestamp logic to group chunk outputs under unique run sessions
+- 📂 Reassembled output now sorted by chunk index, not S3 write time
+- 📤 Uploaded final merged JSON to `final_summarized_<run_id>.json` in S3
+- 📤 Integrated orchestrator summarizer into `template.yml`
+
+> Achieves full orchestration of distributed summarization with reassembled output ready for posting
+
+---
+
+### 🟦 [v0.4.4] – Scraper Lambda Deployment
+
+- 🛠️ Adjusted `scraper.py` and generated `scraper_lambda.py` for Lambda compatibility
+- 🪣 Configured dynamic article limits + S3 output pathing using environment variables
+- 🔐 Ensured proper IAM permissions for `s3:PutObject` scoped to `ScraperOutputPrefix`
+- ✅ Verified scraper Lambda works independently and writes to correct S3 prefix
+- 📦 Integrated scraper, summarizer, poster into `template.yaml` for `sam build && sam deploy`
+
+> First Lambda module deployed into production with cloud-native output handling
+
+---
+
 ### 🚀 [v0.4.3] — AWS Deployment and IAM Architecture
 
 - 📦 Deployed full Lambda pipeline to AWS via SAM:

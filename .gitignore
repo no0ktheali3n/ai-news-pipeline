@@ -3,6 +3,9 @@
 .env.*
 *.env
 
+# SAM build artifacts
+.aws-sam/
+
 # Python venv
 venv/
 
@@ -27,3 +30,7 @@ tweet_threads.csv
 tweet_threads.json
 tweets_output.json
 tweets_output.csv
+
+# old requirements
+requirements-beforechill.txt
+requirements-windev.txt

@@ -68,27 +68,58 @@ This project uses Amazon Bedrock and other AWS services that require explicit pe
 ```
 ai-news-poster-pipeline/
 ├── lambda/
-│   ├── scraper.py               # ArXiv article scraper (user-agent rotation, delay)
-│   ├── summarizer.py            # LLM summarizer (Claude via Bedrock + hashtagging)
-│   └── poster.py                # Formats and prepares summaries for posting
-├── utils/
-│   ├── user_agents.py           # Random user-agent pool
-│   ├── request_helpers.py       # Simulates human behavior with delays
-│   └── formatters.py            # Tweet formatter + hashtag filtering
+│   ├── scraper/
+│   │   ├── scraper_lambda.py          # Lambda entrypoint – pulls articles from ArXiv
+│   │   ├── requirements.txt           # Local deps if needed (e.g., bs4, pandas)
+│   ├── summarizer/
+│   │   ├── summarizer_lambda.py       # Lambda entrypoint – summarizes via Claude
+│   │   ├── requirements.txt           # Optional model-specific deps
+│   ├── poster/
+│   │   ├── poster_lambda.py           # Lambda entrypoint – posts tweet threads
+│   │   ├── requirements.txt           # Only tweepy + formatters
+│
+│   └── layers/
+│       └── common/
+│           └── python/
+│               └── utils/
+│                   ├── __init__.py               # Required for Python to treat as a package
+                    ├── logger.py                 # Standardized logger for all Lambda functions
+                    ├── post_to_twitter.py        # Main orchestrator for tweet threading
+                    ├── request_helpers.py        # Delays, header modifiers, request pacing
+                    ├── scraper.py                # ArXiv-specific scrape logic
+                    ├── summarizer.py             # Claude summarization + hashtag prompt logic
+                    ├── test_tweet.py             # Standalone testing for tweet formatting
+                    ├── tweepy_client.py          # Twitter API client with auth
+                    ├── twitter_threading.py      # Splits summary into threaded tweets
+                    └── user_agents.py            # Randomized browser headers
+│
+├── utils/                           # [Legacy] Dev-only utils or notebooks support
+│
 ├── notebooks/
-│   ├── summarization-lab.ipynb  # Summarizer tuning, throttling handling, token logging
-│   └── poster-lab.ipynb         # Tweet formatting previewer with length validator
+│   ├── summarization-lab.ipynb      # Claude tuning, rate limit handling, retries
+│   ├── poster-lab.ipynb             # Thread preview tool with validator
+│
 ├── docs/
-│   ├── README.md                # Overview for contributors
-│   ├── CHANGELOG.md             # All project changes & version tags
-│   ├── SECURITY.md              # Incident reports, key protection, secret rotation
-│   ├── requirements.txt         # All Python dependencies
-│   └── TECHNICAL_DIARY.md       # Developer log, major decisions & rationale
-├── .env.example                 # Safe template for AWS + model config
-├── .gitignore                  # Prevents secrets and junk files from being tracked
-├── summarized_output.json      # Output from Claude summarizer (v1/v2 + hashtags)
-├── test_output.json            # Output from initial scraper run
-└── sam-template.yaml           # AWS SAM deployment template
+│   ├── README.md                    # Full pipeline overview, goals, and usage
+│   ├── CHANGELOG.md                 # Incremental feature tracking (e.g. v0.4.3 → v0.5.0)
+│   ├── TECHNICAL_DIARY.md          # Live journal of issues, fixes, decisions
+│   ├── SECURITY.md                 # Secret mgmt + IAM handling practices
+│   └── requirements.txt            # Superset of all dependencies (for dev use)
+│
+├── iam/
+│   ├── admin-policy.json            # Custom admin IAM policy for full access
+│   └── user-policy.json             # Constrained IAM policy for Lambda runners
+│
+├── test_output.json                # Cached scraper test run (manual / local test)
+├── summarized_output.json          # Local summarizer output (Claude v1 + hashtags)
+├── poster_event.json               # Sample event to test Twitter poster logic
+│
+├── .env.example                    # Safe reference for AWS + Claude vars
+├── .gitignore                      # Prevents .env, .aws-sam, outputs from leaking
+├── requirements.txt                # Dev-wide package list (env-agnostic)
+├── sam-template.yaml               # SAM template w/ layer ref and env injection
+├── samconfig.toml                  # SAM CLI config (region, stack, param overrides)
+└── venv/                           # Python virtualenv (ignored by git)
 ```
 
 ---

@@ -30,7 +30,7 @@ def generate_tweet_thread(summary, title="", url="", hashtags=None):
 
     # Prepend title to the first tweet
     if title:
-        if len(thread[0]) + len(title) + 1 <= MAX_TWEET_LENGTH:
+        if thread and len(thread[0]) + len(title) + 1 <= MAX_TWEET_LENGTH:
             thread[0] = f"{title}\n{thread[0]}"
         else:
             thread.insert(0, title)

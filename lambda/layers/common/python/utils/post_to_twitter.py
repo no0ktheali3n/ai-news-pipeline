@@ -22,8 +22,10 @@ logger = get_logger("poster")
 
 # Constants
 DEFAULT_HASHTAGS = ["#AI"]
-SUMMARY_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "summarized_output.json"))
-ARCHIVE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "archive"))
+SUMMARY_PATH = "/tmp/summarized_output.json"
+#SUMMARY_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "summarized_output.json"))
+ARCHIVE_DIR = "/tmp/archive"
+#ARCHIVE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "archive"))
 
 REQUIRED_ENV_VARS = [
     "TWITTER_BEARER_TOKEN", "TWITTER_API_KEY", "TWITTER_API_SECRET",
@@ -31,10 +33,13 @@ REQUIRED_ENV_VARS = [
 ]
 
 # ENV validation
-def validate_env_vars():
+def validate_env_vars(skip_if_dry_run=False):
+    if skip_if_dry_run:
+        return
     missing = [key for key in REQUIRED_ENV_VARS if not os.getenv(key)]
     if missing:
         raise EnvironmentError(f"Missing required environment variables: {', '.join(missing)}")
+
 
 # Load summaries
 def load_articles():
@@ -54,12 +59,32 @@ def archive_output_file():
     os.rename(SUMMARY_PATH, archive_path)
     logger.info(f"Archived summarized_output.json to {archive_path}")
 
+def run_posting_pipeline(variant="summary", limit=0, dry_run=False, confirm_post=False, start_index=0):
+    validate_env_vars(skip_if_dry_run=dry_run)
+    articles = load_articles()
+    results = []
+
+    for i, article in enumerate(articles[start_index : start_index + limit]):
+        logger.info(f"Posting Article {start_index + i + 1}: {article.get('title', '')[:60]}")
+        metadata = post_thread(article, variant=variant, dry_run=dry_run)
+        if metadata and not dry_run:
+            archive_output_file()
+            results.append(metadata)
+
+    return results
+
 # Post full summary as a thread
-def post_thread(article, variant="v1_summary", dry_run=False):
+def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
     summary = article.get(variant, "")
     title = article.get("title", "")
     url = article.get("url", "")
-    hashtags = [tag for tag in article.get("hashtags", "").split() if tag.startswith("#")]
+
+    raw_tags = article.get("hashtags", "")
+    if isinstance(raw_tags, str):
+        hashtags = [tag for tag in raw_tags.split(",") if tag.startswith("#")]
+    else:
+        hashtags = [tag for tag in raw_tags if isinstance(tag, str) and tag.startswith("#")]
+    
     tag_block = DEFAULT_HASHTAGS + hashtags[:2]
 
     thread = generate_tweet_thread(summary, title, url, tag_block)
@@ -71,11 +96,11 @@ def post_thread(article, variant="v1_summary", dry_run=False):
     if dry_run:
         print("\n[DRY RUN] Skipping post...")
         return None
-
-    confirm = input("\nPost this thread to Twitter? (y/n): ").strip().lower()
-    if confirm != 'y':
-        print("❌ Cancelled.")
-        return None
+    if confirm_post:
+        confirm = input("\nDo you want to post this thread to Twitter? (y/n): ").strip().lower()
+        if confirm != 'y':
+            print("❌ Cancelled.")
+            return None
 
     tweet_ids = []
     reply_to = None
@@ -106,14 +131,18 @@ def post_thread(article, variant="v1_summary", dry_run=False):
 
 # CLI Interface
 def main():
-    validate_env_vars()
     parser = argparse.ArgumentParser(description="Post AI summaries to Twitter as threads.")
     parser.add_argument("--variant", default="v1_summary", help="Summary variant to use (default: v1_summary)")
     parser.add_argument("--dry-run", action="store_true", help="Preview the thread without posting")
     parser.add_argument("--limit", type=int, default=2, help="Limit number of articles to post")
     args = parser.parse_args()
 
+    if not args.dry_run:
+        validate_env_vars()  # Only check secrets if we’re actually posting
+
     articles = load_articles()
+
+    run_posting_pipeline(variant=args.variant, limit=args.limit, dry_run=args.dry_run)
 
     for i, article in enumerate(articles[:args.limit]):
         print(f"\n=== Posting Article {i+1}: {article.get('title', '')[:60]} ===")
@@ -121,6 +150,4 @@ def main():
         if metadata and not args.dry_run:
             archive_output_file()
 
-if __name__ == "__main__":
-    main()
 

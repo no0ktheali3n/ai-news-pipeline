@@ -29,6 +29,11 @@ Parameters:
     Default: anthropic.claude-3-5-sonnet-20240620-v1:0
     Description: Bedrock model to use for summarization
 
+  FinalSummarizedFile:
+    Type: String
+    Default: final_summarized.json
+    Description: Name of the reassembled summary output file
+
 Globals:
   Function:
     Timeout: 600
@@ -136,7 +141,7 @@ Resources:
       FunctionName: ai-research-poster
       Handler: poster_lambda.handler
       CodeUri: lambda/poster/
-      Description: Posts summaries to Twitter
+      Description: Posts summaries to Twitter as threads
       Layers:
         - !Ref CommonUtilsLayer
       Policies:
@@ -146,11 +151,18 @@ Resources:
               Action:
                 - secretsmanager:GetSecretValue
                 - s3:GetObject
-              Resource: !Sub arn:aws:s3:::${S3OutputBucket}/${PosterOutputPrefix}*
+                - s3:ListBucket
+              Resource:
+                - !Sub arn:aws:secretsmanager:us-east-1:894495940143:secret:TwitterAPICreds-n5vtOF
+                - !Sub arn:aws:s3:::${S3OutputBucket}
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${SummarizerOutputPrefix}*
+
       Environment:
         Variables:
           S3_OUTPUT_BUCKET: !Ref S3OutputBucket
-          POSTER_OUTPUT_PREFIX: !Ref PosterOutputPrefix
+          SUMMARY_OUTPUT_PREFIX: !Ref SummarizerOutputPrefix
+          SUMMARIZED_FILE: !Ref FinalSummarizedFile
+
       
 
 Outputs:

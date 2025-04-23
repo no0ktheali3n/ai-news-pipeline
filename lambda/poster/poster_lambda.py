@@ -1,64 +1,67 @@
-# lambda/poster_handler.py – AWS Lambda handler for posting summary threads
+#poster lambda - calls utils.post_to_twitter to authenticate twitter client via tweepy, format and post content threads to twitter
 
 import os
 import sys
+import base64
 import json
+import boto3
+
 import traceback
 from dotenv import load_dotenv
 
-# Ensure project root is in path
+# Setup path and environment
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from utils.post_to_twitter import post_thread
-from utils.logger import logger, validate_env_vars
-
-# Load environment and validate keys
 load_dotenv()
-validate_env_vars()
+
+from utils.logger import logger
+from utils.post_to_twitter import run_posting_pipeline
+
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+S3_BUCKET = os.getenv("S3_OUTPUT_BUCKET")
+SUMMARY_PREFIX = os.getenv("SUMMARY_OUTPUT_PREFIX", "output/summarizer/")
+
+s3 = boto3.client("s3", region_name=AWS_REGION)
+
+def get_latest_summary_key():
+    response = s3.list_objects_v2(Bucket=S3_BUCKET, Prefix=SUMMARY_PREFIX)
+    objects = response.get("Contents", [])
+    if not objects:
+        raise FileNotFoundError("No summarized output found in S3")
+
+    json_files = [obj for obj in objects if obj["Key"].endswith(".json")]
+    sorted_files = sorted(json_files, key=lambda x: x["LastModified"], reverse=True)
+    return sorted_files[0]["Key"]
 
 def handler(event, context):
     """
-    Lambda entry point for posting a tweet thread.
-    Expects event to contain:
-    {
-        "article": {
-            "title": "...",
-            "url": "...",
-            "v1_summary": "...",
-            "hashtags": "#AI #ML"
-        },
-        "variant": "v1_summary"
-    }
+    Lambda entry point for posting Twitter threads.
+    Downloads the latest summary JSON from S3 and calls the posting pipeline.
     """
     try:
-        article = event.get("article")
-        variant = event.get("variant", "v1_summary")
+        latest_key = get_latest_summary_key()
+        local_path = "/tmp/summarized_output.json"
 
-        if not article:
-            logger.error("Missing 'article' in event payload")
-            raise ValueError("Missing 'article' in event payload")
+        logger.info(f"📥 Downloading summarized file from S3: {latest_key}")
+        s3.download_file(S3_BUCKET, latest_key, local_path)
 
-        required_keys = ["title", "url", variant]
-        missing = [key for key in required_keys if key not in article]
-        if missing:
-            logger.error(f"Article payload is missing required fields: {missing}")
-            raise ValueError(f"Missing article fields: {', '.join(missing)}")
-
-        logger.info(f"🧵 Posting Twitter thread for: {article['title'][:60]}")
-
-        result = post_thread(article, variant=variant, dry_run=False)
+        results = run_posting_pipeline(
+            limit=1, 
+            variant="summary", 
+            dry_run=False, 
+            confirm_post=True,
+            start_index=1
+            )
 
         return {
             "statusCode": 200,
             "body": json.dumps({
-                "message": "Thread posted successfully",
-                "tweet_ids": result.get("tweet_ids", []),
-                "first_tweet": f"https://twitter.com/user/status/{result['tweet_ids'][0]}" if result.get("tweet_ids") else None
+                "message": f"Posted {len(results)} threads successfully.",
+                "results": results
             })
         }
 
     except Exception as e:
-        logger.exception("❌ Error occurred in Twitter thread posting")
+        logger.exception("❌ Poster Lambda error")
         return {
             "statusCode": 500,
             "body": json.dumps({
@@ -67,18 +70,7 @@ def handler(event, context):
             })
         }
 
-# Optional local trigger
+# Optional local test
 if __name__ == "__main__":
-    test_event = {
-        "article": {
-            "title": "Example Paper Title",
-            "url": "https://arxiv.org/abs/2504.12345",
-            "v1_summary": "This is an example summary of the research paper to demonstrate thread posting.",
-            "hashtags": "#AI #ML"
-        },
-        "variant": "v1_summary"
-    }
-
-    response = handler(test_event, None)
-    print("\n🔁 Lambda Response:")
+    response = handler({}, None)
     print(json.dumps(response, indent=2))

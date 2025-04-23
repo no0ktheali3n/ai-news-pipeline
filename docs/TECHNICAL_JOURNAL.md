@@ -304,9 +304,7 @@ ScraperFunction is now fully functional, modular, and integrated with:
 
 👣 Next up: Begin testing SummarizerFunction by reading from this S3 output and saving summaries + hashtags to output/summarizer/
 
-**Technical Journal Log: Claude Summarizer Evolution & Chunking Pipeline Deployment**
-
-**Date:** April 19-20, 2025
+### [2025-04-(20-21)] Claude Summarizer Evolution & Chunking Pipeline Deployment
 
 ---
 
@@ -384,6 +382,69 @@ Achieved 100% successful return of summaries and hashtags using Claude with prop
 ### Conclusion:
 The system now supports scalable, parallel AI summarization with robust output consolidation. We've moved from a single-threaded tool to a distributed summarizer service, increasing throughput and paving the way for full automation in the AI news publishing pipeline.
 
+### ### [2025-04-(20-21)] ✅ Claude Summarizer Evolution & Chunking Pipeline Deployment Continued
+
+---
+
+### 🧠 Overview:
+Transitioned the Claude-based AI paper summarizer from a sequential local processor to a Lambda-distributed, chunked-processing pipeline. This marks a significant leap in performance, fault tolerance, and throughput for the AI News Poster Pipeline.
+
+---
+
+### 🟩 Summarizer Lambda
+
+**What:**  
+- 🧠 Integrated Claude 3.5 Sonnet using a single unified prompt (summary + hashtags)  
+- 🔄 Added exponential backoff + jitter to handle Bedrock throttling  
+- 🧱 Introduced chunking: each Lambda invocation handles 2–5 articles  
+- 🧾 Outputs structured results (JSON) with `run_id` + `chunk_id`-tagged filenames  
+- 🛠️ Fixed early bug: missing `run_id` → failed reassembly during orchestration  
+
+**How:**  
+- Rewrote `summarizer.py` to consolidate summary + hashtag prompts  
+- Created `summarizer_lambda.py` to accept `chunk_id`, `articles[]`, `run_id`  
+- Outputs saved to `/tmp/`, then uploaded to S3 for chunk collection  
+
+---
+
+### 🟩 Orchestrator Module
+
+**What:**  
+- 🧵 Rewrote `orchestrator.py` for chunk-based coordination of summarizer Lambdas  
+- 🪣 Polls S3 until all expected chunks for `run_id` are available  
+- 🧩 Reassembles chunks in original source order using regex-sorted filenames  
+- 📦 Uploads final combined results to `final_summarized_<run_id>.json` in S3  
+
+**How:**  
+- `orchestrate_chunks()` triggers async Lambdas with randomized cooldowns  
+- `reassemble_chunks_from_s3()` waits for `expected_chunk_count` using `run_id`-tagged S3 keys  
+- Bug fix: default S3 sorting by `LastModified` led to incorrect order → fixed via `chunk-<index>` extraction  
+
+---
+
+### ❌ Problems Encountered
+
+- `[Errno 30]` — Attempted to write output to root directory → fixed by using `/tmp/`  
+- ❌ Prefix mismatch between orchestrator and summarizer output path  
+- ❌ Payload bug: `run_id` sent as `run` → caused missed chunk detection during reassembly  
+- ✅ All resolved with consistent env variables and key naming refactor  
+
+---
+
+### ✅ Outcome
+
+- Reassembled full summarization pipeline now operational in Lambda  
+- Summarizer modules now work reliably with throttling management  
+- Output is consistently ordered, accurate, and available for posting  
+- S3 final output is saved with timestamped `run_id` for traceability  
+
+---
+
+### 🔜 Next Steps
+
+- ⚙️ Implement `poster_lambda.py` and wire into orchestration  
+- 🔁 Enable scraper → summarizer → poster automation  
+- 📊 Consider tracking chunk failures with metadata to support selective retries  
 
 
 To be updated as testing progresses.

@@ -1,9 +1,27 @@
+import json
+import boto3
 import os
 from tweepy import Client
 from dotenv import load_dotenv
 
 load_dotenv()
 
+# === Load Secrets from AWS Secrets Manager at import time ===
+def load_twitter_secrets():
+    secret_name = "TwitterAPICreds"
+    region_name = os.getenv("AWS_REGION", "us-east-1")
+    session = boto3.session.Session()
+    client = session.client(service_name='secretsmanager', region_name=region_name)
+
+    secret_value = client.get_secret_value(SecretId=secret_name)
+    creds = json.loads(secret_value["SecretString"])
+    os.environ.update(creds)  # Inject into environment
+
+# Only inject if not already loaded (e.g. from .env locally)
+if not os.getenv("TWITTER_BEARER_TOKEN"):
+    load_twitter_secrets()
+
+# === Twitter client ===
 def get_twitter_client():
     return Client(
         bearer_token=os.getenv("TWITTER_BEARER_TOKEN"),

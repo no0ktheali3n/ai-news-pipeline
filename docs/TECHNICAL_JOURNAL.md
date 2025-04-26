@@ -75,9 +75,10 @@ Recommendations:
 - CI/CD automation via GitHub Actions + SAM deployment
 - Add HuggingFace summarization fallback or multi-model support
 
-**Technical Diary Entry: AWS IAM + SAM Deployment (v0.4.3)**
+## Phase 5 - Cloud Integration (AWS)
 
-**Date:** 2025-04-15  
+**AWS IAM + SAM Deployment v0.4.3 (2025-04-12)**
+
 **Milestone:** First successful deployment of the full AI News Pipeline (Scraper, Summarizer, Poster) to AWS Lambda using SAM.
 
 ---
@@ -162,8 +163,7 @@ Deploy all three pipeline components to AWS Lambda via SAM CLI with proper IAM-b
 
 **AI News Pipeline - Lambda Deployment & Debug Log**
 
-**Date:** April 17, 2025  
-**Author:** no0ktheali3n  
+**Date:** April 17, 2025   
 **Context:** Standalone deployment and debugging of the AI News Pipeline AWS Lambda architecture (scraper, summarizer, poster).
 
 ---
@@ -313,7 +313,7 @@ Over the course of the past 48 hours, we successfully transitioned our Claude-ba
 
 ---
 
-### Phase 1: Refining the Non-Chunked Summarizer (April 19)
+### Step 1: Refining the Non-Chunked Summarizer (April 19)
 
 **Goals:**
 - Generate both summaries and hashtags in one Claude call.
@@ -332,7 +332,7 @@ Achieved 100% successful return of summaries and hashtags using Claude with prop
 
 ---
 
-### Phase 2: Architecting the Chunking Infrastructure (April 19-20)
+### Step 2: Architecting the Chunking Infrastructure (April 19-20)
 
 **Objectives:**
 - Parallelize summarization via Lambda chunking.
@@ -354,7 +354,7 @@ Achieved 100% successful return of summaries and hashtags using Claude with prop
 
 ---
 
-### Phase 3: Deployment & Testing
+### Step 3: Deployment & Testing
 
 **Deployment:**
 - Integrated chunking orchestrator, updated Lambda templates and permissions.
@@ -380,7 +380,7 @@ Achieved 100% successful return of summaries and hashtags using Claude with prop
 ---
 
 ### Conclusion:
-The system now supports scalable, parallel AI summarization with robust output consolidation. We've moved from a single-threaded tool to a distributed summarizer service, increasing throughput and paving the way for full automation in the AI news publishing pipeline.
+The system now supports scalable, parallel AI summarization with robust output consolidation. We've moved from a single-threaded tool to a distributed summarizer service, increasing throughput and paving the way for full automation in the AI news publishing pipeline.  The only thing holding us back are timeouts from Claude 3.5 and the Bedrock API were calling it from.  May need to revisit waits later.
 
 ### ### [2025-04-(20-21)] ✅ Claude Summarizer Evolution & Chunking Pipeline Deployment Continued
 
@@ -449,8 +449,151 @@ Transitioned the Claude-based AI paper summarizer from a sequential local proces
 
 To be updated as testing progresses.
 
+---
 
+### [2025-04-22] ✅ Poster Lambda Deployment (Dry Run Completion)
 
 ---
 
-_Last updated: 2025-04-11_
+## 🦰 Overview:
+- Built `poster_lambda.py` to post summarized outputs as threaded tweets using Tweepy.
+- Implemented structured dry-run capability for safe preview without posting to Twitter.
+
+## 🟩 Poster Lambda (Dry Run Phase)
+
+**What:**
+- 📦 Pulled final summarized JSON from S3 dynamically.
+- 🛠️ Structured each article into a multi-tweet thread using `generate_tweet_thread()`.
+- 🧪 Added local dry-run preview showing tweet structure and character counts.
+- 🛡️ Verified Twitter API credential retrieval with `secretsmanager:GetSecretValue`.
+
+**How:**
+- Cleaned and upgraded `post_to_twitter.py` with logger-based observability.
+- Fixed missing `.env` handling for Lambda runtime separation (dot-env only for local).
+
+**Problems Encountered:**
+- ⛔️ Initial EOFError on dry-run due to missing user input prompt → fixed by full dry-run bypass.
+
+---
+
+### [2025-04-23] ✅ SecretsManager Integration & Poster Lambda Full Validation
+
+---
+
+## 🦰 Overview:
+- Finalized API key retrieval from AWS Secrets Manager into Tweepy client at runtime.
+
+## 🟩 Security Improvements
+
+**What:**
+- 🔐 Bound `TwitterAPICreds` secret to poster Lambda's environment securely.
+- 🔒 Replaced local environment secrets with dynamic retrieval inside `tweepy_client.py`.
+
+**How:**
+- Updated template.yaml to include correct secret resource ARNs.
+- Refactored Tweepy initialization to pull credentials dynamically only when needed.
+
+**Problems Encountered:**
+- ⛔️ Secrets policy mismatch at first → corrected `secretsmanager:GetSecretValue` permissions.
+
+---
+
+### [2025-04-24] ✅ Full Pipeline Controller Scaffolding
+
+---
+
+## 🦰 Overview:
+- Designed and scaffolded `pipeline_lambda.py` to orchestrate scraper → summarizer → poster as a single entrypoint.
+
+## 🟩 Pipeline Controller
+
+**What:**
+- 🦰 Introduced dynamic event forwarding: scraper limit, chunk size, post limit, dry run flag.
+- 🛠️ Built utility function `invoke_lambda()` for modular, controlled Lambda invocation.
+- ⏳ Introduced intermediate stabilization sleeps after scrape/summarize stages.
+
+**How:**
+- Fully parameterized payload builds for modularity and override flexibility.
+- Used explicit payload builders per stage: scrape, orchestrate, post.
+
+**Problems Encountered:**
+- ⛔️ JSON encoding errors due to emojis in Lambda logs → replaced emojis with ASCII-only logs.
+
+---
+
+### [2025-04-25] ✅ Full Pipeline Execution Test + Critical Fixes
+
+---
+
+## 🦰 Overview:
+- Successfully ran scraper → summarizer → poster end-to-end inside a Lambda-controlled session.
+
+## 🟩 End-to-End Validation
+
+**What:**
+- 📰 Scraped latest ArXiv articles with limit control.
+- 📚 Summarized scraped articles in S3 chunked format.
+- 🐧 Generated Twitter threads in dry-run preview mode.
+
+**How:**
+- Verified that all intermediate S3 outputs were correctly produced (scraper, summarizer).
+- Fixed critical payload mismatch where scraper was ignoring limit due to wrong payload keys.
+
+**Problems Encountered:**
+- ⛔️ Scraper defaulted to 8 articles because scraper Lambda expected `"limit"`, but pipeline sent `"scrape_limit"` → corrected mapping via stage-specific payload override.
+- ⛔️ Unicode encoding crash in logs → fixed by standardizing logger output to ASCII characters only.
+
+---
+
+### [2025-04-26] 🚀 Pipeline Milestone Reached: v0.5.0
+
+---
+
+## 🦰 Overview:
+- Officially completed fully modular, serverless, cloud-native AI Research Automation Pipeline.
+- All modules now execute properly in controlled sequence with dynamic configuration.
+
+## 🟩 Highlights
+
+**Accomplishments:**
+- ✅ Parameterized full stack control via single test event JSON.
+- ✅ Dry-run and live posting capabilities integrated safely.
+- ✅ Dynamic chunking, multi-stage S3 handoff, Twitter formatting, and posting all functional.
+- ✅ Lambda CloudWatch logging operational across all modules.
+
+**Architecture Snapshot:**
+
+| Stage | Lambda | Function |
+|:-----|:-------|:---------|
+| 1. Scraper | `ai-research-scraper` | Scrape articles |
+| 2. Summarizer | `ai-research-summary-orchestrator` + `ai-research-summarizer` | Summarize with Bedrock |
+| 3. Poster | `ai-research-poster` | Post summaries to Twitter |
+
+**Problems Encountered (Final Fixes):**
+- ⛔️ `run_id` unassigned edge case for single chunk summarization → patched orchestrator fallback.
+- ⛔️ Minor CloudFormation template errors (`PipelineFunction` indentation) → resolved.
+
+---
+
+# ✅ Current State:
+
+| Component | Status |
+|:-----------|:--------|
+| Scraper Lambda | ✅ Stable |
+| Summarizer Lambda + Orchestrator | ✅ Stable |
+| Poster Lambda | ✅ Stable |
+| Unified Pipeline | ✅ Stable |
+
+---
+
+# 🛄️ Roadmap for v0.5.1+:
+
+- 🔄 Add dynamic event triggers (scheduled, or new content detection).
+- ⚡ Add memory to track posts and avoid/tactically schedule reposts
+- ⚡ Add intelligent retries for partial failures.
+- 🔥 Enhance poster to auto-resume threads based on memory of last posted ID.
+- 🦰 Explore relevance ranking / trending mechanisms to prioritize highest-quality articles.
+
+---
+
+_Last updated: 2025-04-26_

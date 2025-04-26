@@ -116,34 +116,42 @@ This roadmap outlines the strategic path toward a fully automated, serverless CI
 - OAuth credentials securely managed in `.env`
 - Tweet preview with confirmation before posting
 
+### v0.4.2 — Polish and UX Improvements
+- CLI flags for dry run, variant choice, verbosity
+- Auto-clean or archive output files after posting
+- Enhanced preview and error handling in `post_to_twitter.py`
+- Timestamped logging and unified logger utility
+- Improved `.env` validation before posting
+
+### v0.4.3 — AWS Integration prework
+- Pipeline lambda modules deployed
+- IAMs usergroups and permissions established
+- Enhanced preview and error handling in `post_to_twitter.py`
+- Timestamped logging and unified logger utility
+- Improved `.env` validation before posting
+
+### v0.4.4-v0.4.6 — Lambda Deployment and Testing
+- Implemented "chunking" in summarizer to scale process (but still running into Bedrock API timeouts w/ claude 3.5)
+- Pipeline lambda modules adjusted to work from AWS environment and individually tested
+- Introduced SecretsManager for TwitterAPI keys
+- Event-driven, overrideable json parameters
+- Manual Process: Scraper_Lambda -> scraped_output.json -> Orchestrator_Lambda -> summarized_output.json -> Poster_Lambda -> formats tweet, shows in console, posts to twitter if dry_run = false
+
+### v0.5.0 — Fully assembled pipeline
+- Pipeline_Lambda created as main controller for process
+- Automated process:   Scraper_Lambda -> scraped_output.json -> Orchestrator_Lambda -> summarized_output.json -> Poster_Lambda -> formats tweet, shows in console, posts to twitter if dry_run = false
+
 ---
 
 ## 🚧 Current Release (in progress)
 
-### v0.4.2 — Polish and UX Improvements
-- [ ] CLI flags for dry run, variant choice, verbosity
-- [ ] Auto-clean or archive output files after posting
-- [ ] Enhanced preview and error handling in `post_to_twitter.py`
-- [ ] Timestamped logging and unified logger utility
-- [ ] Improved `.env` validation before posting
+### v0.6.0 — Memory & Scheduled Automation (EventBridge)
 
----
+- Trigger Lambda on interval (e.g. every 4-12 hours)
+- Monitor logs in CloudWatch
+- Run full automated pipeline on AWS--
 
 ## 🧭 Upcoming Milestones
-
-### v0.4.3 — Optional AWS Secrets Manager Integration
-- Replace local `.env` credentials with AWS Secrets Manager (opt-in)
-- Refactor Lambda handlers to check both env and secrets
-
-### v0.5.0 — Lambda-Compatible Refactor
-- Restructure code into deployable Lambda modules
-- Finalize lambda handlers for scraper, summarizer, and poster
-- Run end-to-end manually in AWS Console
-
-### v0.6.0 — Scheduled Automation (EventBridge)
-- Trigger Lambda on interval (e.g. every 4 hours)
-- Monitor logs in CloudWatch
-- Run full pipeline on AWS
 
 ### v0.7.0 — CI/CD with GitHub Actions + SAM
 - Auto-deploy Lambda functions via GitHub push to `main`

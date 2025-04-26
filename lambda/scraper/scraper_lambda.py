@@ -41,12 +41,14 @@ def handler(event, context):
     Optional event keys:
     - "url": override the default ArXiv search
     - "prefix": override the S3 output prefix
+    - "scrape_limit": limit the number of articles to scrape
     """
     url = event.get("url", DEFAULT_URL)
     prefix_override = event.get("prefix")
     prefix = prefix_override or S3_PREFIX
+    scrape_limit = event.get("scrape_limit", 8)
 
-    scraper = ScraperClient(url, 8)
+    scraper = ScraperClient(url, scrape_limit)
     results = scraper.scrape()
 
     if not results:

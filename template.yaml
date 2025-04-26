@@ -52,6 +52,52 @@ Resources:
         - python3.11
       RetentionPolicy: Retain
 
+  PipelineFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ai-research-pipeline
+      Handler: pipeline_lambda.handler
+      CodeUri: lambda/pipeline/
+      Layers:
+        - !Ref CommonUtilsLayer
+      Description: Full orchestrator of scraper → summarizer → poster
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource:
+                - !GetAtt ScraperFunction.Arn
+                - !GetAtt OrchestratorFunction.Arn
+                - !GetAtt PosterFunction.Arn
+      Environment:
+        Variables:
+          S3_OUTPUT_BUCKET: !Ref S3OutputBucket
+          SCRAPER_FUNCTION_NAME: !Ref ScraperFunction
+          ORCHESTRATOR_FUNCTION_NAME: !Ref OrchestratorFunction
+          POSTER_FUNCTION_NAME: !Ref PosterFunction
+
+  ScraperFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ai-research-scraper
+      Handler: scraper_lambda.handler
+      CodeUri: lambda/scraper/
+      Layers:
+        - !Ref CommonUtilsLayer
+      Description: Scrapes articles
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action: [ "s3:PutObject" ]
+              Resource: !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
+      Environment:
+        Variables:
+          S3_OUTPUT_BUCKET: !Ref S3OutputBucket
+          SCRAPER_OUTPUT_PREFIX: !Ref ScraperOutputPrefix
+
   OrchestratorFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -82,26 +128,6 @@ Resources:
           SUMMARIZER_OUTPUT_PREFIX: !Ref SummarizerOutputPrefix
           SUMMARIZER_FUNCTION_NAME: !Ref SummarizerFunction
 
-
-  ScraperFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: ai-research-scraper
-      Handler: scraper_lambda.handler
-      CodeUri: lambda/scraper/
-      Layers:
-        - !Ref CommonUtilsLayer
-      Description: Scrapes articles
-      Policies:
-        - AWSLambdaBasicExecutionRole
-        - Statement:
-            - Effect: Allow
-              Action: [ "s3:PutObject" ]
-              Resource: !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
-      Environment:
-        Variables:
-          S3_OUTPUT_BUCKET: !Ref S3OutputBucket
-          SCRAPER_OUTPUT_PREFIX: !Ref ScraperOutputPrefix
 
   SummarizerFunction:
     Type: AWS::Serverless::Function

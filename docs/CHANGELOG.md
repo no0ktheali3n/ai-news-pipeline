@@ -6,6 +6,28 @@
 
 ---
 
+### [v0.5.0] – Pipeline Full Automation Integration – 2025-04-26
+
+**✨ New Features**
+- Introduced `pipeline_lambda.py` as unified controller for the full AI research automation cycle.
+- Added dynamic payload forwarding (`scrape_limit`, `chunk_size`, `dry_run`, `post_limit`, `start_index`) across scraper, summarizer, and poster functions.
+- Integrated structured `logger` output across all modules (no more prints).
+- Full CloudWatch observability for all stages: scraping, summarization, and posting.
+- Parameterized event JSON to allow flexible ad hoc and scheduled runs.
+- Added clean error handling and consistent 200/500 status returns across pipeline stages.
+
+**✅ Verified Completion**
+- Scraper Lambda limited article pulls according to `scrape_limit`.
+- Orchestrator Lambda chunked, triggered summarization, and reassembled outputs based on `chunk_size`.
+- Poster Lambda successfully formatted and posted Twitter threads (with `dry_run` support).
+- Pipeline exited with **code 200** on success and **uploaded logs for all operations**.
+
+**🚀 Strategic Significance**
+This release completes **Phase 1: Modular, Automated, and Observable Research-to-Twitter Pipeline**.  
+Next planned phase (**v0.6.0**) will focus on **scheduling**, **resiliency**, and **dynamic filtering** based on relevance scoring.
+
+---
+
 ### 📝 [v0.4.6] – Poster Lambda Integration & Dry Run Completion – 2025-04-22
 
 **💬 Poster Lambda**

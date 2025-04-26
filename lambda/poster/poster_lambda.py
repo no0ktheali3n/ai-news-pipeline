@@ -2,7 +2,6 @@
 
 import os
 import sys
-import base64
 import json
 import boto3
 
@@ -37,6 +36,10 @@ def handler(event, context):
     Lambda entry point for posting Twitter threads.
     Downloads the latest summary JSON from S3 and calls the posting pipeline.
     """
+    post_limit = event.get("limit", 1) # limits how many summaries to post starting from the start_index
+    dry_run = event.get("dry_run", False) # True = no post to twitter
+    start_index = event.get("start_index", 0) #chooses where to start posting from the summary file
+
     try:
         latest_key = get_latest_summary_key()
         local_path = "/tmp/summarized_output.json"
@@ -45,11 +48,11 @@ def handler(event, context):
         s3.download_file(S3_BUCKET, latest_key, local_path)
 
         results = run_posting_pipeline(
-            limit=1, 
+            limit=post_limit, 
             variant="summary", 
-            dry_run=False, 
+            dry_run=dry_run, 
             confirm_post=True,
-            start_index=1
+            start_index=start_index
             )
 
         return {

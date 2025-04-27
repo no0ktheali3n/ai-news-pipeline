@@ -23,7 +23,7 @@
 - Pipeline exited with **code 200** on success and **uploaded logs for all operations**.
 
 **🚀 Strategic Significance**
-This release completes **Phase 1: Modular, Automated, and Observable Research-to-Twitter Pipeline**.  
+This release completes **MVP: Modular, Automated, and Observable Research-to-Twitter Pipeline**.  
 Next planned phase (**v0.6.0**) will focus on **scheduling**, **resiliency**, and **dynamic filtering** based on relevance scoring.
 
 ---

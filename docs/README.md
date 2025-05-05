@@ -1,6 +1,6 @@
 # AI News Poster Pipeline
 
-A serverless automation tool that scrapes AI-related news, summarizes it using large language models (LLMs), and automatically posts it to Twitter/X. Designed with modular AWS Lambda functions, local notebooks, and a GitHub CI/CD pipeline.
+A serverless automation tool that scrapes AI-related news, summarizes it using large language models (LLMs), and automatically posts it to Twitter/X. Designed with modular AWS Lambda functions, local notebooks, and will eventually integrate scheduled events (v0.6.0) and GitHub CI/CD pipeline (0.7.0+).
 
 This project is open source for educational and non-commercial use.  
 For commercial licensing, please contact me directly.
@@ -68,11 +68,14 @@ This project uses Amazon Bedrock and other AWS services that require explicit pe
 ```
 ai-news-poster-pipeline/
 ├── lambda/
+│   ├── pipeline/
+│   │   ├── pipeline_lambda.py         # Lambda entrypoint – runs full scrape, summary, post process
 │   ├── scraper/
 │   │   ├── scraper_lambda.py          # Lambda entrypoint – pulls articles from ArXiv
 │   │   ├── requirements.txt           # Local deps if needed (e.g., bs4, pandas)
 │   ├── summarizer/
-│   │   ├── summarizer_lambda.py       # Lambda entrypoint – summarizes via Claude
+│   │   ├── summarizer_lambda.py       # summarizes via Claude
+|   |   ├── summarizer_main_lambda.py  # Lambda entrypoint - chunks data and summarizes via summarizer_lambda
 │   │   ├── requirements.txt           # Optional model-specific deps
 │   ├── poster/
 │   │   ├── poster_lambda.py           # Lambda entrypoint – posts tweet threads
@@ -83,7 +86,9 @@ ai-news-poster-pipeline/
 │           └── python/
 │               └── utils/
 │                   ├── __init__.py               # Required for Python to treat as a package
+                    ├── chunker.py                # chunks scraped articles for summary according to chunk_size
                     ├── logger.py                 # Standardized logger for all Lambda functions
+                    ├── memcon.py                 # memory controller for scraper and future poster functionality
                     ├── post_to_twitter.py        # Main orchestrator for tweet threading
                     ├── request_helpers.py        # Delays, header modifiers, request pacing
                     ├── scraper.py                # ArXiv-specific scrape logic

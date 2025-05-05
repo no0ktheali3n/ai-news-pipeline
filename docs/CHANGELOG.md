@@ -8,24 +8,49 @@
 
 ### [v0.5.1] – Memory Integration & Refactor Cleanup – 2025-05-03
 
-## 🧠 *New Features*
 
-* Implemented `memcon.py` (Memory Controller) to track scraped articles via a persistent `article_library.json` file in S3.
+## 🧠 *New Features*
+#This version is deployable and runnable on AWS using defaults, grabs 1 article from arxiv, summarizes it, and posts it to social media in under a minute.  cleanly exits if duplicate summary.
+
 * Pipeline now **terminates early** if duplicate articles are detected (prevents redundant summarization/posting).
+* Implemented `memcon.py` (Memory Controller) to track scraped articles via a persistent `article_library.json` file in S3.
 * Default `scrape_limit` set to **1 article per run** to ensure reliable memory validation until chunking logic is improved.
 * Added safe memory fallback logic for missing memory file (initial run scenario).
 
 ## 🧹 *Refactors & Improvements*
 
-* Renamed `summary_orchestrator_lambda.py` ➔ `summary_main_lambda.py`
-* Renamed `orchestrator.py` ➔ `chunker.py`
-* Refined log structure across `scraper`, `summarizer`, `poster` and `pipeline` to enhance readability and consistency.
-* Improved function and module separation for better responsibility isolation.
+- Renamed `summary_orchestrator_lambda.py` ➔ `summary_main_lambda.py`
+- Renamed `orchestrator.py` ➔ `chunker.py`
+- Refined log structure across `scraper`, `summarizer`, `poster` and `pipeline` to enhance readability and consistency.
+- Improved function and module separation for better responsibility isolation.
 
 ## 🧪 *Known Limitations*
 
-* Current memory system only supports **single-article workflows**; multiple article chunking bypasses memory deduplication.
-* Future enhancement (`v0.6.0+`) will support **multi-article deduplication** and **intelligent memory indexing**.
+- Current memory system only supports **single-article workflows**; multiple article chunking bypasses memory deduplication.
+- Future enhancement (`v0.6.0+`) will support **multi-article deduplication** and **intelligent memory indexing**.
+
+## *Current Parameter Defaults/Overrides*
+# Can be overridden by passing event json to pipeline_lambda
+
+scraper: 
+  scrape_limit (limits articles scraped, default 1), 
+  url (defaults to arxiv, https://arxiv.org/search/?query=artificial+intelligence&searchtype=all&abstracts=show&order=-announced_date_first&size=25&classification-computer_science=y),
+  skip_memory (skips memory check for pipeline testing)
+
+chunker:
+  chunk_size (each chunk has size N elements, in our case articles, default is 2)
+
+poster: 
+  dry_run (posts to X account if false, default true)
+  post_limit (limits N posts to social media from start_index, default 1)
+  start_index (tells poster which article to start from in index if multiple summarized articles in previous iteration, default 0 - first result)
+
+***DEVNOTE: overriding start_index, post_limit or giving scraper_limit a value higher than 1 CURRENTLY DOES NOT WORK AND WILL BREAK PIPELINE.  
+
+"scraper": ["scrape_limit", "url", "skip_memory"],
+    "chunker": ["chunk_size"],
+    "poster": ["dry_run", "post_limit", "start_index"]
+
 
 ## 💡 *Strategic Significance*
 

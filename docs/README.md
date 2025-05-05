@@ -66,6 +66,7 @@ This project uses Amazon Bedrock and other AWS services that require explicit pe
 ## Project Structure
 
 ```
+(requirements loaded per each specific function to avoid dependency bloat and lambda size limitations - 262mb)
 ai-news-poster-pipeline/
 ├── lambda/
 │   ├── pipeline/
@@ -76,7 +77,7 @@ ai-news-poster-pipeline/
 │   ├── summarizer/
 │   │   ├── summarizer_lambda.py       # summarizes via Claude
 |   |   ├── summarizer_main_lambda.py  # Lambda entrypoint - chunks data and summarizes via summarizer_lambda
-│   │   ├── requirements.txt           # Optional model-specific deps
+│   │   ├── requirements.txt           # summarizer requirements
 │   ├── poster/
 │   │   ├── poster_lambda.py           # Lambda entrypoint – posts tweet threads
 │   │   ├── requirements.txt           # Only tweepy + formatters
@@ -98,7 +99,7 @@ ai-news-poster-pipeline/
                     ├── twitter_threading.py      # Splits summary into threaded tweets
                     └── user_agents.py            # Randomized browser headers
 │
-├── utils/                           # [Legacy] Dev-only utils or notebooks support
+├── utils/                           # [Legacy] local utils or notebooks support
 │
 ├── notebooks/
 │   ├── summarization-lab.ipynb      # Claude tuning, rate limit handling, retries
@@ -108,8 +109,7 @@ ai-news-poster-pipeline/
 │   ├── README.md                    # Full pipeline overview, goals, and usage
 │   ├── CHANGELOG.md                 # Incremental feature tracking (e.g. v0.4.3 → v0.5.0)
 │   ├── TECHNICAL_DIARY.md          # Live journal of issues, fixes, decisions
-│   ├── SECURITY.md                 # Secret mgmt + IAM handling practices
-│   └── requirements.txt            # Superset of all dependencies (for dev use)
+│   └── SECURITY.md                 # Secret mgmt + IAM handling practices
 │
 ├── iam/
 │   ├── admin-policy.json            # Custom admin IAM policy for full access

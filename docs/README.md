@@ -9,16 +9,20 @@ For commercial licensing, please contact me directly.
 
 ## Tech Stack
 
+- **Python 3.11** – Primary programming language
 - **AWS Lambda** – Serverless compute for scraper, summarizer, and poster
 - **Amazon Bedrock** – LLM summarization (Claude 3.5 Sonnet)
-- **Pandas** – Tabular data transformation for summarizer output
+- **AWS S3** – Storage for intermediate outputs and article library
+- **AWS CloudWatch** – Logging and monitoring
+- **AWS SecretsManager** – Secure credential storage
+- **Pandas** – Tabular data transformation for scraper output / summarizer input
+- **BeautifulSoup** – HTML parsing for web scraping
+- **JSON** – Data interchange format across Lambda functions
+- **Tweepy** – Social media automation (Twitter API)
 - **Jupyter Notebooks** – Local testing + LLM prompt tuning
-- **Tweepy** – Social media automation (future)
-- **GitHub Actions** – CI/CD deployment (planned)
+- **GitHub Actions** – CI/CD deployment
 - **AWS SAM** – Infrastructure as Code for packaging/deploying Lambda
-- **CloudWatch** – Logging and monitoring
-- **Rotating User Agents** – Basic stealth and rate-limit avoidance for scraping
-
+- **Rotating User Agents** – Basic stealth and rate-limit avoidance
 ---
 
 ## Architecture

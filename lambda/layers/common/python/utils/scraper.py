@@ -31,10 +31,11 @@ class ScraperClient:
             # pulls all articles in class arxiv-result from arxiv.org
             for result in soup.find_all("li", class_="arxiv-result"):
                 random_delay() # random delay from 1-3 seconds to simulate human behavior
-                title_tag = result.find("p", class_="title is-5 mathjax")
-                summary_tag = result.find("span", class_="abstract-full has-text-grey-dark mathjax")
-                authors_tag = result.find("p", class_="authors")
                 link_tag = result.find("p", class_="list-title").find("a")
+                title_tag = result.find("p", class_="title is-5 mathjax")
+                authors_tag = result.find("p", class_="authors")
+                summary_tag = result.find("span", class_="abstract-full has-text-grey-dark mathjax")
+                date_tag = result.find("p", class_="is-size-7")
                 # if title_tag and link_tag scraped, append to articles list
                 if title_tag and link_tag:
                     href = link_tag.get("href", "")
@@ -43,7 +44,8 @@ class ScraperClient:
                         "title": title_tag.get_text(strip=True),
                         "url": full_url,
                         "authors": [a.get_text(strip=True) for a in authors_tag.find_all("a")] if authors_tag else [],
-                        "snippet": summary_tag.get_text(strip=True).replace("Abstract: ", "") if summary_tag else ""
+                        "snippet": summary_tag.get_text(strip=True).replace("Abstract: ", "") if summary_tag else "",
+                        "published": date_tag.get_text(strip=True).split(": ")[-1] if date_tag else ""
                     })
 
                 if self.limit and len(articles) >= self.limit: #counts how many articles have been scraped, stops when limit is reached
@@ -59,8 +61,7 @@ class ScraperClient:
 
 if __name__ == "__main__":
     print("Interpreter path:", sys.executable)
-    import pandas
-    print("Pandas version:", pandas.__version__)
+    print("Pandas version:", pd.__version__)
 
     # Example: ArXiv AI & CS filtered search
     url = "https://arxiv.org/search/?query=artificial+intelligence&searchtype=all&abstracts=show&order=-announced_date_first&size=200&classification-computer_science=y" #overwrites default url

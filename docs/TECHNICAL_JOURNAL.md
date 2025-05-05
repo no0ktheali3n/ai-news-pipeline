@@ -1,4 +1,4 @@
-# Technical Diary
+# Technical Journal
 
 This file documents major technical decisions, fixes, lessons learned, and recurring patterns.
 
@@ -595,5 +595,73 @@ To be updated as testing progresses.
 - 🦰 Explore relevance ranking / trending mechanisms to prioritize highest-quality articles.
 
 ---
+### [2025-04-30] Project Restructuring & Naming Convention Refactor
+## 🦰 Overview:
+Performed a comprehensive project restructuring to improve code organization, clarity, and maintainability. Renamed key components to better reflect their purposes and relationships within the pipeline architecture.
 
-_Last updated: 2025-04-26_
+## 🟩 Directory Structure Refactoring
+What:
+
+📂 Reorganized Lambda functions into clearer subdirectories
+🔄 Consolidated shared utils under a properly structured common layer
+🧹 Separated configuration and execution concerns into distinct modules
+🏷️ Renamed functions to be more self-descriptive (OrchestratorFunction → SummarizerMainFunction)
+
+How:
+
+Restructured Lambda directory to follow AWS best practices for layers and functions
+Updated import paths across all modules to maintain dependencies
+Enforced consistent naming patterns (PascalCase for CloudFormation resources, snake_case for Python)
+Implemented parallel structure across all pipeline components
+
+## 🧪 Template & Configuration Updates
+What:
+
+📝 Updated SAM template to reflect new directory paths and function names
+🔄 Standardized environment variable references across Lambda functions
+📊 Aligned parameter names and references in template
+🧾 Updated documentation to match new structure
+
+How:
+
+Rebuilt SAM template with consistent resource naming
+Verified that all paths in CloudFormation template matched new directory structure
+Ensured all cross-references between functions remained intact
+
+✅ Aligned all resource references in template to match declared resources
+✅ Updated all environment variable references to match new naming scheme
+✅ Verified cross-function references in environment variables
+✅ Implemented memory controller with proper S3 path construction
+
+## 📊 Memory Implementation Enhancements
+What:
+
+📦 Implemented proper S3 path construction for article library
+🧠 Added date tracking with ISO 8601 format standardization
+🔄 Integrated URL-keyed dictionary approach for article library
+📊 Enhanced logging for better operational visibility
+
+How:
+
+Structured article library as key-value store with URLs as unique identifiers
+Added publication date extraction with standardized ISO formatting
+Implemented flexible date parsing to handle arXiv format variations
+
+## ✅ Outcome
+
+📂 Cleaner, more intuitive project structure
+🔍 Self-documenting function and variable names
+🧩 Simplified cross-component dependencies
+🛡️ More maintainable codebase prepared for v0.6.0 automation features
+🔄 Successful deployment with all components verified
+
+🔜 Next Steps
+
+⏱️ Implement scheduled triggers via EventBridge
+🔄 Enhance memory controller with tracking for posted articles
+📊 Add CloudWatch metrics for operational monitoring
+🔍 Implement selective retries for throttled or failed articles
+
+---
+
+Last updated: 2025-04-30

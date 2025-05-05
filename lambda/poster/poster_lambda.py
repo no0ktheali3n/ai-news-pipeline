@@ -12,17 +12,18 @@ from dotenv import load_dotenv
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 load_dotenv()
 
-from utils.logger import logger
+from utils.logger import get_logger
+logger = get_logger("poster")
 from utils.post_to_twitter import run_posting_pipeline
 
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 S3_BUCKET = os.getenv("S3_OUTPUT_BUCKET")
-SUMMARY_PREFIX = os.getenv("SUMMARY_OUTPUT_PREFIX", "output/summarizer/")
+SUMMARY_INPUT = os.getenv("SUMMARY_OUTPUT_PREFIX", "ai-research-pipeline/output/summarizer/") #poster gets its input to format
 
 s3 = boto3.client("s3", region_name=AWS_REGION)
 
 def get_latest_summary_key():
-    response = s3.list_objects_v2(Bucket=S3_BUCKET, Prefix=SUMMARY_PREFIX)
+    response = s3.list_objects_v2(Bucket=S3_BUCKET, Prefix=SUMMARY_INPUT)
     objects = response.get("Contents", [])
     if not objects:
         raise FileNotFoundError("No summarized output found in S3")

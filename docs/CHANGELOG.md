@@ -6,6 +6,32 @@
 
 ---
 
+### [v0.5.1] – Memory Integration & Refactor Cleanup – 2025-05-03
+
+## 🧠 *New Features*
+
+* Implemented `memcon.py` (Memory Controller) to track scraped articles via a persistent `article_library.json` file in S3.
+* Pipeline now **terminates early** if duplicate articles are detected (prevents redundant summarization/posting).
+* Default `scrape_limit` set to **1 article per run** to ensure reliable memory validation until chunking logic is improved.
+* Added safe memory fallback logic for missing memory file (initial run scenario).
+
+## 🧹 *Refactors & Improvements*
+
+* Renamed `summary_orchestrator_lambda.py` ➔ `summary_main_lambda.py`
+* Renamed `orchestrator.py` ➔ `chunker.py`
+* Refined log structure across `scraper`, `summarizer`, `poster` and `pipeline` to enhance readability and consistency.
+* Improved function and module separation for better responsibility isolation.
+
+## 🧪 *Known Limitations*
+
+* Current memory system only supports **single-article workflows**; multiple article chunking bypasses memory deduplication.
+* Future enhancement (`v0.6.0+`) will support **multi-article deduplication** and **intelligent memory indexing**.
+
+## 💡 *Strategic Significance*
+
+This update begins the foundation of **state-aware intelligence** in the pipeline. While currently limited to single-article tracking, it lays the groundwork for scalable memory, versioned content protection, and long-term deduplication analytics.
+
+
 ### [v0.5.0] – Pipeline Full Automation Integration – 2025-04-26
 
 **✨ New Features**

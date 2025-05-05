@@ -34,6 +34,16 @@ Parameters:
     Default: final_summarized.json
     Description: Name of the reassembled summary output file
 
+  MemoryOutputPrefix:
+    Type: String
+    Default: ai-research-pipeline/output/memory/
+    Description: Prefix for memory output
+
+  MemoryOutputFile:
+    Type: String
+    Default: article_memory.json
+    Description: Key for memory output file
+
 Globals:
   Function:
     Timeout: 600
@@ -60,7 +70,7 @@ Resources:
       CodeUri: lambda/pipeline/
       Layers:
         - !Ref CommonUtilsLayer
-      Description: Full orchestrator of scraper → summarizer → poster
+      Description: Full pipeline controller of scraper → summarizer → poster
       Policies:
         - AWSLambdaBasicExecutionRole
         - Statement:
@@ -69,13 +79,13 @@ Resources:
                 - lambda:InvokeFunction
               Resource:
                 - !GetAtt ScraperFunction.Arn
-                - !GetAtt OrchestratorFunction.Arn
+                - !GetAtt SummarizerMainFunction.Arn
                 - !GetAtt PosterFunction.Arn
       Environment:
         Variables:
           S3_OUTPUT_BUCKET: !Ref S3OutputBucket
           SCRAPER_FUNCTION_NAME: !Ref ScraperFunction
-          ORCHESTRATOR_FUNCTION_NAME: !Ref OrchestratorFunction
+          SUMMARIZER_MAIN_FUNCTION_NAME: !Ref SummarizerMainFunction
           POSTER_FUNCTION_NAME: !Ref PosterFunction
 
   ScraperFunction:
@@ -91,22 +101,30 @@ Resources:
         - AWSLambdaBasicExecutionRole
         - Statement:
             - Effect: Allow
-              Action: [ "s3:PutObject" ]
-              Resource: !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
+              Action:
+                - s3:GetObject
+                - s3:PutObject
+                - s3:ListBucket
+              Resource:
+                - !Sub arn:aws:s3:::${S3OutputBucket}
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${MemoryOutputPrefix}${MemoryOutputFile}
       Environment:
         Variables:
           S3_OUTPUT_BUCKET: !Ref S3OutputBucket
           SCRAPER_OUTPUT_PREFIX: !Ref ScraperOutputPrefix
+          MEMORY_OUTPUT_PREFIX: !Ref MemoryOutputPrefix
+          MEMORY_OUTPUT_FILE: !Ref MemoryOutputFile
 
-  OrchestratorFunction:
+  SummarizerMainFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: ai-research-summary-orchestrator
-      Handler: orchestrator_lambda.handler
-      CodeUri: lambda/orchestrator/
+      FunctionName: ai-research-summarizer-main
+      Handler: summarizer_main_lambda.handler
+      CodeUri: lambda/summarizer/
       Layers:
         - !Ref CommonUtilsLayer
-      Description: Orchestrates chunking and summarization of scraped data in parallel
+      Description: Controller for chunking and summarization of scraped data in parallel (run this, not summarizer)
       Policies:
         - AWSLambdaBasicExecutionRole
         - Statement:
@@ -120,7 +138,7 @@ Resources:
                 - !Sub arn:aws:s3:::${S3OutputBucket}
                 - !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
                 - !Sub arn:aws:s3:::${S3OutputBucket}/${SummarizerOutputPrefix}*
-                - !GetAtt SummarizerFunction.Arn  # Needed for invoking summarizer within orchestrator
+                - !GetAtt SummarizerFunction.Arn  # Needed for invoking summarizer within main controller
       Environment:
         Variables:
           S3_OUTPUT_BUCKET: !Ref S3OutputBucket
@@ -192,9 +210,9 @@ Resources:
       
 
 Outputs:
-  OrchestratorOutput:
-    Description: Orchestrator Lambda Function ARN
-    Value: !GetAtt OrchestratorFunction.Arn
+  SummarizerMainOutput:
+    Description: Summarizer Main Lambda Function ARN
+    Value: !GetAtt SummarizerMainFunction.Arn
   PosterOutput:
     Description: Poster Lambda Function ARN
     Value: !GetAtt PosterFunction.Arn

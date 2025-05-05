@@ -20,6 +20,9 @@ Thumbs.db
 # Jupyter/IPython
 .ipynb_checkpoints/
 
+# PowerShell scripts
+*.ps1
+
 # VSCode
 .vscode/
 

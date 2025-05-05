@@ -94,14 +94,14 @@ ai-news-poster-pipeline/
                     ├── chunker.py                # chunks scraped articles for summary according to chunk_size
                     ├── logger.py                 # Standardized logger for all Lambda functions
                     ├── memcon.py                 # memory controller for scraper and future poster functionality
-                    ├── post_to_twitter.py        # Main orchestrator for tweet threading
+                    ├── post_to_twitter.py        # Main util for tweet threading/posting
                     ├── request_helpers.py        # Delays, header modifiers, request pacing
                     ├── scraper.py                # ArXiv-specific scrape logic
                     ├── summarizer.py             # Claude summarization + hashtag prompt logic
                     ├── test_tweet.py             # Standalone testing for tweet formatting
                     ├── tweepy_client.py          # Twitter API client with auth
                     ├── twitter_threading.py      # Splits summary into threaded tweets
-                    └── user_agents.py            # Randomized browser headers
+                    └── user_agents.py            # Randomized browser headers, rotating agents
 │
 ├── utils/                           # [Legacy] local utils or notebooks support
 │
@@ -147,8 +147,8 @@ ai-news-poster-pipeline/
 ### 1. Clone the repo
 
 ```
-git clone https://github.com/no0ktheali3n/scraper-alpha.git
-cd scraper-alpha
+git clone https://github.com/no0ktheali3n/ai-news-pipeline.git
+cd ai-news-pipeline
 ```
 
 ### 2. Set up your environment

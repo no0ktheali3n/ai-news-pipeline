@@ -32,7 +32,7 @@ OUTPUT_FILE = os.path.join(PROJECT_ROOT, "summarized_output.json")
 def build_summary_prompt(article):
     return (
         f"You are a social media manager summarizing AI research for a tech-savvy audience.\n\n"
-        f"**Task**: Summarize the following research paper in 2–4 engaging sentences suitable for a tweet or thread.\n\n"
+        f"**Task**: Summarize the following research paper in 4-6 engaging sentences suitable for a tweet or thread intended to stimulate curious minds\n\n"
         f"**Title**: {article['title']}\n"
         f"**Authors**: {', '.join(article['authors'])}\n"
         f"**Abstract**: {article['snippet']}\n\n"

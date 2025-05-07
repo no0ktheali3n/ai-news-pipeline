@@ -1,32 +1,65 @@
 {
   "Version": "2012-10-17",
   "Statement": [
-    {
-      "Sid": "aiPipelineAdminPolicy",
-      "Effect": "Allow",
-      "Action": [
-        "lambda:*",
-        "bedrock:InvokeModel",
-        "bedrock:ListFoundationModels",
-        "secretsmanager:*",
-        "iam:GetRole",
-        "iam:ListRoles",
-        "iam:PassRole",
-        "iam:CreateRole",
-        "iam:DeleteRole",
-        "iam:PutRolePolicy",
-        "iam:DeleteRolePolicy",
-        "iam:DetachRolePolicy",
-        "iam:TagRole",
-        "iam:UntagRole",
-        "cloudwatch:*",
-        "cloudformation:*",
-        "logs:*",
-        "s3:*",
-        "events:*",
-        "sts:GetCallerIdentity"
-      ],
-      "Resource": "*"
-    }
+      {
+          "Sid": "aiPipelineAdminPolicy",
+          "Effect": "Allow",
+          "Action": [
+              "lambda:*",
+              "bedrock:InvokeModel",
+              "bedrock:ListFoundationModels",
+              "secretsmanager:*",
+              "cloudformation:CreateChangeSet",
+              "cloudformation:DescribeChangeSet",
+              "cloudformation:ExecuteChangeSet",
+              "cloudformation:DeleteChangeSet",
+              "cloudformation:CreateStack",
+              "cloudformation:UpdateStack",
+              "cloudformation:DeleteStack",
+              "cloudformation:RollbackStack",
+              "cloudformation:DescribeStacks",
+              "cloudformation:DescribeStackEvents",
+              "cloudformation:GetTemplateSummary",
+              "scheduler:CreateSchedule",
+              "scheduler:UpdateSchedule",
+              "scheduler:DeleteSchedule",
+              "scheduler:GetSchedule",
+              "scheduler:ListSchedules",
+              "scheduler:GetScheduleGroup",
+              "iam:GetRole",
+              "iam:ListRoles",
+              "iam:CreateRole",
+              "iam:DeleteRole",
+              "iam:PutRolePolicy",
+              "iam:DeleteRolePolicy",
+              "iam:AttachRolePolicy",
+              "iam:DetachRolePolicy",
+              "iam:TagRole",
+              "iam:UntagRole",
+              "cloudwatch:*",
+              "logs:*",
+              "s3:*",
+              "events:*",
+              "sts:GetCallerIdentity"
+          ],
+          "Resource": "*"
+      },
+      {
+          "Sid": "AllowSchedulerPassRole",
+          "Effect": "Allow",
+          "Action": "iam:PassRole",
+          "Resource": "arn:aws:iam::894495940143:role/SchedulerInvokeRole",
+          "Condition": {
+              "StringEquals": {
+                  "iam:PassedToService": "scheduler.amazonaws.com"
+              }
+          }
+      },
+      {
+          "Sid": "AllowLambdaPassRoles",
+          "Effect": "Allow",
+          "Action": "iam:PassRole",
+          "Resource": "arn:aws:iam::894495940143:role/ai-research-pipeline-*"
+      }
   ]
 }

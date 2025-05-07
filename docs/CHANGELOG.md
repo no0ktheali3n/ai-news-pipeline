@@ -1,16 +1,38 @@
 # 📜 CHANGELOG.md  
-**Project:** `scraper-alpha`  
+**Project:** `ai-news-pipeline`  
 **Maintainer:** no0ktheali3n  
 **Created:** April 2025  
 **Purpose:** Version-controlled AI research scraper, summarizer, and social media poster pipeline
 
 ---
 
+### [v0.6.0] – EventBridge Integration & Stable Pipeline – 2025-05-07
+
+🐍 **New Features**
+- 🎯 Fully automated pipeline now deploys with **EventBridge scheduled triggers** using CloudFormation/SAM.
+- 🧠 Memory validation and deduplication logic now runs **before chunking or summarization**, terminating early if duplicates found.
+- ✅ Initial support for **scheduled automation**: runs every 4 hours on weekdays (UTC), using `pipeline_lambda` as entrypoint.
+- 🔐 Finalized IAM and role policies to support `iam:PassRole` permissions for all Lambda and Scheduler operations.
+**adjusted prompt to give slightly more verbose output.  ive noticed ive been getting anywhere between 10-30 views on these and occasionally even a like or two.  going to do a little A/B test and see if longer threads are more or less engaging.
+
+🔧 **Refactors & Stability Enhancements**
+- Refined **common utils layer** to support `dry_run` prompt refactoring and centralized utility prompts.
+- Hardened permissions and policies for all Lambdas, including scheduler-triggered roles.
+- Updated all `sam deploy` and CloudFormation templates to support new scheduled deployment logic and runtime environment consistency.
+- Resolved IAM policy bugs causing `iam:PassRole` errors during deployment.
+
+⚠️ **Known Limitations**
+- Memory deduplication still scoped to *single-article workflows*. Multi-article deduplication (for chunking) targeted for v0.6.6+.
+- Scheduler currently uses **hardcoded parameters** (`scrape_limit = 1`, `chunk_size = 1`). Future update will externalize parameter profile sets.
+
+🧠 **Strategic Significance**
+This marks the first version where **"hands-off" automation** is possible. From scraping to posting, all steps are now autonomously scheduled and executed using AWS-native tooling, requiring no human intervention unless an error occurs. This milestone shifts the project from development tool to **production-grade research distribution pipeline**.
+
 ### [v0.5.1] – Memory Integration & Refactor Cleanup – 2025-05-03
 
 
 ## 🧠 *New Features*
-#This version is deployable and runnable on AWS using defaults, grabs 1 article from arxiv, summarizes it, and posts it to social media in under a minute.  cleanly exits if duplicate summary.
+#This version is deployable and runnable on AWS using defaults, grabs 1 article from arxiv, summarizes it, and posts it to social media in under a minute.  Cleanly exits if duplicate article detected.
 
 * Pipeline now **terminates early** if duplicate articles are detected (prevents redundant summarization/posting).
 * Implemented `memcon.py` (Memory Controller) to track scraped articles via a persistent `article_library.json` file in S3.

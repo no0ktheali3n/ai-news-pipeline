@@ -200,14 +200,49 @@ Resources:
                 - !Sub arn:aws:secretsmanager:us-east-1:894495940143:secret:TwitterAPICreds-n5vtOF
                 - !Sub arn:aws:s3:::${S3OutputBucket}
                 - !Sub arn:aws:s3:::${S3OutputBucket}/${SummarizerOutputPrefix}*
-
       Environment:
         Variables:
           S3_OUTPUT_BUCKET: !Ref S3OutputBucket
           SUMMARY_OUTPUT_PREFIX: !Ref SummarizerOutputPrefix
           SUMMARIZED_FILE: !Ref FinalSummarizedFile
 
-      
+  PipelineSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Name: pipeline-daily-run
+      ScheduleExpression: cron(0 0,4,8,12,16,20 ? * MON-FRI *) # Every 4 hours on weekdays
+      FlexibleTimeWindow:
+        Mode: "OFF"
+      Target:
+        Arn: !GetAtt PipelineFunction.Arn
+        RoleArn: !GetAtt SchedulerInvokeRole.Arn
+        Input: !Sub |
+          {
+            "scrape_limit": 1,
+            "chunk_size": 1,
+            "skip_memory": false,
+            "dry_run": false
+          }
+
+  SchedulerInvokeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: SchedulerInvokeRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AllowLambdaInvoke
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !GetAtt PipelineFunction.Arn      
 
 Outputs:
   SummarizerMainOutput:

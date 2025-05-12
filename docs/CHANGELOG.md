@@ -13,7 +13,7 @@
 - 🧠 Memory validation and deduplication logic now runs **before chunking or summarization**, terminating early if duplicates found.
 - ✅ Initial support for **scheduled automation**: runs every 4 hours on weekdays (UTC), using `pipeline_lambda` as entrypoint.
 - 🔐 Finalized IAM and role policies to support `iam:PassRole` permissions for all Lambda and Scheduler operations.
-- **Adjusted prompt to give slightly more verbose output.  I've noticed I've been getting anywhere between 10-30 views on these and occasionally even a like or two.  Going to do a little A/B test and see if longer threads are more or less engaging.**
+- **Adjusted prompt to give slightly more verbose output.  I've noticed I've been getting anywhere between 20-50 views for these posts on X and occasionally even a like or two.  Going to do a little A/B test and see if longer threads are more or less engaging.**
 
 
 🔧 **Refactors & Stability Enhancements**

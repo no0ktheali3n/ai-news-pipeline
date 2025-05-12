@@ -8,7 +8,7 @@
 
 ### [v0.6.0] – EventBridge Integration & Stable Pipeline – 2025-05-07
 
-🐍 **New Features**
+🧠 **New Features**
 - 🎯 Fully automated pipeline now deploys with **EventBridge scheduled triggers** using CloudFormation/SAM.
 - 🧠 Memory validation and deduplication logic now runs **before chunking or summarization**, terminating early if duplicates found.
 - ✅ Initial support for **scheduled automation**: runs every 4 hours on weekdays (UTC), using `pipeline_lambda` as entrypoint.

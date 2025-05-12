@@ -13,7 +13,7 @@
 - 🧠 Memory validation and deduplication logic now runs **before chunking or summarization**, terminating early if duplicates found.
 - ✅ Initial support for **scheduled automation**: runs every 4 hours on weekdays (UTC), using `pipeline_lambda` as entrypoint.
 - 🔐 Finalized IAM and role policies to support `iam:PassRole` permissions for all Lambda and Scheduler operations.
-**adjusted prompt to give slightly more verbose output.  ive noticed ive been getting anywhere between 10-30 views on these and occasionally even a like or two.  going to do a little A/B test and see if longer threads are more or less engaging.
+**Adjusted prompt to give slightly more verbose output.  I've noticed I've been getting anywhere between 10-30 views on these and occasionally even a like or two.  Going to do a little A/B test and see if longer threads are more or less engaging.
 
 🔧 **Refactors & Stability Enhancements**
 - Refined **common utils layer** to support `dry_run` prompt refactoring and centralized utility prompts.
@@ -24,6 +24,7 @@
 ⚠️ **Known Limitations**
 - Memory deduplication still scoped to *single-article workflows*. Multi-article deduplication (for chunking) targeted for v0.6.6+.
 - Scheduler currently uses **hardcoded parameters** (`scrape_limit = 1`, `chunk_size = 1`). Future update will externalize parameter profile sets.
+- Summarizer was first written to run multiple scraped articles through a queue that summarized each through Bedrock, but ran into timeout issues with Bedrock's API (seems to allow for one summarization every 45-60 seconds).  Insert chunking.  The idea was to be able to run N summarizers simultaneously so that we could take N scraped articles and process them in parallel to make the summarizer microservice scalable.  This didn't work and will be addressed in a later update.
 
 🧠 **Strategic Significance**
 This marks the first version where **"hands-off" automation** is possible. From scraping to posting, all steps are now autonomously scheduled and executed using AWS-native tooling, requiring no human intervention unless an error occurs. This milestone shifts the project from development tool to **production-grade research distribution pipeline**.

@@ -8,7 +8,7 @@
 
 ### [v0.6.0] – EventBridge Integration & Stable Pipeline – 2025-05-07
 
-🧠 **New Features**
+✨ **New Features**
 - 🎯 Fully automated pipeline now deploys with **EventBridge scheduled triggers** using CloudFormation/SAM.
 - 🧠 Memory validation and deduplication logic now runs **before chunking or summarization**, terminating early if duplicates found.
 - ✅ Initial support for **scheduled automation**: runs every 4 hours on weekdays (UTC), using `pipeline_lambda` as entrypoint.
@@ -33,7 +33,7 @@ This marks the first version where **"hands-off" automation** is possible. From 
 ### [v0.5.1] – Memory Integration & Refactor Cleanup – 2025-05-03
 
 
-## 🧠 *New Features*
+## ✨ *New Features*
 #This version is deployable and runnable on AWS using defaults, grabs 1 article from arxiv, summarizes it, and posts it to social media in under a minute.  Cleanly exits if duplicate article detected.
 
 * Pipeline now **terminates early** if duplicate articles are detected (prevents redundant summarization/posting).

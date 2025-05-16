@@ -20,7 +20,7 @@ Thumbs.db
 # Jupyter/IPython
 .ipynb_checkpoints/
 
-#local testing utils
+#local testing utils with sensitive data (keys/webhook urls etc)
 utils/test_make_output.py
 
 # PowerShell scripts

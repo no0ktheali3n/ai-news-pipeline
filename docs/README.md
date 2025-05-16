@@ -91,6 +91,7 @@ ai-news-poster-pipeline/
 │           └── python/
 │               └── utils/
 │                   ├── __init__.py               # Required for Python to treat as a package
+|                   ├── automations.py            # logic for automated notifications (Make, etc)
                     ├── chunker.py                # chunks scraped articles for summary according to chunk_size
                     ├── logger.py                 # Standardized logger for all Lambda functions
                     ├── memcon.py                 # memory controller for scraper and future poster functionality

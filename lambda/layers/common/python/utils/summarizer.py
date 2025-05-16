@@ -32,7 +32,7 @@ OUTPUT_FILE = os.path.join(PROJECT_ROOT, "summarized_output.json")
 def build_summary_prompt(article):
     return (
         f"You are a social media manager summarizing AI research for a tech-savvy audience.\n\n"
-        f"**Task**: Summarize the following research paper in 4-6 engaging sentences suitable for a tweet or thread intended to stimulate curious minds\n\n"
+        f"**Task**: Summarize the following research paper in 5-10(depending on the depth of the article) engaging sentences suitable for a tweet or thread intended to stimulate curious minds about the advancement and potential impact of the subject matter\n\n"
         f"**Title**: {article['title']}\n"
         f"**Authors**: {', '.join(article['authors'])}\n"
         f"**Abstract**: {article['snippet']}\n\n"
@@ -53,7 +53,7 @@ def build_summary_and_hashtag_prompt(article):
     return (
         f"You are a social media assistant tasked with summarizing AI research and generating hashtags.\n\n"
         f"**Task**:\n"
-        f"1. Summarize the research in 2–4 engaging sentences suitable for a tweet.\n"
+        f"1. Summarize the following research paper in 5-10(depending on the depth of the article) engaging sentences in 600-1000 characters suitable for an educational and trendy thread intended to stimulate curious minds about the advancement and potential impact of the subject matter. You should be informative and entertaining, but also friendly and expressive.  When talking about potential implications, give a couple of specific examples or applications\n\n"
         f"2. Generate 3–5 relevant and concise hashtags.\n\n"
         f"**Only return a valid JSON object. Do not include any explanation, markdown formatting, or commentary.**\n\n"
         f"Here is the required JSON format:\n"

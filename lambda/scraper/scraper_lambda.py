@@ -14,6 +14,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils.scraper import ScraperClient  # Scraper logic
 from utils.memcon import filter_new_articles  # Memory controller
 from utils.logger import get_logger
+from utils.automations import notify_make_pipeline_status  # Automation notifications
 
 load_dotenv()
 logger = get_logger("scraper_lambda")
@@ -53,10 +54,11 @@ def handler(event, context):
     prefix = prefix_override or S3_PREFIX
     scrape_limit = event.get("scrape_limit", 1)
     skip_memory = event.get("skip_memory", False)
+    start_scrape = event.get("start_scrape", 0)
 
 
     # Scrape articles
-    scraper = ScraperClient(url, scrape_limit)
+    scraper = ScraperClient(url, scrape_limit, start_scrape)
     all_results = scraper.scrape()
 
     if not all_results:
@@ -73,7 +75,9 @@ def handler(event, context):
         # Filter against already-seen articles
         results = filter_new_articles(all_results)
         
+        # terminates if no new articles found
         if not results:
+            notify_make_pipeline_status(message="🚫 No articles scraped — pipeline aborted.")
             return {
                 "statusCode": 200,
                 "body": json.dumps({
@@ -83,7 +87,7 @@ def handler(event, context):
                 })
             }
 
-    # Upload filtered results to S3
+    # If new article(s) found, upload filtered results to S3
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     filename = f"scraped_articles_{timestamp}.json"
 

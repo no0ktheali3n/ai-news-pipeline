@@ -26,7 +26,7 @@ lambda_client = boto3.client("lambda", region_name=AWS_REGION)
 
 # Define expected parameters per function
 FUNCTION_PAYLOADS = {
-    "scraper": ["scrape_limit", "url", "skip_memory"],
+    "scraper": ["scrape_limit", "url", "skip_memory", "start_scrape"],
     "chunker": ["chunk_size"],
     "poster": ["dry_run", "post_limit", "start_index"]
 }

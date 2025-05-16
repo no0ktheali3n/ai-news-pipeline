@@ -14,9 +14,10 @@ from utils.request_helpers import random_delay
 import json
 
 class ScraperClient:
-    def __init__(self, target_url, limit=None):
+    def __init__(self, target_url, limit=None, start_scrape=0):
         self.target_url = target_url
         self.limit = limit
+        self.start_scrape = start_scrape
         self.headers = {"User-Agent": get_random_user_agent()}  #randomizes user agent for each request
 
     def scrape(self):
@@ -28,15 +29,19 @@ class ScraperClient:
             base_url = "https://arxiv.org"
             articles = []
 
-            # pulls all articles in class arxiv-result from arxiv.org
-            for result in soup.find_all("li", class_="arxiv-result"):
-                random_delay() # random delay from 1-3 seconds to simulate human behavior
+            # pulls all articles in class arxiv-result from arxiv.org starting from start_scrape and ending at limit
+            for i, result in enumerate(soup.find_all("li", class_="arxiv-result")):
+                if i < self.start_scrape:
+                    continue  # Skip this article
+
+                random_delay()
+
                 link_tag = result.find("p", class_="list-title").find("a")
                 title_tag = result.find("p", class_="title is-5 mathjax")
                 authors_tag = result.find("p", class_="authors")
                 summary_tag = result.find("span", class_="abstract-full has-text-grey-dark mathjax")
                 date_tag = result.find("p", class_="is-size-7")
-                # if title_tag and link_tag scraped, append to articles list
+
                 if title_tag and link_tag:
                     href = link_tag.get("href", "")
                     full_url = href if href.startswith("http") else base_url + href
@@ -48,7 +53,7 @@ class ScraperClient:
                         "published": date_tag.get_text(strip=True).split(": ")[-1] if date_tag else ""
                     })
 
-                if self.limit and len(articles) >= self.limit: #counts how many articles have been scraped, stops when limit is reached
+                if self.limit and len(articles) >= self.limit:
                     break
 
             #append articles list to pandas DataFrame and convert to dict

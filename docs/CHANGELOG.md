@@ -6,9 +6,29 @@
 
 ---
 
+### [v0.6.1] – Make Webhook Alerts & Slack Notifications – 2025-05-15
+
+✨ **New Features**
+- Integrated **Make.com webhook** to receive real-time article metadata from the AI pipeline.
+- Implemented **Slack notification alerts** triggered by successful post events.
+  - Notifications include article **title**, **source URL**, and **Twitter/X thread link**, dynamically populated using Make.
+- Added support for **Make iterator + variable mapping**, allowing multi-article alert threading in future updates.
+- New `automations.py` module
+- Scraper now has the functionality to skip listed articles with `start_scrape` parameter (start_scrape: 0 starts at the top of the list)
+
+🔧 **Enhancements & Fixes**
+- Created **test webhook script** to simulate and debug webhook payloads locally before full deployment.
+- Refactored metadata payload format in `poster_lambda.py` for **clean separation of summary vs. metadata logic**.
+- Fixed webhook routing and variable persistence issues caused by Make’s module scoping.
+- Improved logging and metadata visibility.
+
+🧠 **Strategic Significance**
+This marks a key milestone in **multi-system integration**. The pipeline now includes **end-to-end automated feedback alerts** after a successful article thread is posted to Twitter/X. Adds visibility for passive monitoring and enables **operator-less validation** for live deployments.
+
+
 ### [v0.6.0] – EventBridge Integration & Stable Pipeline – 2025-05-07
 
-🐍 **New Features**
+✨ **New Features**
 - 🎯 Fully automated pipeline now deploys with **EventBridge scheduled triggers** using CloudFormation/SAM.
 - 🧠 Memory validation and deduplication logic now runs **before chunking or summarization**, terminating early if duplicates found.
 - ✅ Initial support for **scheduled automation**: runs every 4 hours on weekdays (UTC), using `pipeline_lambda` as entrypoint.

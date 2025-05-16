@@ -69,6 +69,7 @@ def run_posting_pipeline(variant="summary", limit=0, dry_run=False, confirm_post
         metadata = post_thread(article, variant=variant, dry_run=dry_run)
         if metadata and not dry_run:
             archive_output_file()
+            logger.info(f"Appending metadata: {metadata}")
             results.append(metadata)
 
     return results
@@ -85,7 +86,7 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
     else:
         hashtags = [tag for tag in raw_tags if isinstance(tag, str) and tag.startswith("#")]
     
-    tag_block = DEFAULT_HASHTAGS + hashtags[:2]
+    tag_block = DEFAULT_HASHTAGS + hashtags[:3]  # Limit to 3 hashtags
 
     thread = generate_tweet_thread(summary, title, url, tag_block)
 
@@ -119,14 +120,15 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
             return None
 
     if tweet_ids:
-        print(f"\n📣 Thread posted! View the first tweet: https://twitter.com/user/status/{tweet_ids[0]}")
-        logger.info(f"Thread posted! First tweet: https://twitter.com/user/status/{tweet_ids[0]}")
+        logger.info(f"Thread posted! View the first tweet: https://twitter.com/user/status/{tweet_ids[0]}")
+        first_tweet_url = f"https://twitter.com/user/status/{tweet_ids[0]}"
 
     return {
         "article_title": title,
         "url": url,
         "variant": variant,
-        "tweet_ids": tweet_ids
+        "tweet_ids": tweet_ids,
+        "thread_url": first_tweet_url
     }
 
 # CLI Interface

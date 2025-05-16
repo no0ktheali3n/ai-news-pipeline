@@ -7,6 +7,7 @@ import boto3
 
 import traceback
 from dotenv import load_dotenv
+from utils.automations import notify_make_pipeline_status
 
 # Setup path and environment
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -40,21 +41,47 @@ def handler(event, context):
     post_limit = event.get("limit", 1) # limits how many summaries to post starting from the start_index
     dry_run = event.get("dry_run", False) # True = no post to twitter
     start_index = event.get("start_index", 0) #chooses where to start posting from the summary file
+    confirm_post = event.get("confirm_post", False) #True = prompt for confirmation before posting for local testing//mostly deprecated since dry_run is now used for this purpose
 
     try:
         latest_key = get_latest_summary_key()
         local_path = "/tmp/summarized_output.json"
 
         logger.info(f"📥 Downloading summarized file from S3: {latest_key}")
+        #downloads the latest summary file from S3 to local tmp path
         s3.download_file(S3_BUCKET, latest_key, local_path)
 
         results = run_posting_pipeline(
             limit=post_limit, 
             variant="summary", 
             dry_run=dry_run, 
-            confirm_post=True,
+            confirm_post=confirm_post,
             start_index=start_index
             )
+        
+        logger.info(f"Raw posting results: {results}")
+
+        if not results:
+            logger.warning("⚠️ Posting results are empty.")
+        else:
+            for i, r in enumerate(results):
+                logger.info(f"📄 Article {i+1} result: {json.dumps(r, indent=2)}")
+
+
+        # takes data from the returned results of the posting pipeline and formats it for the automations notification
+        posted_metadata = [
+            {
+                "title": r["article_title"],
+                "source_url": r["url"],
+                "thread": r["thread_url"]
+            }
+            for r in results
+        ]
+
+        logger.info(f"📦 Posting metadata to Make: {json.dumps(posted_metadata, indent=2)}")
+        
+        #notifies Make webhook to post to Slack
+        notify_make_pipeline_status(articles=posted_metadata)
 
         return {
             "statusCode": 200,

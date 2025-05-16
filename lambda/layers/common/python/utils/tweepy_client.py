@@ -1,6 +1,8 @@
 import json
 import boto3
 import os
+from tweepy.errors import TooManyRequests
+from datetime import datetime
 from tweepy import Client
 from dotenv import load_dotenv
 
@@ -41,6 +43,18 @@ def post_tweet(text, reply_to_id=None):
         tweet_id = tweet.data["id"]
         print(f"✅ Tweeted: https://twitter.com/user/status/{tweet_id}")
         return tweet_id
+    
+    except TooManyRequests as e:
+        headers = e.response.headers
+        limit = headers.get("x-rate-limit-limit")
+        remaining = headers.get("x-rate-limit-remaining")
+        reset_epoch = int(headers.get("x-rate-limit-reset", 0))
+        reset_time = datetime.fromtimestamp(reset_epoch).strftime('%Y-%m-%d %H:%M:%S')
+        print("Rate limit exceeded. Try again later.")
+        print(f"Limit: {limit}, Remaining: {remaining}")
+        print(f"Rate limit resets at: {reset_time} UTC")
+        print(f"Full header response:\n{headers}")
+
     except Exception as e:
         print("❌ Error posting tweet:", e)
         return None

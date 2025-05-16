@@ -62,6 +62,8 @@ def filter_new_articles(scraped_articles):
         url = article["url"]
         if url not in seen_articles:
             new_articles.append(article)
+        else:
+            logger.info(f"Article already seen: {url} - skipping.")
     
     # Update library if we found new articles
     if new_articles:

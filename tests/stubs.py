@@ -35,7 +35,7 @@ class FakeS3:
             raise NoSuchKey(Key)
         return {"Body": FakeBody(self.store[Key])}
 
-    def put_object(self, Bucket, Key, Body):
+    def put_object(self, Bucket, Key, Body, **kwargs):
         self.store[Key] = Body
 
     def download_file(self, Bucket, Key, Filename):

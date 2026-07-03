@@ -181,5 +181,95 @@ def test_scrape_lanes_merges_and_tags():
 
 check("lanes merge, dedup, tag query_source, sort newest-first", test_scrape_lanes_merges_and_tags)
 
+print("\n[5] scraper handler: scoring, sidecar, gate, fallback")
+
+def _run_handler(event, batches=None, scoring_mode="ok"):
+    """Harness: fake lanes + bedrock mode, clean S3, run scraper handler."""
+    batches = batches or {
+        "ai-security": [{"url": "https://arxiv.org/abs/2607.00002", "title": "Sec",
+                         "snippet": "s", "authors": [], "published": ""}],
+        "agents": [{"url": "https://arxiv.org/abs/2607.00001", "title": "Agent",
+                    "snippet": "a", "authors": [], "published": ""}],
+        "llm-systems": [],
+    }
+
+    class FakeClient:
+        def __init__(self, url, limit, start):
+            self.lane = next(name for name, u in scraper_lambda.LANES if u == url)
+
+        def scrape(self):
+            return list(batches[self.lane])
+
+    FAKE_BEDROCK.mode = scoring_mode
+    FAKE_BEDROCK.scoring_response = None
+    orig_client, orig_sleep = scraper_lambda.ScraperClient, scraper_lambda.time.sleep
+    scraper_lambda.ScraperClient = FakeClient
+    scraper_lambda.time.sleep = lambda *_: None
+    try:
+        resp = scraper_lambda.handler(event, None)
+    finally:
+        scraper_lambda.ScraperClient, scraper_lambda.time.sleep = orig_client, orig_sleep
+        FAKE_BEDROCK.mode = "denied"
+    return resp, json.loads(resp["body"])
+
+
+def _pipeline_file():
+    keys = [k for k in FAKE_S3.store if k.startswith("out/scraper/")]
+    assert len(keys) == 1, keys
+    return json.loads(FAKE_S3.store[keys[0]])
+
+
+def test_scored_run_selects_top_and_writes_sidecar():
+    FAKE_S3.store.clear()
+    resp, body = _run_handler({"scrape_limit": 5, "max_new_articles": 1})
+    assert resp["statusCode"] == 200 and body["scoring_used"] is True
+    picked = _pipeline_file()
+    assert len(picked) == 1 and "composite" in picked[0]
+    sidecars = [k for k in FAKE_S3.store if k.startswith("out/scored/scored_candidates_")]
+    assert len(sidecars) == 1
+    assert len(json.loads(FAKE_S3.store[sidecars[0]])["candidates"]) == 2
+
+
+def test_gated_run_noops_below_threshold():
+    FAKE_S3.store.clear()
+    resp, body = _run_handler({"scrape_limit": 5, "min_score": 9.9})
+    assert body["new_count"] == 0 and body.get("gated") is True
+    assert not [k for k in FAKE_S3.store if k.startswith("out/scraper/")]
+
+
+def test_gated_run_never_falls_back_on_scoring_failure():
+    FAKE_S3.store.clear()
+    resp, body = _run_handler({"scrape_limit": 5, "min_score": 5}, scoring_mode="denied")
+    assert body["new_count"] == 0 and body.get("gate_unevaluable") is True
+    assert not [k for k in FAKE_S3.store if k.startswith("out/scraper/")]
+
+
+def test_noon_run_falls_back_newest_on_scoring_failure():
+    FAKE_S3.store.clear()
+    resp, body = _run_handler({"scrape_limit": 5}, scoring_mode="denied")
+    assert resp["statusCode"] == 200 and body["scoring_used"] is False
+    picked = _pipeline_file()
+    assert picked[0]["url"].endswith("00002"), "newest unposted (00002 > 00001) must be selected"
+
+
+def test_three_consecutive_fallbacks_escalate_to_sns():
+    FAKE_S3.store.clear()
+    FAKE_SNS.published.clear()
+    for _ in range(3):
+        for k in [k for k in FAKE_S3.store if k.startswith("out/scraper/")]:
+            del FAKE_S3.store[k]
+        _run_handler({"scrape_limit": 5}, scoring_mode="denied")
+    assert len(FAKE_SNS.published) == 1, FAKE_SNS.published
+    _run_handler({"scrape_limit": 5}, scoring_mode="ok")
+    streak = json.loads(FAKE_S3.store["out/scored/scoring_failure_streak.json"])
+    assert streak["streak"] == 0, "success must reset the streak"
+
+
+check("scored run selects top-1 + writes sidecar", test_scored_run_selects_top_and_writes_sidecar)
+check("gated run no-ops below threshold", test_gated_run_noops_below_threshold)
+check("gated run never falls back on scoring failure", test_gated_run_never_falls_back_on_scoring_failure)
+check("noon run falls back to newest on scoring failure", test_noon_run_falls_back_newest_on_scoring_failure)
+check("3 consecutive fallbacks escalate to SNS, success resets", test_three_consecutive_fallbacks_escalate_to_sns)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

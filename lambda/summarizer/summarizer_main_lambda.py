@@ -38,26 +38,28 @@ def handler(event, context):
 
         prefix = f"{DEFAULT_SUMMARIZER_OUTPUT_PREFIX}summarized_{run_id}_"
 
-        paginator = s3.get_paginator("list_objects_v2")
+        # Re-list S3 every INTERVAL until all chunks land or MAX_WAIT expires.
+        # (The old loop paginated a single point-in-time listing, so it never
+        # actually waited for late-arriving chunks.)
         chunk_keys = []
-
-        for page in paginator.paginate(Bucket=S3_BUCKET, Prefix=prefix):
-            for obj in page.get("Contents", []):
-                if obj["Key"].endswith(".json"):
-                    chunk_keys.append(obj["Key"])
-
-
-            logger.info(f"📦 S3 returned {len(chunk_keys)} objects. Matching JSON chunks: {len(chunk_keys)}")
-            logger.info(f"🔑 Keys: {[obj['Key'] for obj in chunk_keys]}")
+        while True:
+            chunk_keys = []
+            paginator = s3.get_paginator("list_objects_v2")
+            for page in paginator.paginate(Bucket=S3_BUCKET, Prefix=prefix):
+                for obj in page.get("Contents", []):
+                    if obj["Key"].endswith(".json"):
+                        chunk_keys.append(obj["Key"])
 
             if len(chunk_keys) >= expected_chunk_count:
                 logger.info(f"✅ Found all {len(chunk_keys)} chunks. Proceeding to reassembly.")
                 break
 
             if waited + INTERVAL > MAX_WAIT:
-                raise TimeoutError("Timeout waiting for all chunks to be uploaded.")
+                raise TimeoutError(
+                    f"Timeout waiting for chunks: {len(chunk_keys)}/{expected_chunk_count} after {waited}s."
+                )
 
-            logger.info(f"⌛ {len(chunk_keys)} chunks found so far. Waiting...")
+            logger.info(f"⌛ {len(chunk_keys)}/{expected_chunk_count} chunks found so far. Waiting...")
             time.sleep(INTERVAL)
             waited += INTERVAL
 
@@ -123,6 +125,7 @@ def handler(event, context):
             "statusCode": 200,
             "body": json.dumps({
                 "message": "Summarization pipeline complete and reassembled.",
+                "final_key": final_key,
                 "chunks": [os.path.basename(k) for k in chunk_keys],
                 "chunk_size": chunk_size,
                 "article_titles": article_titles,

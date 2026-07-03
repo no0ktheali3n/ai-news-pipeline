@@ -16,7 +16,12 @@ load_dotenv()
 aws_access_key = os.getenv("AWS_ACCESS_KEY_ID")
 aws_secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
 aws_region = os.getenv("AWS_REGION", "us-east-1")
-model_id = os.getenv("BEDROCK_MODEL_ID", "anthropic.claude-3-5-sonnet-20240620-v1:0")
+model_id = os.getenv("BEDROCK_MODEL_ID", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+
+# Give up on an article after this many failed summarization attempts instead of
+# retrying it forever (retry-forever + Lambda timeout 600s meant no chunk file was
+# ever written after a Bedrock failure, freezing the poster on a stale summary).
+MAX_ATTEMPTS_PER_ARTICLE = int(os.getenv("MAX_ATTEMPTS_PER_ARTICLE", "2"))
 
 bedrock = boto3.client(
     service_name="bedrock-runtime",
@@ -69,6 +74,23 @@ def build_summary_and_hashtag_prompt(article):
         f"Abstract: {article['snippet']}"
     )
 
+def parse_model_json(text):
+    """Parse a JSON object from a model response.
+
+    Newer Claude models often wrap JSON in ```json fences (or add a short
+    preamble) despite prompt instructions — tolerate both instead of failing
+    the whole article.
+    """
+    text = text.strip()
+    if text.startswith("```"):
+        text = re.sub(r"^```[a-zA-Z]*\s*", "", text)
+        text = re.sub(r"```\s*$", "", text)
+    start, end = text.find("{"), text.rfind("}")
+    if start != -1 and end > start:
+        text = text[start:end + 1]
+    return json.loads(text)
+
+
 def parse_hashtags(response_raw):
     if isinstance(response_raw, list):
         return [tag.strip() for tag in response_raw if isinstance(tag, str)]
@@ -115,7 +137,7 @@ def summarize_with_claude(prompt):
             try:
                 combined = " ".join(part["text"] for part in content if part["type"] == "text")
                 print(f"[Claude Output Preview] {combined[:120]}...")
-                return json.loads(combined), len(prompt)
+                return parse_model_json(combined), len(prompt)
             except Exception as e:
                 print(f"[ERROR] Failed to extract structured output: {e}")
                 return {"summary": "[Summary unavailable]", "hashtags": ["[Summary unavailable]"]}, 0
@@ -123,7 +145,7 @@ def summarize_with_claude(prompt):
         elif isinstance(content, str):
             print(f"[Claude Output Preview] {content[:120]}...")
             try:
-                return json.loads(content), len(prompt)
+                return parse_model_json(content), len(prompt)
             except Exception as e:
                 print(f"[ERROR] JSON parse error: {e}")
                 return {"summary": "[Summary unavailable]", "hashtags": ["[Summary unavailable]"]}, 0
@@ -133,9 +155,11 @@ def summarize_with_claude(prompt):
             return {"summary": "[Summary unavailable]", "hashtags": ["[Summary unavailable]"]}, 0
 
     except Exception as e:
+        if "ThrottlingException" in str(e):
+            raise  # let retry_until_timeout apply exponential backoff
         print(f"[Claude API ERROR] {str(e)}")
         return {"summary": "[Summary unavailable]", "hashtags": ["[Summary unavailable]"]}, 0
-    
+
 
 # Retry with backoff + token tracking
 def retry_until_timeout(func, max_seconds=900, base_delay=10):
@@ -153,8 +177,8 @@ def retry_until_timeout(func, max_seconds=900, base_delay=10):
                 attempt += 1
             else:
                 print(f"[{datetime.utcnow().isoformat()}] Non-throttle error: {e}")
-                return "[Summary unavailable]", 0
-    return "[Summary unavailable after max retry time]", 0
+                return {"summary": "[Summary unavailable]", "hashtags": []}, 0
+    return {"summary": "[Summary unavailable after max retry time]", "hashtags": []}, 0
 
 
 # Main summarizer logic
@@ -174,6 +198,8 @@ def summarize_articles(limit=None, max_runtime=900):
         articles = articles[:limit]
 
     idx = 0
+    attempts = 0
+    failed_count = 0
     while idx < len(articles):
         elapsed = time.time() - start_time
         if max_runtime - elapsed < 45:
@@ -181,7 +207,7 @@ def summarize_articles(limit=None, max_runtime=900):
             break
 
         article = articles[idx]
-        print(f"[🔍] Attempting article {idx + 1}/{len(articles)}")
+        print(f"[🔍] Attempting article {idx + 1}/{len(articles)} (attempt {attempts + 1}/{MAX_ATTEMPTS_PER_ARTICLE})")
 
         def attempt_summary():
             return summarize_with_claude(build_summary_and_hashtag_prompt(article))
@@ -200,9 +226,20 @@ def summarize_articles(limit=None, max_runtime=900):
             })
             total_tokens += tokens_used
             idx += 1
+            attempts = 0
             time.sleep(random.uniform(2.0, 4.0))  # throttle cooldown
         else:
-            print(f"[⚠️] Failed to summarize article {idx + 1}. Retrying...")
+            attempts += 1
+            if attempts >= MAX_ATTEMPTS_PER_ARTICLE:
+                print(f"[⛔] Giving up on article {idx + 1} after {attempts} attempts. Skipping.")
+                failed_count += 1
+                idx += 1
+                attempts = 0
+            else:
+                print(f"[⚠️] Failed to summarize article {idx + 1}. Retrying...")
+
+    if failed_count:
+        print(f"[⚠️] {failed_count} article(s) failed to summarize this run.")
 
     try:
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:

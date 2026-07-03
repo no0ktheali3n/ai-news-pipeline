@@ -26,8 +26,8 @@ Parameters:
 
   BedrockModelId:
     Type: String
-    Default: anthropic.claude-3-5-sonnet-20240620-v1:0
-    Description: Bedrock model to use for summarization
+    Default: us.anthropic.claude-haiku-4-5-20251001-v1:0
+    Description: Bedrock model (or cross-region inference profile) to use for summarization
 
   FinalSummarizedFile:
     Type: String
@@ -47,7 +47,7 @@ Parameters:
 Globals:
   Function:
     Timeout: 600
-    Runtime: python3.11
+    Runtime: python3.12
     MemorySize: 512
 
 Resources:
@@ -59,13 +59,14 @@ Resources:
       Description: Shared utility code for all AI pipeline Lambdas
       ContentUri: lambda/layers/common
       CompatibleRuntimes:
-        - python3.11
+        - python3.12
       RetentionPolicy: Retain
 
   PipelineFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: ai-research-pipeline
+      Timeout: 900  # must outlive the summarizer stage (up to 600s) + scraper + poster
       Handler: pipeline_lambda.handler
       CodeUri: lambda/pipeline/
       Layers:
@@ -167,7 +168,12 @@ Resources:
                 - s3:PutObject
                 - s3:ListBucket
               Resource:
-                - !Sub arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-3-5-sonnet-20240620-v1:0
+                # Wildcards (scoped to Anthropic models) instead of a pinned model ARN:
+                # a BedrockModelId change must never outrun this policy again.
+                # Cross-region inference profiles (us.anthropic.*) need invoke on the
+                # profile AND the underlying foundation models in the routed regions.
+                - arn:aws:bedrock:*::foundation-model/anthropic.*
+                - !Sub arn:aws:bedrock:*:${AWS::AccountId}:inference-profile/*.anthropic.*
                 - !Sub arn:aws:s3:::${S3OutputBucket}
                 - !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
                 - !Sub arn:aws:s3:::${S3OutputBucket}/${SummarizerOutputPrefix}*
@@ -200,17 +206,26 @@ Resources:
                 - !Sub arn:aws:secretsmanager:us-east-1:894495940143:secret:TwitterAPICreds-n5vtOF
                 - !Sub arn:aws:s3:::${S3OutputBucket}
                 - !Sub arn:aws:s3:::${S3OutputBucket}/${SummarizerOutputPrefix}*
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${MemoryOutputPrefix}*
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource:
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${MemoryOutputPrefix}*
       Environment:
         Variables:
           S3_OUTPUT_BUCKET: !Ref S3OutputBucket
           SUMMARY_OUTPUT_PREFIX: !Ref SummarizerOutputPrefix
           SUMMARIZED_FILE: !Ref FinalSummarizedFile
+          MEMORY_OUTPUT_PREFIX: !Ref MemoryOutputPrefix
+          POSTED_LEDGER_FILE: posted_library.json
+          MAX_SUMMARY_AGE_HOURS: "6"
 
   PipelineSchedule:
     Type: AWS::Scheduler::Schedule
     Properties:
       Name: pipeline-daily-run
-      ScheduleExpression: cron(0 0,4,8,12,16,20 ? * MON-FRI *) # Every 4 hours on weekdays
+      ScheduleExpression: cron(0 16 ? * MON-FRI *) # Once daily on weekdays, 16:00 UTC (noon ET) — arXiv announces Mon-Fri
       FlexibleTimeWindow:
         Mode: "OFF"
       Target:

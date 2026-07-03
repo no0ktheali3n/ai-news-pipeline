@@ -13,7 +13,7 @@ parameter_overrides = [
   "ScraperOutputPrefix=ai-research-pipeline/output/scraper/",
   "SummarizerOutputPrefix=ai-research-pipeline/output/summarizer/",
   "PosterOutputPrefix=ai-research-pipeline/output/poster/",
-  "BedrockModelId=anthropic.claude-3-5-sonnet-20240620-v1:0"
+  "BedrockModelId=us.anthropic.claude-haiku-4-5-20251001-v1:0"
 ]
 [default.deploy.parameters]
 stack_name = "ai-research-pipeline"
@@ -22,6 +22,6 @@ s3_prefix = "ai-research-pipeline"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]
-parameter_overrides = "S3OutputBucket=\"aws-sam-cli-managed-default-samclisourcebucket-k0ga8ni5vmbc\" ScraperOutputPrefix=\"ai-research-pipeline/output/scraper/\" SummarizerOutputPrefix=\"ai-research-pipeline/output/summarizer/\" PosterOutputPrefix=\"ai-research-pipeline/output/poster/\" BedrockModelId=\"anthropic.claude-3-5-sonnet-20240620-v1:0\" FinalSummarizedFile=\"final_summarized.json\" MemoryOutputPrefix=\"ai-research-pipeline/output/memory/\" MemoryOutputFile=\"article_memory.json\""
+parameter_overrides = "S3OutputBucket=\"aws-sam-cli-managed-default-samclisourcebucket-k0ga8ni5vmbc\" ScraperOutputPrefix=\"ai-research-pipeline/output/scraper/\" SummarizerOutputPrefix=\"ai-research-pipeline/output/summarizer/\" PosterOutputPrefix=\"ai-research-pipeline/output/poster/\" BedrockModelId=\"us.anthropic.claude-haiku-4-5-20251001-v1:0\" FinalSummarizedFile=\"final_summarized.json\" MemoryOutputPrefix=\"ai-research-pipeline/output/memory/\" MemoryOutputFile=\"article_memory.json\""
 image_repositories = []
 disable_rollback = false

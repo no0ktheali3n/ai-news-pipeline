@@ -171,7 +171,7 @@ def handler(event, context):
         max_composite = scored[0]["composite"]
         _write_sidecar(scored)
         if scored[0]["composite"] >= min_score:
-            results = scored[:max_new_articles]
+            results = [c for c in scored[:max_new_articles] if c["composite"] >= min_score]
         else:
             logger.info(f"GATE no-op: max composite {max_composite} < min_score {min_score} "
                         f"({len(scored)} candidates)")

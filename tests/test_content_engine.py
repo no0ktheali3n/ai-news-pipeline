@@ -271,6 +271,53 @@ check("gated run never falls back on scoring failure", test_gated_run_never_fall
 check("noon run falls back to newest on scoring failure", test_noon_run_falls_back_newest_on_scoring_failure)
 check("3 consecutive fallbacks escalate to SNS, success resets", test_three_consecutive_fallbacks_escalate_to_sns)
 
+
+def test_gate_filters_all_selected_not_just_top():
+    # max_new_articles=2 with min_score between the two candidates' composites:
+    # top article scores 7.25 (b=8,n=6,h=7), second scores 5.0 (b=4,n=6,h=6).
+    # min_score=6.0 → only the top clears; exactly 1 article must be selected.
+    FAKE_S3.store.clear()
+    two_cand_batches = {
+        "ai-security": [{"url": "https://arxiv.org/abs/2607.00002", "title": "High",
+                         "snippet": "s", "authors": [], "published": ""}],
+        "agents":      [{"url": "https://arxiv.org/abs/2607.00001", "title": "Low",
+                         "snippet": "a", "authors": [], "published": ""}],
+        "llm-systems": [],
+    }
+
+    # Inline harness (mirrors _run_handler) so we can set scoring_response
+    # AFTER the harness reset and BEFORE the handler call.
+    class FakeClient2:
+        def __init__(self, url, limit, start):
+            self.lane = next(name for name, u in scraper_lambda.LANES if u == url)
+        def scrape(self):
+            return list(two_cand_batches[self.lane])
+
+    # Give the two candidates distinct scores: top=7.25, second=5.0
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.scoring_response = json.dumps([
+        {"id": "2607.00002", "builder_relevance": 8, "novelty": 6, "hook_potential": 7},
+        {"id": "2607.00001", "builder_relevance": 4, "novelty": 6, "hook_potential": 6},
+    ])
+    orig_client, orig_sleep = scraper_lambda.ScraperClient, scraper_lambda.time.sleep
+    scraper_lambda.ScraperClient = FakeClient2
+    scraper_lambda.time.sleep = lambda *_: None
+    try:
+        resp = scraper_lambda.handler(
+            {"scrape_limit": 5, "max_new_articles": 2, "min_score": 6.0}, None)
+    finally:
+        scraper_lambda.ScraperClient, scraper_lambda.time.sleep = orig_client, orig_sleep
+        FAKE_BEDROCK.scoring_response = None
+        FAKE_BEDROCK.mode = "denied"
+    body = json.loads(resp["body"])
+    assert resp["statusCode"] == 200, body
+    picked = _pipeline_file()
+    assert len(picked) == 1, f"expected 1 article past gate, got {len(picked)}"
+    assert picked[0]["url"].endswith("00002"), "only the high-scoring article should be selected"
+
+
+check("gate filters every selected article, not just top", test_gate_filters_all_selected_not_just_top)
+
 # Set up environment vars and path for poster tests
 os.environ.setdefault("SUMMARY_OUTPUT_PREFIX", "out/summarizer/")
 os.environ.setdefault("MAX_SUMMARY_AGE_HOURS", "6")

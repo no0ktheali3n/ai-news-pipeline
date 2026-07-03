@@ -464,5 +464,21 @@ check("strips foreign URLs and @mentions", test_sanitize_summary_strips_foreign_
 check("caps runaway summary length", test_sanitize_summary_caps_length)
 
 
+def test_validate_env_vars_pulls_lazy_secrets():
+    # Prod regression 2026-07-03: secrets are fetched lazily, but validation
+    # ran before any fetch and failed on a cold start with an empty env.
+    saved = {k: os.environ.pop(k, None) for k in ptt.REQUIRED_ENV_VARS}
+    try:
+        ptt.validate_env_vars()  # must fetch from (stubbed) Secrets Manager, not raise
+        assert os.getenv("TWITTER_BEARER_TOKEN"), "secrets should be injected into env"
+    finally:
+        for k, v in saved.items():
+            if v is not None:
+                os.environ[k] = v
+
+
+check("validate_env_vars triggers the lazy secrets fetch", test_validate_env_vars_pulls_lazy_secrets)
+
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

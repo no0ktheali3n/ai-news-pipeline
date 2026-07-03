@@ -55,6 +55,10 @@ REQUIRED_ENV_VARS = [
 def validate_env_vars(skip_if_dry_run=False):
     if skip_if_dry_run:
         return
+    # Secrets load lazily (Secrets Manager) — fetch before checking the env,
+    # otherwise validation fails on every cold start that intends to post.
+    from utils.tweepy_client import _ensure_twitter_creds
+    _ensure_twitter_creds()
     missing = [key for key in REQUIRED_ENV_VARS if not os.getenv(key)]
     if missing:
         raise EnvironmentError(f"Missing required environment variables: {', '.join(missing)}")

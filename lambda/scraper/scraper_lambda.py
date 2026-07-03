@@ -55,6 +55,11 @@ def handler(event, context):
     scrape_limit = event.get("scrape_limit", 1)
     skip_memory = event.get("skip_memory", False)
     start_scrape = event.get("start_scrape", 0)
+    # How many unposted articles to pass downstream. Scraping wider than this
+    # (scrape_limit > max_new_articles) lets a run walk down the newest-first
+    # list to the next article the account hasn't posted yet, instead of
+    # no-opping whenever the single newest one is already in the ledger.
+    max_new_articles = event.get("max_new_articles", 1)
 
 
     # Scrape articles
@@ -72,9 +77,12 @@ def handler(event, context):
         logger.info("Memory check bypassed by request.")
         results = all_results
     else:
-        # Filter against already-seen articles
+        # Filter against already-posted articles (newest-first order preserved)
         results = filter_new_articles(all_results)
-        
+        if max_new_articles and len(results) > max_new_articles:
+            logger.info(f"Keeping {max_new_articles} of {len(results)} unposted article(s) for this run.")
+            results = results[:max_new_articles]
+
         # terminates if no new articles found
         if not results:
             notify_make_pipeline_status(message="🚫 No articles scraped — pipeline aborted.")

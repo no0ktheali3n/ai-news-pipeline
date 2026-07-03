@@ -331,7 +331,8 @@ Resources:
         RoleArn: !GetAtt SchedulerInvokeRole.Arn
         Input: !Sub |
           {
-            "scrape_limit": 1,
+            "scrape_limit": 10,
+            "max_new_articles": 1,
             "chunk_size": 1,
             "skip_memory": false,
             "dry_run": false

@@ -177,7 +177,65 @@ AccessDenied) cannot hide behind green pipelines.
   count. The paid-analytics milestone is **defined numerically (500
   followers)** so it is checkable from the ledger.
 
-### 5. Out of scope (explicitly deferred)
+### 5. Buzz signal (Phase 1.5)
+
+Ground `hook_potential` in observed attention instead of model guesswork —
+free, programmatic, no X involvement:
+
+- **Hugging Face Daily Papers**: community upvotes per arXiv id (free JSON).
+- **Hacker News (Algolia API)**: points + comment counts on submissions
+  linking the arXiv id.
+- **Semantic Scholar API**: early citation counts (useful for older
+  candidates).
+
+Fetched per candidate at scoring time (batched, best-effort — any source
+failing degrades to LLM-only scoring, never blocks). Blended as a `buzz`
+component into the composite (starting blend: replace half the
+`hook_potential` weight; env-tunable). Raw per-source values are stored in
+the sidecar and carried into the ledger for calibration. Ships only after
+Phase 1's LLM-only scoring is proven live.
+
+### 6. Self-built analytics (log now, dashboard later)
+
+**Premise check:** per-post impressions/likes are not freely readable by API
+— that is precisely the paid wall. A self-built layer therefore tracks three
+free signal classes, structured so paid signals can join later without
+rework:
+
+1. **Selection-time signals** (free, automatic): rubric scores, buzz values,
+   `query_source`/lane, thread shape (tweet count, hook length), slot
+   (noon/evening), day-of-week — all already in the sidecar/ledger per this
+   design.
+2. **Outcome proxies** (free, automatic): `follower_count` captured per post
+   (§4); follower *delta* between consecutive posts is a noisy but real
+   per-post performance signal that de-noises over months of data.
+3. **Owner-side enrichment** (optional, manual, cheap): X Premium's
+   analytics dashboard exports per-post data; a monthly 5-minute CSV export
+   dropped into `s3://…/analytics/imports/` joins real impressions/likes to
+   ledger entries by tweet id. The dashboard renders with or without it.
+
+**Dashboard (Phase 4):** a weekly Lambda renders a static HTML report to S3
+(top posts by follower delta, lane performance, buzz-vs-outcome hit rate,
+follower curve, threshold/no-op stats) and emails a one-paragraph digest +
+link via the non-failure channel. No servers, no hosting cost, zero owner
+obligation — the report accrues value passively as data accumulates.
+
+**Design rule:** Phases 1–3 must log every field the dashboard needs, even
+though the dashboard ships last. Data gaps are the only unrecoverable
+failure in an analytics system.
+
+### 7. X subscriptions: noted, gated on ROI
+
+Current promo (2026-07): Premium ≈ $5/mo (first 2 months) includes the
+account analytics dashboard; Premium+ ≈ $25/mo adds "Radar" trend features.
+**Policy: no subscription until it justifies itself.** Concrete triggers —
+Premium when the Phase 4 dashboard exists and impressions data would answer
+a real open question (the manual CSV import is designed and waiting);
+Premium+/Radar only if the free buzz trio (§5) proves insufficient for
+selection. Revisit at each phase boundary; the paid **API** milestone
+remains 500 followers.
+
+### 8. Out of scope (explicitly deferred)
 
 - Paid X API metrics / engagement feedback loop (milestone: 500 followers).
 - Cross-posting (Bluesky/LinkedIn), weekly roundups, images/figures.
@@ -194,7 +252,9 @@ AccessDenied) cannot hide behind green pipelines.
 | 0 | One-time, ~30 min, **owner**: bio rewritten to the practitioner-curator lens, stating the account is an autonomous pipeline (the transparency IS the portfolio piece); pin the best early thread; profile link to repo/portfolio | — |
 | 1 | Multi-query scrape + batched scoring (validation per §1) + sidecar + fallback + scraper Bedrock IAM + retry-safety config + score-carrying ledger | Tests; live run shows scored selection; ledger entry contains all five provenance fields; measured worst-case wall-clock ≤750s; observe ≥10 runs |
 | 2 | Thread contract + writer model + repair table + mid-thread failure policy + sanitizer adaptation + hashtag removal + write-cap re-verification | Tests incl. contract validation, partial-thread path, and fallback-path-has-no-hashtags; dry-run + live thread inspected |
+| 1.5 | Buzz signal: HF Daily Papers + HN + Semantic Scholar fetchers, blended composite, sidecar/ledger fields | Tests incl. per-source failure degradation; live run logs buzz values |
 | 3 | **Entry gate:** ≥10 scored Phase-1 runs; set initial `min_score` from the observed distribution (~85th percentile of daily-best composites), not the assumed 7.5. Evening schedule + sidecar gating + no-op observability/alarm + human-lane message + follower-count capture | Tests; force both paths via payload override: `min_score: 11` (must no-op cleanly) and `min_score: 0` (must post) against the live scorer; forced scoring-failure on the evening slot must no-op, not post; evening log shows configured threshold |
+| 4 | Analytics dashboard: weekly static HTML report to S3 + digest email; optional Premium CSV import path | Report renders correctly from ledger-only data (no import present); import path joins by tweet id |
 
 Each phase: green tests → changeset deploy → verified live run → commit,
 push, tag.

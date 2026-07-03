@@ -5,6 +5,7 @@ import os
 import sys
 import json
 import boto3
+import time
 from datetime import datetime, timezone
 from dotenv import load_dotenv
 
@@ -15,17 +16,54 @@ from utils.scraper import ScraperClient  # Scraper logic
 from utils.memcon import filter_new_articles  # Memory controller
 from utils.logger import get_logger
 from utils.automations import notify_make_pipeline_status  # Automation notifications
+from utils.scoring import arxiv_id
 
 load_dotenv()
 logger = get_logger("scraper_lambda")
 
 # Constants
+ARXIV_SEARCH = ("https://arxiv.org/search/?searchtype=all&abstracts=show"
+                "&order=-announced_date_first&size=25&classification-computer_science=y&query=")
+
+# Fixed, documented lane order (spec §1). Query strings are tunable.
+LANES = [
+    ("ai-security", ARXIV_SEARCH + "%22prompt+injection%22+OR+%22jailbreak%22+OR+%22LLM+security%22+OR+%22agent+safety%22+OR+%22AI+control%22"),
+    ("agents", ARXIV_SEARCH + "%22LLM+agent%22+OR+%22multi-agent%22+OR+%22tool+use%22+OR+%22agentic%22"),
+    ("llm-systems", ARXIV_SEARCH + "%22LLM+serving%22+OR+%22retrieval+augmented%22+OR+%22LLM+evaluation%22+OR+%22inference+optimization%22"),
+]
+LANE_FETCH_DELAY_S = 1.5
+
 DEFAULT_URL = "https://arxiv.org/search/?query=artificial+intelligence&searchtype=all&abstracts=show&order=-announced_date_first&size=25&classification-computer_science=y"
 S3_BUCKET = os.getenv("S3_OUTPUT_BUCKET")
 S3_PREFIX = os.getenv("SCRAPER_OUTPUT_PREFIX", "ai-research-pipeline/output/scraper/")
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 
 s3 = boto3.client("s3", region_name=AWS_REGION)
+
+
+def _id_sort_key(candidate):
+    ident = arxiv_id(candidate["url"])
+    try:
+        month, num = ident.split(".")
+        return (int(month), int(num))
+    except ValueError:
+        return (0, 0)
+
+
+def scrape_lanes(scrape_limit, start_scrape):
+    """Scrape every lane, merge by URL (recording each contributing lane in
+    query_source), newest-first by numeric arXiv id."""
+    merged = {}
+    for i, (lane, lane_url) in enumerate(LANES):
+        if i:
+            time.sleep(LANE_FETCH_DELAY_S)  # be polite between lane fetches
+        for article in ScraperClient(lane_url, scrape_limit, start_scrape).scrape():
+            entry = merged.setdefault(article["url"], {**article, "query_source": []})
+            entry["query_source"].append(lane)
+    ordered = sorted(merged.values(), key=_id_sort_key, reverse=True)
+    logger.info(f"Lanes produced {len(ordered)} unique candidates.")
+    return ordered
+
 
 def upload_to_s3(data, filename):
     try:

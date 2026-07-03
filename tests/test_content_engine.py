@@ -141,5 +141,45 @@ def test_scrape_loop_has_no_per_result_delay():
 
 check("scrape loop has no per-result delay", test_scrape_loop_has_no_per_result_delay)
 
+print("\n[4] scraper: lane merge")
+import scraper_lambda  # noqa: E402
+
+
+def test_scrape_lanes_merges_and_tags():
+    fake_batches = {
+        "ai-security": [
+            {"url": "https://arxiv.org/abs/2607.00002", "title": "Sec", "snippet": "s"},
+            {"url": "https://arxiv.org/abs/2607.00001", "title": "Both", "snippet": "b"},
+        ],
+        "agents": [
+            {"url": "https://arxiv.org/abs/2607.00003", "title": "Agent", "snippet": "a"},
+            {"url": "https://arxiv.org/abs/2607.00001", "title": "Both", "snippet": "b"},
+        ],
+        "llm-systems": [],
+    }
+
+    class FakeClient:
+        def __init__(self, url, limit, start):
+            self.lane = next(name for name, u in scraper_lambda.LANES if u == url)
+
+        def scrape(self):
+            return list(fake_batches[self.lane])
+
+    orig_client, orig_sleep = scraper_lambda.ScraperClient, scraper_lambda.time.sleep
+    scraper_lambda.ScraperClient = FakeClient
+    scraper_lambda.time.sleep = lambda *_: None
+    try:
+        merged = scraper_lambda.scrape_lanes(10, 0)
+    finally:
+        scraper_lambda.ScraperClient, scraper_lambda.time.sleep = orig_client, orig_sleep
+
+    by_url = {c["url"]: c for c in merged}
+    assert len(merged) == 3
+    assert by_url["https://arxiv.org/abs/2607.00001"]["query_source"] == ["ai-security", "agents"]
+    assert [c["url"][-1] for c in merged] == ["3", "2", "1"], "newest-first by arXiv id"
+
+
+check("lanes merge, dedup, tag query_source, sort newest-first", test_scrape_lanes_merges_and_tags)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

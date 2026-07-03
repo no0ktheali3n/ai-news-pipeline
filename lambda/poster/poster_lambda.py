@@ -105,10 +105,16 @@ def handler(event, context):
         # Persist each URL to the ledger the moment its thread posts — a crash
         # later in the run must not allow an already-tweeted article to repost.
         def record_posted(metadata):
+            scores = metadata.get("scores") or {}
             ledger[metadata["url"]] = {
                 "title": metadata.get("article_title"),
                 "thread_url": metadata.get("thread_url"),
                 "posted_at": datetime.now(timezone.utc).isoformat(),
+                "builder_relevance": scores.get("builder_relevance"),
+                "novelty": scores.get("novelty"),
+                "hook_potential": scores.get("hook_potential"),
+                "composite": metadata.get("composite"),
+                "query_source": metadata.get("query_source"),
             }
             save_posted_ledger(ledger)
 

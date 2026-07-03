@@ -271,5 +271,65 @@ check("gated run never falls back on scoring failure", test_gated_run_never_fall
 check("noon run falls back to newest on scoring failure", test_noon_run_falls_back_newest_on_scoring_failure)
 check("3 consecutive fallbacks escalate to SNS, success resets", test_three_consecutive_fallbacks_escalate_to_sns)
 
+# Set up environment vars and path for poster tests
+os.environ.setdefault("SUMMARY_OUTPUT_PREFIX", "out/summarizer/")
+os.environ.setdefault("MAX_SUMMARY_AGE_HOURS", "6")
+os.environ.setdefault("TWITTER_BEARER_TOKEN", "fake-token")
+os.environ.setdefault("TWITTER_API_KEY", "fake-key")
+os.environ.setdefault("TWITTER_API_SECRET", "fake-secret")
+os.environ.setdefault("TWITTER_ACCESS_TOKEN", "fake-access")
+os.environ.setdefault("TWITTER_ACCESS_SECRET", "fake-access-secret")
+sys.path.insert(0, str(REPO / "lambda" / "poster"))
+
+print("\n[6] provenance: scores reach the ledger")
+
+
+def test_ledger_entry_carries_provenance():
+    import poster_lambda as poster  # path added below
+    import utils.post_to_twitter as ptt
+    FAKE_S3.store.clear()
+    art = {"title": "Scored", "url": "https://arxiv.org/abs/2607.00009",
+           "summary": "s", "hashtags": [],
+           "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
+           "composite": 7.25, "query_source": ["agents"]}
+    key = "out/summarizer/final_summarized_RUN.json"
+    FAKE_S3.store[key] = json.dumps([art]).encode()
+
+    orig = ptt.post_thread
+    ptt.post_thread = lambda a, **kw: {"article_title": a["title"], "url": a["url"],
+                                       "variant": "summary", "tweet_ids": ["1"],
+                                       "thread_url": "https://t/1",
+                                       "scores": a.get("scores"),
+                                       "composite": a.get("composite"),
+                                       "query_source": a.get("query_source")}
+    try:
+        resp = poster.handler({"summary_key": key, "dry_run": False, "post_limit": 1}, None)
+    finally:
+        ptt.post_thread = orig
+    assert resp["statusCode"] == 200, resp
+    entry = json.loads(FAKE_S3.store[poster.POSTED_LEDGER_KEY])["https://arxiv.org/abs/2607.00009"]
+    for field in ("builder_relevance", "novelty", "hook_potential", "composite", "query_source"):
+        assert field in entry, f"missing {field}: {entry}"
+
+
+def test_post_thread_returns_provenance():
+    # Covers the REAL post_thread edit (Step 3) — the ledger test above
+    # monkeypatches post_thread, so without this the production change ships
+    # untested. post_tweet is imported into ptt's namespace
+    # (from utils.tweepy_client import post_tweet), so patch ptt.post_tweet.
+    import utils.post_to_twitter as ptt
+    ptt.post_tweet = lambda *a, **k: "111"
+    art = {"title": "T", "url": "https://arxiv.org/abs/2607.00009",
+           "summary": "s", "hashtags": [],
+           "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
+           "composite": 7.25, "query_source": ["agents"]}
+    md = ptt.post_thread(art, dry_run=False)
+    for f in ("scores", "composite", "query_source"):
+        assert md[f] is not None, f
+
+
+check("ledger entry carries all five provenance fields", test_ledger_entry_carries_provenance)
+check("post_thread return carries scores/composite/query_source", test_post_thread_returns_provenance)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

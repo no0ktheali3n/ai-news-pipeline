@@ -163,7 +163,10 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
         "url": url,
         "variant": variant,
         "tweet_ids": tweet_ids,
-        "thread_url": first_tweet_url
+        "thread_url": first_tweet_url,
+        "scores": article.get("scores"),
+        "composite": article.get("composite"),
+        "query_source": article.get("query_source"),
     }
 
 # CLI Interface

@@ -61,10 +61,12 @@ Post-deploy verification:
 2. Check CloudWatch logs of `ai-research-summarizer` for a successful Bedrock call.
 3. Confirm `s3://<bucket>/ai-research-pipeline/output/memory/posted_library.json` appears after the first real post.
 
-## Known remaining items (not part of this fix)
+## Known remaining items
 
-- Schedule is `cron(0 0,4,8,12,16,20 ? * MON-FRI *)` = **every 4 hours on weekdays**, not once daily — confirm intent.
-- Repo bloat: ~20K committed `venv/` files + 32MB `snapshots/` zip.
-- `tweepy_client.py` fetches Twitter secrets at *import* time (Secrets Manager call on every cold start).
-- Top-level `utils/` is a stale duplicate of the deployed layer copy.
-- `post_to_twitter.main()` posts twice when run as CLI (duplicated loop).
+All items from the original v0.6.x list (4-hour schedule, venv/snapshot repo bloat, import-time secrets, stale top-level `utils/`, CLI double-post) were fixed in v0.7.0. As of v0.8.0 (content engine Phase 1 — lane scraping + batched scoring + sidecar + min_score gate):
+
+- S3 lifecycle rule for `output/scored/` (30-day expiry) not yet applied — the idempotent `put-bucket-lifecycle-configuration` command is in the Phase 1 plan, Task 9 Step 2; sidecar objects simply don't expire until it's run.
+- Verify ledger provenance fields (`builder_relevance`, `novelty`, `hook_potential`, `composite`, `query_source`) in `posted_library.json` after the next scheduled run.
+- Evening min_score slot needs threshold calibration from ≥10 scored runs before enabling (Phase 3 — do not assume 7.5).
+- Rotate the Make webhook (low priority; value moved to `MAKE_WEBHOOK_URL` env in v0.7.0).
+- Phases 1.5 (free buzz signal), 2 (thread contract), 4 (self-built analytics) are designed but not built — see `docs/superpowers/specs/2026-07-03-content-engine-design.md`.

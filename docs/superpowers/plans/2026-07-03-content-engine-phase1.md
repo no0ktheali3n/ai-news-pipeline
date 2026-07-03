@@ -136,6 +136,7 @@ os.environ.setdefault("S3_OUTPUT_BUCKET", "test-bucket")
 os.environ.setdefault("MEMORY_OUTPUT_PREFIX", "out/memory/")
 os.environ.setdefault("POSTED_LEDGER_FILE", "posted_library.json")
 os.environ.setdefault("SCORED_OUTPUT_PREFIX", "out/scored/")
+os.environ.setdefault("SCRAPER_OUTPUT_PREFIX", "out/scraper/")  # bound into scraper_lambda.S3_PREFIX AT IMPORT — must precede `import scraper_lambda`
 os.environ.setdefault("ALERT_TOPIC_ARN", "arn:fake:alerts")
 
 PASSED, FAILED = [], []
@@ -369,16 +370,29 @@ git commit -m "feat: scoring module — rubric prompt, composite, arxiv id (pure
         return {"body": FakeBody(json.dumps(payload).encode())}
 ```
 
-and route it in `invoke_model` (before the existing mode checks):
+and **replace the whole `invoke_model` method** with this full body (scoring branch first, existing summarizer routing preserved verbatim — do NOT splice with an ellipsis, or the 17 `test_fixes.py` tests lose their denied/fenced/ok path):
 
 ```python
     def invoke_model(self, **kw):
-        if "score EVERY paper".lower() in json.loads(kw["body"])["messages"][0]["content"].lower():
+        content = json.loads(kw["body"])["messages"][0]["content"]
+        if "score every paper" in content.lower():
             if self.mode == "denied":
                 raise Exception("AccessDeniedException: no model access")
             return self._scoring_reply(kw["body"])
-        # ... existing denied/fenced/ok logic unchanged ...
+        # --- existing summarizer routing, unchanged from test_fixes.py ---
+        if self.mode == "denied":
+            raise Exception(
+                "An error occurred (AccessDeniedException) when calling the "
+                "InvokeModel operation: You don't have access to the model."
+            )
+        summary = json.dumps({"summary": "A fine summary.", "hashtags": ["#AI"]})
+        if self.mode == "fenced":
+            summary = f"```json\n{summary}\n```"
+        payload = {"content": [{"type": "text", "text": summary}]}
+        return {"body": FakeBody(json.dumps(payload).encode())}
 ```
+
+The scoring routing keys off the literal `"Score EVERY paper"` in `build_scoring_prompt` (Task 2). Every scoring test in Step 2 must set `FAKE_BEDROCK.mode = "ok"` explicitly (the class default is `"denied"`), so tests are order-independent regardless of what ran before.
 
 - [ ] **Step 2: Append failing tests to `tests/test_content_engine.py`** (before the final summary/exit lines; all later tasks append the same way):
 
@@ -398,6 +412,7 @@ def test_valid_scoring_round_trip():
 
 
 def test_id_mismatch_raises():
+    FAKE_BEDROCK.mode = "ok"
     FAKE_BEDROCK.scoring_response = json.dumps(
         [{"id": "9999.99999", "builder_relevance": 8, "novelty": 6, "hook_potential": 7}] * 3)
     try:
@@ -410,6 +425,7 @@ def test_id_mismatch_raises():
 
 
 def test_count_mismatch_raises():
+    FAKE_BEDROCK.mode = "ok"
     FAKE_BEDROCK.scoring_response = json.dumps(
         [{"id": "2607.00001", "builder_relevance": 8, "novelty": 6, "hook_potential": 7}])
     try:
@@ -422,6 +438,7 @@ def test_count_mismatch_raises():
 
 
 def test_fenced_response_tolerated():
+    FAKE_BEDROCK.mode = "ok"
     FAKE_BEDROCK.scoring_response = "```json\n" + json.dumps(
         [{"id": scoring.arxiv_id(c["url"]), "builder_relevance": 9,
           "novelty": 9, "hook_potential": 9} for c in CANDS]) + "\n```"
@@ -433,6 +450,7 @@ def test_fenced_response_tolerated():
 def test_cap_at_max_candidates():
     many = [{"url": f"https://arxiv.org/abs/2607.{10000 + i}", "title": "t", "snippet": "a"}
             for i in range(60)]
+    FAKE_BEDROCK.mode = "ok"
     FAKE_BEDROCK.scoring_response = None
     out = scoring.score_candidates(many)
     assert len(out) == scoring.MAX_CANDIDATES
@@ -461,7 +479,7 @@ git commit -m "test: scoring validation coverage (id echo, count, fences, cap)"
 ### Task 4: Remove per-result scrape delay
 
 **Files:**
-- Modify: `lambda/layers/common/python/utils/scraper.py:37` (the `random_delay()` line inside the result loop)
+- Modify: `lambda/layers/common/python/utils/scraper.py:36` (the `random_delay()` call inside the result loop; keep the import at line 12)
 
 **Interfaces:**
 - Consumes/Produces: `ScraperClient.scrape()` signature unchanged.
@@ -659,7 +677,6 @@ def _pipeline_file():
 
 def test_scored_run_selects_top_and_writes_sidecar():
     FAKE_S3.store.clear()
-    os.environ["SCRAPER_OUTPUT_PREFIX"] = "out/scraper/"
     resp, body = _run_handler({"scrape_limit": 5, "max_new_articles": 1})
     assert resp["statusCode"] == 200 and body["scoring_used"] is True
     picked = _pipeline_file()
@@ -713,7 +730,7 @@ check("3 consecutive fallbacks escalate to SNS, success resets", test_three_cons
 
 - [ ] **Step 2: Run to verify failure** — Expected: KeyError/AssertionError (`scoring_used` missing).
 
-- [ ] **Step 3: Rewrite the handler body in `scraper_lambda.py`.** Replace the section from `# Scrape articles` through the final success `return` with:
+- [ ] **Step 3: Rewrite the handler body in `scraper_lambda.py`.** Replace `handler()` lines 65–120 (from the `# Scrape articles` comment through the closing of the final success `return {...}`). **Also delete the now-dead assignments at lines 52–54** (`url = event.get("url", DEFAULT_URL)`, `prefix_override = event.get("prefix")`, `prefix = prefix_override or S3_PREFIX`) — the new body reads `event.get("url")` inline and nothing surviving references `url`/`prefix`. **Keep** the surviving event reads (`scrape_limit`:55, `skip_memory`:56, `start_scrape`:57, `max_new_articles`:62) and the module-level `upload_to_s3`, `S3_PREFIX`, `s3`, `S3_BUCKET`, `AWS_REGION` intact. Replace with:
 
 ```python
     min_score = float(event.get("min_score", 0))
@@ -888,10 +905,27 @@ def test_ledger_entry_carries_provenance():
 Add `sys.path.insert(0, str(REPO / "lambda" / "poster"))` next to the existing path inserts at the top of the file, plus the env vars the poster needs (copy the `SUMMARY_OUTPUT_PREFIX`, `MAX_SUMMARY_AGE_HOURS`, and `TWITTER_*` setup lines from `tests/test_fixes.py`), then:
 
 ```python
+def test_post_thread_returns_provenance():
+    # Covers the REAL post_thread edit (Step 3) — the ledger test above
+    # monkeypatches post_thread, so without this the production change ships
+    # untested. post_tweet is imported into ptt's namespace
+    # (from utils.tweepy_client import post_tweet), so patch ptt.post_tweet.
+    import utils.post_to_twitter as ptt
+    ptt.post_tweet = lambda *a, **k: "111"
+    art = {"title": "T", "url": "https://arxiv.org/abs/2607.00009",
+           "summary": "s", "hashtags": [],
+           "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
+           "composite": 7.25, "query_source": ["agents"]}
+    md = ptt.post_thread(art, dry_run=False)
+    for f in ("scores", "composite", "query_source"):
+        assert md[f] is not None, f
+
+
 check("ledger entry carries all five provenance fields", test_ledger_entry_carries_provenance)
+check("post_thread return carries scores/composite/query_source", test_post_thread_returns_provenance)
 ```
 
-- [ ] **Step 2: Run to verify failure** — Expected: `missing builder_relevance`.
+- [ ] **Step 2: Run to verify failure** — Expected: `missing builder_relevance` (and `test_post_thread_returns_provenance` fails with a `KeyError`/`None` on `scores` until Step 3).
 
 - [ ] **Step 3: Implement.**
 
@@ -1074,9 +1108,7 @@ aws lambda invoke --function-name ai-research-pipeline \
 
 Expected: 200 with `"No candidate cleared min_score"` (or no-new-articles if the ledger already covers everything scraped).
 
-- [ ] **Step 5: Ledger provenance check after the next SCHEDULED run** (Mon 16:00 UTC — do not force a live post manually): download `posted_library.json`, confirm the newest entry has non-null `builder_relevance`, `novelty`, `hook_potential`, `composite`, `query_source`.
-
-- [ ] **Step 6: Commit docs + tag**
+- [ ] **Step 5: Commit docs + tag** (gated by Steps 1–4 only — NOT by the scheduled run). Pre-tag evidence that the five ledger fields are wired is the Task 7 unit test `test_ledger_entry_carries_provenance` — the dry-run E2E never writes the ledger (`run_posting_pipeline` only calls `on_posted` when `metadata and not dry_run`, `post_to_twitter.py:97`), so a live ledger entry cannot exist pre-tag.
 
 ```bash
 # update docs/FIX_NOTES.md "known remaining" + pyproject version to 0.8.0
@@ -1084,6 +1116,8 @@ git add -A && git commit -m "chore: v0.8.0 — content engine phase 1 (scored se
 git tag -a v0.8.0 -m "Content engine Phase 1: lane scraping + batched scoring + sidecar + noon-only fallback"
 git push origin feat/content-engine v0.8.0   # (PAT-inline push per repo convention)
 ```
+
+**Async post-deploy checklist (does NOT block the tag):** after the next *scheduled* run (Mon 16:00 UTC — do not force a live post manually per the ledger-race rule), download `posted_library.json` and confirm the newest entry has non-null `builder_relevance`, `novelty`, `hook_potential`, `composite`, `query_source`. This confirms the passthrough end-to-end in production; the unit test already proves the wiring.
 
 ---
 

@@ -33,8 +33,6 @@ class ScraperClient:
                 if i < self.start_scrape:
                     continue  # Skip this article
 
-                random_delay()
-
                 link_tag = result.find("p", class_="list-title").find("a")
                 title_tag = result.find("p", class_="title is-5 mathjax")
                 authors_tag = result.find("p", class_="authors")

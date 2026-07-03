@@ -129,5 +129,17 @@ check("count mismatch raises ScoringError", test_count_mismatch_raises)
 check("fenced JSON tolerated", test_fenced_response_tolerated)
 check("hard cap at 40 candidates", test_cap_at_max_candidates)
 
+print("\n[3] scraper: no per-result delay")
+
+
+def test_scrape_loop_has_no_per_result_delay():
+    import inspect
+    import utils.scraper as scraper_mod
+    src = inspect.getsource(scraper_mod.ScraperClient.scrape)
+    assert "random_delay" not in src, "per-result random_delay must be removed (time budget)"
+
+
+check("scrape loop has no per-result delay", test_scrape_loop_has_no_per_result_delay)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

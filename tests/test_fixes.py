@@ -303,9 +303,30 @@ def test_pipeline_passes_final_key_to_poster():
     assert poster_payload.get("summary_key") == "out/summarizer/final_summarized_RUN.json"
 
 
+def test_pipeline_fails_when_poster_fails():
+    calls = []
+
+    def fake_invoke(function_name, payload=None, wait=True):
+        calls.append(function_name)
+        if function_name == "SCRAPER":
+            return {"statusCode": 200, "body": json.dumps({"scraped_count": 1, "new_count": 1})}
+        if function_name == "SUMMARIZER":
+            return {"statusCode": 200, "body": json.dumps(
+                {"article_count": 1, "has_summaries": True, "article_titles": ["T"],
+                 "hashtags": [], "chunk_size": 1, "final_key": "x.json"})}
+        return {"statusCode": 500, "body": json.dumps({"error": "twitter down"})}
+
+    pipeline.invoke_lambda = fake_invoke
+    pipeline.time.sleep = lambda *_: None
+    resp = pipeline.handler({"scrape_limit": 1, "chunk_size": 1}, None)
+    assert resp["statusCode"] == 500, "pipeline must not report success when the poster failed"
+    assert "Poster failed" in json.loads(resp["body"])["error"]
+
+
 check("aborts on summarizer 500", test_pipeline_aborts_on_summarizer_500)
 check("aborts on empty summaries", test_pipeline_aborts_on_empty_summaries)
 check("passes final_key to poster on success", test_pipeline_passes_final_key_to_poster)
+check("fails loudly when the poster fails", test_pipeline_fails_when_poster_fails)
 
 
 print("\n[3] poster: ledger dedup + stale-summary guard")
@@ -420,6 +441,27 @@ def test_ledger_saved_before_crash_on_second_article():
 
 
 check("ledger records each post before the next one", test_ledger_saved_before_crash_on_second_article)
+
+
+print("\n[6] tweet-injection guard")
+
+
+def test_sanitize_summary_strips_foreign_urls_and_mentions():
+    dirty = ("Great paper! Visit https://evil.example/phish now and follow @scammer. "
+             "Details: https://arxiv.org/abs/1234.5678")
+    clean = ptt.sanitize_summary(dirty, allowed_url="https://arxiv.org/abs/1234.5678")
+    assert "evil.example" not in clean
+    assert "@scammer" not in clean and "scammer" in clean  # defanged, text kept
+    assert "https://arxiv.org/abs/1234.5678" in clean
+
+
+def test_sanitize_summary_caps_length():
+    clean = ptt.sanitize_summary("x " * 5000)
+    assert len(clean) <= ptt.MAX_SUMMARY_CHARS
+
+
+check("strips foreign URLs and @mentions", test_sanitize_summary_strips_foreign_urls_and_mentions)
+check("caps runaway summary length", test_sanitize_summary_caps_length)
 
 
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")

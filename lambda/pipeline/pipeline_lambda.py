@@ -127,8 +127,19 @@ def handler(event, context):
         # loudly — silently posting the most recent S3 object is how the same
         # article got tweeted for months after the summarizer broke.
         def abort_pipeline(reason):
-            logger.error(f"❌ Aborting pipeline before poster stage: {reason}")
+            logger.error(f"❌ Aborting pipeline: {reason}")
             notify_make_pipeline_status(message=f"⚠️ AI research pipeline aborted: {reason}")
+            # Email via SNS — the webhook channel is best-effort and unmonitored
+            topic_arn = os.getenv("ALERT_TOPIC_ARN")
+            if topic_arn:
+                try:
+                    boto3.client("sns", region_name=AWS_REGION).publish(
+                        TopicArn=topic_arn,
+                        Subject="AI research pipeline failure",
+                        Message=reason[:8000],
+                    )
+                except Exception as sns_err:
+                    logger.error(f"SNS alert failed: {sns_err}")
             return {
                 "statusCode": 500,
                 "body": json.dumps({"error": reason})
@@ -159,7 +170,9 @@ def handler(event, context):
         if chunker_result.get('final_key'):
             poster_payload["summary_key"] = chunker_result["final_key"]
         logger.info(f"Formatting and posting summaries (payload: {poster_payload})")
-        invoke_lambda(POSTER_FUNCTION_NAME, poster_payload)
+        poster_result = invoke_lambda(POSTER_FUNCTION_NAME, poster_payload)
+        if not (isinstance(poster_result, dict) and poster_result.get('statusCode') == 200):
+            return abort_pipeline(f"Poster failed: {str(poster_result)[:500]}")
 
         logger.info("Unified pipeline run completed successfully!")
 

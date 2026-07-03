@@ -55,6 +55,11 @@ Parameters:
     NoEcho: true
     Description: Make.com webhook for Slack alerts (empty = code fallback URL; set after rotating)
 
+  AlertEmail:
+    Type: String
+    Default: no0krypto@gmail.com
+    Description: Email for pipeline failure alerts (SNS subscription requires one-time confirmation)
+
 Globals:
   Function:
     Timeout: 600
@@ -93,6 +98,10 @@ Resources:
                 - !GetAtt ScraperFunction.Arn
                 - !GetAtt SummarizerMainFunction.Arn
                 - !GetAtt PosterFunction.Arn
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: !Ref AlertTopic
       Environment:
         Variables:
           S3_OUTPUT_BUCKET: !Ref S3OutputBucket
@@ -100,6 +109,7 @@ Resources:
           SUMMARIZER_MAIN_FUNCTION_NAME: !Ref SummarizerMainFunction
           POSTER_FUNCTION_NAME: !Ref PosterFunction
           MAKE_WEBHOOK_URL: !Ref MakeWebhookUrl
+          ALERT_TOPIC_ARN: !Ref AlertTopic
 
   ScraperFunction:
     Type: AWS::Serverless::Function
@@ -235,6 +245,79 @@ Resources:
           POSTED_LEDGER_FILE: !Ref PostedLedgerFile
           MAX_SUMMARY_AGE_HOURS: "6"
           MAKE_WEBHOOK_URL: !Ref MakeWebhookUrl
+
+  AlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: ai-research-pipeline-alerts
+
+  AlertEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref AlertTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  # Backstop for hard crashes/timeouts (graceful aborts publish to SNS directly)
+  PipelineErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: ai-research-pipeline-errors
+      AlarmDescription: Pipeline Lambda crashed or timed out
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref PipelineFunction
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  PosterErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: ai-research-poster-errors
+      AlarmDescription: Poster Lambda crashed or timed out
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref PosterFunction
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlertTopic
+
+  # Dead-schedule detector: no pipeline invocation for 4 consecutive days
+  # (covers the Fri→Mon weekend gap of the weekday schedule).
+  PipelineHeartbeatAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: ai-research-pipeline-heartbeat
+      AlarmDescription: Pipeline has not run for 4 days — schedule is dead or disabled
+      Namespace: AWS/Lambda
+      MetricName: Invocations
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref PipelineFunction
+      Statistic: Sum
+      Period: 86400
+      EvaluationPeriods: 4
+      DatapointsToAlarm: 4
+      Threshold: 1
+      ComparisonOperator: LessThanThreshold
+      TreatMissingData: breaching
+      AlarmActions:
+        - !Ref AlertTopic
 
   PipelineSchedule:
     Type: AWS::Scheduler::Schedule

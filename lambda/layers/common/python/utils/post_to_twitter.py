@@ -22,6 +22,25 @@ logger = get_logger("poster")
 
 # Constants
 DEFAULT_HASHTAGS = ["#AI"]
+
+import re
+
+_URL_RE = re.compile(r"https?://\S+")
+_MENTION_RE = re.compile(r"(?<!\w)@(\w+)")
+MAX_SUMMARY_CHARS = 1200
+
+
+def sanitize_summary(summary, allowed_url=""):
+    """Model output goes to Twitter verbatim, and the model reads untrusted
+    scraped text — strip links we didn't choose and @-mentions so a poisoned
+    abstract can't make the account link out or ping people."""
+    cleaned = summary
+    for url in set(_URL_RE.findall(cleaned)):
+        if allowed_url and url.rstrip(".,;)") == allowed_url:
+            continue
+        cleaned = cleaned.replace(url, "")
+    cleaned = _MENTION_RE.sub(r"\1", cleaned)  # drop the @, keep the word
+    return " ".join(cleaned.split())[:MAX_SUMMARY_CHARS]
 SUMMARY_PATH = "/tmp/summarized_output.json"
 #SUMMARY_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "summarized_output.json"))
 ARCHIVE_DIR = "/tmp/archive"
@@ -86,16 +105,17 @@ def run_posting_pipeline(variant="summary", limit=0, dry_run=False, confirm_post
 
 # Post full summary as a thread
 def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
-    summary = article.get(variant, "")
     title = article.get("title", "")
     url = article.get("url", "")
+    summary = sanitize_summary(article.get(variant, ""), allowed_url=url)
 
     raw_tags = article.get("hashtags", "")
     if isinstance(raw_tags, str):
         hashtags = [tag for tag in raw_tags.split(",") if tag.startswith("#")]
     else:
         hashtags = [tag for tag in raw_tags if isinstance(tag, str) and tag.startswith("#")]
-    
+    hashtags = [tag for tag in hashtags if re.fullmatch(r"#\w+", tag)]  # no URLs/mentions smuggled in tags
+
     tag_block = DEFAULT_HASHTAGS + hashtags[:3]  # Limit to 3 hashtags
 
     thread = generate_tweet_thread(summary, title, url, tag_block)

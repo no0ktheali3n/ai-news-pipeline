@@ -22,62 +22,22 @@ def handler(event, context):
         chunk_size = event.get("chunk_size", 2)
         scraper_key = event.get("scraper_key")  # exact scrape file from this pipeline run
 
-        # Trigger summarizer and get run ID + expected chunks
-        run_id, expected_chunk_count = orchestrate_chunks(chunk_size, scraper_key=scraper_key) #gets run id and creates N summarizers based on chunk size
-        FINAL_SUMMARIZED_FILE = os.getenv("FINAL_SUMMARIZED_FILE", f"final_summarized_{run_id}.json")
-
-        if not run_id or expected_chunk_count is None:
-            raise ValueError("Failed to initialize chunking: invalid run_id or chunk count.")
-
-        logger.info(f"🧠 Using run_id: {run_id}")
-        logger.info(f"📡 Polling prefix: {DEFAULT_SUMMARIZER_OUTPUT_PREFIX}summarized_{run_id}_")
-
-        logger.info("⏳ Waiting for all summarizer chunks to be uploaded to S3...")
-        MAX_WAIT = 600
-        INTERVAL = 15
-        waited = 0
+        # Run the summarizer chunks (synchronous — every chunk file is in S3,
+        # verified successful, by the time this returns; failures raise).
+        run_id, expected_chunk_count = orchestrate_chunks(chunk_size, scraper_key=scraper_key)
+        logger.info(f"🧠 Run {run_id}: {expected_chunk_count} chunk(s) summarized.")
 
         prefix = f"{DEFAULT_SUMMARIZER_OUTPUT_PREFIX}summarized_{run_id}_"
-
-        # Re-list S3 every INTERVAL until all chunks land or MAX_WAIT expires.
-        # (The old loop paginated a single point-in-time listing, so it never
-        # actually waited for late-arriving chunks.)
         chunk_keys = []
-        while True:
-            chunk_keys = []
-            paginator = s3.get_paginator("list_objects_v2")
-            for page in paginator.paginate(Bucket=S3_BUCKET, Prefix=prefix):
-                for obj in page.get("Contents", []):
-                    if obj["Key"].endswith(".json"):
-                        chunk_keys.append(obj["Key"])
+        paginator = s3.get_paginator("list_objects_v2")
+        for page in paginator.paginate(Bucket=S3_BUCKET, Prefix=prefix):
+            chunk_keys.extend(o["Key"] for o in page.get("Contents", []) if o["Key"].endswith(".json"))
+        if len(chunk_keys) < expected_chunk_count:
+            raise RuntimeError(f"Expected {expected_chunk_count} chunk files, found {len(chunk_keys)}.")
 
-            if len(chunk_keys) >= expected_chunk_count:
-                logger.info(f"✅ Found all {len(chunk_keys)} chunks. Proceeding to reassembly.")
-                break
-
-            if waited + INTERVAL > MAX_WAIT:
-                raise TimeoutError(
-                    f"Timeout waiting for chunks: {len(chunk_keys)}/{expected_chunk_count} after {waited}s."
-                )
-
-            logger.info(f"⌛ {len(chunk_keys)}/{expected_chunk_count} chunks found so far. Waiting...")
-            time.sleep(INTERVAL)
-            waited += INTERVAL
-
-        final_key = f"{DEFAULT_SUMMARIZER_OUTPUT_PREFIX}{FINAL_SUMMARIZED_FILE}"
-
-        # Edge case: only one chunk, copy it directly as final output
-        if len(chunk_keys) == 1:
-            source_key = chunk_keys[0]
-            logger.info(f"📄 Only 1 chunk found. Copying {source_key} to {final_key}")
-            s3.copy_object(
-                Bucket=S3_BUCKET,
-                CopySource={'Bucket': S3_BUCKET, 'Key': source_key},
-                Key=final_key
-            )
-        else:
-            logger.info(f"🔧 Reassembling {len(chunk_keys)} chunks...")
-            reassemble_chunks_from_s3(run_id) #reassembles chunks of current run_id into json 
+        final_key = f"{DEFAULT_SUMMARIZER_OUTPUT_PREFIX}final_summarized_{run_id}.json"
+        logger.info(f"🔧 Reassembling {len(chunk_keys)} chunk(s) into {final_key}")
+        reassemble_chunks_from_s3(run_id)
 
         #final output content check
         article_count = 0

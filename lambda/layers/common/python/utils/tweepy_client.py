@@ -8,7 +8,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# === Load Secrets from AWS Secrets Manager at import time ===
+# === Load Secrets from AWS Secrets Manager (lazily, on first client use) ===
+# Fetching at import time added a Secrets Manager round-trip to every cold
+# start of every function importing this module — even ones that never tweet.
 def load_twitter_secrets():
     secret_name = "TwitterAPICreds"
     region_name = os.getenv("AWS_REGION", "us-east-1")
@@ -19,12 +21,14 @@ def load_twitter_secrets():
     creds = json.loads(secret_value["SecretString"])
     os.environ.update(creds)  # Inject into environment
 
-# Only inject if not already loaded (e.g. from .env locally)
-if not os.getenv("TWITTER_BEARER_TOKEN"):
-    load_twitter_secrets()
+def _ensure_twitter_creds():
+    # Skip if already present (e.g. from .env locally or a previous call)
+    if not os.getenv("TWITTER_BEARER_TOKEN"):
+        load_twitter_secrets()
 
 # === Twitter client ===
 def get_twitter_client():
+    _ensure_twitter_creds()
     return Client(
         bearer_token=os.getenv("TWITTER_BEARER_TOKEN"),
         consumer_key=os.getenv("TWITTER_API_KEY"),

@@ -59,7 +59,11 @@ def archive_output_file():
     os.rename(SUMMARY_PATH, archive_path)
     logger.info(f"Archived summarized_output.json to {archive_path}")
 
-def run_posting_pipeline(variant="summary", limit=0, dry_run=False, confirm_post=False, start_index=0):
+def run_posting_pipeline(variant="summary", limit=0, dry_run=False, confirm_post=False, start_index=0, on_posted=None):
+    """Posts up to `limit` articles. `on_posted(metadata)` fires immediately
+    after each successful thread so callers can persist state (e.g. the posted
+    ledger) before the next article — a crash mid-run must not forget tweets
+    that already went out."""
     validate_env_vars(skip_if_dry_run=dry_run)
     articles = load_articles()
     results = []
@@ -68,9 +72,15 @@ def run_posting_pipeline(variant="summary", limit=0, dry_run=False, confirm_post
         logger.info(f"Posting Article {start_index + i + 1}: {article.get('title', '')[:60]}")
         metadata = post_thread(article, variant=variant, dry_run=dry_run)
         if metadata and not dry_run:
-            archive_output_file()
             logger.info(f"Appending metadata: {metadata}")
             results.append(metadata)
+            if on_posted:
+                on_posted(metadata)
+
+    # Archive once, after the loop — renaming inside the loop crashed the
+    # second article of any multi-post run (the file was already moved).
+    if results and not dry_run:
+        archive_output_file()
 
     return results
 
@@ -105,6 +115,7 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
 
     tweet_ids = []
     reply_to = None
+    first_tweet_url = None
 
     for i, tweet in enumerate(thread):
         print(f"\n🌀 Posting tweet {i+1} of {len(thread)}...")
@@ -142,14 +153,6 @@ def main():
     if not args.dry_run:
         validate_env_vars()  # Only check secrets if we’re actually posting
 
-    articles = load_articles()
-
     run_posting_pipeline(variant=args.variant, limit=args.limit, dry_run=args.dry_run)
-
-    for i, article in enumerate(articles[:args.limit]):
-        print(f"\n=== Posting Article {i+1}: {article.get('title', '')[:60]} ===")
-        metadata = post_thread(article, variant=args.variant, dry_run=args.dry_run)
-        if metadata and not args.dry_run:
-            archive_output_file()
 
 

@@ -20,9 +20,10 @@ s3 = boto3.client("s3")
 def handler(event, context):
     try:
         chunk_size = event.get("chunk_size", 2)
-                
+        scraper_key = event.get("scraper_key")  # exact scrape file from this pipeline run
+
         # Trigger summarizer and get run ID + expected chunks
-        run_id, expected_chunk_count = orchestrate_chunks(chunk_size) #gets run id and creates N summarizers based on chunk size
+        run_id, expected_chunk_count = orchestrate_chunks(chunk_size, scraper_key=scraper_key) #gets run id and creates N summarizers based on chunk size
         FINAL_SUMMARIZED_FILE = os.getenv("FINAL_SUMMARIZED_FILE", f"final_summarized_{run_id}.json")
 
         if not run_id or expected_chunk_count is None:

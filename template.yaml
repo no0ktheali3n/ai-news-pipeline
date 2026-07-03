@@ -42,7 +42,18 @@ Parameters:
   MemoryOutputFile:
     Type: String
     Default: article_memory.json
-    Description: Key for memory output file
+    Description: Key for memory output file (legacy seen-library; dedup now uses the posted ledger)
+
+  PostedLedgerFile:
+    Type: String
+    Default: posted_library.json
+    Description: Ledger of actually-posted articles (written by poster, read by scraper for dedup)
+
+  MakeWebhookUrl:
+    Type: String
+    Default: ""
+    NoEcho: true
+    Description: Make.com webhook for Slack alerts (empty = code fallback URL; set after rotating)
 
 Globals:
   Function:
@@ -88,6 +99,7 @@ Resources:
           SCRAPER_FUNCTION_NAME: !Ref ScraperFunction
           SUMMARIZER_MAIN_FUNCTION_NAME: !Ref SummarizerMainFunction
           POSTER_FUNCTION_NAME: !Ref PosterFunction
+          MAKE_WEBHOOK_URL: !Ref MakeWebhookUrl
 
   ScraperFunction:
     Type: AWS::Serverless::Function
@@ -109,13 +121,15 @@ Resources:
               Resource:
                 - !Sub arn:aws:s3:::${S3OutputBucket}
                 - !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
-                - !Sub arn:aws:s3:::${S3OutputBucket}/${MemoryOutputPrefix}${MemoryOutputFile}
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${MemoryOutputPrefix}*
       Environment:
         Variables:
           S3_OUTPUT_BUCKET: !Ref S3OutputBucket
           SCRAPER_OUTPUT_PREFIX: !Ref ScraperOutputPrefix
           MEMORY_OUTPUT_PREFIX: !Ref MemoryOutputPrefix
           MEMORY_OUTPUT_FILE: !Ref MemoryOutputFile
+          POSTED_LEDGER_FILE: !Ref PostedLedgerFile
+          MAKE_WEBHOOK_URL: !Ref MakeWebhookUrl
 
   SummarizerMainFunction:
     Type: AWS::Serverless::Function
@@ -218,8 +232,9 @@ Resources:
           SUMMARY_OUTPUT_PREFIX: !Ref SummarizerOutputPrefix
           SUMMARIZED_FILE: !Ref FinalSummarizedFile
           MEMORY_OUTPUT_PREFIX: !Ref MemoryOutputPrefix
-          POSTED_LEDGER_FILE: posted_library.json
+          POSTED_LEDGER_FILE: !Ref PostedLedgerFile
           MAX_SUMMARY_AGE_HOURS: "6"
+          MAKE_WEBHOOK_URL: !Ref MakeWebhookUrl
 
   PipelineSchedule:
     Type: AWS::Scheduler::Schedule

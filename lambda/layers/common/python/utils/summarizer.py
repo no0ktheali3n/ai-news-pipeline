@@ -227,7 +227,8 @@ def summarize_articles(limit=None, max_runtime=900):
             total_tokens += tokens_used
             idx += 1
             attempts = 0
-            time.sleep(random.uniform(2.0, 4.0))  # throttle cooldown
+            if idx < len(articles):
+                time.sleep(random.uniform(2.0, 4.0))  # throttle cooldown between articles
         else:
             attempts += 1
             if attempts >= MAX_ATTEMPTS_PER_ARTICLE:

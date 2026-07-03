@@ -10,7 +10,7 @@ import random
 import time
 from uuid import uuid4
 from typing import List
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 # Constants (can be overridden)
 DEFAULT_INPUT_FILE = "test_output.json"
@@ -43,33 +43,36 @@ def invoke_lambda_for_chunk(lambda_client, chunk: List[dict], chunk_id: str, lam
     print(f"[Lambda Invoke] Chunk {chunk_id} invoked with {len(chunk)} articles.")
     return response
 
+MAX_SCRAPE_AGE_HOURS = float(os.getenv("MAX_SCRAPE_AGE_HOURS", "6"))
+
 def get_latest_scraper_key(prefix: str = "ai-research-pipeline/output/scraper/") -> str:
-    response = s3.list_objects_v2(Bucket=S3_BUCKET, Prefix=prefix)
-
-    contents = response.get("Contents", [])
-    print(f"[📂] Found {len(contents)} objects under prefix '{prefix}'")
-
-    if not contents:
-        raise FileNotFoundError(f"No scraper output files found under prefix: {prefix}")
-
-    # Filter only valid .json files
-    json_files = [obj for obj in contents if obj["Key"].endswith(".json")]
+    """Fallback only — the pipeline normally passes the exact scraper_key.
+    Paginated (a single list_objects_v2 page caps at 1000 keys, and page one
+    of a big prefix is the OLDEST keys) and freshness-guarded so a broken
+    scraper can't silently feed a stale scrape downstream."""
+    paginator = s3.get_paginator("list_objects_v2")
+    json_files = []
+    for page in paginator.paginate(Bucket=S3_BUCKET, Prefix=prefix):
+        json_files.extend(obj for obj in page.get("Contents", []) if obj["Key"].endswith(".json"))
 
     if not json_files:
-        print(f"[⚠️] Found files, but none ended in .json. Keys: {[obj['Key'] for obj in contents]}")
-        raise FileNotFoundError("No .json files found in scraper output.")
+        raise FileNotFoundError(f"No scraper output .json files found under prefix: {prefix}")
 
-    # Sort to get the most recent .json
-    sorted_objs = sorted(json_files, key=lambda x: x["LastModified"], reverse=True)
-    latest_key = sorted_objs[0]["Key"]
-    print(f"[✅] Latest scraper output file selected: {latest_key}")
-    return latest_key
+    latest = max(json_files, key=lambda x: x["LastModified"])
+    age = datetime.now(timezone.utc) - latest["LastModified"]
+    if age > timedelta(hours=MAX_SCRAPE_AGE_HOURS):
+        raise RuntimeError(
+            f"Latest scrape {latest['Key']} is {age} old (limit {MAX_SCRAPE_AGE_HOURS}h) — "
+            f"refusing to summarize stale input. Upstream scraper is likely broken."
+        )
+    print(f"[✅] Latest scraper output file selected: {latest['Key']}")
+    return latest["Key"]
 
-def orchestrate_chunks(chunk_size=DEFAULT_CHUNK_SIZE, lambda_name=DEFAULT_LAMBDA_NAME):
+def orchestrate_chunks(chunk_size=DEFAULT_CHUNK_SIZE, lambda_name=DEFAULT_LAMBDA_NAME, scraper_key=None):
     run_id = datetime.utcnow().strftime("%Y%m%d_%H%M%S")  # Unique run ID
 
-    # Download scraper input
-    scraper_key = get_latest_scraper_key()
+    # Prefer the exact file this pipeline run scraped
+    scraper_key = scraper_key or get_latest_scraper_key()
     tmp_input_path = "/tmp/scraper_input.json"
     s3.download_file(S3_BUCKET, scraper_key, tmp_input_path)
 

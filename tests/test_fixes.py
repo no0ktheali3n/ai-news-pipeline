@@ -40,7 +40,9 @@ class FakeBody:
 
 
 class NoSuchKey(Exception):
-    pass
+    """Behaves like botocore's ClientError for a missing key."""
+
+    response = {"Error": {"Code": "NoSuchKey"}}
 
 
 class FakeS3:
@@ -136,7 +138,7 @@ def install_stubs():
     config_mod = types.ModuleType("botocore.config")
     config_mod.Config = lambda **kw: None
     exceptions_mod = types.ModuleType("botocore.exceptions")
-    exceptions_mod.ClientError = Exception
+    exceptions_mod.ClientError = NoSuchKey
     botocore.config = config_mod
     botocore.exceptions = exceptions_mod
     sys.modules["botocore"] = botocore
@@ -189,8 +191,13 @@ os.environ.setdefault("SUMMARY_OUTPUT_PREFIX", "out/summarizer/")
 os.environ.setdefault("MEMORY_OUTPUT_PREFIX", "out/memory/")
 os.environ.setdefault("POSTED_LEDGER_FILE", "posted_library.json")
 os.environ.setdefault("MAX_SUMMARY_AGE_HOURS", "6")
+for k in ("TWITTER_BEARER_TOKEN", "TWITTER_API_KEY", "TWITTER_API_SECRET",
+          "TWITTER_ACCESS_TOKEN", "TWITTER_ACCESS_SECRET"):
+    os.environ.setdefault(k, "test-cred")
 
 import utils.summarizer as summarizer  # noqa: E402  (from the layer)
+import utils.memcon as memcon  # noqa: E402
+import utils.post_to_twitter as ptt  # noqa: E402
 
 poster = load_module("poster_lambda", REPO / "lambda" / "poster" / "poster_lambda.py")
 pipeline = load_module("pipeline_lambda", REPO / "lambda" / "pipeline" / "pipeline_lambda.py")
@@ -355,6 +362,64 @@ check("filters already-posted articles via ledger", test_poster_filters_already_
 check("no-ops when every article was already posted", test_poster_noops_when_everything_posted)
 check("rejects a months-old 'latest' summary", test_poster_rejects_stale_latest)
 check("accepts a fresh 'latest' summary", test_poster_accepts_fresh_latest)
+
+
+print("\n[4] scraper dedup: read-only filter against the posted ledger")
+
+
+def test_scraper_filter_uses_posted_ledger():
+    FAKE_S3.store.clear()
+    FAKE_S3.store[memcon.POSTED_LEDGER_KEY] = json.dumps(
+        {"https://arxiv.org/old": {"posted_at": "2026-01-01"}}).encode()
+    scraped = [{"url": "https://arxiv.org/old"}, {"url": "https://arxiv.org/new"}]
+    fresh = memcon.filter_new_articles(scraped)
+    assert [a["url"] for a in fresh] == ["https://arxiv.org/new"], fresh
+    # read-only: scrape-time filtering must never write state (that design
+    # lost every article whose downstream stage failed)
+    assert set(FAKE_S3.store) == {memcon.POSTED_LEDGER_KEY}, FAKE_S3.store.keys()
+
+
+def test_scraper_filter_with_no_ledger_yet():
+    FAKE_S3.store.clear()
+    fresh = memcon.filter_new_articles([{"url": "https://arxiv.org/x"}])
+    assert len(fresh) == 1
+    assert not FAKE_S3.store, "no writes expected"
+
+
+check("filters against posted ledger, read-only", test_scraper_filter_uses_posted_ledger)
+check("treats everything as new when ledger absent", test_scraper_filter_with_no_ledger_yet)
+
+
+print("\n[5] poster: ledger persisted per-article (crash-safe)")
+
+
+def test_ledger_saved_before_crash_on_second_article():
+    FAKE_S3.store.clear()
+    FAKE_S3.store[SUMMARY_KEY] = json.dumps(ARTICLES).encode()
+
+    calls = {"n": 0}
+
+    def fake_post_thread(article, variant="summary", dry_run=False, confirm_post=False):
+        calls["n"] += 1
+        if calls["n"] == 2:
+            raise RuntimeError("simulated crash mid-run")
+        return {"article_title": article["title"], "url": article["url"],
+                "variant": variant, "tweet_ids": ["1"], "thread_url": "https://t/1"}
+
+    orig = ptt.post_thread
+    ptt.post_thread = fake_post_thread
+    try:
+        resp = poster.handler({"summary_key": SUMMARY_KEY, "dry_run": False, "post_limit": 2}, None)
+    finally:
+        ptt.post_thread = orig
+
+    assert resp["statusCode"] == 500, resp
+    ledger = json.loads(FAKE_S3.store[poster.POSTED_LEDGER_KEY])
+    assert ARTICLES[0]["url"] in ledger, "article 1 tweeted before the crash must be in the ledger"
+    assert ARTICLES[1]["url"] not in ledger
+
+
+check("ledger records each post before the next one", test_ledger_saved_before_crash_on_second_article)
 
 
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")

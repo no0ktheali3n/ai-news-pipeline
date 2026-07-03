@@ -102,12 +102,23 @@ def handler(event, context):
         with open(local_path, "w", encoding="utf-8") as f:
             json.dump(fresh_articles, f, ensure_ascii=False)
 
+        # Persist each URL to the ledger the moment its thread posts — a crash
+        # later in the run must not allow an already-tweeted article to repost.
+        def record_posted(metadata):
+            ledger[metadata["url"]] = {
+                "title": metadata.get("article_title"),
+                "thread_url": metadata.get("thread_url"),
+                "posted_at": datetime.now(timezone.utc).isoformat(),
+            }
+            save_posted_ledger(ledger)
+
         results = run_posting_pipeline(
-            limit=post_limit, 
-            variant="summary", 
-            dry_run=dry_run, 
+            limit=post_limit,
+            variant="summary",
+            dry_run=dry_run,
             confirm_post=confirm_post,
-            start_index=start_index
+            start_index=start_index,
+            on_posted=record_posted
             )
         
         logger.info(f"Raw posting results: {results}")
@@ -118,15 +129,6 @@ def handler(event, context):
             for i, r in enumerate(results):
                 logger.info(f"📄 Article {i+1} result: {json.dumps(r, indent=2)}")
 
-        # Record successful posts so they can never be posted twice.
-        if results and not dry_run:
-            for r in results:
-                ledger[r["url"]] = {
-                    "title": r.get("article_title"),
-                    "thread_url": r.get("thread_url"),
-                    "posted_at": datetime.now(timezone.utc).isoformat(),
-                }
-            save_posted_ledger(ledger)
 
 
         # takes data from the returned results of the posting pipeline and formats it for the automations notification

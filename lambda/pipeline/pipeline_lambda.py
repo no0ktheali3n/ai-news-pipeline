@@ -81,13 +81,24 @@ def handler(event, context):
         scraper_result = invoke_lambda(SCRAPER_FUNCTION_NAME, scraper_payload)
         logger.info("Waiting for scraper output to stabilize...")
 
-        #check for new articles and exit pipeline if none found
+        # Parse the scraper result: exact S3 key for the summarizer + new-article gate.
         skip_memory = event.get("skip_memory", False)
-        if not skip_memory and scraper_result and isinstance(scraper_result, dict) and 'body' in scraper_result:
+        scraper_key = None
+        if scraper_result and isinstance(scraper_result, dict) and 'body' in scraper_result:
             try:
                 scraper_body = json.loads(scraper_result['body'])
+            except (json.JSONDecodeError, TypeError) as e:
+                logger.error(f"Failed to parse scraper result body: {e}")
+                notify_make_pipeline_status(message=f"⚠️ AI research pipeline aborted: unparsable scraper result ({e})")
+                return {
+                    "statusCode": 500,
+                    "body": json.dumps({"error": f"Failed to parse scraper result body: {e}"})
+                }
+
+            scraper_key = scraper_body.get('s3_key')
+
+            if not skip_memory:
                 new_count = scraper_body.get('new_count', 0)
-        
                 if new_count == 0:
                     logger.info("No new articles found after memory check, aborting pipeline.")
                     return {
@@ -98,22 +109,16 @@ def handler(event, context):
                             "new_count": 0
                         })
                     }
-        
                 logger.info(f"Found {new_count} new articles to process")
-            except (json.JSONDecodeError, TypeError) as e:
-                logger.error(f"Failed to parse scraper result body: {e}")
-                notify_make_pipeline_status(message=f"⚠️ AI research pipeline aborted: unparsable scraper result ({e})")
-                return {
-                    "statusCode": 500,
-                    "body": json.dumps({"error": f"Failed to parse scraper result body: {e}"})
-                }
-        elif skip_memory:
-            logger.info("Article checking bypassed with skip_memory, continuing pipeline...")
-
-        time.sleep(5)
+            else:
+                logger.info("Article checking bypassed with skip_memory, continuing pipeline...")
 
         # --- Summarizer Stage (Chunker) ---
+        # Hand the summarizer the exact file this run scraped (fallback:
+        # freshness-guarded newest-file lookup inside the chunker).
         chunker_payload = build_payload("chunker", event)
+        if scraper_key:
+            chunker_payload["scraper_key"] = scraper_key
         logger.info(f"Summarizing articles (payload: {chunker_payload})")
         chunker_result = invoke_lambda(SUMMARIZER_FUNCTION_NAME, chunker_payload)
         logger.info("Waiting for summarizer output to stabilize...")
@@ -148,8 +153,6 @@ def handler(event, context):
                 f"(article_count={chunker_result.get('article_count')}, "
                 f"has_summaries={chunker_result.get('has_summaries')})"
             )
-
-        time.sleep(5)
 
         # --- Poster Stage ---
         poster_payload = build_payload("poster", event)

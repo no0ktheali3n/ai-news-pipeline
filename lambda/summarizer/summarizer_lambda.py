@@ -80,4 +80,6 @@ def handler(event, context):
         }
 
     except Exception as e:
+        import traceback
+        print(f"[❌] Summarizer chunk failed: {e}\n{traceback.format_exc()}")
         return {"statusCode": 500, "body": json.dumps({"error": str(e)})}

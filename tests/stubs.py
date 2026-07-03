@@ -60,18 +60,37 @@ class FakeBedrock:
     """Simulates the post-model-change failure: every invoke is AccessDenied."""
 
     mode = "denied"  # "ok" | "fenced"
+    scoring_response = None  # None → auto-valid; str → returned verbatim
+
+    def _scoring_reply(self, body):
+        req = json.loads(body)
+        prompt = req["messages"][0]["content"]
+        if self.scoring_response is not None:
+            text = self.scoring_response
+        else:
+            import re as _re
+            papers = json.loads(_re.search(r"<papers>\n(.*)\n</papers>", prompt, _re.S).group(1))
+            text = json.dumps([{"id": p["id"], "builder_relevance": 8,
+                                "novelty": 6, "hook_potential": 7} for p in papers])
+        payload = {"content": [{"type": "text", "text": text}]}
+        return {"body": FakeBody(json.dumps(payload).encode())}
 
     def invoke_model(self, **kw):
+        content = json.loads(kw["body"])["messages"][0]["content"]
+        if "score every paper" in content.lower():
+            if self.mode == "denied":
+                raise Exception("AccessDeniedException: no model access")
+            return self._scoring_reply(kw["body"])
+        # --- existing summarizer routing, unchanged from test_fixes.py ---
         if self.mode == "denied":
             raise Exception(
                 "An error occurred (AccessDeniedException) when calling the "
                 "InvokeModel operation: You don't have access to the model."
             )
-        content = json.dumps({"summary": "A fine summary.", "hashtags": ["#AI"]})
+        summary = json.dumps({"summary": "A fine summary.", "hashtags": ["#AI"]})
         if self.mode == "fenced":
-            # Haiku 4.5 (observed in prod): wraps JSON in a markdown fence
-            content = f"```json\n{content}\n```"
-        payload = {"content": [{"type": "text", "text": content}]}
+            summary = f"```json\n{summary}\n```"
+        payload = {"content": [{"type": "text", "text": summary}]}
         return {"body": FakeBody(json.dumps(payload).encode())}
 
 

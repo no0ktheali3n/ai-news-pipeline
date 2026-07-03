@@ -64,5 +64,70 @@ check("arxiv_id extraction", test_arxiv_id)
 check("composite uses 50/25/25 weights", test_composite_weights)
 check("prompt truncates + embeds ids + injection note", test_prompt_truncates_and_ids)
 
+print("\n[2] scoring: batched call validation")
+
+CANDS = [{"url": f"https://arxiv.org/abs/2607.0000{i}",
+          "title": f"Paper {i}", "snippet": "abs"} for i in range(1, 4)]
+
+
+def test_valid_scoring_round_trip():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.scoring_response = None
+    out = scoring.score_candidates(list(CANDS))
+    assert len(out) == 3 and out[0]["composite"] == 7.25  # 0.5*8+0.25*6+0.25*7
+    assert all("scores" in c for c in out)
+
+
+def test_id_mismatch_raises():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.scoring_response = json.dumps(
+        [{"id": "9999.99999", "builder_relevance": 8, "novelty": 6, "hook_potential": 7}] * 3)
+    try:
+        scoring.score_candidates(list(CANDS))
+        raise AssertionError("expected ScoringError")
+    except scoring.ScoringError:
+        pass
+    finally:
+        FAKE_BEDROCK.scoring_response = None
+
+
+def test_count_mismatch_raises():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.scoring_response = json.dumps(
+        [{"id": "2607.00001", "builder_relevance": 8, "novelty": 6, "hook_potential": 7}])
+    try:
+        scoring.score_candidates(list(CANDS))
+        raise AssertionError("expected ScoringError")
+    except scoring.ScoringError:
+        pass
+    finally:
+        FAKE_BEDROCK.scoring_response = None
+
+
+def test_fenced_response_tolerated():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.scoring_response = "```json\n" + json.dumps(
+        [{"id": scoring.arxiv_id(c["url"]), "builder_relevance": 9,
+          "novelty": 9, "hook_potential": 9} for c in CANDS]) + "\n```"
+    out = scoring.score_candidates(list(CANDS))
+    assert out[0]["composite"] == 9.0
+    FAKE_BEDROCK.scoring_response = None
+
+
+def test_cap_at_max_candidates():
+    many = [{"url": f"https://arxiv.org/abs/2607.{10000 + i}", "title": "t", "snippet": "a"}
+            for i in range(60)]
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.scoring_response = None
+    out = scoring.score_candidates(many)
+    assert len(out) == scoring.MAX_CANDIDATES
+
+
+check("valid round trip computes composites", test_valid_scoring_round_trip)
+check("id mismatch raises ScoringError", test_id_mismatch_raises)
+check("count mismatch raises ScoringError", test_count_mismatch_raises)
+check("fenced JSON tolerated", test_fenced_response_tolerated)
+check("hard cap at 40 candidates", test_cap_at_max_candidates)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

@@ -60,6 +60,11 @@ Parameters:
     Default: no0krypto@gmail.com
     Description: Email for pipeline failure alerts (SNS subscription requires one-time confirmation)
 
+  ScoredOutputPrefix:
+    Type: String
+    Default: ai-research-pipeline/output/scored/
+    Description: Prefix for the scored-candidates sidecar (never scanned by chunker/poster)
+
 Globals:
   Function:
     Timeout: 600
@@ -88,6 +93,8 @@ Resources:
       Layers:
         - !Ref CommonUtilsLayer
       Description: Full pipeline controller of scraper → summarizer → poster
+      EventInvokeConfig:
+        MaximumRetryAttempts: 0
       Policies:
         - AWSLambdaBasicExecutionRole
         - Statement:
@@ -132,6 +139,22 @@ Resources:
                 - !Sub arn:aws:s3:::${S3OutputBucket}
                 - !Sub arn:aws:s3:::${S3OutputBucket}/${ScraperOutputPrefix}*
                 - !Sub arn:aws:s3:::${S3OutputBucket}/${MemoryOutputPrefix}*
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource:
+                - arn:aws:bedrock:*::foundation-model/anthropic.*
+                - !Sub arn:aws:bedrock:*:${AWS::AccountId}:inference-profile/*.anthropic.*
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+                - s3:PutObject
+              Resource:
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${ScoredOutputPrefix}*
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: !Ref AlertTopic
       Environment:
         Variables:
           S3_OUTPUT_BUCKET: !Ref S3OutputBucket
@@ -140,6 +163,9 @@ Resources:
           MEMORY_OUTPUT_FILE: !Ref MemoryOutputFile
           POSTED_LEDGER_FILE: !Ref PostedLedgerFile
           MAKE_WEBHOOK_URL: !Ref MakeWebhookUrl
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+          SCORED_OUTPUT_PREFIX: !Ref ScoredOutputPrefix
+          ALERT_TOPIC_ARN: !Ref AlertTopic
 
   SummarizerMainFunction:
     Type: AWS::Serverless::Function
@@ -337,6 +363,8 @@ Resources:
             "skip_memory": false,
             "dry_run": false
           }
+        RetryPolicy:
+          MaximumRetryAttempts: 0
 
   SchedulerInvokeRole:
     Type: AWS::IAM::Role

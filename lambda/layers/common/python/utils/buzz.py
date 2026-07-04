@@ -66,3 +66,95 @@ def apply_buzz(scored, buzz_map):
         out.append(entry)
     out.sort(key=lambda c: c["composite"], reverse=True)
     return out
+
+
+def _fetch_hf(ids):
+    """One call: today's HF Daily Papers list -> {arxiv_id: upvotes} for ids
+    we hold. The daily list is small and human-curated: most freshly-scraped
+    ids will simply not be on it — absent is the normal case, not an error."""
+    resp = requests.get(HF_DAILY_URL, timeout=HTTP_TIMEOUT_S)
+    resp.raise_for_status()
+    wanted = set(ids)
+    out = {}
+    for row in resp.json():
+        paper = row.get("paper") or {}
+        pid = str(paper.get("id"))
+        if pid in wanted:
+            out[pid] = int(paper.get("upvotes") or 0)
+    return out
+
+
+def _fetch_s2(ids):
+    """One batch call -> {arxiv_id: citationCount}. S2 returns one row per
+    requested id, in order; null rows mean the paper is unknown to S2. The
+    unauthenticated tier 429s under load — raise_for_status degrades that
+    to a caught source failure."""
+    resp = requests.post(
+        S2_BATCH_URL, params={"fields": "citationCount"},
+        json={"ids": [f"ARXIV:{i}" for i in ids]}, timeout=HTTP_TIMEOUT_S)
+    resp.raise_for_status()
+    rows = resp.json()
+    if not isinstance(rows, list):   # error-shaped body: no signal, not garbage pairings
+        return {}
+    out = {}
+    for i, row in zip(ids, rows):
+        if isinstance(row, dict) and row.get("citationCount") is not None:
+            out[i] = int(row["citationCount"])
+    return out
+
+
+def _fetch_hn(paper_id):
+    """(points, comments) summed across HN SUBMISSIONS of the paper —
+    story-tagged hits whose url contains the arXiv id. Algolia's free-text
+    match is loose (comments and unrelated stories match the digits), so we
+    query the abs URL with tags=story AND re-filter by url. (None, None)
+    when HN has no submission of this paper."""
+    resp = requests.get(
+        HN_SEARCH_URL,
+        params={"query": f"arxiv.org/abs/{paper_id}", "tags": "story"},
+        timeout=HTTP_TIMEOUT_S)
+    resp.raise_for_status()
+    hits = [h for h in resp.json().get("hits", [])
+            if paper_id in (h.get("url") or "")]
+    if not hits:
+        return None, None
+    return (sum(int(h.get("points") or 0) for h in hits),
+            sum(int(h.get("num_comments") or 0) for h in hits))
+
+
+def fetch_buzz(candidates):
+    """Best-effort raw buzz per candidate: {arxiv_id: {source: count, ...}}.
+    Sources are isolated (one failing never hides another); the per-candidate
+    HN loop stops when WALL_BUDGET_S is spent. Only ids with data appear."""
+    ids = [arxiv_id(c["url"]) for c in candidates]
+    raw = {i: {} for i in ids}
+    started = time.monotonic()
+
+    try:
+        for i, upvotes in _fetch_hf(ids).items():
+            raw[i]["hf_upvotes"] = upvotes
+    except Exception as e:
+        logger.warning("buzz: HF daily papers unavailable: %s", e)
+
+    try:
+        for i, citations in _fetch_s2(ids).items():
+            raw[i]["s2_citations"] = citations
+    except Exception as e:
+        logger.warning("buzz: Semantic Scholar unavailable: %s", e)
+
+    skipped = 0
+    for i in ids:
+        if time.monotonic() - started > WALL_BUDGET_S:
+            skipped += 1
+            continue
+        try:
+            points, comments = _fetch_hn(i)
+            if points is not None:
+                raw[i]["hn_points"] = points
+                raw[i]["hn_comments"] = comments
+        except Exception as e:
+            logger.warning("buzz: HN lookup failed for %s: %s", i, e)
+    if skipped:
+        logger.warning("buzz: wall budget exhausted; skipped %d HN lookups", skipped)
+
+    return {i: r for i, r in raw.items() if r}

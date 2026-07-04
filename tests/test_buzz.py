@@ -6,7 +6,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).parent))
-from stubs import install_stubs  # noqa: E402
+from stubs import install_stubs, FAKE_HTTP  # noqa: E402
 install_stubs()
 
 LAYER = REPO / "lambda" / "layers" / "common" / "python"
@@ -91,6 +91,83 @@ check("buzz_score saturates at cap", test_buzz_score_saturates_at_cap)
 check("buzz_score takes strongest source", test_buzz_score_takes_strongest_source)
 check("blend_composite math", test_blend_composite_math)
 check("apply_buzz re-ranks + annotates", test_apply_buzz_reranks_and_annotates)
+
+print("[2] buzz: fetchers (best-effort, budget-capped)")
+
+CANDS = [
+    {"url": "https://arxiv.org/abs/2607.00001", "title": "A"},
+    {"url": "https://arxiv.org/abs/2607.00002", "title": "B"},
+]
+
+
+def test_fetch_buzz_happy_path():
+    FAKE_HTTP.reset()
+    FAKE_HTTP.routes["huggingface.co/api/daily_papers"] = [
+        {"paper": {"id": "2607.00001", "upvotes": 40}},
+        {"paper": {"id": "9999.99999", "upvotes": 7}},   # not ours — ignored
+    ]
+    FAKE_HTTP.routes["semanticscholar.org"] = [
+        {"citationCount": 3}, {"citationCount": 0},
+    ]
+    FAKE_HTTP.routes["hn.algolia.com"] = {
+        "hits": [
+            # real submission of the paper — the only hit that may count:
+            {"url": "https://arxiv.org/abs/2607.00001", "points": 120, "num_comments": 45},
+            # unrelated story that merely full-text-matched the digits:
+            {"url": "https://example.com/other", "points": 999, "num_comments": 999},
+            # comment-shaped hit (no url/points) — must be ignored, not crash:
+            {"comment_text": "see 2607.00001", "points": None},
+        ],
+    }
+    out = buzz.fetch_buzz(CANDS)
+    assert out["2607.00001"]["hf_upvotes"] == 40
+    assert out["2607.00001"]["s2_citations"] == 3
+    assert out["2607.00001"]["hn_points"] == 120, out["2607.00001"]
+    assert out["2607.00001"]["hn_comments"] == 45
+    assert out["2607.00002"]["s2_citations"] == 0
+    assert "hf_upvotes" not in out["2607.00002"]
+    # 2607.00002's HN lookup sees the same fake payload but no hit whose url
+    # contains ITS id — so it must get no hn_* fields:
+    assert "hn_points" not in out["2607.00002"], out["2607.00002"]
+
+
+def test_fetch_buzz_source_failure_isolated():
+    FAKE_HTTP.reset()
+    FAKE_HTTP.routes["huggingface.co"] = Exception("HF down")
+    FAKE_HTTP.routes["semanticscholar.org"] = Exception("S2 down")
+    FAKE_HTTP.routes["hn.algolia.com"] = {
+        "hits": [{"url": "https://arxiv.org/abs/2607.00001", "points": 50, "num_comments": 5}]}
+    out = buzz.fetch_buzz(CANDS)  # must not raise
+    assert out["2607.00001"] == {"hn_points": 50, "hn_comments": 5}, out
+
+
+def test_fetch_buzz_all_down_returns_empty():
+    FAKE_HTTP.reset()
+    FAKE_HTTP.routes["huggingface.co"] = Exception("down")
+    FAKE_HTTP.routes["semanticscholar.org"] = Exception("down")
+    FAKE_HTTP.routes["hn.algolia.com"] = Exception("down")
+    assert buzz.fetch_buzz(CANDS) == {}
+
+
+def test_fetch_buzz_wall_budget_skips_hn():
+    FAKE_HTTP.reset()
+    FAKE_HTTP.routes["hn.algolia.com"] = {
+        "hits": [{"url": "https://arxiv.org/abs/2607.00001", "points": 50, "num_comments": 5}]}
+    old = buzz.WALL_BUDGET_S
+    buzz.WALL_BUDGET_S = -1.0   # budget already spent
+    try:
+        out = buzz.fetch_buzz(CANDS)
+    finally:
+        buzz.WALL_BUDGET_S = old
+    hn_calls = [c for c in FAKE_HTTP.calls if "hn.algolia" in c[1]]
+    assert not hn_calls, f"HN must be skipped on exhausted budget: {hn_calls}"
+    assert out == {}, "no other source routed → empty map"
+
+
+check("fetch_buzz happy path", test_fetch_buzz_happy_path)
+check("fetch_buzz source failure isolated", test_fetch_buzz_source_failure_isolated)
+check("fetch_buzz all-down returns empty", test_fetch_buzz_all_down_returns_empty)
+check("fetch_buzz wall budget skips HN", test_fetch_buzz_wall_budget_skips_hn)
 
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

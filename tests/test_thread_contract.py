@@ -65,7 +65,8 @@ def test_hard_fails():
     for bad, name in [
         ([f"hook", f"{URL}"][0:1], "single tweet"),                      # <2
         (["", f"Paper\n{URL}"], "empty tweet"),
-        (["x" * 281, f"Paper\n{URL}"], "tweet over 280"),
+        (["x" * 281, f"Paper\n{URL}"], "tweet over 280 (hook)"),
+        (["short hook", "x" * 281, f"Paper\n{URL}"], "middle tweet over 280"),
         (["h" * 241, f"Paper\n{URL}"], "hook over 240"),
         (["hook ok", "no link here"], "missing final link"),
         ("not a list", "non-list"),

@@ -165,7 +165,10 @@ def latest_sidecar(s3, bucket: str, prefix: str) -> list[dict]:
     print(f"[harness] Using sidecar: s3://{bucket}/{newest_key}")
 
     body = s3.get_object(Bucket=bucket, Key=newest_key)["Body"].read()
-    return json.loads(body)
+    doc = json.loads(body)
+    # Sidecars are {"generated_at": ..., "candidates": [...]} (Phase 1 shape);
+    # tolerate a bare list for forward compatibility.
+    return doc["candidates"] if isinstance(doc, dict) else doc
 
 
 def top_n(candidates: list[dict], n: int = 8) -> list[dict]:

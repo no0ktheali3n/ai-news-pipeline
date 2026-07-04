@@ -39,7 +39,11 @@ from utils.thread_contract import build_writer_prompt, validate_and_repair, Cont
 # Model IDs
 # ---------------------------------------------------------------------------
 OLD_MODEL = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
-NEW_MODEL = "us.anthropic.claude-sonnet-4-6"
+# Round 1 (2026-07): Sonnet 4.6 quotas are 0 TPM/RPM pending an increase, so
+# the NEW side runs on Haiku too — same model both sides cleanly isolates the
+# prompt+contract change. Flip back to us.anthropic.claude-sonnet-4-6 for the
+# writer-model-upgrade A/B once quota lands.
+NEW_MODEL = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
 
 # ---------------------------------------------------------------------------
 # FROZEN v0.9 legacy code — verbatim copies from commit e5115538

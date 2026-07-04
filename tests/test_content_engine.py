@@ -593,7 +593,9 @@ def test_invalid_transit_tweets_fall_back():
     }
     md = _ptt.post_thread(art, dry_run=False)
     assert md is not None
-    # Fallback path → url must appear in the thread
+    # Fallback path → a real multi-tweet thread was posted, not the rejected contract list
+    assert len(captured) >= 2, f"fallback thread too short: {captured}"
+    assert captured != art["tweets"], "rejected contract tweets were posted verbatim"
     assert any(_VALID_URL in t for t in captured), f"fallback url missing: {captured}"
     # The literal "ok hook" string must NOT be the first posted tweet (contract was rejected)
     assert captured[0] != "ok hook", "contract rejected; should have used summary path"

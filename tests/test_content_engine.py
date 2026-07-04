@@ -36,6 +36,7 @@ def check(name, fn):
 
 import utils.scoring as scoring  # noqa: E402
 import utils.buzz as buzz_mod  # noqa: E402
+import utils.summarizer as summarizer  # noqa: E402
 
 print("\n[1] scoring: pure functions")
 
@@ -452,6 +453,89 @@ def test_buzz_disabled_no_http():
 check("buzz re-ranks selection", test_buzz_reranks_selection)
 check("buzz failure keeps LLM order", test_buzz_failure_keeps_llm_order)
 check("buzz disabled makes no HTTP calls", test_buzz_disabled_no_http)
+
+print("\n[9] summarizer: writer contract")
+
+import tempfile  # noqa: E402
+
+_WRITER_ARTICLE = {
+    "url": "https://arxiv.org/abs/2607.00001",
+    "title": "Paper Title",
+    "snippet": "An abstract snippet about agents.",
+    "authors": ["Author One", "Author Two"],
+    "scores": {"builder_relevance": 8, "novelty": 6, "hook_potential": 7},
+    "composite": 7.5,
+    "query_source": ["agents"],
+    "buzz": 8.05,
+    "buzz_raw": {"hf_upvotes": 40},
+}
+
+
+def test_writer_produces_validated_tweets():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.writer_response = None
+    try:
+        result = summarizer.write_thread_with_claude(_WRITER_ARTICLE)
+        assert isinstance(result, dict), f"expected dict, got {type(result)}"
+        assert "tweets" in result and "summary" in result
+        tweets = result["tweets"]
+        assert isinstance(tweets, list) and len(tweets) == 3, f"expected 3 tweets, got {tweets}"
+        assert "https://arxiv.org/abs/2607.00001" in tweets[-1], f"final tweet missing url: {tweets[-1]}"
+        assert result["summary"] == "A plain fallback summary."
+    finally:
+        FAKE_BEDROCK.mode = "denied"
+        FAKE_BEDROCK.writer_response = None
+
+
+def test_writer_contract_violation_falls_back_to_summary_only():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.writer_response = json.dumps({"tweets": ["only one tweet"], "summary": "still a good summary"})
+    try:
+        result = summarizer.write_thread_with_claude(_WRITER_ARTICLE)
+        assert result["tweets"] is None, f"expected tweets=None on contract violation, got {result['tweets']}"
+        assert result["summary"] == "still a good summary", f"summary not preserved: {result['summary']}"
+    finally:
+        FAKE_BEDROCK.mode = "denied"
+        FAKE_BEDROCK.writer_response = None
+
+
+def test_summarize_articles_output_carries_tweets_and_provenance():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.writer_response = None
+    orig_in = summarizer.INPUT_FILE
+    orig_out = summarizer.OUTPUT_FILE
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as fin:
+        json.dump([_WRITER_ARTICLE], fin)
+        tmp_in = fin.name
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as fout:
+        tmp_out = fout.name
+    summarizer.INPUT_FILE = tmp_in
+    summarizer.OUTPUT_FILE = tmp_out
+    try:
+        summarizer.summarize_articles(limit=1)
+        with open(tmp_out, "r") as f:
+            output = json.load(f)
+        assert len(output) == 1, f"expected 1 output article, got {len(output)}"
+        art = output[0]
+        assert "tweets" in art, "output article must have tweets key"
+        assert "summary" in art, "output article must have summary key"
+        assert "hashtags" not in art, f"output must not carry hashtags key, got: {list(art.keys())}"
+        # provenance spread intact
+        assert "scores" in art and isinstance(art["scores"], dict), "scores must survive spread"
+        for axis in ("builder_relevance", "novelty", "hook_potential"):
+            assert axis in art["scores"], f"missing scores.{axis}"
+        for key in ("composite", "query_source", "buzz", "buzz_raw"):
+            assert key in art, f"missing provenance key: {key}"
+    finally:
+        FAKE_BEDROCK.mode = "denied"
+        FAKE_BEDROCK.writer_response = None
+        summarizer.INPUT_FILE = orig_in
+        summarizer.OUTPUT_FILE = orig_out
+
+
+check("writer produces validated tweets", test_writer_produces_validated_tweets)
+check("writer contract violation falls back to summary-only", test_writer_contract_violation_falls_back_to_summary_only)
+check("summarize_articles output carries tweets and provenance", test_summarize_articles_output_carries_tweets_and_provenance)
 
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

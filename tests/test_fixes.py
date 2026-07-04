@@ -96,7 +96,9 @@ def test_summarizer_success_path_still_works():
     FAKE_BEDROCK.mode = "ok"
     result = summarizer.summarize_articles(max_runtime=300)
     assert len(result) == 2, f"expected 2 summaries, got {len(result)}"
-    assert result[0]["summary"] == "A fine summary."
+    assert result[0]["summary"] == "A plain fallback summary.", result[0]["summary"]
+    assert isinstance(result[0]["tweets"], list) and len(result[0]["tweets"]) > 0, \
+        f"expected non-empty tweets list, got {result[0].get('tweets')}"
     FAKE_BEDROCK.mode = "denied"
 
 
@@ -104,7 +106,9 @@ def test_summarizer_handles_markdown_fenced_json():
     FAKE_BEDROCK.mode = "fenced"
     result = summarizer.summarize_articles(max_runtime=300)
     assert len(result) == 2, f"expected 2 summaries from fenced output, got {len(result)}"
-    assert result[0]["summary"] == "A fine summary."
+    assert result[0]["summary"] == "A plain fallback summary.", result[0]["summary"]
+    assert isinstance(result[0]["tweets"], list) and len(result[0]["tweets"]) > 0, \
+        f"expected non-empty tweets list, got {result[0].get('tweets')}"
     FAKE_BEDROCK.mode = "denied"
 
 

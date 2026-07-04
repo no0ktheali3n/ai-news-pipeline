@@ -19,7 +19,7 @@ aws_access_key = os.getenv("AWS_ACCESS_KEY_ID")
 aws_secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
 aws_region = os.getenv("AWS_REGION", "us-east-1")
 model_id = os.getenv("BEDROCK_MODEL_ID", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
-WRITER_MODEL_ID = os.getenv("BEDROCK_WRITER_MODEL_ID", "us.anthropic.claude-sonnet-4-5-20250929-v1:0")
+WRITER_MODEL_ID = os.getenv("BEDROCK_WRITER_MODEL_ID", "us.anthropic.claude-sonnet-4-6")
 
 logger = logging.getLogger(__name__)
 

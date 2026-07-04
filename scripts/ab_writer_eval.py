@@ -39,7 +39,7 @@ from utils.thread_contract import build_writer_prompt, validate_and_repair, Cont
 # Model IDs
 # ---------------------------------------------------------------------------
 OLD_MODEL = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
-NEW_MODEL = "us.anthropic.claude-sonnet-4-5-20250929-v1:0"
+NEW_MODEL = "us.anthropic.claude-sonnet-4-6"
 
 # ---------------------------------------------------------------------------
 # FROZEN v0.9 legacy code — verbatim copies from commit e5115538

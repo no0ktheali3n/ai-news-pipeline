@@ -73,7 +73,7 @@ Parameters:
 
   BedrockWriterModelId:
     Type: String
-    Default: us.anthropic.claude-sonnet-4-5-20250929-v1:0
+    Default: us.anthropic.claude-sonnet-4-6
     Description: Bedrock model for thread writing (Sonnet-tier); scoring stays on BedrockModelId.
 
 Globals:

@@ -296,5 +296,140 @@ check("run_stats counts", test_run_stats_counts)
 check("run_stats empty", test_run_stats_empty)
 check("run_stats no status field", test_run_stats_no_status_field)
 
+print("[7] report_html: render_report")
+
+from utils import report_html  # noqa: E402
+
+# ---------------------------------------------------------------------------
+# Shared fixture for render_report tests
+# ---------------------------------------------------------------------------
+_SERIES_3 = [
+    ("2026-01-02T10:00:00", 100),
+    ("2026-01-03T10:00:00", 110),
+    ("2026-01-04T10:00:00", 105),
+]
+_SERIES_1 = [("2026-01-02T10:00:00", 100)]
+
+_DELTAS_FIXTURE = [
+    {
+        "title": "Good Paper",
+        "url": "https://twitter.com/user/status/1",
+        "composite": 7.5,
+        "buzz": 8.0,
+        "delta": 10,
+    },
+    {
+        "title": "Bad Paper <b>evil</b>",
+        "url": "https://twitter.com/user/status/2",
+        "composite": 5.0,
+        "buzz": None,
+        "delta": None,
+    },
+]
+
+_FULL_AGG = {
+    "series": _SERIES_3,
+    "deltas": _DELTAS_FIXTURE,
+    "lanes": {"agents": {"posts": 2, "avg_composite": 6.5}},
+    "buzz": {
+        "buzzed": {"posts": 1, "avg_delta": 10.0},
+        "unbuzzed": {"posts": 1, "avg_delta": None},
+    },
+    "runs": {"runs": 3, "posts": 2, "partials": 0},
+    "milestone": {"target": 500, "current": 42},
+}
+
+
+# ---------------------------------------------------------------------------
+# Test 1: empty agg → placeholders, no svg, no script
+# ---------------------------------------------------------------------------
+
+def test_render_empty_agg():
+    html_out = report_html.render_report({}, "2026-07-04")
+    assert "<html" in html_out, "must contain <html"
+    assert "collecting data" in html_out, "must contain placeholder text"
+    assert "<svg" not in html_out, "no SVG when empty"
+    assert "<script" not in html_out, "no <script tags ever"
+
+
+# ---------------------------------------------------------------------------
+# Test 2: follower series SVG presence/absence
+# ---------------------------------------------------------------------------
+
+def test_render_svg_with_3_points():
+    agg = {"series": _SERIES_3, "deltas": []}
+    html_out = report_html.render_report(agg, "2026-07-04")
+    assert "<svg" in html_out, "3-point series must produce <svg"
+    # polyline points — count coordinate pairs (x,y separated by space)
+    import re
+    m = re.search(r'<polyline points="([^"]+)"', html_out)
+    assert m, "must have a <polyline points=...>"
+    pairs = m.group(1).strip().split()
+    assert len(pairs) == 3, f"expected 3 coordinate pairs, got {len(pairs)}: {pairs}"
+
+
+def test_render_no_svg_with_1_point():
+    agg = {"series": _SERIES_1, "deltas": []}
+    html_out = report_html.render_report(agg, "2026-07-04")
+    assert "<svg" not in html_out, "1-point series must NOT produce <svg"
+
+
+# ---------------------------------------------------------------------------
+# Test 3: delta ordering and HTML escaping
+# ---------------------------------------------------------------------------
+
+def test_render_delta_ordering_and_escaping():
+    agg = {"series": [], "deltas": _DELTAS_FIXTURE}
+    html_out = report_html.render_report(agg, "2026-07-04")
+    idx_good = html_out.index("Good Paper")
+    idx_bad = html_out.index("Bad Paper")
+    assert idx_good < idx_bad, "delta=10 row must appear before delta=None row"
+    # evil title must be escaped
+    assert "&lt;b&gt;" in html_out, "< in title must be HTML-escaped to &lt;"
+    assert "<b>evil</b>" not in html_out, "raw <b> tags must not appear in output"
+
+
+# ---------------------------------------------------------------------------
+# Test 4: http only in allowed href attributes
+# ---------------------------------------------------------------------------
+
+def test_render_http_only_in_hrefs():
+    import re
+    html_out = report_report = report_html.render_report(_FULL_AGG, "2026-07-04")
+    # Collect all href values that contain http
+    href_pattern = re.compile(r'href="([^"]*http[^"]*)"')
+    allowed_urls = {m.group(1) for m in href_pattern.finditer(html_out)}
+    # Strip those hrefs from the output
+    stripped = href_pattern.sub('href="STRIPPED"', html_out)
+    assert "http" not in stripped, (
+        f"'http' found outside of href attributes in the rendered HTML.\n"
+        f"Allowed URLs: {allowed_urls}"
+    )
+
+
+# ---------------------------------------------------------------------------
+# Test 5: milestone rendering
+# ---------------------------------------------------------------------------
+
+def test_render_milestone_with_current():
+    agg = {"milestone": {"target": 500, "current": 42}}
+    html_out = report_html.render_report(agg, "2026-07-04")
+    assert "42 / 500" in html_out, "must show 'current / target'"
+
+
+def test_render_milestone_none_current():
+    agg = {"milestone": {"target": 500, "current": None}}
+    html_out = report_html.render_report(agg, "2026-07-04")
+    assert "not yet captured" in html_out, "None current must show 'not yet captured'"
+
+
+check("render empty agg → placeholders, no svg, no script", test_render_empty_agg)
+check("render 3-point series → svg with 3 pairs", test_render_svg_with_3_points)
+check("render 1-point series → no svg", test_render_no_svg_with_1_point)
+check("render delta ordering + html escaping", test_render_delta_ordering_and_escaping)
+check("render http only in hrefs", test_render_http_only_in_hrefs)
+check("render milestone current=42", test_render_milestone_with_current)
+check("render milestone current=None", test_render_milestone_none_current)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

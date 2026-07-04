@@ -182,6 +182,23 @@ def test_post_deltas_single():
     assert deltas[0]["delta"] is None
 
 
+def test_post_deltas_none_in_middle_resets_chain():
+    """follower_counts [100, None, 120]: the None RESETS the chain.
+    Spec: delta is None when either side is missing — prev_fc is not carried across a None.
+    All three deltas must be None: first (no prev), second (own=None), third (prev was None).
+    """
+    entries = [
+        {"title": "A", "posted_at": "2026-01-01T00:00:00", "url": "u1", "follower_count": 100},
+        {"title": "B", "posted_at": "2026-01-02T00:00:00", "url": "u2", "follower_count": None},
+        {"title": "C", "posted_at": "2026-01-03T00:00:00", "url": "u3", "follower_count": 120},
+    ]
+    deltas = analytics.post_deltas(entries)
+    assert len(deltas) == 3
+    assert deltas[0]["delta"] is None, "first entry always None"
+    assert deltas[1]["delta"] is None, "own=None → delta None"
+    assert deltas[2]["delta"] is None, "prev was None (gap resets chain) → delta None"
+
+
 print("[4] analytics: lane_stats")
 
 
@@ -282,6 +299,7 @@ check("follower_series no follower fields", test_follower_series_no_follower_fie
 check("post_deltas delta chain", test_post_deltas_delta_chain)
 check("post_deltas empty", test_post_deltas_empty)
 check("post_deltas single entry", test_post_deltas_single)
+check("post_deltas None in middle resets chain (all deltas None)", test_post_deltas_none_in_middle_resets_chain)
 
 check("lane_stats correct lanes", test_lane_stats_correct_lanes)
 check("lane_stats avg_composite 2dp", test_lane_stats_avg_composite_2dp)
@@ -423,6 +441,31 @@ def test_render_milestone_none_current():
     assert "not yet captured" in html_out, "None current must show 'not yet captured'"
 
 
+def test_render_top_posts_prefers_thread_url():
+    """A delta row with thread_url must link to thread_url, not the arXiv url."""
+    agg = {
+        "series": [],
+        "deltas": [
+            {
+                "title": "Linked Paper",
+                "url": "https://arxiv.org/abs/2607.00001",
+                "thread_url": "https://twitter.com/user/status/9999",
+                "composite": 7.5,
+                "buzz": None,
+                "delta": 5,
+            }
+        ],
+    }
+    html_out = report_html.render_report(agg, "2026-07-04")
+    assert "https://twitter.com/user/status/9999" in html_out, "thread_url must appear as href"
+    # arXiv url must NOT be the href (it may appear elsewhere escaped, but not as href target)
+    import re
+    hrefs = re.findall(r'href="([^"]+)"', html_out)
+    assert any("twitter.com" in h for h in hrefs), "thread_url must be an href"
+    assert not any("arxiv.org/abs/2607.00001" in h for h in hrefs), \
+        "arXiv url must NOT be used as href when thread_url is present"
+
+
 check("render empty agg → placeholders, no svg, no script", test_render_empty_agg)
 check("render 3-point series → svg with 3 pairs", test_render_svg_with_3_points)
 check("render 1-point series → no svg", test_render_no_svg_with_1_point)
@@ -430,6 +473,7 @@ check("render delta ordering + html escaping", test_render_delta_ordering_and_es
 check("render http only in hrefs", test_render_http_only_in_hrefs)
 check("render milestone current=42", test_render_milestone_with_current)
 check("render milestone current=None", test_render_milestone_none_current)
+check("render top-posts prefers thread_url over arXiv url", test_render_top_posts_prefers_thread_url)
 
 # ── Reporter Lambda tests ─────────────────────────────────────────────────────
 print("[8] reporter: lambda handler")
@@ -541,8 +585,29 @@ def test_reporter_empty_world():
     assert "0" in msg["Message"], f"digest must mention 0: {msg['Message']}"
 
 
+def test_reporter_corrupt_ledger():
+    """Corrupt ledger JSON → handler still returns 200 and publishes a digest."""
+    FAKE_S3.store.clear()
+    FAKE_S3.meta.clear()
+    FAKE_S3.listing = []
+    FAKE_SNS.published.clear()
+
+    # Seed invalid JSON at the ledger key
+    ledger_key = f"{reporter_lambda.MEMORY_OUTPUT_PREFIX}{reporter_lambda.POSTED_LEDGER_FILE}"
+    FAKE_S3.store[ledger_key] = b"THIS IS NOT JSON {"
+
+    resp = reporter_lambda.handler({}, None)
+    assert resp["statusCode"] == 200, f"expected 200 on corrupt ledger, got {resp}"
+
+    # Must still publish a digest (empty-ledger fallback)
+    assert len(FAKE_SNS.published) == 1, "must still publish digest on corrupt ledger"
+    msg = FAKE_SNS.published[0]
+    assert msg["Subject"].startswith("[report]"), f"bad subject: {msg['Subject']}"
+
+
 check("reporter happy path: HTML written + SNS presigned URL + 2 posts", test_reporter_happy_path)
 check("reporter empty world: 200 + HTML written + digest published", test_reporter_empty_world)
+check("reporter corrupt ledger → 200 + digest still published", test_reporter_corrupt_ledger)
 
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

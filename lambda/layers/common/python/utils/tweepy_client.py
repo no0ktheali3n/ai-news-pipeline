@@ -2,6 +2,7 @@ import json
 import boto3
 import os
 import logging
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
 from tweepy.errors import TooManyRequests
 from datetime import datetime
 from tweepy import Client
@@ -40,6 +41,12 @@ def get_twitter_client():
         access_token_secret=os.getenv("TWITTER_ACCESS_SECRET")
     )
 
+# Hard bound on the follower lookup: a hung Twitter call must never stall
+# post_thread past the ledger write (posted-but-unledgered = repost risk).
+# Module-level so tests can patch it down.
+GET_ME_TIMEOUT_S = float(os.getenv("GET_ME_TIMEOUT_S", "10"))
+
+
 def get_follower_count() -> "int | None":
     """Return the account's current follower count, or None on any error.
 
@@ -50,9 +57,10 @@ def get_follower_count() -> "int | None":
     try:
         _ensure_twitter_creds()
         client = get_twitter_client()
-        resp = client.get_me(user_fields=["public_metrics"])
+        with ThreadPoolExecutor(max_workers=1) as ex:
+            resp = ex.submit(client.get_me, user_fields=["public_metrics"]).result(timeout=GET_ME_TIMEOUT_S)
         return resp.data.public_metrics["followers_count"]
-    except Exception as e:
+    except (FuturesTimeout, Exception) as e:
         logger.warning("get_follower_count failed (non-blocking): %s", e)
         return None
 

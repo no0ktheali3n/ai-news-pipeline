@@ -127,13 +127,16 @@ def handler(event, context):
                 best_title = d["title"]
 
     lines = [
-        f"Posts this period: {n_posts} ({n_partials} partial).",
+        f"Total posts: {n_posts} ({n_partials} partial).",
         f"Current followers: {followers_str}.",
     ]
     if best_title and best_delta is not None:
-        lines.append(f"Best post: \"{best_title}\" (+{best_delta} followers).")
+        lines.append(f"Best post: \"{best_title}\" ({best_delta:+d} followers).")
     lines.append(f"Milestone: {followers_str} / 500.")
-    lines.append(report_link)
+    lines.append(
+        f"Report link (may expire within hours): {report_link}\n"
+        f"Durable location: s3://{S3_BUCKET}/{report_key}"
+    )
 
     digest = "\n".join(lines)
 

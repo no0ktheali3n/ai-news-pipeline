@@ -48,10 +48,11 @@ def follower_series(entries: list) -> list[tuple[str, int]]:
 # ---------------------------------------------------------------------------
 
 def post_deltas(entries: list) -> list[dict]:
-    """Return per-entry dicts {title, url, composite, buzz, delta} in chronological order.
+    """Return per-entry dicts {title, url, thread_url, composite, buzz, delta} in chronological order.
 
     delta = this entry's follower_count minus the PREVIOUS entry's follower_count.
     delta is None when either side is missing/None. First entry delta is always None.
+    A None follower_count on either side resets the chain — no carry-forward of prev_fc.
     """
     out = []
     prev_fc: Optional[int] = None
@@ -68,10 +69,12 @@ def post_deltas(entries: list) -> list[dict]:
         out.append({
             "title": e.get("title"),
             "url": e.get("url"),
+            "thread_url": e.get("thread_url"),
             "composite": e.get("composite"),
             "buzz": e.get("buzz"),
             "delta": delta,
         })
+        # None fc resets the chain: next entry's delta is also None (no carry-forward).
         prev_fc = fc
     return out
 

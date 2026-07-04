@@ -115,9 +115,10 @@ def _section_top_posts(deltas: list) -> str:
     for d in sorted_deltas:
         title_raw = d.get("title") or ""
         title_esc = html.escape(title_raw)
-        url = d.get("url")
-        if url:
-            title_cell = f'<a href="{html.escape(url)}">{title_esc}</a>'
+        # Prefer thread_url (links to the tweet thread); fall back to arXiv url.
+        link_url = d.get("thread_url") or d.get("url")
+        if link_url:
+            title_cell = f'<a href="{html.escape(link_url)}">{title_esc}</a>'
         else:
             title_cell = title_esc
 

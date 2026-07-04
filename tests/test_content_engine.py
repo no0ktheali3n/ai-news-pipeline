@@ -341,7 +341,8 @@ def test_ledger_entry_carries_provenance():
     art = {"title": "Scored", "url": "https://arxiv.org/abs/2607.00009",
            "summary": "s", "hashtags": [],
            "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
-           "composite": 7.25, "query_source": ["agents"]}
+           "composite": 7.25, "query_source": ["agents"],
+           "buzz": 7.5, "buzz_raw": {"hn_points": 120}}
     key = "out/summarizer/final_summarized_RUN.json"
     FAKE_S3.store[key] = json.dumps([art]).encode()
 
@@ -351,7 +352,9 @@ def test_ledger_entry_carries_provenance():
                                        "thread_url": "https://t/1",
                                        "scores": a.get("scores"),
                                        "composite": a.get("composite"),
-                                       "query_source": a.get("query_source")}
+                                       "query_source": a.get("query_source"),
+                                       "buzz": a.get("buzz"),
+                                       "buzz_raw": a.get("buzz_raw")}
     try:
         resp = poster.handler({"summary_key": key, "dry_run": False, "post_limit": 1}, None)
     finally:
@@ -360,6 +363,7 @@ def test_ledger_entry_carries_provenance():
     entry = json.loads(FAKE_S3.store[poster.POSTED_LEDGER_KEY])["https://arxiv.org/abs/2607.00009"]
     for field in ("builder_relevance", "novelty", "hook_potential", "composite", "query_source"):
         assert field in entry, f"missing {field}: {entry}"
+    assert entry["buzz"] == 7.5 and entry["buzz_raw"] == {"hn_points": 120}
 
 
 def test_post_thread_returns_provenance():
@@ -372,10 +376,12 @@ def test_post_thread_returns_provenance():
     art = {"title": "T", "url": "https://arxiv.org/abs/2607.00009",
            "summary": "s", "hashtags": [],
            "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
-           "composite": 7.25, "query_source": ["agents"]}
+           "composite": 7.25, "query_source": ["agents"],
+           "buzz": 7.5, "buzz_raw": {"hn_points": 120}}
     md = ptt.post_thread(art, dry_run=False)
     for f in ("scores", "composite", "query_source"):
         assert md[f] is not None, f
+    assert md["buzz"] == 7.5 and md["buzz_raw"] == {"hn_points": 120}
 
 
 check("ledger entry carries all five provenance fields", test_ledger_entry_carries_provenance)

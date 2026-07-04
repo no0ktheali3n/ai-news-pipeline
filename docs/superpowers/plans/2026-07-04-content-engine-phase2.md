@@ -6,20 +6,20 @@
 
 **Architecture:** A new pure module `utils/thread_contract.py` owns the writer prompt, tweet sanitization, and the contract validate/repair table. The summarizer Lambda calls the writer model (`BEDROCK_WRITER_MODEL_ID`) and stores a validated `tweets` list next to the fallback `summary`. The poster posts contract tweets verbatim (light re-check), falls back to the legacy formatter (no hashtags — the constant is deleted) when tweets are absent/invalid, and gains a mid-thread failure policy (retry once → minimal closing link reply → ledger `status: partial`). A local A/B harness generates before/after pairs from the latest scored sidecar; a blind judge panel decides the ship gate.
 
-**Tech Stack:** Python 3.12, boto3/Bedrock (`us.anthropic.claude-sonnet-5` writer — verified available in us-east-1), Tweepy, AWS SAM. No new dependencies.
+**Tech Stack:** Python 3.12, boto3/Bedrock (`us.anthropic.claude-sonnet-4-5-20250929-v1:0` writer — verified by a real invoke under this account 2026-07-04; note `us.anthropic.claude-sonnet-5` is listed in the region but NOT granted to this account and returns AccessDenied), Tweepy, AWS SAM. No new dependencies.
 
 ## Global Constraints (from spec §3 + owner's A/B requirement)
 
 - **Thread contract:** writer returns `{"tweets": [...], "summary": "..."}`. Tweet 1 = hook ≤ 240 chars, NO links. Middle tweets = substance with explicit builder relevance, ≤ 280 each. Final tweet = paper title + the exact arXiv link, ≤ 280. **2–5 tweets total**; never pad (a tight 2-tweet post beats a stretched 4-tweet thread).
 - **No hashtags anywhere.** `DEFAULT_HASHTAGS` is DELETED from `post_to_twitter.py` (not bypassed), and `generate_tweet_thread`'s `["#AI"]` defaults are removed (empty tag block when none passed).
 - **Repair table:** link in tweet 1 → strip it; > 5 tweets → keep the first 4 + the final link tweet (a truncation that preserves the contract); any tweet > 280 post-sanitize, hook > 240, empty tweet, final tweet missing the exact arXiv link, < 2 tweets, or non-list/non-string shapes → `ContractError` (hard fail → fallback path).
-- **Fallback path:** legacy formatter with the writer's plain `summary` string and an empty tag block. If the writer call itself fails entirely, the article follows the existing Phase 1 retry/abort semantics (retry cap → pipeline abort + alert), unchanged.
+- **Fallback path:** legacy formatter with the writer's plain `summary` string and an empty tag block. If the writer call itself fails entirely, the article follows the EXISTING failure semantics in `summarize_articles` unchanged: `retry_until_timeout` catches errors into the `[Summary unavailable]` sentinel and the article is skipped after the retry cap (the pipeline aborts only when no article in the batch succeeds — that logic is untouched).
 - **Mid-thread failure policy:** retry the failed tweet once; if still failing and ≥ 1 tweet already posted, best-effort post a minimal closing reply containing the arXiv link (the hook gets its payoff), and ALWAYS record the article in the ledger with `status: "partial"` so it is never re-selected. Full success records `status: "posted"`. If tweet 1 itself fails twice, nothing was posted: return None (no ledger entry, article stays retryable) — today's behavior. A 429 mid-thread follows the same policy.
-- **Models:** scoring stays Haiku (`BEDROCK_MODEL_ID`); writing = `BEDROCK_WRITER_MODEL_ID` env from new template parameter `BedrockWriterModelId`, default `us.anthropic.claude-sonnet-5`. The summarizer role's existing anthropic wildcards already cover it — NO IAM changes.
+- **Models:** scoring stays Haiku (`BEDROCK_MODEL_ID`); writing = `BEDROCK_WRITER_MODEL_ID` env from new template parameter `BedrockWriterModelId`, default `us.anthropic.claude-sonnet-4-5-20250929-v1:0`. The summarizer role's existing anthropic wildcards already cover it — NO IAM changes.
 - **Provenance:** articles keep carrying the seven fields (`builder_relevance`, `novelty`, `hook_potential`, `composite`, `query_source`, `buzz`, `buzz_raw`) through summarizer output to the ledger — the summarizer's `{**article}` spread must survive the rework; a test asserts it.
-- **A/B SHIP GATE (owner requirement):** before deploy, generate before/after thread pairs for the top 8 candidates (by composite) from the latest real scored sidecar; a blind 3-judge panel evaluates each pair (randomized order, unlabeled) on hook strength, practitioner value, clarity, coherence + overall preference. Ship only if the new writer is preferred in ≥ 6/8 pairs AND mean clarity does not regress by more than 0.5. One prompt-iteration retry is allowed; a second failure stops for owner review.
+- **A/B SHIP GATE (owner requirement):** before deploy, generate before/after thread pairs for the top 8 candidates (by composite) from the latest real scored sidecar; a 3-judge panel evaluates each pair (randomized order, unlabeled) on hook strength, practitioner value, clarity, coherence, follow-likelihood, share-likelihood + overall preference framed as "which post better serves audience growth for this account." The hashtag style tell is inherent (only old threads have them) — judges are instructed to judge the posts as a reader experiences them, not to guess provenance. Ship only if the new writer is preferred (per-pair majority of 3 judges) in **≥ 7/8 pairs** (chance ≈ 3.5% under a null coin) AND clarity does not regress: per pair take the median clarity across judges per version; mean over the 8 pairs of clarity_new ≥ mean clarity_old − 0.5, and no single pair's median clarity regresses by more than 1.5. One prompt-iteration retry is allowed (regenerate new side only, fresh judges); a second failure stops for owner review. The gate is a quality PROXY — the real growth signal is post-deploy follower deltas (Phase 4).
 - **Deploy is double-gated:** A/B pass AND the Mon 2026-07-06 16:00 UTC autonomous run confirmed (one new variable per autonomous run — Phase 1.5 gets its clean run first). Tasks 1–6 build everything now; Task 7 (A/B execution) runs now; Task 8 (deploy) waits for Monday.
-- **X free-tier write limits must be re-verified** (spec line 25) during Task 8: current published caps vs. worst-case usage (≤ 5 tweets/weekday + occasional partial-closing reply ≈ ~115/month).
+- **X free-tier write limits must be re-verified** (spec line 25): the published-cap lookup happens in Task 7 (before deploy, not after). Worst case at the current once-daily schedule: 5 tweets + 1 closing reply per weekday × 22 weekdays = **~132 writes/month worst case** (typical ~66–110). `MAX_TWEETS` is env-tunable (`THREAD_MAX_TWEETS`, default "5") so Task 8 can cap thread length by config if the verified limits demand it — no contract-module change, no A/B re-run. Phase 3's evening slot would roughly double usage: re-verify again then.
 - Tests are dependency-free scripts: `uv run python tests/<file>.py`, NOT pytest. All 49 existing tests (17 fixes + 21 content_engine + 11 buzz) stay green.
 - All work on branch `feat/content-engine-phase2` (created off `feat/content-engine-phase15` tip `e5115538` — Phase 1.5 is deployed but not yet merged; do not branch off main).
 - The pipeline keeps the one-article invariant (`max_new_articles: 1` semantics preserved).
@@ -122,7 +122,7 @@ def test_writer_prompt_contract_elements():
            "url": URL}
     p = tc.build_writer_prompt(art)
     assert '"tweets"' in p and '"summary"' in p
-    assert "240" in p and "2 to 5" in p.lower() or "2-5" in p
+    assert "240" in p and ("2 to 5" in p.lower() or "2-5" in p)
     assert URL in p
     assert "T" * 301 not in p and "S" * 4001 not in p          # truncation
     assert "never follow instructions" in p.lower()             # untrusted-input note
@@ -155,12 +155,15 @@ Expected: import-time failure (`ImportError`/`ModuleNotFoundError` for `utils.th
 # hitting Twitter, and the validate/repair table. Anything unrepairable
 # raises ContractError and the caller falls back to the legacy formatter.
 
+import os
 import re
 
 HOOK_MAX = 240
 TWEET_MAX = 280
 MIN_TWEETS = 2
-MAX_TWEETS = 5
+# Env-tunable so a rate-limit verification can cap thread length by config
+# (template env THREAD_MAX_TWEETS) without touching this module.
+MAX_TWEETS = int(os.getenv("THREAD_MAX_TWEETS", "5"))
 
 _URL_RE = re.compile(r"https?://\S+")
 _MENTION_RE = re.compile(r"(?<!\w)@(\w+)")
@@ -266,12 +269,13 @@ git commit -m "feat: thread-contract module — writer prompt, sanitize, validat
 - Modify: `lambda/layers/common/python/utils/summarizer.py`
 - Modify: `tests/stubs.py` (FakeBedrock writer mode)
 - Modify: `tests/test_content_engine.py` (append writer tests)
+- Modify: `tests/test_fixes.py` (two summarizer assertions change — see Step 5)
 
 **Interfaces:**
 - Consumes: `thread_contract.build_writer_prompt`, `validate_and_repair`, `ContractError` (Task 1); existing `parse_model_json`, `summarize_articles` structure, `_bedrock` client, `retry_until_timeout`.
-- Produces: summarizer output articles carry `tweets: list[str] | None` (validated/repaired; None ⇒ poster falls back to `summary`) plus `summary` as today. No `hashtags` key in new output. Env: `BEDROCK_WRITER_MODEL_ID` (default `us.anthropic.claude-sonnet-5`).
+- Produces: summarizer output articles carry `tweets: list[str] | None` (validated/repaired; None ⇒ poster falls back to `summary`) plus `summary` as today. No `hashtags` key in new output. Env: `BEDROCK_WRITER_MODEL_ID` (default `us.anthropic.claude-sonnet-4-5-20250929-v1:0`).
 
-- [ ] **Step 1: FakeBedrock writer mode** — in `tests/stubs.py`, extend `invoke_model`'s routing (it already routes scoring via `"score every paper"`): add a writer route keyed on the prompt substring `"you write twitter/x threads"` (case-insensitive), returning `self.writer_response` if set, else a default valid body:
+- [ ] **Step 1: FakeBedrock writer mode** — read `tests/stubs.py`'s `invoke_model` first. It currently branches on `"score every paper" in content.lower()` for scoring, then falls through to a generic summarizer reply; `FakeBedrock.mode` defaults to `"denied"` and gates both branches (raise AccessDenied under `denied`, markdown-fence the JSON under `fenced`). Add:
 
 ```python
     writer_response = None  # class-level, like scoring_response
@@ -287,16 +291,16 @@ git commit -m "feat: thread-contract module — writer prompt, sanitize, validat
         })
 ```
 
-Route it exactly like the scoring path (same `_resp(...)` wrapper the scoring mode uses; read the existing `invoke_model` before editing).
+and insert the writer branch in `invoke_model` keyed on `"you write twitter/x threads" in content.lower()`, **BEFORE the generic-summarizer fallthrough**, respecting `mode` exactly like the existing branches: raise AccessDenied under `"denied"`, wrap in ```` ```json ```` fences under `"fenced"`, else return `{"body": FakeBody(json.dumps({"content": [{"type": "text", "text": self._writer_reply()}]}).encode())}` (the same body shape `_scoring_reply`'s route returns — there is no `_resp` helper; mirror the scoring route's inline construction).
 
 - [ ] **Step 2: Write the failing tests** — append to `tests/test_content_engine.py` before the summary lines, section `[9] summarizer: writer contract`:
 
-Three tests (write them concretely, mirroring section [2]'s direct-call style — no handler needed):
-1. `test_writer_produces_validated_tweets` — build an article dict with url `https://arxiv.org/abs/2607.00001`, title/snippet/authors + provenance fields (`composite: 7.5, buzz: 8.05, buzz_raw: {"hf_upvotes": 40}, query_source: ["agents"], scores: {...}`); set `FAKE_BEDROCK.writer_response = None`; call `summarizer.write_thread_with_claude(article)`; assert it returns a dict with `tweets` (the stub's 3 valid tweets, final containing the url) and `summary`.
-2. `test_writer_contract_violation_falls_back_to_summary_only` — set `FAKE_BEDROCK.writer_response = json.dumps({"tweets": ["only one tweet"], "summary": "still a good summary"})`; call `write_thread_with_claude`; assert result has `tweets is None` and `summary == "still a good summary"` (ContractError swallowed, summary preserved).
-3. `test_summarize_articles_output_carries_tweets_and_provenance` — seed `FAKE_S3` with a scraper file containing one article with all seven provenance fields (mirror how section [5]-[7] tests seed pipeline files — read the existing seeding pattern first); run `summarizer.summarize_articles(limit=1)`; read the written summary file from FAKE_S3; assert the output article has `tweets`, `summary`, no `hashtags` key, and all seven provenance fields intact.
+Add `import utils.summarizer as summarizer` near the other layer imports at the top of `tests/test_content_engine.py` (the file does not currently import it). The new section `[9]` goes after section `[8]` (buzz), immediately before the final summary `print`/`sys.exit` lines.
 
-Reset `FAKE_BEDROCK.writer_response = None` in `finally` blocks wherever set.
+Three tests (write them concretely, mirroring section [2]'s direct-call style — no handler needed). **Every test sets `FAKE_BEDROCK.mode = "ok"` at entry and resets `mode = "denied"` and `writer_response = None` in `finally`** (the mode default is `"denied"`, which raises — mirroring how the scoring tests manage it):
+1. `test_writer_produces_validated_tweets` — build an article dict with url `https://arxiv.org/abs/2607.00001`, title/snippet/authors + provenance (`scores: {...}` three axes, `composite: 7.5`, `query_source: ["agents"]`, `buzz: 8.05`, `buzz_raw: {"hf_upvotes": 40}`); `FAKE_BEDROCK.writer_response = None`; call `summarizer.write_thread_with_claude(article)`; assert dict with `tweets` (the stub's 3 valid tweets, final containing the url) and `summary`.
+2. `test_writer_contract_violation_falls_back_to_summary_only` — `FAKE_BEDROCK.writer_response = json.dumps({"tweets": ["only one tweet"], "summary": "still a good summary"})`; assert result has `tweets is None` and `summary == "still a good summary"` (ContractError swallowed, summary preserved).
+3. `test_summarize_articles_output_carries_tweets_and_provenance` — `summarize_articles` reads/writes LOCAL files via module attributes, NOT S3 (the S3 wiring lives in `summarizer_lambda.py`, which points these attributes at /tmp paths). Mirror `tests/test_fixes.py` lines ~80–88: write a one-article JSON list (article with the provenance fields from test 1) to a temp file; set `summarizer.INPUT_FILE = <temp in>` and `summarizer.OUTPUT_FILE = <temp out>` (restore both in `finally`); run `summarizer.summarize_articles(limit=1)`; `json.load` the OUTPUT_FILE; assert the output article has `tweets`, `summary`, NO `hashtags` key, and that the `scores` dict (three axes) plus the four top-level keys `composite`, `query_source`, `buzz`, `buzz_raw` survived the `{**article}` spread. No FAKE_S3 anywhere in this test.
 
 - [ ] **Step 3: Run to verify failure**
 
@@ -308,7 +312,7 @@ Expected: 21 pass, 3 FAIL (`AttributeError: ... 'write_thread_with_claude'`).
 Add near the model config:
 
 ```python
-WRITER_MODEL_ID = os.getenv("BEDROCK_WRITER_MODEL_ID", "us.anthropic.claude-sonnet-5")
+WRITER_MODEL_ID = os.getenv("BEDROCK_WRITER_MODEL_ID", "us.anthropic.claude-sonnet-4-5-20250929-v1:0")
 ```
 
 Add (imports: `from utils.thread_contract import ContractError, build_writer_prompt, validate_and_repair`):
@@ -325,7 +329,7 @@ def write_thread_with_claude(article):
         "temperature": 0.4,
         "messages": [{"role": "user", "content": build_writer_prompt(article)}],
     }
-    response = _bedrock.invoke_model(
+    response = bedrock.invoke_model(
         modelId=WRITER_MODEL_ID, contentType="application/json",
         accept="application/json", body=json.dumps(payload))
     result = json.loads(response["body"].read())
@@ -342,16 +346,37 @@ def write_thread_with_claude(article):
     return {"tweets": tweets, "summary": summary}
 ```
 
-(Note: `_bedrock` — match the actual client variable name in summarizer.py; read the file first. If the module's Bedrock client has a different name, use that.)
+(`bedrock` is the module's actual client variable — verify by reading summarizer.py line ~26 before editing.)
 
-In `summarize_articles`'s per-article attempt (currently `attempt_summary` calling `summarize_with_claude(build_summary_and_hashtag_prompt(article))`): replace with the writer call so each output article is `{**article, "tweets": thread["tweets"], "summary": thread["summary"]}` — no `hashtags`. Keep the retry/timeout wrapper and abort semantics exactly as they are. Do not delete `build_summary_and_hashtag_prompt`/`summarize_with_claude` (the A/B harness and any manual tooling may still import them) — mark with a comment `# legacy path, kept for A/B harness + fallback tooling`.
+In `summarize_articles`'s per-article flow, reconcile the writer's return shape with the retry wrapper's `(dict, tokens)` tuple contract and the `[Summary unavailable]` sentinel gate — both stay, and the writer plugs into them:
 
-- [ ] **Step 5: Run to verify pass, regression, commit**
+```python
+        def attempt_summary():
+            # Writer path: no per-prompt token tracking (report 0). Transport
+            # failures raise; retry_until_timeout catches them into the
+            # existing "[Summary unavailable]" sentinel dict, so the sentinel
+            # gate below keeps its exact meaning.
+            return write_thread_with_claude(article), 0
 
-All four suites green (`test_content_engine.py` now 24). 
+        result_obj, tokens_used = retry_until_timeout(attempt_summary, ...)  # unchanged wrapper call
+        summary = result_obj.get("summary", "")
+        if "[Summary unavailable" not in summary and summary.strip():
+            summarized.append({**article, "tweets": result_obj.get("tweets"),
+                               "summary": summary})
+        else:
+            ...  # existing skip/failed-count path, unchanged
+```
+
+Match the surrounding code exactly when editing (read the current per-article block first — variable names like `summarized`/failed counters must be the file's own). The sentinel fallback dict returned by `retry_until_timeout`'s error branch has no `tweets` key — `.get("tweets")` handles it, and that path is skipped anyway. No `hashtags` key in new output. Do not delete `build_summary_and_hashtag_prompt`/`summarize_with_claude`/`build_summary_prompt`/`build_hashtag_prompt` (fallback + tooling still reference the legacy path) — mark the legacy prompt builders with a comment `# legacy path, kept for A/B harness + fallback tooling`.
+
+- [ ] **Step 5: Update test_fixes.py, verify all suites, commit**
+
+`tests/test_fixes.py` has summarizer tests that assert against the OLD stub route and WILL fail after this task: `test_summarizer_success_path_still_works` and `test_summarizer_handles_markdown_fenced_json` both assert `result[0]["summary"] == "A fine summary."` — after the rewire, `summarize_articles` hits the new writer route, whose default summary is `"A plain fallback summary."`. Update both to assert the writer stub's summary AND that `result[0]["tweets"]` is a non-empty list (the fenced test proves fence-tolerance through the writer path). `test_summarizer_skips_failed_articles` (mode `"denied"`) needs no change — the writer route raises under `denied` and the sentinel skip path is unchanged; confirm it still passes.
+
+All four suites green (`test_content_engine.py` now 24; `test_fixes.py` still 17).
 
 ```bash
-git add lambda/layers/common/python/utils/summarizer.py tests/stubs.py tests/test_content_engine.py
+git add lambda/layers/common/python/utils/summarizer.py tests/stubs.py tests/test_content_engine.py tests/test_fixes.py
 git commit -m "feat: Sonnet thread writer in summarizer — validated tweets + summary fallback"
 ```
 
@@ -434,6 +459,8 @@ def _scripted_post_tweet(script):
     return fake, calls
 ```
 
+Also patch `ptt.time.sleep = lambda *_: None` (restore in `finally`) in every section-[11] test — the policy sleeps 3s on retry and 2s between tweets, which would add real seconds to the suite (test_fixes.py patches `pipeline.time.sleep` the same way).
+
 1. `test_mid_thread_retry_succeeds` — 3-tweet article; script `["id1", None, "id2", "id3"]` (tweet 2 fails once, retry succeeds); assert metadata `status == "posted"`, 3 tweet ids, and 4 post_tweet calls.
 2. `test_mid_thread_double_failure_posts_closing_reply_and_partial` — script `["id1", None, None, "id9"]` (tweet 2 fails twice; the 4th call is the closing reply succeeding); assert metadata `status == "partial"`, the last posted text contains the arXiv url, and metadata still carries provenance fields.
 3. `test_first_tweet_double_failure_returns_none` — script `[None, None]`; assert `post_thread` returns None (nothing to ledger).
@@ -468,6 +495,10 @@ def _scripted_post_tweet(script):
         # hook has its payoff, and mark partial so the article never reposts.
         status = "partial"
         logger.error(f"Tweet {i+1} failed twice; posting minimal closing reply.")
+        # post_tweet swallows ALL errors (incl. 429 rate limits) and returns
+        # None — that swallowing is what routes a mid-thread 429 into this
+        # retry-once → partial-closing path. The try/except is cheap insurance
+        # in case that contract ever changes.
         try:
             closing_id = post_tweet(f"Full paper: {url}", reply_to_id=reply_to)
             if closing_id:
@@ -498,11 +529,18 @@ Steps: add parameter after `BuzzEnabled`:
 ```yaml
   BedrockWriterModelId:
     Type: String
-    Default: us.anthropic.claude-sonnet-5
+    Default: us.anthropic.claude-sonnet-4-5-20250929-v1:0
     Description: Bedrock model for thread writing (Sonnet-tier); scoring stays on BedrockModelId.
 ```
 
-and `BEDROCK_WRITER_MODEL_ID: !Ref BedrockWriterModelId` in **SummarizerFunction**'s `Environment.Variables` (the worker function that runs `summarize_articles` — verify by finding which function's handler is `summarizer_lambda`). NO IAM changes (existing anthropic wildcards cover it). Validate `sam validate --lint`; run all four test suites (no code change); commit `infra: BedrockWriterModelId parameter + summarizer env`.
+and in **SummarizerFunction**'s `Environment.Variables` (the worker function that runs `summarize_articles` — verify by finding which function's handler is `summarizer_lambda`):
+
+```yaml
+          BEDROCK_WRITER_MODEL_ID: !Ref BedrockWriterModelId
+          THREAD_MAX_TWEETS: "5"
+```
+
+NO IAM changes (existing anthropic wildcards cover the writer profile — verified by a real invoke). Validate `sam validate --lint`; run all four test suites (no code change); commit `infra: BedrockWriterModelId parameter + summarizer envs`.
 
 ---
 
@@ -522,7 +560,7 @@ The script (complete outline the implementer fills mechanically — every functi
 - `LEGACY_PROMPT(article)`: verbatim frozen copy of today's `build_summary_and_hashtag_prompt` (copy the string from git history of `summarizer.py` — it is unchanged on this branch until Task 2, so copy it from the file BEFORE Task 2 or from `git show e5115538:lambda/layers/common/python/utils/summarizer.py`).
 - `legacy_thread(summary, title, url, hashtags)`: verbatim frozen copy of today's `generate_tweet_thread` INCLUDING the `["#AI"]` default and tag block (frozen v0.9 behavior).
 - `call_bedrock(client, model_id, prompt, max_tokens)`: shared invoke + `parse_model_json`-equivalent fence-tolerant parse (embed a copy; do not import from utils — the script must run standalone under `uv run python` with only boto3).
-- `generate_pair(client, article)`: OLD = Haiku (`us.anthropic.claude-haiku-4-5-20251001-v1:0`) with LEGACY_PROMPT → `legacy_thread(summary, title, url, ["#AI"] + hashtags[:3])`; NEW = `us.anthropic.claude-sonnet-5` with `build_writer_prompt` → `validate_and_repair` (on ContractError, record the failure and the raw tweets — a contract failure in generation is itself A/B data).
+- `generate_pair(client, article)`: OLD = Haiku (`us.anthropic.claude-haiku-4-5-20251001-v1:0`) with LEGACY_PROMPT → `legacy_thread(summary, title, url, ["#AI"] + hashtags[:3])`; NEW = `us.anthropic.claude-sonnet-4-5-20250929-v1:0` with `build_writer_prompt` → `validate_and_repair` (on ContractError, record the failure and the raw tweets — a contract failure in generation is itself A/B data).
 - `main()`: argparse `--n 8 --bucket ... --prefix ai-research-pipeline/output/scored/`; writes the JSON (`[{id, title, url, composite, old: [...], new: [...], new_contract_error: str|None}]`) and a markdown report where each pair shows the two threads as **Version 1 / Version 2 with order randomized by pair index parity and the mapping recorded ONLY in the JSON** (report stays blind for human reading too).
 - Unit tests (stub boto3 via tests/stubs.py): `top_n` ordering/skip, `legacy_thread` freeze (produces `#AI` tag block), order-randomization mapping recorded correctly.
 
@@ -535,9 +573,10 @@ Run: `uv run python tests/test_ab_harness.py` green; all suites green; commit `f
 ### Task 7: A/B execution + blind judgment (CONTROLLER-RUN — not delegated to an implementer)
 
 - [ ] Run `AWS_PROFILE=pipeline-admin uv run python scripts/ab_writer_eval.py --n 8` → pairs JSON + report.
-- [ ] Dispatch a blind judge panel: 3 independent judges (subagents), each receiving all 8 pairs as Version 1/Version 2 (the randomized order from the JSON; judges never see which is which, nor each other's output). Each judge scores per pair: hook_strength, practitioner_value, clarity, coherence (1–10 per version) + overall preference (1|2) + one-line rationale. Structured output.
+- [ ] Re-verify X free-tier write caps (spec line 25) BEFORE judging: current published limits vs. worst case ~132 writes/month (5 tweets + closing reply × 22 weekdays). If the cap demands shorter threads, set `THREAD_MAX_TWEETS` accordingly in the template (Task 5 env) before the A/B generation so the experiment tests what will ship. Record numbers in the verdict doc.
+- [ ] Dispatch a judge panel: 3 independent judges (subagents), each receiving all 8 pairs as Version 1/Version 2 (the randomized order from the JSON; judges never told which system produced which, nor shown each other's output). The hashtag style tell is inherent — judges are instructed to evaluate each post as a reader experiences it, not to guess or reward/punish provenance. Each judge scores per pair and per version (1–10): hook_strength, practitioner_value, clarity, coherence, follow_likelihood ("would a practitioner follow this account after seeing this post?"), share_likelihood — plus overall preference (1|2) framed as "which post better serves audience growth for this account" and a one-line rationale. Structured output.
 - [ ] Compile: per-pair majority preference (≥2/3 judges); un-blind via the JSON mapping.
-- [ ] **SHIP GATE:** new writer preferred in ≥ 6/8 pairs AND mean(clarity_new) ≥ mean(clarity_old) − 0.5. Record the verdict + full table in `docs/ab-test/<date>-writer-verdict.md` and commit.
+- [ ] **SHIP GATE (as pinned in Global Constraints):** new preferred in ≥ 7/8 pairs; clarity guard: per-pair median across judges per version, mean over 8 pairs of clarity_new ≥ mean clarity_old − 0.5, and no single pair's median clarity regresses > 1.5. Record the verdict + full table in `docs/ab-test/<date>-writer-verdict.md` and commit.
 - [ ] If the gate FAILS: one iteration allowed — revise `build_writer_prompt` based on the judges' rationales (a normal fix-dispatch), regenerate ONLY the new side, re-judge with fresh judges. A second failure → STOP and present both rounds to the owner.
 - [ ] Present the verdict + 2-3 sample pairs to the owner in the session summary (the owner explicitly asked to SEE before/after).
 
@@ -547,8 +586,8 @@ Run: `uv run python tests/test_ab_harness.py` green; all suites green; commit `f
 
 - [ ] `sam build` → changeset → inspect (expect: SummarizerFunction env + layer version + parameter; NO IAM) → execute → wait.
 - [ ] Dry-run E2E (standard payload, outside scheduled window): verify summarizer output file carries `tweets` (log/S3), poster preview shows the hook first and no `#`, response 200.
-- [ ] Re-verify X free-tier write caps (spec line 25): check the current published limits; worst case ≈ 5 tweets + 1 closing reply per weekday ≈ ~130/month; record the numbers + verdict in FIX_NOTES.
-- [ ] Version 0.10.0 (`pyproject.toml` + `uv lock`), FIX_NOTES update (thread contract live, A/B verdict reference), commit `chore: v0.10.0 — content engine phase 2 (thread contract) deployed`, tag `v0.10.0`, push branch + tag.
+- [ ] Confirm the rate-limit verdict from Task 7 is recorded in FIX_NOTES (the lookup itself happened pre-A/B).
+- [ ] Version 0.10.0 (`pyproject.toml` + `uv lock`) — NOTE: this branch's pyproject says 0.8.0 (it forked before any 0.9.0 bump; v0.9.0 is the phase15 tag applied at merge time). Verify the actual version line before editing and bump straight to 0.10.0. FIX_NOTES update (thread contract live, A/B verdict reference), commit `chore: v0.10.0 — content engine phase 2 (thread contract) deployed`, tag `v0.10.0`, push branch + tag.
 - [ ] Merge sequencing after Monday: `feat/content-engine-phase15` → main (v0.9.0 tag), then `feat/content-engine-phase2` → main.
 - [ ] Async: after the first scheduled run posts a contract thread, verify the live tweet shape + ledger `status: "posted"`.
 
@@ -559,3 +598,4 @@ Run: `uv run python tests/test_ab_harness.py` green; all suites green; commit `f
 - **Spec §3 coverage:** structured contract + prompt (T1), no-hashtags deletion (T3), repair table (T1) + transit re-check (T3), fallback to legacy formatter with empty tags (T3), mid-thread policy + `partial` ledger status (T4), writer model via `BedrockWriterModelId` (T2/T5), provenance passthrough preserved + tested (T2), free-tier limit re-verification (T8). Owner's A/B gate: T6 harness + T7 blind panel with explicit ship criteria and one iteration cycle.
 - **Placeholder scan:** T1/T4 carry complete code; T2/T3 specify exact behaviors, assertions, and code blocks with explicit read-the-file-first notes where a local name must be matched (`_bedrock` client name; existing seeding patterns). T6 lists every function with its contract; legacy freezes are verbatim copies from a pinned commit (`e5115538`), not rewrites. No TBDs.
 - **Type consistency:** `tweets: list[str]|None` from `write_thread_with_claude` → summarizer output → `post_thread` branch → same key in tests; `status` string in metadata → ledger; `ContractError`/`sanitize_tweet`/`MIN_TWEETS`/`TWEET_MAX` names identical in T1 definition and T3/T4 consumption; writer env name `BEDROCK_WRITER_MODEL_ID` identical in T2 code and T5 template.
+- **Rev 2 (adversarial review, 25 findings — 7 blocker-severity, all addressed):** writer model corrected to `us.anthropic.claude-sonnet-4-5-20250929-v1:0` (sonnet-5 profile exists in-region but is NOT granted to this account — verified by real invokes of both); Task 2 test 3 rewritten to local INPUT_FILE/OUTPUT_FILE overrides (summarize_articles never touches S3); retry-wrapper reconciliation spelled out (tuple contract + sentinel gate preserved, exact code given); FakeBedrock writer route fully specified (before the summarizer fallthrough, honors mode denied/fenced/ok, exact body shape — no `_resp` helper exists); test_fixes.py summary assertions added to Task 2's scope; `import utils.summarizer` + section anchor instruction added; failure-semantics description corrected (sentinel skip, not pipeline abort); MAX_TWEETS env-tunable (`THREAD_MAX_TWEETS`) + rate-limit lookup moved before A/B generation; ship gate strengthened to 7/8 (chance ≈ 3.5%) with growth-oriented judge dimensions (follow/share likelihood) and a pinned clarity-aggregation rule; hashtag style tell acknowledged with judge instruction; mid-thread tests patch `ptt.time.sleep`; 429-swallowing dependency documented; version-base note (0.8.0 on branch); worst-case writes reconciled to ~132/month; minor assertion precedence fixed.

@@ -17,11 +17,22 @@ from utils.scoring import W_HOOK, arxiv_id, composite
 logger = get_logger("buzz")
 
 BUZZ_ENABLED = os.getenv("BUZZ_ENABLED", "true").lower() == "true"
+
+
+def _env_float(name, default):
+    """Best-effort float env: a malformed value must degrade to the default,
+    never break the module import (the scraper handler imports this module)."""
+    try:
+        return float(os.getenv(name, "") or default)
+    except (TypeError, ValueError):
+        return default
+
+
 # Cedes this much of the hook weight to observed buzz; clamped so a mis-set
 # env can never produce a negative hook weight (Lambda must not crash a run).
-W_BUZZ = min(float(os.getenv("SCORING_W_BUZZ", str(W_HOOK / 2))), W_HOOK)
-HTTP_TIMEOUT_S = float(os.getenv("BUZZ_HTTP_TIMEOUT_S", "3"))
-WALL_BUDGET_S = float(os.getenv("BUZZ_WALL_BUDGET_S", "20"))
+W_BUZZ = max(0.0, min(_env_float("SCORING_W_BUZZ", W_HOOK / 2), W_HOOK))
+HTTP_TIMEOUT_S = _env_float("BUZZ_HTTP_TIMEOUT_S", 3.0)
+WALL_BUDGET_S = _env_float("BUZZ_WALL_BUDGET_S", 20.0)
 
 HF_DAILY_URL = "https://huggingface.co/api/daily_papers"
 HN_SEARCH_URL = "https://hn.algolia.com/api/v1/search"
@@ -40,8 +51,10 @@ def _saturate(value, cap):
 def buzz_score(raw):
     """One 0-10 buzz value from raw per-source counts; the strongest source
     wins (sources are sparse — a mean would punish single-source hits).
-    None when no source produced a number: no signal is not zero buzz."""
-    parts = [_saturate(raw[k], CAPS[k]) for k in CAPS if raw.get(k) is not None]
+    None when no source produced a number: no signal is not zero buzz.
+    Zero counts are treated as no-signal — a zero count carries no positive
+    attention signal and must not move the composite down."""
+    parts = [_saturate(raw[k], CAPS[k]) for k in CAPS if raw.get(k)]
     return round(max(parts), 2) if parts else None
 
 

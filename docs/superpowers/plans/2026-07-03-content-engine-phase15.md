@@ -824,7 +824,7 @@ aws cloudformation execute-change-set --change-set-name <ARN from output>
 aws cloudformation wait stack-update-complete --stack-name ai-research-pipeline
 ```
 
-Expected changeset: Modify ScraperFunction (+ new layer version, Timeout, envs); no IAM changes.
+Expected changeset: Modify ScraperFunction (+ new layer version, envs); no IAM changes.
 
 - [ ] **Step 2: Dry-run E2E with buzz** (manual runs use dry_run per spec):
 

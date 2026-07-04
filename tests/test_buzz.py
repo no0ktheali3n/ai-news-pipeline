@@ -35,6 +35,8 @@ from utils import buzz  # noqa: E402
 def test_buzz_score_none_without_signal():
     assert buzz.buzz_score({}) is None, "empty raw must be None"
     assert buzz.buzz_score({"hf_upvotes": None}) is None, "None values must not count"
+    assert buzz.buzz_score({"s2_citations": 0}) is None, "zero count is no-signal, not zero buzz"
+    assert buzz.buzz_score({"s2_citations": 0, "hn_points": 50}) is not None, "zero must not mask a real signal"
 
 
 def test_buzz_score_saturates_at_cap():
@@ -85,12 +87,23 @@ def test_w_buzz_clamped_to_hook_weight():
     assert buzz.W_BUZZ <= W_HOOK, f"W_BUZZ {buzz.W_BUZZ} must be clamped to W_HOOK {W_HOOK}"
 
 
+def test_env_float_degrades_not_raises():
+    assert buzz._env_float("BUZZ_NO_SUCH_ENV", 3.0) == 3.0
+    os.environ["BUZZ_BAD_ENV"] = "not-a-number"
+    try:
+        assert buzz._env_float("BUZZ_BAD_ENV", 3.0) == 3.0
+    finally:
+        del os.environ["BUZZ_BAD_ENV"]
+    assert max(0.0, min(-1.0, 0.25)) == 0.0  # clamp shape used for W_BUZZ
+
+
 check("buzz_score None without signal", test_buzz_score_none_without_signal)
 check("W_BUZZ clamped to hook weight", test_w_buzz_clamped_to_hook_weight)
 check("buzz_score saturates at cap", test_buzz_score_saturates_at_cap)
 check("buzz_score takes strongest source", test_buzz_score_takes_strongest_source)
 check("blend_composite math", test_blend_composite_math)
 check("apply_buzz re-ranks + annotates", test_apply_buzz_reranks_and_annotates)
+check("env floats degrade, never raise", test_env_float_degrades_not_raises)
 
 print("[2] buzz: fetchers (best-effort, budget-capped)")
 

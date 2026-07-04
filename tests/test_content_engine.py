@@ -601,6 +601,24 @@ def test_invalid_transit_tweets_fall_back():
     assert captured[0] != "ok hook", "contract rejected; should have used summary path"
 
 
+def test_hook_over_240_fails_transit_recheck():
+    """Hook of 250 chars (valid ≤280 but >240) must fail the transit re-check → summary fallback."""
+    captured = []
+    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    long_hook = "A" * 250   # 250 chars: passes TWEET_MAX(280) but fails HOOK_MAX(240)
+    art = {
+        "title": "Paper Title",
+        "url": _VALID_URL,
+        "summary": "Sentence one. Sentence two.",
+        "tweets": [long_hook, f"Paper details\n{_VALID_URL}"],
+    }
+    md = _ptt.post_thread(art, dry_run=False)
+    assert md is not None
+    # Transit re-check must have rejected it; fallback path posts summary thread
+    assert captured[0] != long_hook, "hook with 250 chars should be rejected by transit re-check"
+    assert any(_VALID_URL in t for t in captured), f"fallback url missing: {captured}"
+
+
 def test_default_hashtags_constant_deleted():
     """DEFAULT_HASHTAGS must not exist on the ptt module."""
     assert not hasattr(_ptt, "DEFAULT_HASHTAGS"), \
@@ -610,6 +628,7 @@ def test_default_hashtags_constant_deleted():
 check("contract tweets posted verbatim, no hashtags", test_contract_tweets_posted_verbatim_no_hashtags)
 check("missing tweets falls back to summary, no hashtags", test_missing_tweets_falls_back_to_summary_no_hashtags)
 check("invalid transit tweets fall back to summary path", test_invalid_transit_tweets_fall_back)
+check("hook >240 chars fails transit re-check → summary fallback", test_hook_over_240_fails_transit_recheck)
 check("DEFAULT_HASHTAGS constant deleted", test_default_hashtags_constant_deleted)
 
 print("\n[11] poster: mid-thread policy")

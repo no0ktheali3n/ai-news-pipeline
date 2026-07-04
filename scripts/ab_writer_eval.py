@@ -48,9 +48,30 @@ NEW_MODEL = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
 # ---------------------------------------------------------------------------
 # FROZEN v0.9 legacy code — verbatim copies from commit e5115538
 # (lambda/layers/common/python/utils/summarizer.py +
-#  lambda/layers/common/python/utils/twitter_threading.py)
+#  lambda/layers/common/python/utils/twitter_threading.py +
+#  lambda/layers/common/python/utils/post_to_twitter.py)
 # DO NOT modify these — they must match the shipped v0.9 behavior exactly.
 # ---------------------------------------------------------------------------
+
+# --- frozen from post_to_twitter.py @ e5115538 ---
+_LEGACY_URL_RE = re.compile(r"https?://\S+")
+_LEGACY_MENTION_RE = re.compile(r"(?<!\w)@(\w+)")
+_LEGACY_MAX_SUMMARY_CHARS = 1200  # frozen v0.9: MAX_SUMMARY_CHARS
+
+
+def legacy_sanitize_summary(summary: str, allowed_url: str = "") -> str:
+    """Frozen v0.9 copy of sanitize_summary from post_to_twitter.py @ e5115538.
+
+    Strips foreign URLs and @-mentions; whitespace-collapses; caps at 1200 chars.
+    """
+    cleaned = summary
+    for url in set(_LEGACY_URL_RE.findall(cleaned)):
+        if allowed_url and url.rstrip(".,;)") == allowed_url:
+            continue
+        cleaned = cleaned.replace(url, "")
+    cleaned = _LEGACY_MENTION_RE.sub(r"\1", cleaned)  # drop the @, keep the word
+    return " ".join(cleaned.split())[:_LEGACY_MAX_SUMMARY_CHARS]
+
 
 _FROZEN_MAX_TWEET_LENGTH = 280
 
@@ -245,10 +266,21 @@ def generate_pair(client, article: dict) -> tuple[list[str], list[str], Optional
          On ContractError: record error + raw tweets (not a crash).
     """
     # --- OLD side ---
+    # Reproduce v0.9 prod behavior exactly — see frozen helpers above.
     old_result = call_bedrock(client, OLD_MODEL, LEGACY_PROMPT(article), max_tokens=600)
-    summary = old_result.get("summary", "")
-    hashtags = old_result.get("hashtags", ["#AI"])
-    old_tweets = legacy_thread(summary, article.get("title", ""), article.get("url", ""), ["#AI"] + hashtags[:3])
+    url = article.get("url", "")
+    raw_summary = old_result.get("summary", "")
+    # (a) sanitize exactly as v0.9 prod did
+    summary = legacy_sanitize_summary(raw_summary, allowed_url=url)
+    # (b)/(c) hashtag parsing: same logic as v0.9 post_thread
+    raw_tags = old_result.get("hashtags", "")
+    if isinstance(raw_tags, str):
+        hashtags = [tag for tag in raw_tags.split(",") if tag.startswith("#")]
+    else:
+        hashtags = [tag for tag in raw_tags if isinstance(tag, str) and tag.startswith("#")]
+    hashtags = [tag for tag in hashtags if re.fullmatch(r"#\w+", tag)]
+    tag_block = ["#AI"] + hashtags[:3]
+    old_tweets = legacy_thread(summary, article.get("title", ""), url, tag_block)
 
     # --- NEW side ---
     new_contract_error: Optional[str] = None

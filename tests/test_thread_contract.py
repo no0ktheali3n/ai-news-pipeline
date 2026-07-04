@@ -97,6 +97,12 @@ def test_writer_prompt_contract_elements():
     assert "no hashtags" in p.lower() and "hook" in p.lower()
 
 
+def test_max_tweets_gte_min_tweets():
+    assert tc.MAX_TWEETS >= tc.MIN_TWEETS, \
+        f"MAX_TWEETS ({tc.MAX_TWEETS}) must be >= MIN_TWEETS ({tc.MIN_TWEETS})"
+
+
+check("MAX_TWEETS >= MIN_TWEETS (clamp guard)", test_max_tweets_gte_min_tweets)
 check("valid thread passes unchanged", test_valid_thread_passes_unchanged)
 check("link in hook stripped", test_link_in_hook_is_stripped)
 check("6 tweets truncate keeping final link", test_six_tweets_truncates_keeping_final_link)

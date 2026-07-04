@@ -13,7 +13,8 @@ TWEET_MAX = 280
 MIN_TWEETS = 2
 # Env-tunable so a rate-limit verification can cap thread length by config
 # (template env THREAD_MAX_TWEETS) without touching this module.
-MAX_TWEETS = int(os.getenv("THREAD_MAX_TWEETS", "5"))
+# Clamped: a mis-set env below MIN_TWEETS must not ContractError every thread.
+MAX_TWEETS = max(MIN_TWEETS, int(os.getenv("THREAD_MAX_TWEETS", "5")))
 
 _URL_RE = re.compile(r"https?://\S+")
 _MENTION_RE = re.compile(r"(?<!\w)@(\w+)")

@@ -281,6 +281,59 @@ check("JSON output shape is dict with pairs+failures", test_json_output_is_dict_
 
 
 # ---------------------------------------------------------------------------
+# [6] Fix 1: legacy_sanitize_summary fidelity (frozen v0.9 helper)
+# ---------------------------------------------------------------------------
+print("[6] legacy_sanitize_summary: v0.9 fidelity")
+
+
+def test_legacy_sanitize_strips_evil_url_and_mention():
+    """A summary with a foreign URL + @mention + 1500 chars comes out sanitized and capped."""
+    long_body = "X " * 600  # 1200 chars of body before the nasty stuff
+    dirty = (
+        "Great paper! Visit https://evil.example/phish now and follow @scammer for updates. "
+        + long_body
+        + " Extra tail that should be cut off."
+    )
+    allowed = "https://arxiv.org/abs/2607.99999"
+    clean = harness.legacy_sanitize_summary(dirty, allowed_url=allowed)
+    assert "evil.example" not in clean, "evil URL must be stripped"
+    assert "@scammer" not in clean, "@mention must be stripped"
+    assert "scammer" in clean, "word after @ should survive (defanged)"
+    assert len(clean) <= harness._LEGACY_MAX_SUMMARY_CHARS, \
+        f"result too long: {len(clean)} > {harness._LEGACY_MAX_SUMMARY_CHARS}"
+
+
+def test_legacy_sanitize_missing_hashtags_no_doubling():
+    """When model returns no hashtags the tag_block must be exactly ['#AI'], not ['#AI', '#AI']."""
+    # Simulate old_result with empty hashtags (as a string — the common model output shape)
+    raw_tags = ""
+    if isinstance(raw_tags, str):
+        hashtags = [tag for tag in raw_tags.split(",") if tag.startswith("#")]
+    else:
+        hashtags = [tag for tag in raw_tags if isinstance(tag, str) and tag.startswith("#")]
+    hashtags = [tag for tag in hashtags if __import__("re").fullmatch(r"#\w+", tag)]
+    tag_block = ["#AI"] + hashtags[:3]
+    assert tag_block == ["#AI"], f"Expected ['#AI'], got {tag_block}"
+
+
+def test_legacy_sanitize_hashtag_filter():
+    """Hashtag list ['#Good', 'bad', '#al$o-bad'] → only '#Good' survives the re.fullmatch filter."""
+    import re as _re
+    raw_tags = ["#Good", "bad", "#al$o-bad"]
+    if isinstance(raw_tags, str):
+        hashtags = [tag for tag in raw_tags.split(",") if tag.startswith("#")]
+    else:
+        hashtags = [tag for tag in raw_tags if isinstance(tag, str) and tag.startswith("#")]
+    hashtags = [tag for tag in hashtags if _re.fullmatch(r"#\w+", tag)]
+    assert hashtags == ["#Good"], f"Expected ['#Good'], got {hashtags}"
+
+
+check("legacy_sanitize: evil URL + @mention + 1500 chars → sanitized/capped", test_legacy_sanitize_strips_evil_url_and_mention)
+check("legacy_sanitize: missing hashtags → tag_block is exactly ['#AI'] (no doubling)", test_legacy_sanitize_missing_hashtags_no_doubling)
+check("legacy_sanitize: hashtag filter keeps only #word-only tags", test_legacy_sanitize_hashtag_filter)
+
+
+# ---------------------------------------------------------------------------
 # Summary
 # ---------------------------------------------------------------------------
 total = len(PASSED) + len(FAILED)

@@ -162,7 +162,7 @@ def test_pipeline_passes_final_key_to_poster():
     resp, poster_called, calls = run_pipeline_with(
         {"statusCode": 200, "body": json.dumps(
             {"article_count": 1, "has_summaries": True,
-             "article_titles": ["T"], "hashtags": [], "chunk_size": 1,
+             "article_titles": ["T"], "tweet_counts": [], "chunk_size": 1,
              "final_key": "out/summarizer/final_summarized_RUN.json"})}
     )
     assert resp["statusCode"] == 200, resp

@@ -110,13 +110,14 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
     url = article.get("url", "")
     summary = sanitize_summary(article.get(variant, ""), allowed_url=url)
 
-    from utils.thread_contract import MIN_TWEETS, TWEET_MAX, sanitize_tweet
+    from utils.thread_contract import MIN_TWEETS, TWEET_MAX, HOOK_MAX, sanitize_tweet
 
     tweets = article.get("tweets")
     if isinstance(tweets, list) and tweets:
         thread = [sanitize_tweet(t, allowed_url=url) for t in tweets]
         thread[0] = sanitize_tweet(thread[0], allowed_url="")
         ok = (len(thread) >= MIN_TWEETS and all(thread)
+              and len(thread[0]) <= HOOK_MAX
               and all(len(t) <= TWEET_MAX for t in thread) and url in thread[-1])
         if not ok:
             logger.warning("Contract tweets failed transit re-check; using summary fallback.")

@@ -431,5 +431,110 @@ check("render http only in hrefs", test_render_http_only_in_hrefs)
 check("render milestone current=42", test_render_milestone_with_current)
 check("render milestone current=None", test_render_milestone_none_current)
 
+# ── Reporter Lambda tests ─────────────────────────────────────────────────────
+print("[8] reporter: lambda handler")
+
+import json  # noqa: E402 — needed for reporter tests (not imported at top of this file)
+
+# Set up envs and path for reporter lambda BEFORE import
+os.environ.setdefault("MEMORY_OUTPUT_PREFIX", "out/memory/")
+os.environ.setdefault("POSTED_LEDGER_FILE", "posted_library.json")
+os.environ.setdefault("SCORED_OUTPUT_PREFIX", "out/scored/")
+os.environ.setdefault("REPORTS_OUTPUT_PREFIX", "out/reports/")
+os.environ.setdefault("REPORT_TOPIC_ARN", "arn:fake:report-topic")
+
+sys.path.insert(0, str(REPO / "lambda" / "reporter"))
+
+# Re-import FAKE_S3 / FAKE_SNS so tests can inspect/reset them
+from stubs import FAKE_S3, FAKE_SNS  # noqa: E402
+
+import reporter_lambda  # noqa: E402
+
+
+def test_reporter_happy_path():
+    """Happy path: ledger with 2 entries + 3 sidecar keys → 200, HTML written, SNS published."""
+    FAKE_S3.store.clear()
+    FAKE_SNS.published.clear()
+
+    # Seed ledger: two full entries (one with follower_count chain)
+    ledger = {
+        "https://arxiv.org/abs/2607.00001": {
+            "title": "First Paper",
+            "posted_at": "2026-07-01T10:00:00",
+            "composite": 7.0,
+            "buzz": None,
+            "buzz_raw": None,
+            "query_source": ["agents"],
+            "follower_count": 100,
+            "tweet_count": 3,
+            "status": "posted",
+        },
+        "https://arxiv.org/abs/2607.00002": {
+            "title": "Second Paper",
+            "posted_at": "2026-07-02T10:00:00",
+            "composite": 8.0,
+            "buzz": 7.0,
+            "buzz_raw": {"hf_upvotes": 50},
+            "query_source": ["agents"],
+            "follower_count": 115,
+            "tweet_count": 5,
+            "status": "posted",
+        },
+    }
+    ledger_key = f"{reporter_lambda.MEMORY_OUTPUT_PREFIX}{reporter_lambda.POSTED_LEDGER_FILE}"
+    FAKE_S3.store[ledger_key] = json.dumps(ledger).encode()
+
+    # Seed 3 sidecar keys under scored prefix
+    for i in range(1, 4):
+        FAKE_S3.listing = [
+            {"Key": f"out/scored/scored_candidates_2026-07-0{i}.json"}
+            for i in range(1, 4)
+        ]
+
+    resp = reporter_lambda.handler({}, None)
+    assert resp["statusCode"] == 200, f"expected 200, got {resp}"
+
+    body = json.loads(resp["body"])
+    assert body["posts"] == 2, f"expected 2 posts, got {body['posts']}"
+
+    # HTML object written under reports prefix
+    reports_keys = [k for k in FAKE_S3.store if k.startswith("out/reports/") and k.endswith(".html")]
+    assert reports_keys, "no HTML object written under out/reports/"
+    html_bytes = FAKE_S3.store[reports_keys[0]]
+    html_str = html_bytes if isinstance(html_bytes, str) else html_bytes.decode("utf-8")
+    assert "<html" in html_str.lower(), "report must contain <html"
+
+    # SNS: exactly one publish with presigned URL and "2" posts
+    assert len(FAKE_SNS.published) == 1, f"expected 1 SNS publish, got {len(FAKE_SNS.published)}"
+    msg = FAKE_SNS.published[0]
+    assert msg["Subject"].startswith("[report]"), f"bad subject: {msg['Subject']}"
+    assert "fake-presigned" in msg["Message"], "digest must contain presigned URL"
+    assert "2" in msg["Message"], "digest must mention post count (2)"
+
+
+def test_reporter_empty_world():
+    """Empty world: no ledger key, no sidecars → 200, report written, no crash."""
+    FAKE_S3.store.clear()
+    FAKE_S3.listing = []
+    FAKE_SNS.published.clear()
+
+    resp = reporter_lambda.handler({}, None)
+    assert resp["statusCode"] == 200, f"expected 200, got {resp}"
+
+    body = json.loads(resp["body"])
+    assert body["posts"] == 0, f"expected 0 posts, got {body['posts']}"
+
+    reports_keys = [k for k in FAKE_S3.store if k.startswith("out/reports/") and k.endswith(".html")]
+    assert reports_keys, "no HTML object written under out/reports/ in empty-world case"
+
+    assert len(FAKE_SNS.published) == 1, "must still publish digest in empty-world case"
+    msg = FAKE_SNS.published[0]
+    # digest must mention 0 posts
+    assert "0" in msg["Message"], f"digest must mention 0: {msg['Message']}"
+
+
+check("reporter happy path: HTML written + SNS presigned URL + 2 posts", test_reporter_happy_path)
+check("reporter empty world: 200 + HTML written + digest published", test_reporter_empty_world)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

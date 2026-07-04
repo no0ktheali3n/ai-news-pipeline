@@ -52,6 +52,10 @@ class FakeS3:
 
         return P()
 
+    def generate_presigned_url(self, op, Params=None, ExpiresIn=3600):
+        key = (Params or {}).get("Key", "")
+        return f"https://fake-presigned/{key}"
+
 
 FAKE_S3 = FakeS3()
 

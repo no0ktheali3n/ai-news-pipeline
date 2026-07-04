@@ -10,7 +10,7 @@ import random
 import time
 from uuid import uuid4
 from typing import List
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 # Constants (can be overridden)
 DEFAULT_INPUT_FILE = "test_output.json"
@@ -25,7 +25,8 @@ s3 = boto3.client("s3", region_name=AWS_REGION)
 
 LAMBDA_CONFIG = botocore.config.Config(
     read_timeout=600,  # Wait up to 10 minutes for response
-    connect_timeout=10
+    connect_timeout=10,
+    retries={"total_max_attempts": 1},  # a retried invoke = duplicate Bedrock spend
 )
 
 def split_into_chunks(data: List[dict], chunk_size: int) -> List[List[dict]]:
@@ -43,33 +44,36 @@ def invoke_lambda_for_chunk(lambda_client, chunk: List[dict], chunk_id: str, lam
     print(f"[Lambda Invoke] Chunk {chunk_id} invoked with {len(chunk)} articles.")
     return response
 
+MAX_SCRAPE_AGE_HOURS = float(os.getenv("MAX_SCRAPE_AGE_HOURS", "6"))
+
 def get_latest_scraper_key(prefix: str = "ai-research-pipeline/output/scraper/") -> str:
-    response = s3.list_objects_v2(Bucket=S3_BUCKET, Prefix=prefix)
-
-    contents = response.get("Contents", [])
-    print(f"[📂] Found {len(contents)} objects under prefix '{prefix}'")
-
-    if not contents:
-        raise FileNotFoundError(f"No scraper output files found under prefix: {prefix}")
-
-    # Filter only valid .json files
-    json_files = [obj for obj in contents if obj["Key"].endswith(".json")]
+    """Fallback only — the pipeline normally passes the exact scraper_key.
+    Paginated (a single list_objects_v2 page caps at 1000 keys, and page one
+    of a big prefix is the OLDEST keys) and freshness-guarded so a broken
+    scraper can't silently feed a stale scrape downstream."""
+    paginator = s3.get_paginator("list_objects_v2")
+    json_files = []
+    for page in paginator.paginate(Bucket=S3_BUCKET, Prefix=prefix):
+        json_files.extend(obj for obj in page.get("Contents", []) if obj["Key"].endswith(".json"))
 
     if not json_files:
-        print(f"[⚠️] Found files, but none ended in .json. Keys: {[obj['Key'] for obj in contents]}")
-        raise FileNotFoundError("No .json files found in scraper output.")
+        raise FileNotFoundError(f"No scraper output .json files found under prefix: {prefix}")
 
-    # Sort to get the most recent .json
-    sorted_objs = sorted(json_files, key=lambda x: x["LastModified"], reverse=True)
-    latest_key = sorted_objs[0]["Key"]
-    print(f"[✅] Latest scraper output file selected: {latest_key}")
-    return latest_key
+    latest = max(json_files, key=lambda x: x["LastModified"])
+    age = datetime.now(timezone.utc) - latest["LastModified"]
+    if age > timedelta(hours=MAX_SCRAPE_AGE_HOURS):
+        raise RuntimeError(
+            f"Latest scrape {latest['Key']} is {age} old (limit {MAX_SCRAPE_AGE_HOURS}h) — "
+            f"refusing to summarize stale input. Upstream scraper is likely broken."
+        )
+    print(f"[✅] Latest scraper output file selected: {latest['Key']}")
+    return latest["Key"]
 
-def orchestrate_chunks(chunk_size=DEFAULT_CHUNK_SIZE, lambda_name=DEFAULT_LAMBDA_NAME):
+def orchestrate_chunks(chunk_size=DEFAULT_CHUNK_SIZE, lambda_name=DEFAULT_LAMBDA_NAME, scraper_key=None):
     run_id = datetime.utcnow().strftime("%Y%m%d_%H%M%S")  # Unique run ID
 
-    # Download scraper input
-    scraper_key = get_latest_scraper_key()
+    # Prefer the exact file this pipeline run scraped
+    scraper_key = scraper_key or get_latest_scraper_key()
     tmp_input_path = "/tmp/scraper_input.json"
     s3.download_file(S3_BUCKET, scraper_key, tmp_input_path)
 
@@ -79,23 +83,32 @@ def orchestrate_chunks(chunk_size=DEFAULT_CHUNK_SIZE, lambda_name=DEFAULT_LAMBDA
     chunks = split_into_chunks(articles, chunk_size)
     lambda_client = boto3.client("lambda", config=LAMBDA_CONFIG)
 
+    # Synchronous, sequential invocation. The previous async 'Event' fan-out +
+    # S3 polling meant a failing chunk was unobservable (its 500 went nowhere),
+    # AWS's async retries duplicated Bedrock spend, and the orchestrator was
+    # billed for 15s-interval polling. At scheduled scale (chunk_size=1) there
+    # is no parallelism to lose.
     for idx, chunk in enumerate(chunks):
         chunk_id = f"chunk-{idx+1}-{uuid4()}"
-        lambda_client.invoke(
+        response = lambda_client.invoke(
             FunctionName=lambda_name,
-            InvocationType='Event',
+            InvocationType='RequestResponse',
             Payload=json.dumps({
                 "chunk_id": chunk_id,
                 "articles": chunk,
                 "run_id": run_id
             }).encode('utf-8')
         )
-        time.sleep(3 + random.uniform(0.5, 2.5))  # throttle safety
+        payload = json.loads(response["Payload"].read().decode("utf-8"))
+        if response.get("FunctionError") or not (
+            isinstance(payload, dict) and payload.get("statusCode") == 200
+        ):
+            raise RuntimeError(
+                f"Summarizer chunk {idx + 1}/{len(chunks)} ({chunk_id}) failed: {str(payload)[:400]}"
+            )
+        print(f"[✅] Chunk {idx + 1}/{len(chunks)} summarized.")
 
-    print(f"✅ Triggered {len(chunks)} Lambda invocations.")
     return run_id, len(chunks)  # 🔁 return for reassembly
-
-    print(f"✅ Triggered {len(chunks)} Lambda invocations.")
 
 def extract_chunk_index(key):
     match = re.search(r'chunk-(\d+)', key)

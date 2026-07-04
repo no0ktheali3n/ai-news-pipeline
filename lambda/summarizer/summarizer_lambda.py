@@ -50,6 +50,19 @@ def handler(event, context):
 
         summarized = summarize_articles()
 
+        # A failed run must not produce an S3 object: an empty (or missing) chunk
+        # would still count as "newest summary" downstream and get posted/frozen.
+        if not summarized:
+            print(f"[⛔] No articles summarized for run {run_id} chunk {chunk_id}; not uploading.")
+            return {
+                "statusCode": 500,
+                "body": json.dumps({
+                    "error": "Summarization produced no results (check BEDROCK_MODEL_ID and Bedrock IAM permissions)",
+                    "run_id": run_id,
+                    "chunk_id": chunk_id
+                })
+            }
+
         output_key = f"{SUMMARIZER_OUTPUT_PREFIX}summarized_{run_id}_{chunk_id}.json"
         
         # Upload chunk result to S3
@@ -67,4 +80,6 @@ def handler(event, context):
         }
 
     except Exception as e:
+        import traceback
+        print(f"[❌] Summarizer chunk failed: {e}\n{traceback.format_exc()}")
         return {"statusCode": 500, "body": json.dumps({"error": str(e)})}

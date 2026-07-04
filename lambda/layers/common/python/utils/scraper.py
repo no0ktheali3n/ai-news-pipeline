@@ -7,7 +7,6 @@ print("Working dir:", os.getcwd())
 print("sys.path includes:", sys.path)
 
 import requests
-import pandas as pd
 from bs4 import BeautifulSoup
 from utils.user_agents import get_random_user_agent
 from utils.request_helpers import random_delay
@@ -34,8 +33,6 @@ class ScraperClient:
                 if i < self.start_scrape:
                     continue  # Skip this article
 
-                random_delay()
-
                 link_tag = result.find("p", class_="list-title").find("a")
                 title_tag = result.find("p", class_="title is-5 mathjax")
                 authors_tag = result.find("p", class_="authors")
@@ -56,9 +53,7 @@ class ScraperClient:
                 if self.limit and len(articles) >= self.limit:
                     break
 
-            #append articles list to pandas DataFrame and convert to dict
-            df = pd.DataFrame(articles)
-            return df.to_dict(orient="records")
+            return articles
 
         except Exception as e:
             print(f"Error scraping {self.target_url}: {e}")
@@ -66,7 +61,6 @@ class ScraperClient:
 
 if __name__ == "__main__":
     print("Interpreter path:", sys.executable)
-    print("Pandas version:", pd.__version__)
 
     # Example: ArXiv AI & CS filtered search
     url = "https://arxiv.org/search/?query=artificial+intelligence&searchtype=all&abstracts=show&order=-announced_date_first&size=200&classification-computer_science=y" #overwrites default url

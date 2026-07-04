@@ -1,7 +1,10 @@
+import os
 import requests
 
-#constants
-MAKE_WEBHOOK_URL = "https://hook.us2.make.com/tyy2u5jewfu7y215nudb6fcxaf5awu0y" 
+# The webhook URL is secret-ish (anyone holding it can post into the Slack
+# flow) — configure via env; the fallback keeps old deployments working until
+# the URL is rotated.
+MAKE_WEBHOOK_URL = os.getenv("MAKE_WEBHOOK_URL") or "https://hook.us2.make.com/tyy2u5jewfu7y215nudb6fcxaf5awu0y"
 
 def notify_make_pipeline_status(articles=None, message=None):
     """
@@ -25,7 +28,7 @@ def notify_make_pipeline_status(articles=None, message=None):
     headers = {"Content-Type": "application/json"}
 
     try:
-        response = requests.post(MAKE_WEBHOOK_URL, json=data, headers=headers)
+        response = requests.post(MAKE_WEBHOOK_URL, json=data, headers=headers, timeout=10)
         response.raise_for_status()
         print("Make webhook sent.")
     except requests.exceptions.RequestException as e:

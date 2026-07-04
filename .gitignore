@@ -40,3 +40,7 @@ tweets_output.csv
 # old requirements
 requirements-beforechill.txt
 requirements-windev.txt
+# --- hygiene additions (2026-07-03) ---
+.venv/
+snapshots/
+.pytest_cache/

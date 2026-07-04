@@ -22,6 +22,25 @@ logger = get_logger("poster")
 
 # Constants
 DEFAULT_HASHTAGS = ["#AI"]
+
+import re
+
+_URL_RE = re.compile(r"https?://\S+")
+_MENTION_RE = re.compile(r"(?<!\w)@(\w+)")
+MAX_SUMMARY_CHARS = 1200
+
+
+def sanitize_summary(summary, allowed_url=""):
+    """Model output goes to Twitter verbatim, and the model reads untrusted
+    scraped text — strip links we didn't choose and @-mentions so a poisoned
+    abstract can't make the account link out or ping people."""
+    cleaned = summary
+    for url in set(_URL_RE.findall(cleaned)):
+        if allowed_url and url.rstrip(".,;)") == allowed_url:
+            continue
+        cleaned = cleaned.replace(url, "")
+    cleaned = _MENTION_RE.sub(r"\1", cleaned)  # drop the @, keep the word
+    return " ".join(cleaned.split())[:MAX_SUMMARY_CHARS]
 SUMMARY_PATH = "/tmp/summarized_output.json"
 #SUMMARY_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "summarized_output.json"))
 ARCHIVE_DIR = "/tmp/archive"
@@ -36,6 +55,10 @@ REQUIRED_ENV_VARS = [
 def validate_env_vars(skip_if_dry_run=False):
     if skip_if_dry_run:
         return
+    # Secrets load lazily (Secrets Manager) — fetch before checking the env,
+    # otherwise validation fails on every cold start that intends to post.
+    from utils.tweepy_client import _ensure_twitter_creds
+    _ensure_twitter_creds()
     missing = [key for key in REQUIRED_ENV_VARS if not os.getenv(key)]
     if missing:
         raise EnvironmentError(f"Missing required environment variables: {', '.join(missing)}")
@@ -59,7 +82,11 @@ def archive_output_file():
     os.rename(SUMMARY_PATH, archive_path)
     logger.info(f"Archived summarized_output.json to {archive_path}")
 
-def run_posting_pipeline(variant="summary", limit=0, dry_run=False, confirm_post=False, start_index=0):
+def run_posting_pipeline(variant="summary", limit=0, dry_run=False, confirm_post=False, start_index=0, on_posted=None):
+    """Posts up to `limit` articles. `on_posted(metadata)` fires immediately
+    after each successful thread so callers can persist state (e.g. the posted
+    ledger) before the next article — a crash mid-run must not forget tweets
+    that already went out."""
     validate_env_vars(skip_if_dry_run=dry_run)
     articles = load_articles()
     results = []
@@ -68,24 +95,31 @@ def run_posting_pipeline(variant="summary", limit=0, dry_run=False, confirm_post
         logger.info(f"Posting Article {start_index + i + 1}: {article.get('title', '')[:60]}")
         metadata = post_thread(article, variant=variant, dry_run=dry_run)
         if metadata and not dry_run:
-            archive_output_file()
             logger.info(f"Appending metadata: {metadata}")
             results.append(metadata)
+            if on_posted:
+                on_posted(metadata)
+
+    # Archive once, after the loop — renaming inside the loop crashed the
+    # second article of any multi-post run (the file was already moved).
+    if results and not dry_run:
+        archive_output_file()
 
     return results
 
 # Post full summary as a thread
 def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
-    summary = article.get(variant, "")
     title = article.get("title", "")
     url = article.get("url", "")
+    summary = sanitize_summary(article.get(variant, ""), allowed_url=url)
 
     raw_tags = article.get("hashtags", "")
     if isinstance(raw_tags, str):
         hashtags = [tag for tag in raw_tags.split(",") if tag.startswith("#")]
     else:
         hashtags = [tag for tag in raw_tags if isinstance(tag, str) and tag.startswith("#")]
-    
+    hashtags = [tag for tag in hashtags if re.fullmatch(r"#\w+", tag)]  # no URLs/mentions smuggled in tags
+
     tag_block = DEFAULT_HASHTAGS + hashtags[:3]  # Limit to 3 hashtags
 
     thread = generate_tweet_thread(summary, title, url, tag_block)
@@ -105,6 +139,7 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
 
     tweet_ids = []
     reply_to = None
+    first_tweet_url = None
 
     for i, tweet in enumerate(thread):
         print(f"\n🌀 Posting tweet {i+1} of {len(thread)}...")
@@ -128,7 +163,10 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
         "url": url,
         "variant": variant,
         "tweet_ids": tweet_ids,
-        "thread_url": first_tweet_url
+        "thread_url": first_tweet_url,
+        "scores": article.get("scores"),
+        "composite": article.get("composite"),
+        "query_source": article.get("query_source"),
     }
 
 # CLI Interface
@@ -142,14 +180,6 @@ def main():
     if not args.dry_run:
         validate_env_vars()  # Only check secrets if we’re actually posting
 
-    articles = load_articles()
-
     run_posting_pipeline(variant=args.variant, limit=args.limit, dry_run=args.dry_run)
-
-    for i, article in enumerate(articles[:args.limit]):
-        print(f"\n=== Posting Article {i+1}: {article.get('title', '')[:60]} ===")
-        metadata = post_thread(article, variant=args.variant, dry_run=args.dry_run)
-        if metadata and not args.dry_run:
-            archive_output_file()
 
 

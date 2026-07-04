@@ -4,12 +4,14 @@ import os
 import sys
 import json
 import boto3
+import botocore.config
 import time
 import traceback
 
 # Setup environment paths
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from utils.logger import get_logger
+from utils.automations import notify_make_pipeline_status
 
 # Initialize logger
 logger = get_logger("pipeline")
@@ -21,12 +23,20 @@ SCRAPER_FUNCTION_NAME = os.getenv("SCRAPER_FUNCTION_NAME")
 SUMMARIZER_FUNCTION_NAME = os.getenv("SUMMARIZER_MAIN_FUNCTION_NAME")
 POSTER_FUNCTION_NAME = os.getenv("POSTER_FUNCTION_NAME")
 
-# Initialize Lambda client
-lambda_client = boto3.client("lambda", region_name=AWS_REGION)
+# Initialize Lambda client.
+# Default boto3 read timeout is 60s; summarizer-main legitimately runs for
+# minutes now that it actually waits for chunks. No retries: stage invokes
+# are not idempotent (a retried summarizer spawns duplicate Bedrock runs).
+LAMBDA_CONFIG = botocore.config.Config(
+    read_timeout=780,
+    connect_timeout=10,
+    retries={"total_max_attempts": 1},
+)
+lambda_client = boto3.client("lambda", region_name=AWS_REGION, config=LAMBDA_CONFIG)
 
 # Define expected parameters per function
 FUNCTION_PAYLOADS = {
-    "scraper": ["scrape_limit", "url", "skip_memory", "start_scrape"],
+    "scraper": ["scrape_limit", "url", "skip_memory", "start_scrape", "max_new_articles", "min_score"],
     "chunker": ["chunk_size"],
     "poster": ["dry_run", "post_limit", "start_index"]
 }
@@ -71,13 +81,24 @@ def handler(event, context):
         scraper_result = invoke_lambda(SCRAPER_FUNCTION_NAME, scraper_payload)
         logger.info("Waiting for scraper output to stabilize...")
 
-        #check for new articles and exit pipeline if none found
+        # Parse the scraper result: exact S3 key for the summarizer + new-article gate.
         skip_memory = event.get("skip_memory", False)
-        if not skip_memory and scraper_result and isinstance(scraper_result, dict) and 'body' in scraper_result:
+        scraper_key = None
+        if scraper_result and isinstance(scraper_result, dict) and 'body' in scraper_result:
             try:
                 scraper_body = json.loads(scraper_result['body'])
+            except (json.JSONDecodeError, TypeError) as e:
+                logger.error(f"Failed to parse scraper result body: {e}")
+                notify_make_pipeline_status(message=f"⚠️ AI research pipeline aborted: unparsable scraper result ({e})")
+                return {
+                    "statusCode": 500,
+                    "body": json.dumps({"error": f"Failed to parse scraper result body: {e}"})
+                }
+
+            scraper_key = scraper_body.get('s3_key')
+
+            if not skip_memory:
                 new_count = scraper_body.get('new_count', 0)
-        
                 if new_count == 0:
                     logger.info("No new articles found after memory check, aborting pipeline.")
                     return {
@@ -88,36 +109,70 @@ def handler(event, context):
                             "new_count": 0
                         })
                     }
-        
                 logger.info(f"Found {new_count} new articles to process")
-            except (json.JSONDecodeError, TypeError) as e:
-                logger.error(f"Failed to parse scraper result body: {e}")
-        elif skip_memory:
-            logger.info("Article checking bypassed with skip_memory, continuing pipeline...")
-
-        time.sleep(5)
+            else:
+                logger.info("Article checking bypassed with skip_memory, continuing pipeline...")
 
         # --- Summarizer Stage (Chunker) ---
+        # Hand the summarizer the exact file this run scraped (fallback:
+        # freshness-guarded newest-file lookup inside the chunker).
         chunker_payload = build_payload("chunker", event)
+        if scraper_key:
+            chunker_payload["scraper_key"] = scraper_key
         logger.info(f"Summarizing articles (payload: {chunker_payload})")
         chunker_result = invoke_lambda(SUMMARIZER_FUNCTION_NAME, chunker_payload)
         logger.info("Waiting for summarizer output to stabilize...")
-        if chunker_result and isinstance(chunker_result, dict) and 'body' in chunker_result:
-            try:
-                # Parse the JSON string in the body field
-                parsed_body = json.loads(chunker_result['body'])
-                logger.info(f"Successfully parsed summarizer result body with keys: {list(parsed_body.keys())}")
-        
-                # Replace the original nested result with the parsed data
-                chunker_result = parsed_body
-            except (json.JSONDecodeError, TypeError) as e:
-                logger.error(f"Failed to parse summarizer result body: {e}")
-        time.sleep(5)
+
+        # The poster only runs on a verified-fresh summary. Anything else aborts
+        # loudly — silently posting the most recent S3 object is how the same
+        # article got tweeted for months after the summarizer broke.
+        def abort_pipeline(reason):
+            logger.error(f"❌ Aborting pipeline: {reason}")
+            notify_make_pipeline_status(message=f"⚠️ AI research pipeline aborted: {reason}")
+            # Email via SNS — the webhook channel is best-effort and unmonitored
+            topic_arn = os.getenv("ALERT_TOPIC_ARN")
+            if topic_arn:
+                try:
+                    boto3.client("sns", region_name=AWS_REGION).publish(
+                        TopicArn=topic_arn,
+                        Subject="AI research pipeline failure",
+                        Message=reason[:8000],
+                    )
+                except Exception as sns_err:
+                    logger.error(f"SNS alert failed: {sns_err}")
+            return {
+                "statusCode": 500,
+                "body": json.dumps({"error": reason})
+            }
+
+        if not (chunker_result and isinstance(chunker_result, dict) and 'body' in chunker_result):
+            return abort_pipeline(f"Summarizer returned no parsable result: {chunker_result}")
+
+        if chunker_result.get('statusCode') != 200:
+            return abort_pipeline(f"Summarizer failed: {chunker_result.get('body')}")
+
+        try:
+            parsed_body = json.loads(chunker_result['body'])
+            logger.info(f"Successfully parsed summarizer result body with keys: {list(parsed_body.keys())}")
+            chunker_result = parsed_body
+        except (json.JSONDecodeError, TypeError) as e:
+            return abort_pipeline(f"Failed to parse summarizer result body: {e}")
+
+        if not chunker_result.get('article_count') or not chunker_result.get('has_summaries'):
+            return abort_pipeline(
+                f"Summarizer produced no usable summaries "
+                f"(article_count={chunker_result.get('article_count')}, "
+                f"has_summaries={chunker_result.get('has_summaries')})"
+            )
 
         # --- Poster Stage ---
         poster_payload = build_payload("poster", event)
+        if chunker_result.get('final_key'):
+            poster_payload["summary_key"] = chunker_result["final_key"]
         logger.info(f"Formatting and posting summaries (payload: {poster_payload})")
-        invoke_lambda(POSTER_FUNCTION_NAME, poster_payload)
+        poster_result = invoke_lambda(POSTER_FUNCTION_NAME, poster_payload)
+        if not (isinstance(poster_result, dict) and poster_result.get('statusCode') == 200):
+            return abort_pipeline(f"Poster failed: {str(poster_result)[:500]}")
 
         logger.info("Unified pipeline run completed successfully!")
 

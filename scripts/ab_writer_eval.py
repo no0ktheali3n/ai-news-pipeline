@@ -170,7 +170,7 @@ def latest_sidecar(s3, bucket: str, prefix: str) -> list[dict]:
 
 def top_n(candidates: list[dict], n: int = 8) -> list[dict]:
     """Return top-n candidates by composite score, skipping empty snippets."""
-    filtered = [c for c in candidates if c.get("snippet")]
+    filtered = [c for c in candidates if (c.get("snippet") or "").strip()]
     filtered.sort(key=lambda c: c.get("composite", 0.0), reverse=True)
     return filtered[:n]
 
@@ -260,10 +260,14 @@ def generate_pair(client, article: dict) -> tuple[list[str], list[str], Optional
 # Report rendering
 # ---------------------------------------------------------------------------
 
-def render_report(pairs: list[dict], date: str) -> str:
+def render_report(pairs: list[dict], date: str, total_attempted: int | None = None) -> str:
     """Build a blind markdown report — Version 1 / Version 2, no OLD/NEW labels."""
+    n_gen = len(pairs)
+    n_total = total_attempted if total_attempted is not None else n_gen
     lines = [
         f"# A/B Writer Evaluation — {date}",
+        "",
+        f"> {n_gen} of {n_total} pairs generated.",
         "",
         "> **Blind review**: Version 1 and Version 2 labels are randomized per pair.",
         "> The mapping (which version is OLD vs NEW) is recorded only in the companion JSON.",
@@ -280,7 +284,7 @@ def render_report(pairs: list[dict], date: str) -> str:
             "",
         ]
         if pair.get("new_contract_error"):
-            lines += [f"> ⚠️ Contract error on NEW side: `{pair['new_contract_error']}`", ""]
+            lines += ["> ⚠️ One version in this pair had a formatting deviation; tweets are shown exactly as generated.", ""]
 
         lines += ["### Version 1", ""]
         for tweet in v1_thread:
@@ -319,6 +323,11 @@ def main() -> None:
         required=True,
         help="Output date label (YYYY-MM-DD); used in output filenames",
     )
+    parser.add_argument(
+        "--region",
+        default=os.environ.get("AWS_DEFAULT_REGION", "us-east-1"),
+        help="AWS region for Bedrock Runtime (default: AWS_DEFAULT_REGION env var or us-east-1)",
+    )
     args = parser.parse_args()
 
     out_dir = REPO / "docs" / "ab-test"
@@ -327,32 +336,38 @@ def main() -> None:
     report_path = out_dir / f"{args.date}-writer-report.md"
 
     s3 = boto3.client("s3")
-    bedrock = boto3.client("bedrock-runtime", region_name="us-east-1")
+    bedrock = boto3.client("bedrock-runtime", region_name=args.region)
 
     print(f"[harness] Fetching candidates from s3://{args.bucket}/{args.prefix}")
     candidates = latest_sidecar(s3, args.bucket, args.prefix)
     selected = top_n(candidates, n=args.n)
     print(f"[harness] Selected {len(selected)} articles for evaluation")
 
-    pairs: list[dict] = []
-    for pair_index, article in enumerate(selected):
-        print(f"[harness] Generating pair {pair_index + 1}/{len(selected)}: {article.get('title', '')[:60]}")
-        old_thread, new_thread, error = generate_pair(bedrock, article)
-        pair = make_pair_dict(
-            pair_index=pair_index,
-            article=article,
-            old_thread=old_thread,
-            new_thread=new_thread,
-            new_contract_error=error,
-        )
-        pairs.append(pair)
+    pairs, failures = [], []
+    for i, cand in enumerate(selected):
+        print(f"[harness] Generating pair {i + 1}/{len(selected)}: {cand.get('title', '')[:60]}")
+        try:
+            old_thread, new_thread, error = generate_pair(bedrock, cand)
+            pair = make_pair_dict(
+                pair_index=i,
+                article=cand,
+                old_thread=old_thread,
+                new_thread=new_thread,
+                new_contract_error=error,
+            )
+            pairs.append(pair)
+        except Exception as e:
+            print(f"WARN: pair {i} ({cand.get('title', '')[:40]!r}) failed: {e}", file=sys.stderr)
+            failures.append({"index": i, "title": cand.get("title"), "url": cand.get("url"),
+                             "error": f"{type(e).__name__}: {e}"})
 
-    # Write JSON output
-    pairs_path.write_text(json.dumps(pairs, indent=2, ensure_ascii=False), encoding="utf-8")
+    # Write JSON output (dict with pairs + failures)
+    output_doc = {"pairs": pairs, "failures": failures}
+    pairs_path.write_text(json.dumps(output_doc, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"[harness] Pairs JSON written: {pairs_path}")
 
     # Write blind markdown report
-    report_path.write_text(render_report(pairs, args.date), encoding="utf-8")
+    report_path.write_text(render_report(pairs, args.date, total_attempted=len(selected)), encoding="utf-8")
     print(f"[harness] Blind report written: {report_path}")
 
 

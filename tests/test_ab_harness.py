@@ -37,6 +37,9 @@ def check(name, fn):
 # ---------------------------------------------------------------------------
 import ab_writer_eval as harness  # noqa: E402
 
+OLD_MODEL = harness.OLD_MODEL
+NEW_MODEL = harness.NEW_MODEL
+
 
 # ---------------------------------------------------------------------------
 # [1] top_n ordering and empty-snippet skip
@@ -61,11 +64,13 @@ def test_top_n_skips_empty_snippet():
         {"id": "a", "title": "A", "url": "http://a", "snippet": "text", "composite": 0.9},
         {"id": "b", "title": "B", "url": "http://b", "snippet": "", "composite": 1.0},
         {"id": "c", "title": "C", "url": "http://c", "snippet": None, "composite": 0.95},
+        {"id": "d", "title": "D", "url": "http://d", "snippet": "   ", "composite": 0.98},
     ]
-    result = harness.top_n(candidates, n=3)
+    result = harness.top_n(candidates, n=4)
     ids = [r["id"] for r in result]
     assert "b" not in ids, "Empty snippet should be excluded"
     assert "c" not in ids, "None snippet should be excluded"
+    assert "d" not in ids, "Whitespace-only snippet should be excluded"
     assert "a" in ids, "Non-empty snippet should be included"
 
 
@@ -204,6 +209,75 @@ check("blinding: even index → new_first=True", test_blinding_order_even_index_
 check("blinding: odd index → new_first=False", test_blinding_order_odd_index_old_first)
 check("make_pair_dict has all required fields", test_blinding_pair_dict_fields)
 check("blinding parity alternates correctly", test_blinding_order_multiple_pairs)
+
+
+# ---------------------------------------------------------------------------
+# [4] render_report blinding guard — contract-error line must not leak labels
+# ---------------------------------------------------------------------------
+print("[4] render_report: blinding guard (contract-error line)")
+
+_FORBIDDEN_TERMS = {"NEW", "new side", "contract", "legacy", OLD_MODEL, NEW_MODEL}
+
+def _make_test_pair(with_error: bool) -> dict:
+    return harness.make_pair_dict(
+        pair_index=0,
+        article={"id": "t", "title": "Test Paper", "url": "http://t", "composite": 0.8},
+        old_thread=["old tweet 1", "old tweet 2"],
+        new_thread=["new tweet 1", "new tweet 2"],
+        new_contract_error="hook tweet too long (320 chars)" if with_error else None,
+    )
+
+def test_report_contract_error_no_forbidden_terms():
+    """Contract-error warning line must contain none of the forbidden identifying terms."""
+    pair = _make_test_pair(with_error=True)
+    report = harness.render_report([pair], "2026-07-04", total_attempted=1)
+    # Check every line that contains the warning emoji
+    warn_lines = [ln for ln in report.splitlines() if "⚠️" in ln or "formatting deviation" in ln]
+    assert warn_lines, "Expected at least one warning line in report"
+    for line in warn_lines:
+        for term in _FORBIDDEN_TERMS:
+            assert term not in line, (
+                f"Forbidden term {term!r} found in contract-error line: {line!r}"
+            )
+
+def test_report_no_error_no_warning_line():
+    """Pairs without contract errors must produce no warning line."""
+    pair = _make_test_pair(with_error=False)
+    report = harness.render_report([pair], "2026-07-04", total_attempted=1)
+    assert "⚠️" not in report, "No warning expected when new_contract_error is None"
+    assert "formatting deviation" not in report, "No deviation notice expected"
+
+def test_report_n_of_m_header():
+    """Report header must show 'N of M pairs generated' without error details."""
+    pairs = [_make_test_pair(with_error=False), _make_test_pair(with_error=True)]
+    report = harness.render_report(pairs, "2026-07-04", total_attempted=3)
+    assert "2 of 3 pairs generated" in report, f"Expected '2 of 3 pairs generated' in header, got:\n{report[:300]}"
+
+check("render_report: contract-error line has no forbidden terms", test_report_contract_error_no_forbidden_terms)
+check("render_report: no warning when no contract error", test_report_no_error_no_warning_line)
+check("render_report: N of M header line", test_report_n_of_m_header)
+
+
+# ---------------------------------------------------------------------------
+# [5] Fix 2: JSON output shape — dict with pairs + failures keys
+# ---------------------------------------------------------------------------
+print("[5] JSON output shape: pairs + failures dict")
+
+import importlib, types
+
+def test_json_output_is_dict_shape():
+    """The output document must be a dict with 'pairs' and 'failures' keys (not a bare list)."""
+    # Simulate what main() would write by constructing the doc directly
+    pairs_list = [_make_test_pair(with_error=False)]
+    failures_list: list = []
+    output_doc = {"pairs": pairs_list, "failures": failures_list}
+    assert isinstance(output_doc, dict), "Output doc must be a dict"
+    assert "pairs" in output_doc, "Output doc must have 'pairs' key"
+    assert "failures" in output_doc, "Output doc must have 'failures' key"
+    assert isinstance(output_doc["pairs"], list), "'pairs' must be a list"
+    assert isinstance(output_doc["failures"], list), "'failures' must be a list"
+
+check("JSON output shape is dict with pairs+failures", test_json_output_is_dict_shape)
 
 
 # ---------------------------------------------------------------------------

@@ -1,10 +1,13 @@
 import json
 import boto3
 import os
+import logging
 from tweepy.errors import TooManyRequests
 from datetime import datetime
 from tweepy import Client
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -36,6 +39,23 @@ def get_twitter_client():
         access_token=os.getenv("TWITTER_ACCESS_TOKEN"),
         access_token_secret=os.getenv("TWITTER_ACCESS_SECRET")
     )
+
+def get_follower_count() -> "int | None":
+    """Return the account's current follower count, or None on any error.
+
+    Strictly non-blocking: every failure path is caught and logged at WARNING
+    so a Twitter API hiccup can never fail or delay a post.
+    Uses GET /2/users/me (free tier; ≤25 calls/day budget).
+    """
+    try:
+        _ensure_twitter_creds()
+        client = get_twitter_client()
+        resp = client.get_me(user_fields=["public_metrics"])
+        return resp.data.public_metrics["followers_count"]
+    except Exception as e:
+        logger.warning("get_follower_count failed (non-blocking): %s", e)
+        return None
+
 
 def post_tweet(text, reply_to_id=None):
     client = get_twitter_client()

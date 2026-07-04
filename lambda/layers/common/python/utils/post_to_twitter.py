@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from utils.twitter_threading import generate_tweet_thread
-from utils.tweepy_client import post_tweet
+from utils.tweepy_client import post_tweet, get_follower_count
 from utils.logger import get_logger
 
 load_dotenv()
@@ -179,6 +179,11 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
         logger.info(f"Thread posted! View the first tweet: https://twitter.com/user/status/{tweet_ids[0]}")
         first_tweet_url = f"https://twitter.com/user/status/{tweet_ids[0]}"
 
+    # Capture follower count ONCE after the posting loop completes (both full
+    # and partial paths).  Strictly non-blocking: get_follower_count() swallows
+    # all errors and returns None so no API failure can affect posting.
+    follower_count = get_follower_count()
+
     return {
         "article_title": title,
         "url": url,
@@ -191,6 +196,8 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
         "buzz": article.get("buzz"),
         "buzz_raw": article.get("buzz_raw"),
         "status": status,
+        "tweet_count": len(tweet_ids),
+        "follower_count": follower_count,
     }
 
 # CLI Interface

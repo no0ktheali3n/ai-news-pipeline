@@ -20,9 +20,6 @@ load_dotenv()
 # Setup logger
 logger = get_logger("poster")
 
-# Constants
-DEFAULT_HASHTAGS = ["#AI"]
-
 import re
 
 _URL_RE = re.compile(r"https?://\S+")
@@ -113,16 +110,19 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
     url = article.get("url", "")
     summary = sanitize_summary(article.get(variant, ""), allowed_url=url)
 
-    raw_tags = article.get("hashtags", "")
-    if isinstance(raw_tags, str):
-        hashtags = [tag for tag in raw_tags.split(",") if tag.startswith("#")]
+    from utils.thread_contract import MIN_TWEETS, TWEET_MAX, sanitize_tweet
+
+    tweets = article.get("tweets")
+    if isinstance(tweets, list) and tweets:
+        thread = [sanitize_tweet(t, allowed_url=url) for t in tweets]
+        thread[0] = sanitize_tweet(thread[0], allowed_url="")
+        ok = (len(thread) >= MIN_TWEETS and all(thread)
+              and all(len(t) <= TWEET_MAX for t in thread) and url in thread[-1])
+        if not ok:
+            logger.warning("Contract tweets failed transit re-check; using summary fallback.")
+            thread = generate_tweet_thread(summary, title, url, [])
     else:
-        hashtags = [tag for tag in raw_tags if isinstance(tag, str) and tag.startswith("#")]
-    hashtags = [tag for tag in hashtags if re.fullmatch(r"#\w+", tag)]  # no URLs/mentions smuggled in tags
-
-    tag_block = DEFAULT_HASHTAGS + hashtags[:3]  # Limit to 3 hashtags
-
-    thread = generate_tweet_thread(summary, title, url, tag_block)
+        thread = generate_tweet_thread(summary, title, url, [])
 
     print("\n=== Tweet Thread Preview ===")
     for i, tweet in enumerate(thread):

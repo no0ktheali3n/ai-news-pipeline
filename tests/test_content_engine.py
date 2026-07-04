@@ -537,5 +537,78 @@ check("writer produces validated tweets", test_writer_produces_validated_tweets)
 check("writer contract violation falls back to summary-only", test_writer_contract_violation_falls_back_to_summary_only)
 check("summarize_articles output carries tweets and provenance", test_summarize_articles_output_carries_tweets_and_provenance)
 
+print("\n[10] poster: thread contract")
+
+import utils.post_to_twitter as _ptt  # noqa: E402 — imported once, reused below
+
+_VALID_URL = "https://arxiv.org/abs/2607.00099"
+
+
+def test_contract_tweets_posted_verbatim_no_hashtags():
+    """Valid contract tweets are posted byte-for-byte (after sanitization); no # anywhere."""
+    captured = []
+    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    art = {
+        "title": "Hook title",
+        "url": _VALID_URL,
+        "summary": "Fallback summary sentence one. Sentence two.",
+        "tweets": [
+            "First tweet hook sentence for the thread.",
+            "Second tweet with more detail about the paper.",
+            f"Third and final tweet. {_VALID_URL}",
+        ],
+    }
+    md = _ptt.post_thread(art, dry_run=False)
+    assert md is not None, "post_thread must return metadata"
+    assert captured == art["tweets"], f"posted texts differ: {captured}"
+    assert all("#" not in t for t in captured), f"hashtag found in contract path: {captured}"
+    assert captured[0] == art["tweets"][0], "hook tweet (tweet 1) must be verbatim"
+
+
+def test_missing_tweets_falls_back_to_summary_no_hashtags():
+    """tweets=None triggers summary fallback; final tweet has url; no # anywhere."""
+    captured = []
+    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    art = {
+        "title": "Paper Title",
+        "url": _VALID_URL,
+        "summary": "Sentence one about the paper. Sentence two with more info.",
+        "tweets": None,
+    }
+    md = _ptt.post_thread(art, dry_run=False)
+    assert md is not None
+    assert any(_VALID_URL in t for t in captured), f"url missing from thread: {captured}"
+    assert all("#" not in t for t in captured), f"hashtag found in fallback path: {captured}"
+
+
+def test_invalid_transit_tweets_fall_back():
+    """tweets list where final tweet lacks url → fallback to summary path."""
+    captured = []
+    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    art = {
+        "title": "Paper Title",
+        "url": _VALID_URL,
+        "summary": "Sentence one. Sentence two.",
+        "tweets": ["ok hook", "no link final"],  # final tweet lacks url → re-check fails
+    }
+    md = _ptt.post_thread(art, dry_run=False)
+    assert md is not None
+    # Fallback path → url must appear in the thread
+    assert any(_VALID_URL in t for t in captured), f"fallback url missing: {captured}"
+    # The literal "ok hook" string must NOT be the first posted tweet (contract was rejected)
+    assert captured[0] != "ok hook", "contract rejected; should have used summary path"
+
+
+def test_default_hashtags_constant_deleted():
+    """DEFAULT_HASHTAGS must not exist on the ptt module."""
+    assert not hasattr(_ptt, "DEFAULT_HASHTAGS"), \
+        "DEFAULT_HASHTAGS still present — must be deleted from post_to_twitter"
+
+
+check("contract tweets posted verbatim, no hashtags", test_contract_tweets_posted_verbatim_no_hashtags)
+check("missing tweets falls back to summary, no hashtags", test_missing_tweets_falls_back_to_summary_no_hashtags)
+check("invalid transit tweets fall back to summary path", test_invalid_transit_tweets_fall_back)
+check("DEFAULT_HASHTAGS constant deleted", test_default_hashtags_constant_deleted)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

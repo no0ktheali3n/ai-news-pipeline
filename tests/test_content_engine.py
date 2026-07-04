@@ -612,5 +612,142 @@ check("missing tweets falls back to summary, no hashtags", test_missing_tweets_f
 check("invalid transit tweets fall back to summary path", test_invalid_transit_tweets_fall_back)
 check("DEFAULT_HASHTAGS constant deleted", test_default_hashtags_constant_deleted)
 
+print("\n[11] poster: mid-thread policy")
+
+import utils.post_to_twitter as ptt  # noqa: E402 — alias for section 11
+
+
+def _scripted_post_tweet(script):
+    calls = []
+    def fake(text, reply_to_id=None):
+        calls.append(text)
+        return script.pop(0) if script else None
+    return fake, calls
+
+
+def test_mid_thread_retry_succeeds():
+    """Tweet 2 fails once, retry succeeds → status=posted, 3 ids, 4 calls."""
+    orig_sleep = ptt.time.sleep
+    script = ["id1", None, "id2", "id3"]
+    fake, calls = _scripted_post_tweet(script)
+    ptt.post_tweet = fake
+    ptt.time.sleep = lambda *_: None
+    try:
+        art = {
+            "title": "T", "url": "https://arxiv.org/abs/2607.00099",
+            "summary": "s", "hashtags": [],
+            "tweets": [
+                "First tweet hook sentence for the thread.",
+                "Second tweet with more detail about the paper.",
+                "Third and final tweet. https://arxiv.org/abs/2607.00099",
+            ],
+            "scores": None, "composite": None, "query_source": None,
+            "buzz": None, "buzz_raw": None,
+        }
+        md = ptt.post_thread(art, dry_run=False)
+        assert md is not None, "should return metadata"
+        assert md["status"] == "posted", f"expected posted, got {md['status']}"
+        assert len(md["tweet_ids"]) == 3, f"expected 3 ids: {md['tweet_ids']}"
+        assert len(calls) == 4, f"expected 4 post_tweet calls: {len(calls)}"
+    finally:
+        ptt.time.sleep = orig_sleep
+
+
+def test_mid_thread_double_failure_posts_closing_reply_and_partial():
+    """Tweet 2 fails twice → closing reply with arXiv url, status=partial, provenance intact."""
+    orig_sleep = ptt.time.sleep
+    script = ["id1", None, None, "id9"]
+    fake, calls = _scripted_post_tweet(script)
+    ptt.post_tweet = fake
+    ptt.time.sleep = lambda *_: None
+    try:
+        art = {
+            "title": "T", "url": "https://arxiv.org/abs/2607.00099",
+            "summary": "s", "hashtags": [],
+            "tweets": [
+                "First tweet hook sentence for the thread.",
+                "Second tweet with more detail about the paper.",
+                "Third and final tweet. https://arxiv.org/abs/2607.00099",
+            ],
+            "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
+            "composite": 7.25, "query_source": ["agents"],
+            "buzz": 7.5, "buzz_raw": {"hn_points": 120},
+        }
+        md = ptt.post_thread(art, dry_run=False)
+        assert md is not None, "should return metadata on partial"
+        assert md["status"] == "partial", f"expected partial, got {md['status']}"
+        # The closing reply text must contain the arXiv url
+        assert any("https://arxiv.org/abs/2607.00099" in t for t in calls), \
+            f"no closing reply with arXiv url in calls: {calls}"
+        # Provenance fields must still be present
+        assert md["scores"] is not None, "scores must be in partial metadata"
+        assert md["composite"] == 7.25, "composite must be in partial metadata"
+        assert md["query_source"] == ["agents"], "query_source must be in partial metadata"
+    finally:
+        ptt.time.sleep = orig_sleep
+
+
+def test_first_tweet_double_failure_returns_none():
+    """Tweet 1 fails twice → returns None (nothing posted, no ledger)."""
+    orig_sleep = ptt.time.sleep
+    script = [None, None]
+    fake, calls = _scripted_post_tweet(script)
+    ptt.post_tweet = fake
+    ptt.time.sleep = lambda *_: None
+    try:
+        art = {
+            "title": "T", "url": "https://arxiv.org/abs/2607.00099",
+            "summary": "s", "hashtags": [],
+            "tweets": [
+                "First tweet hook sentence for the thread.",
+                "Second tweet with more detail about the paper.",
+                "Third and final tweet. https://arxiv.org/abs/2607.00099",
+            ],
+            "scores": None, "composite": None, "query_source": None,
+            "buzz": None, "buzz_raw": None,
+        }
+        md = ptt.post_thread(art, dry_run=False)
+        assert md is None, f"expected None on tweet-1 double failure, got {md}"
+    finally:
+        ptt.time.sleep = orig_sleep
+
+
+def test_ledger_stores_status():
+    """record_posted persists the status field from metadata."""
+    import poster_lambda as poster
+    FAKE_S3.store.clear()
+    art = {"title": "Scored", "url": "https://arxiv.org/abs/2607.00009",
+           "summary": "s", "hashtags": [],
+           "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
+           "composite": 7.25, "query_source": ["agents"],
+           "buzz": 7.5, "buzz_raw": {"hn_points": 120}}
+    key = "out/summarizer/final_summarized_RUN.json"
+    FAKE_S3.store[key] = json.dumps([art]).encode()
+
+    orig = ptt.post_thread
+    ptt.post_thread = lambda a, **kw: {"article_title": a["title"], "url": a["url"],
+                                       "variant": "summary", "tweet_ids": ["1"],
+                                       "thread_url": "https://t/1",
+                                       "scores": a.get("scores"),
+                                       "composite": a.get("composite"),
+                                       "query_source": a.get("query_source"),
+                                       "buzz": a.get("buzz"),
+                                       "buzz_raw": a.get("buzz_raw"),
+                                       "status": "posted"}
+    try:
+        resp = poster.handler({"summary_key": key, "dry_run": False, "post_limit": 1}, None)
+    finally:
+        ptt.post_thread = orig
+    assert resp["statusCode"] == 200, resp
+    entry = json.loads(FAKE_S3.store[poster.POSTED_LEDGER_KEY])["https://arxiv.org/abs/2607.00009"]
+    assert "status" in entry, f"status missing from ledger entry: {entry}"
+    assert entry["status"] == "posted", f"expected posted, got {entry['status']}"
+
+
+check("mid-thread retry succeeds → posted", test_mid_thread_retry_succeeds)
+check("mid-thread double failure → partial + closing reply", test_mid_thread_double_failure_posts_closing_reply_and_partial)
+check("first-tweet double failure → None", test_first_tweet_double_failure_returns_none)
+check("ledger stores status field", test_ledger_stores_status)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

@@ -140,19 +140,39 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
     tweet_ids = []
     reply_to = None
     first_tweet_url = None
+    status = "posted"
 
     for i, tweet in enumerate(thread):
         print(f"\n🌀 Posting tweet {i+1} of {len(thread)}...")
         logger.info(f"Posting tweet {i+1} of {len(thread)}")
         tweet_id = post_tweet(tweet, reply_to_id=reply_to)
+        if not tweet_id:
+            logger.warning(f"Tweet {i+1} failed; retrying once.")
+            time.sleep(3)
+            tweet_id = post_tweet(tweet, reply_to_id=reply_to)
         if tweet_id:
             tweet_ids.append(tweet_id)
             reply_to = tweet_id
             time.sleep(2)
-        else:
-            print("❌ Error posting one of the tweets. Aborting thread.")
-            logger.error("Error posting tweet. Aborting thread.")
+            continue
+        if not tweet_ids:               # hook itself failed twice: nothing posted
+            logger.error("First tweet failed twice; aborting (article stays unledgered).")
             return None
+        # Mid-thread double failure: close the thread with the link so the
+        # hook has its payoff, and mark partial so the article never reposts.
+        status = "partial"
+        logger.error(f"Tweet {i+1} failed twice; posting minimal closing reply.")
+        # post_tweet swallows ALL errors (incl. 429 rate limits) and returns
+        # None — that swallowing is what routes a mid-thread 429 into this
+        # retry-once → partial-closing path. The try/except is cheap insurance
+        # in case that contract ever changes.
+        try:
+            closing_id = post_tweet(f"Full paper: {url}", reply_to_id=reply_to)
+            if closing_id:
+                tweet_ids.append(closing_id)
+        except Exception as e:
+            logger.error(f"Closing reply also failed: {e}")
+        break
 
     if tweet_ids:
         logger.info(f"Thread posted! View the first tweet: https://twitter.com/user/status/{tweet_ids[0]}")
@@ -169,6 +189,7 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
         "query_source": article.get("query_source"),
         "buzz": article.get("buzz"),
         "buzz_raw": article.get("buzz_raw"),
+        "status": status,
     }
 
 # CLI Interface

@@ -17,6 +17,7 @@ from utils.memcon import filter_new_articles  # Memory controller
 from utils.logger import get_logger
 from utils.automations import notify_make_pipeline_status  # Automation notifications
 from utils.scoring import arxiv_id, score_candidates, ScoringError
+import utils.buzz as buzz_mod
 
 load_dotenv()
 logger = get_logger("scraper_lambda")
@@ -168,6 +169,15 @@ def handler(event, context):
         scored = score_candidates(candidates)
         scoring_used = True
         _reset_failure_streak()
+        if buzz_mod.BUZZ_ENABLED:
+            try:
+                buzz_map = buzz_mod.fetch_buzz(scored)
+                scored = buzz_mod.apply_buzz(scored, buzz_map)
+                logger.info("Buzz blended for %d/%d candidates.",
+                            sum(1 for c in scored if c.get("buzz") is not None),
+                            len(scored))
+            except Exception as e:
+                logger.warning(f"Buzz enrichment failed; LLM-only order kept: {e}")
         max_composite = scored[0]["composite"]
         _write_sidecar(scored)
         if scored[0]["composite"] >= min_score:

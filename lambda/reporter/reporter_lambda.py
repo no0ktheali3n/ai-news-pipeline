@@ -50,6 +50,9 @@ def _load_ledger() -> dict:
     except s3.exceptions.NoSuchKey:
         logger.warning("Ledger key %s not found — generating empty report.", POSTED_LEDGER_KEY)
         return {}
+    except json.JSONDecodeError as e:
+        logger.warning("Posted ledger unreadable (%s); reporting on empty ledger.", e)
+        return {}
 
 
 def _count_sidecars() -> int:

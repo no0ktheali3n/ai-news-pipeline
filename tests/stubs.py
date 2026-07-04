@@ -28,6 +28,7 @@ class FakeS3:
 
     def __init__(self):
         self.store = {}       # key -> bytes
+        self.meta = {}        # key -> kwargs dict
         self.listing = []     # objects returned by list pagination
 
     def get_object(self, Bucket, Key):
@@ -37,6 +38,8 @@ class FakeS3:
 
     def put_object(self, Bucket, Key, Body, **kwargs):
         self.store[Key] = Body
+        self.meta = getattr(self, 'meta', {})
+        self.meta[Key] = kwargs
 
     def download_file(self, Bucket, Key, Filename):
         if Key not in self.store:

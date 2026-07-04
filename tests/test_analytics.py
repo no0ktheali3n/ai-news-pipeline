@@ -454,6 +454,7 @@ import reporter_lambda  # noqa: E402
 def test_reporter_happy_path():
     """Happy path: ledger with 2 entries + 3 sidecar keys → 200, HTML written, SNS published."""
     FAKE_S3.store.clear()
+    FAKE_S3.meta.clear()
     FAKE_SNS.published.clear()
 
     # Seed ledger: two full entries (one with follower_count chain)
@@ -511,10 +512,17 @@ def test_reporter_happy_path():
     assert "fake-presigned" in msg["Message"], "digest must contain presigned URL"
     assert "2" in msg["Message"], "digest must mention post count (2)"
 
+    # ContentType assertion: HTML object must have text/html
+    html_key = reports_keys[0]
+    assert html_key in FAKE_S3.meta, f"HTML key {html_key} not in metadata"
+    assert FAKE_S3.meta[html_key].get("ContentType") == "text/html", \
+        f"expected ContentType=text/html, got {FAKE_S3.meta[html_key].get('ContentType')}"
+
 
 def test_reporter_empty_world():
     """Empty world: no ledger key, no sidecars → 200, report written, no crash."""
     FAKE_S3.store.clear()
+    FAKE_S3.meta.clear()
     FAKE_S3.listing = []
     FAKE_SNS.published.clear()
 

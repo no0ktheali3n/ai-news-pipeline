@@ -65,6 +65,12 @@ Parameters:
     Default: ai-research-pipeline/output/scored/
     Description: Prefix for the scored-candidates sidecar (never scanned by chunker/poster)
 
+  BuzzEnabled:
+    Type: String
+    Default: "true"
+    AllowedValues: ["true", "false"]
+    Description: Kill switch for Phase 1.5 buzz enrichment (no redeploy of code needed).
+
 Globals:
   Function:
     Timeout: 600
@@ -166,6 +172,14 @@ Resources:
           BEDROCK_MODEL_ID: !Ref BedrockModelId
           SCORED_OUTPUT_PREFIX: !Ref ScoredOutputPrefix
           ALERT_TOPIC_ARN: !Ref AlertTopic
+          BUZZ_ENABLED: !Ref BuzzEnabled
+          SCORING_W_BUZZ: "0.125"
+          BUZZ_HTTP_TIMEOUT_S: "3"
+          BUZZ_WALL_BUDGET_S: "20"
+          SCORING_W_RELEVANCE: "0.5"
+          SCORING_W_NOVELTY: "0.25"
+          SCORING_W_HOOK: "0.25"
+          SCORING_MAX_CANDIDATES: "40"
 
   SummarizerMainFunction:
     Type: AWS::Serverless::Function

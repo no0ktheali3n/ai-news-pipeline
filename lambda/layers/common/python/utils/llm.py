@@ -50,11 +50,20 @@ class LLMError(Exception):
 
 
 # ---------------------------------------------------------------------------
-# Module-level Bedrock client (mirroring scoring.py; reused across calls)
+# Lazy Bedrock client — created on first use, reused across calls.
+# Module import must NEVER raise (Lambda-safe; plan invariant), and
+# boto3.client() at import time can raise on credential/config issues.
 # ---------------------------------------------------------------------------
 
-_AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
-_bedrock = boto3.client("bedrock-runtime", region_name=_AWS_REGION)
+_bedrock = None
+
+
+def _get_bedrock():
+    global _bedrock
+    if _bedrock is None:
+        _bedrock = boto3.client(
+            "bedrock-runtime", region_name=os.getenv("AWS_REGION", "us-east-1"))
+    return _bedrock
 
 
 # ---------------------------------------------------------------------------
@@ -112,7 +121,7 @@ def _call_bedrock(prompt: str, model: str, max_tokens: int, temperature: float) 
         "temperature": temperature,
         "messages": [{"role": "user", "content": prompt}],
     }
-    response = _bedrock.invoke_model(
+    response = _get_bedrock().invoke_model(
         modelId=model,
         contentType="application/json",
         accept="application/json",

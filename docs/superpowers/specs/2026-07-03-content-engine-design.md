@@ -271,3 +271,19 @@ push, tag.
 - Ledger carries scores + provenance + follower count, making the 500-follower
   milestone and future calibration checkable without paid reads.
 - Owner input remains strictly optional throughout.
+
+### 9. Premium-aware thread limits (designed 2026-07-05, deferred)
+
+Detection rides the existing per-post `GET /2/users/me` call (§4 follower capture
+— zero extra API calls): request `verified_type` alongside `public_metrics`;
+`verified_type == "blue"` ⇒ Premium. Env `PREMIUM_OVERRIDE` (auto|true|false) for
+testing. When Premium: thread-contract limits switch to a tier profile (working
+caps well below the raw ~25k — e.g. TWEET_MAX ~4000, HOOK_MAX ~1000; exact caps
+get their own A/B — longer ≠ better), the writer prompt gains a premium variant,
+validation uses the active profile, and every ledger entry records `account_tier`
+so §6 analytics can compare engagement across modes. Goal: the pipeline
+self-adapts free → premium → lapsed with ZERO code changes, enabling promotional
+trials of Premium against an established baseline. Verify the exact detection
+field empirically on the live account before building. Perks in scope: char
+limit, reply-priority visibility (growth-relevant), analytics dashboard (§7's
+CSV import); edit/media perks out of scope.

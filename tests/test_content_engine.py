@@ -950,5 +950,35 @@ def test_get_me_hang_returns_none_and_post_succeeds():
 
 check("get_me hang → follower_count=None, post succeeds, completes <2s", test_get_me_hang_returns_none_and_post_succeeds)
 
+print("\n[integration] scoring: bedrock-denied → openrouter fallback")
+
+def test_scoring_falls_back_to_openrouter():
+    """With Bedrock denied and OpenRouter configured, score_candidates succeeds."""
+    FAKE_BEDROCK.mode = "denied"
+    FAKE_BEDROCK.scoring_response = None
+    # Valid chat-completions body whose content is a scoring array for CANDS
+    or_content = json.dumps([
+        {"id": "2607.00001", "builder_relevance": 8, "novelty": 6, "hook_potential": 7},
+        {"id": "2607.00002", "builder_relevance": 7, "novelty": 5, "hook_potential": 6},
+        {"id": "2607.00003", "builder_relevance": 9, "novelty": 8, "hook_potential": 8},
+    ])
+    FAKE_HTTP.routes["openrouter.ai"] = {
+        "choices": [{"message": {"content": or_content}}]
+    }
+    os.environ["LLM_FALLBACK_PROVIDER"] = "openrouter"
+    os.environ["OPENROUTER_API_KEY"] = "test-key"
+    try:
+        result = scoring.score_candidates(list(CANDS))
+        assert len(result) == 3, f"expected 3 results, got {len(result)}"
+        for r in result:
+            assert "composite" in r and "scores" in r, f"missing composite/scores: {r}"
+    finally:
+        FAKE_HTTP.routes.pop("openrouter.ai", None)
+        os.environ.pop("LLM_FALLBACK_PROVIDER", None)
+        os.environ.pop("OPENROUTER_API_KEY", None)
+        FAKE_BEDROCK.mode = "denied"
+
+check("bedrock denied → openrouter fallback → scoring succeeds", test_scoring_falls_back_to_openrouter)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

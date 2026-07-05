@@ -6,18 +6,15 @@ import json
 import time
 import random
 import logging
-import boto3
 from datetime import datetime
 from dotenv import load_dotenv
+from utils.llm import complete
 from utils.thread_contract import ContractError, build_writer_prompt, validate_and_repair
 
 # Load environment variables
 load_dotenv()
 
-# AWS setup
-aws_access_key = os.getenv("AWS_ACCESS_KEY_ID")
-aws_secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
-aws_region = os.getenv("AWS_REGION", "us-east-1")
+# Model ids
 model_id = os.getenv("BEDROCK_MODEL_ID", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
 WRITER_MODEL_ID = os.getenv("BEDROCK_WRITER_MODEL_ID", "us.anthropic.claude-sonnet-4-6")
 
@@ -27,11 +24,6 @@ logger = logging.getLogger(__name__)
 # retrying it forever (retry-forever + Lambda timeout 600s meant no chunk file was
 # ever written after a Bedrock failure, freezing the poster on a stale summary).
 MAX_ATTEMPTS_PER_ARTICLE = int(os.getenv("MAX_ATTEMPTS_PER_ARTICLE", "2"))
-
-bedrock = boto3.client(
-    service_name="bedrock-runtime",
-    region_name=aws_region
-)
 
 # File paths
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
@@ -132,44 +124,10 @@ def parse_hashtags(response_raw):
 # Claude Bedrock API call with combined summary + hashtag prompt
 
 def summarize_with_claude(prompt):
-    payload = {
-        "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 400,
-        "temperature": 0.7,
-        "messages": [{"role": "user", "content": prompt}]
-    }
-
     try:
-        response = bedrock.invoke_model(
-            modelId=model_id,
-            contentType="application/json",
-            accept="application/json",
-            body=json.dumps(payload)
-        )
-        result = json.loads(response["body"].read())
-
-        content = result.get("content")
-        if isinstance(content, list):
-            try:
-                combined = " ".join(part["text"] for part in content if part["type"] == "text")
-                print(f"[Claude Output Preview] {combined[:120]}...")
-                return parse_model_json(combined), len(prompt)
-            except Exception as e:
-                print(f"[ERROR] Failed to extract structured output: {e}")
-                return {"summary": "[Summary unavailable]", "hashtags": ["[Summary unavailable]"]}, 0
-
-        elif isinstance(content, str):
-            print(f"[Claude Output Preview] {content[:120]}...")
-            try:
-                return parse_model_json(content), len(prompt)
-            except Exception as e:
-                print(f"[ERROR] JSON parse error: {e}")
-                return {"summary": "[Summary unavailable]", "hashtags": ["[Summary unavailable]"]}, 0
-
-        else:
-            print(f"[ERROR] Claude content unrecognized: {content}")
-            return {"summary": "[Summary unavailable]", "hashtags": ["[Summary unavailable]"]}, 0
-
+        text = complete(prompt, model=model_id, max_tokens=400, temperature=0.7)
+        print(f"[Claude Output Preview] {text[:120]}...")
+        return parse_model_json(text), len(prompt)
     except Exception as e:
         if "ThrottlingException" in str(e):
             raise  # let retry_until_timeout apply exponential backoff
@@ -202,17 +160,8 @@ def write_thread_with_claude(article):
     Contract violations demote to summary-only (tweets=None) — the poster's
     legacy formatter handles those. Raises on transport/parse failure so the
     existing retry/abort semantics in summarize_articles apply."""
-    payload = {
-        "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 1500,
-        "temperature": 0.4,
-        "messages": [{"role": "user", "content": build_writer_prompt(article)}],
-    }
-    response = bedrock.invoke_model(
-        modelId=WRITER_MODEL_ID, contentType="application/json",
-        accept="application/json", body=json.dumps(payload))
-    result = json.loads(response["body"].read())
-    text = " ".join(p["text"] for p in result.get("content", []) if p.get("type") == "text")
+    text = complete(build_writer_prompt(article), model=WRITER_MODEL_ID,
+                    max_tokens=1500, temperature=0.4)
     data = parse_model_json(text)
     summary = str(data.get("summary") or "").strip()
     if not summary:

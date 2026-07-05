@@ -9,21 +9,17 @@ import json
 import os
 import re
 
-import boto3
-
+from utils.llm import complete, LLMError  # noqa: F401 (LLMError caught as Exception below)
 from utils.logger import get_logger
 
 logger = get_logger("scoring")
 
-AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 SCORER_MODEL_ID = os.getenv("BEDROCK_MODEL_ID", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
 MAX_CANDIDATES = int(os.getenv("SCORING_MAX_CANDIDATES", "40"))
 ABSTRACT_TRUNC = 400
 W_RELEVANCE = float(os.getenv("SCORING_W_RELEVANCE", "0.5"))
 W_NOVELTY = float(os.getenv("SCORING_W_NOVELTY", "0.25"))
 W_HOOK = float(os.getenv("SCORING_W_HOOK", "0.25"))
-
-_bedrock = boto3.client("bedrock-runtime", region_name=AWS_REGION)
 
 AXES = ("builder_relevance", "novelty", "hook_potential")
 
@@ -86,22 +82,13 @@ def score_candidates(candidates):
     if not candidates:
         return []
 
-    payload = {
-        "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 60 * len(candidates) + 200,
-        "temperature": 0.2,
-        "messages": [{"role": "user", "content": build_scoring_prompt(candidates)}],
-    }
     try:
-        response = _bedrock.invoke_model(
-            modelId=SCORER_MODEL_ID,
-            contentType="application/json",
-            accept="application/json",
-            body=json.dumps(payload),
+        text = complete(
+            build_scoring_prompt(candidates),
+            model=SCORER_MODEL_ID,
+            max_tokens=60 * len(candidates) + 200,
+            temperature=0.2,
         )
-        result = json.loads(response["body"].read())
-        text = " ".join(p["text"] for p in result.get("content", [])
-                        if p.get("type") == "text")
         rows = _parse_json_array(text)
     except ScoringError:
         raise

@@ -54,15 +54,20 @@ def get_follower_count() -> "int | None":
     so a Twitter API hiccup can never fail or delay a post.
     Uses GET /2/users/me (free tier; ≤25 calls/day budget).
     """
+    # NOTE: no `with` block — the context manager's __exit__ does
+    # shutdown(wait=True), which would block on a hung thread and defeat the
+    # timeout entirely. shutdown(wait=False) abandons the worker instead.
+    ex = ThreadPoolExecutor(max_workers=1)
     try:
         _ensure_twitter_creds()
         client = get_twitter_client()
-        with ThreadPoolExecutor(max_workers=1) as ex:
-            resp = ex.submit(client.get_me, user_fields=["public_metrics"]).result(timeout=GET_ME_TIMEOUT_S)
+        resp = ex.submit(client.get_me, user_fields=["public_metrics"]).result(timeout=GET_ME_TIMEOUT_S)
         return resp.data.public_metrics["followers_count"]
     except (FuturesTimeout, Exception) as e:
         logger.warning("get_follower_count failed (non-blocking): %s", e)
         return None
+    finally:
+        ex.shutdown(wait=False, cancel_futures=True)
 
 
 def post_tweet(text, reply_to_id=None):

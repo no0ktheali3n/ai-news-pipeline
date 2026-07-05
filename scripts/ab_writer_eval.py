@@ -34,6 +34,7 @@ if str(LAYER) not in sys.path:
     sys.path.insert(0, str(LAYER))
 
 from utils.thread_contract import build_writer_prompt, validate_and_repair, ContractError  # noqa: E402
+import utils.llm as _llm  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Model IDs
@@ -208,25 +209,13 @@ def top_n(candidates: list[dict], n: int = 8) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 def call_bedrock(client, model_id: str, prompt: str, max_tokens: int = 1200) -> dict:
-    """Invoke a Bedrock model and return the parsed JSON payload."""
-    payload = {
-        "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": max_tokens,
-        "temperature": 0.7,
-        "messages": [{"role": "user", "content": prompt}],
-    }
-    response = client.invoke_model(
-        modelId=model_id,
-        contentType="application/json",
-        accept="application/json",
-        body=json.dumps(payload),
-    )
-    result = json.loads(response["body"].read())
-    content = result.get("content", [])
-    if isinstance(content, list):
-        text = " ".join(part["text"] for part in content if part.get("type") == "text")
-    else:
-        text = str(content)
+    """Invoke the configured LLM provider and return the parsed JSON payload.
+
+    The ``client`` parameter is retained for backwards compatibility but is no
+    longer used — routing now goes through utils.llm.complete so that
+    --provider / LLM_PROVIDER / LLM_FALLBACK_PROVIDER are all honoured.
+    """
+    text = _llm.complete(prompt, model=model_id, max_tokens=max_tokens, temperature=0.7)
     return _parse_model_json(text)
 
 
@@ -367,7 +356,26 @@ def main() -> None:
         default=os.environ.get("AWS_DEFAULT_REGION", "us-east-1"),
         help="AWS region for Bedrock Runtime (default: AWS_DEFAULT_REGION env var or us-east-1)",
     )
+    parser.add_argument(
+        "--provider",
+        choices=["bedrock", "openrouter"],
+        default="bedrock",
+        help="LLM provider to use for generation (default: bedrock)",
+    )
     args = parser.parse_args()
+
+    # Set provider env BEFORE any model call (utils.llm reads envs at call time).
+    os.environ["LLM_PROVIDER"] = args.provider
+
+    # Convenience: load OpenRouter key from local key file if env not already set.
+    if not os.environ.get("OPENROUTER_API_KEY"):
+        key_file = Path.home() / "projects" / "00-cr" / "openrouter-key.txt"
+        if key_file.exists():
+            os.environ["OPENROUTER_API_KEY"] = key_file.read_text(encoding="utf-8").strip()
+
+    if args.provider == "openrouter" and not os.environ.get("OPENROUTER_API_KEY"):
+        print("ERROR: --provider openrouter requires OPENROUTER_API_KEY (env or ~/projects/00-cr/openrouter-key.txt)", file=sys.stderr)
+        sys.exit(2)
 
     out_dir = REPO / "docs" / "ab-test"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -375,7 +383,7 @@ def main() -> None:
     report_path = out_dir / f"{args.date}-writer-report.md"
 
     s3 = boto3.client("s3")
-    bedrock = boto3.client("bedrock-runtime", region_name=args.region)
+    # boto3 bedrock-runtime client removed — routing now via utils.llm.complete.
 
     print(f"[harness] Fetching candidates from s3://{args.bucket}/{args.prefix}")
     candidates = latest_sidecar(s3, args.bucket, args.prefix)
@@ -386,7 +394,7 @@ def main() -> None:
     for i, cand in enumerate(selected):
         print(f"[harness] Generating pair {i + 1}/{len(selected)}: {cand.get('title', '')[:60]}")
         try:
-            old_thread, new_thread, error = generate_pair(bedrock, cand)
+            old_thread, new_thread, error = generate_pair(None, cand)
             pair = make_pair_dict(
                 pair_index=i,
                 article=cand,

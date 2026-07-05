@@ -25,6 +25,6 @@ region = "us-east-1"
 confirm_changeset = true
 capabilities = ["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM"]
 # writer pinned to Haiku until Sonnet 4.6 quota approved — flip param, redeploy, re-A/B
-parameter_overrides = "S3OutputBucket=\"aws-sam-cli-managed-default-samclisourcebucket-k0ga8ni5vmbc\" ScraperOutputPrefix=\"ai-research-pipeline/output/scraper/\" SummarizerOutputPrefix=\"ai-research-pipeline/output/summarizer/\" PosterOutputPrefix=\"ai-research-pipeline/output/poster/\" BedrockModelId=\"us.anthropic.claude-haiku-4-5-20251001-v1:0\" FinalSummarizedFile=\"final_summarized.json\" MemoryOutputPrefix=\"ai-research-pipeline/output/memory/\" MemoryOutputFile=\"article_memory.json\" BedrockWriterModelId=\"us.anthropic.claude-haiku-4-5-20251001-v1:0\""
+parameter_overrides = "S3OutputBucket=\"aws-sam-cli-managed-default-samclisourcebucket-k0ga8ni5vmbc\" ScraperOutputPrefix=\"ai-research-pipeline/output/scraper/\" SummarizerOutputPrefix=\"ai-research-pipeline/output/summarizer/\" PosterOutputPrefix=\"ai-research-pipeline/output/poster/\" BedrockModelId=\"us.anthropic.claude-haiku-4-5-20251001-v1:0\" FinalSummarizedFile=\"final_summarized.json\" MemoryOutputPrefix=\"ai-research-pipeline/output/memory/\" MemoryOutputFile=\"article_memory.json\" BedrockWriterModelId=\"us.anthropic.claude-haiku-4-5-20251001-v1:0\" LlmFallbackProvider=\"openrouter\""
 image_repositories = []
 disable_rollback = false

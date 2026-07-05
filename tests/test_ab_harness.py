@@ -10,7 +10,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).parent))
-from stubs import install_stubs  # noqa: E402
+from stubs import install_stubs, FAKE_HTTP  # noqa: E402
 install_stubs()
 
 LAYER = REPO / "lambda" / "layers" / "common" / "python"
@@ -331,6 +331,46 @@ def test_legacy_sanitize_hashtag_filter():
 check("legacy_sanitize: evil URL + @mention + 1500 chars → sanitized/capped", test_legacy_sanitize_strips_evil_url_and_mention)
 check("legacy_sanitize: missing hashtags → tag_block is exactly ['#AI'] (no doubling)", test_legacy_sanitize_missing_hashtags_no_doubling)
 check("legacy_sanitize: hashtag filter keeps only #word-only tags", test_legacy_sanitize_hashtag_filter)
+
+
+# ---------------------------------------------------------------------------
+# [7] call_bedrock routes through utils.llm (provider flag wiring)
+# ---------------------------------------------------------------------------
+print("[7] call_bedrock: routes through utils.llm.complete")
+
+
+def test_call_bedrock_via_llm_openrouter():
+    """call_bedrock(None, model, prompt, max_tokens) uses utils.llm.complete.
+
+    With LLM_PROVIDER=openrouter + a fake key + FAKE_HTTP routing openrouter.ai,
+    it must return a parsed dict (the stubs reply with a chat-completions body
+    whose content is valid JSON so _parse_model_json succeeds).
+    """
+    FAKE_HTTP.reset()
+    FAKE_HTTP.routes["openrouter.ai"] = {
+        "choices": [{"message": {"content": '{"tweets": ["hello world"]}'}}]
+    }
+    orig_provider = os.environ.get("LLM_PROVIDER")
+    orig_key = os.environ.get("OPENROUTER_API_KEY")
+    try:
+        os.environ["LLM_PROVIDER"] = "openrouter"
+        os.environ["OPENROUTER_API_KEY"] = "sk-fake-key-for-test"
+        result = harness.call_bedrock(None, "us.anthropic.claude-haiku-4-5-20251001-v1:0", '{"tweets": ["hello world"]}', 100)
+        assert isinstance(result, dict), f"Expected dict, got {type(result)}: {result!r}"
+        assert "tweets" in result, f"Expected 'tweets' key in result, got: {result!r}"
+    finally:
+        if orig_provider is None:
+            os.environ.pop("LLM_PROVIDER", None)
+        else:
+            os.environ["LLM_PROVIDER"] = orig_provider
+        if orig_key is None:
+            os.environ.pop("OPENROUTER_API_KEY", None)
+        else:
+            os.environ["OPENROUTER_API_KEY"] = orig_key
+        FAKE_HTTP.reset()
+
+
+check("call_bedrock routes through utils.llm (openrouter path)", test_call_bedrock_via_llm_openrouter)
 
 
 # ---------------------------------------------------------------------------

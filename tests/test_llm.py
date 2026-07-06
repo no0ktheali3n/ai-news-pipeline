@@ -185,11 +185,12 @@ def test_mapping():
     """Table hits, regex derivation, passthrough, env override, garbage."""
     # explicit table — us. prefix
     assert to_openrouter_model("us.anthropic.claude-haiku-4-5-20251001-v1:0") == "anthropic/claude-haiku-4.5"
-    assert to_openrouter_model("us.anthropic.claude-sonnet-4-6-20260101-v1:0") == "anthropic/claude-sonnet-4.6"
+    # Sonnet 4.6's REAL Bedrock id is un-dated (list-inference-profiles 2026-07-05)
+    assert to_openrouter_model("us.anthropic.claude-sonnet-4-6") == "anthropic/claude-sonnet-4.6"
     assert to_openrouter_model("us.anthropic.claude-sonnet-4-5-20251001-v1:0") == "anthropic/claude-sonnet-4.5"
     # explicit table — global. prefix
     assert to_openrouter_model("global.anthropic.claude-haiku-4-5-20251001-v1:0") == "anthropic/claude-haiku-4.5"
-    assert to_openrouter_model("global.anthropic.claude-sonnet-4-6-20260101-v1:0") == "anthropic/claude-sonnet-4.6"
+    assert to_openrouter_model("global.anthropic.claude-sonnet-4-6") == "anthropic/claude-sonnet-4.6"
     # regex derivation — synthetic id not in table
     assert to_openrouter_model("us.anthropic.claude-opus-4-8") == "anthropic/claude-opus-4.8"
     # passthrough: already a slug

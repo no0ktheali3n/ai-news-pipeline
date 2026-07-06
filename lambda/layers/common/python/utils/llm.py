@@ -25,10 +25,12 @@ _MODEL_TABLE = {
     "us.anthropic.claude-haiku-4-5-20251001-v1:0": "anthropic/claude-haiku-4.5",
     "anthropic.claude-haiku-4-5-20251001-v1:0": "anthropic/claude-haiku-4.5",
     "global.anthropic.claude-haiku-4-5-20251001-v1:0": "anthropic/claude-haiku-4.5",
-    # Sonnet 4.6
-    "us.anthropic.claude-sonnet-4-6-20260101-v1:0": "anthropic/claude-sonnet-4.6",
-    "anthropic.claude-sonnet-4-6-20260101-v1:0": "anthropic/claude-sonnet-4.6",
-    "global.anthropic.claude-sonnet-4-6-20260101-v1:0": "anthropic/claude-sonnet-4.6",
+    # Sonnet 4.6 — Bedrock dropped the dated-id format for this model
+    # (verified via list-inference-profiles 2026-07-05; a fabricated dated id
+    # here caused ValidationException on the live writer call)
+    "us.anthropic.claude-sonnet-4-6": "anthropic/claude-sonnet-4.6",
+    "anthropic.claude-sonnet-4-6": "anthropic/claude-sonnet-4.6",
+    "global.anthropic.claude-sonnet-4-6": "anthropic/claude-sonnet-4.6",
     # Sonnet 4.5 (dated id)
     "us.anthropic.claude-sonnet-4-5-20251001-v1:0": "anthropic/claude-sonnet-4.5",
     "anthropic.claude-sonnet-4-5-20251001-v1:0": "anthropic/claude-sonnet-4.5",

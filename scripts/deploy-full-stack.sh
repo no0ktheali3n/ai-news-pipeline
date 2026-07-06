@@ -28,7 +28,7 @@ sam deploy --no-execute-changeset --parameter-overrides \
   "FinalSummarizedFile=final_summarized.json" \
   "MemoryOutputPrefix=ai-research-pipeline/output/memory/" \
   "MemoryOutputFile=article_memory.json" \
-  "BedrockWriterModelId=us.anthropic.claude-sonnet-4-6-20260101-v1:0" \
+  "BedrockWriterModelId=us.anthropic.claude-sonnet-4-6" \
   "LlmFallbackProvider=openrouter" \
   "OpenRouterApiKey=$KEY"
 

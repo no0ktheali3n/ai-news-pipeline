@@ -1,0 +1,617 @@
+{
+  "generated_at": "2026-06-20T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-06-18",
+    "2026-06-20"
+  ],
+  "candidates": [
+    {
+      "title": "AgentRiskBOM: A Risk-Scoping Security Bill of Materials forAgenticAI Systems",
+      "url": "https://arxiv.org/abs/2606.21877",
+      "authors": [
+        "Srimonti Dutta",
+        "Akshata Kishore Moharir"
+      ],
+      "snippet": "AgenticAI systems retrieve private context, invoke tools, write files, call external services, coordinate with otheragents, and may act without human approval. Existing bill of materials artifacts improve transparency for dependencies, model metadata, and training provenance, but leave anagentictransparency gap: capability opacity, the absence of a structured account of what a deployedagentcan access, remember, change, delegate, and prove afterward. This paper introduces AgentRiskBOM, a security BOM for risk-scopingtool-usingAIagents. It is an additive layer over SBOM, AIBOM, and MLBOM artifacts, referencing them where authoritative while adding fields for runtime authority: autonomy, tool permissions, memory, credential scope, approval gates, audit signals, inter-agentcommunication, and external action capability. We implement AgentRiskBOM as a JSON-schema artifact with a reproducible corpus, risk scenarios, scorer, diff detector, control mapper, and reports. We evaluate AgentRiskBOM on 13 open-sourceagentsspanning coding, RAG, andmulti-agentarchetypes, plus 52 risk scenarios across 14 categories. The schema validates all 13 corpus artifacts. Coverage analysis gives AgentRiskBOM a native-equivalent score of 14 across 16 capability dimensions, vs. 1 for SBOM, 1.5 for AIBOM and 2 for MLBOM. Across modeled risk categories, AgentRiskBOM exposes 100% risk-category visibility vs. 10.5% for SBOM-like and 20.9% for AIBOM-like views. To testagenticauthority drift, we inject 33 structured deployment mutations; the diff detector identifies the correct change type for all mutations. A secondary penalty-based scorer yields a Spearman correlation of 0.73 with the primary scorer, supporting rank-level consistency while showing that thresholds require human calibration. The results show thatagenticAI security needs a machine-readable authority-and-risk artifact before incidents occur.△ Less",
+      "published": "Submitted20 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "Safe to Check, Unsafe to Use: Relinking at the Compression Boundary of LLM Agents",
+      "url": "https://arxiv.org/abs/2606.21732",
+      "authors": [
+        "Zesen Liu",
+        "Zihan Zhang",
+        "Dongdong She"
+      ],
+      "snippet": "Summarization-based prompt compression is increasingly used by LLM agents to shorten long, distributed contexts, but it shifts the security boundary: filters inspect the pre-compression prompt while the backend acts on a newly generated compressed context. We identify relinking, a compression-boundary vulnerability where the compressor behaves as a confused deputy, summarizing distributed, locally benign fragments into a complete malicious instruction. Unlikepromptinjection, relinking need not place an explicitly malicious payload in the source context. We show that relinking arises from summarization itself: attention makes separated fragments jointly available, pre-training makes compatible fragments plausible to connect, and post-training favors compact backend-actionable summaries. We formalize the attacker-induced form as adversarial relinking and present Relink, an automated DSL-based tool that splits malicious payloads into benign fragments while keeping the complete payload absent before compression. Across four long-context agent benchmarks, Relink achieves 86.9% Relink Rate and Backend Action Rate versus 17.0% for clean-split controls. Existing defenses fail to reliably capture adversarial relinking; our KBRA defense reduces residual Backend Action Rate to 0.0%.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "AgenticOS: An Intent-Oriented Secure Operating System Architecture for Autonomous AI Agents",
+      "url": "https://arxiv.org/abs/2606.21129",
+      "authors": [
+        "Zhen Zhao",
+        "Yu Zhang",
+        "Yanpeng Zhu",
+        "Jia Wang",
+        "Songqiao Tao",
+        "Xin Cheng",
+        "Jiexin Gao"
+      ],
+      "snippet": "Traditional OS security models based on \"resource exposure plus permission checks\" face structural challenges as LLM-driven autonomous agents acquire capabilities for planning, tool use, network access, and code execution. Once an agent runtime is compromised throughpromptinjectionor malicious tool outputs, an attacker can compose POSIX-style resource primitives into behaviors far beyond the user's task authorization. To address this, we propose AgenticOS, an intent-oriented secure OS architecture that consolidates delegable, auditable software capabilities into OS-native ones rather than replacing all applications. The core insight is to reframe the OS from a \"resource manager\" into an \"intent filter\": instead of requesting low-level resources directly, agents submit structured intent declarations, from which the system synthesizes a least-privilege environment with mandatory mediation, auditing, and information-flow constraints. At the implementation level, we introduce a four-layer architecture -- Ghost Kernel, Logic Shutter, Agent Capsule, and Semantic Boundary Gateway -- together with the Intent ABI, Manifest-Only Runtime, Weaver-based capability generation, and an admission model for AgenticOS-native Skills.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "Local LLM Agents as Vulnerable Runtimes:A Source-Code Audit of the Agent Runtime Layer",
+      "url": "https://arxiv.org/abs/2606.21071",
+      "authors": [
+        "Zhengsong Zhang",
+        "Zongze Li",
+        "Jiawei Guo",
+        "Haipeng Cai"
+      ],
+      "snippet": "Local LLM agents such as OpenClaw and Nanobot run on end-user machines and act on host resources - the shell, filesystem, browser, stored credentials, and messaging applications - through natural-language goals. These agents have become privileged software runtimes that mediate between user intent, model outputs, and host-level actions. Existing research characterizes the landscape throughpromptinjection, malicious skills, marketplace risks, or black-box evaluation of agents. But the implementation layer that performs this mediation, the prompt builder, parser, tool dispatcher, skill loader, memory writer, network client, and permission gate, has remained an unexamined safety boundary. To our knowledge, no prior work has examined the agent's source tree to audit these components for implementation-level security weaknesses. We present CLAWAUDIT, a static auditing framework for measuring vulnerability exposure in local LLM agent runtimes. CLAWAUDIT derives a five-category vulnerability taxonomy from STRIDE and develops custom static-analysis rules that target agent-specific patterns absent from established rule sets for vulnerability analysis. We instantiate the taxonomy in two backends, 47 Semgrep YAML rules and 30 CodeQL queries, and evaluate on OPENCLAWBENCH, a benchmark of 446 source-code-level advisories from the OpenClaw repository and split temporally into 229 rule-derivation (train) and 217 held-out (test) advisories. On the held-out test, CLAWAUDIT raises Semgrep recall from 21.7% (Pro baseline) to 66.8%, and CodeQL recall from 13.8% (security-extended) to 75.1%. Train/test gaps remain within 4 percentage points for all four configurations, indicating that the rules generalize to vulnerabilities unseen during rule writing. A preliminary live-code audit shows that these recall-oriented rules require manual triage, motivating semantic filtering before production deployment.△ Less",
+      "published": "Submitted18 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "Aligning Sentence Embeddings to Human Concepts via Sparse Autoencoders",
+      "url": "https://arxiv.org/abs/2607.00023",
+      "authors": [
+        "Wonseok Shin",
+        "Songkuk Kim"
+      ],
+      "snippet": "Dense sentence embeddings are fundamental to modernRetrieval-AugmentedGeneration (RAG) systems but suffer from a lack of interpretability due to feature superposition. This opacity hinders the alignment of retrieval processes with human intent, as the entangled representations are difficult to analyze or control. In this work, we propose a method to disentangle the dense representations of sentence transformers (e.g., E5) into human-interpretable concepts using Top-k Sparse Autoencoders (SAEs). We demonstrate that these disentangled features align with specific semantic, syntactic, and pragmatic categories. Furthermore, we introduce an activation steering mechanism that allows for precise intervention in the retrieval process. By clamping specific latent features, we show that it is possible to re-rank search results to better align with user constraints without retraining the backbone model. Our findings suggest that SAE-based decomposition offers a viable path toward transparent and steerable neural information retrieval.△ Less",
+      "published": "Submitted18 June, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "Agent-Assisted Side-Channel Attacks on Non-Prefix KV Cache in RAG",
+      "url": "https://arxiv.org/abs/2606.21842",
+      "authors": [
+        "He Sun",
+        "Shinan Liu",
+        "Siyuan Ma",
+        "Junhao Li",
+        "Mingjun Xiao",
+        "Wenhao Jiang"
+      ],
+      "snippet": "Modern Large Language Model (LLM) serving engines increasingly rely on Retrieval-Augmented Generation (RAG) and non-prefix Key-Value (KV) cache fusion to accelerate long-context, multi-tenant inference. While existing KV cache side-channel attacks require strict linear prefix alignment--rendering them ineffective against real-world RAG queries that contain unique, user-specific private prefixes--we uncover a critical class of structural vulnerabilities inherent to chunk-aware memory scheduling. We demonstrate that the deterministic micro-architectural mechanisms used to align and fuse disjoint memory chunks inadvertently leak a continuous \"Step-Wave\" timing signature. Exploiting this physical observation, we introduce SpliceLeak, the first end-to-end side-channel attack targeting non-prefix KV cache fusion. SpliceLeak executes a systematic two-phase privacy breach: it first structurally fingerprints the exact length of hidden private prompts, and subsequently manipulates boundary collisions to extract exact semantic content token-by-token. Extensive evaluations on production-grade frameworks (vLLM integrated with LMCache) demonstrate that SpliceLeak achieves up to a 100% extraction success rate in bounded-entropy scenarios. Driven by a deterministic +104 ms hardware latency void, the attack requires as few as 63 requests per token, piercing through realistic continuous batching noise. To resolve the inherent conflict between memory deduplication and security, we propose SpliceDefense, a bipartite mitigation framework consisting of Quantized Chunk Padding (QCP) and Constant-Time Boundary Fusion (CTBF). Our evaluations confirm that SpliceDefense effectively flattens the side-channel signal (Delta TTFT ~ 0) with negligible throughput overhead, preserving the critical benefits of global cache sharing.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 8.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "LEDGER: ScalingAgenticDocument Editing with Dependency-aware Graph Retrieval",
+      "url": "https://arxiv.org/abs/2606.28379",
+      "authors": [
+        "Mike Hang Wang",
+        "Utkarsh Garg",
+        "Reza Davari",
+        "Huitian Jiao",
+        "Hao Cheng",
+        "Baolin Peng",
+        "Tao Ge",
+        "Si-Qing Chen"
+      ],
+      "snippet": "We introduce LEDGER to tackle the novel context engineering challenge ofagenticdocument editing, where localized edits to long, structured documents must be applied efficiently without breaking cross-references or semantic consistency. LEDGER constructs a lightweight dependency graph that explicitly models document structure, including hierarchical organization, explicit references, implicit dependencies, and semantic relationships. For each edit, graph-guided retrieval selects only the necessary context, avoiding full-document processing while preserving consistency. We evaluate LEDGER on a curated benchmark of 1.9k test cases with various document types and lengths, spanning six state-of-the-art models: LEDGER improves consistency from 56% to 76% across all six models and test scenarios while reducing token usage. Notably, LEDGER with low reasoning effort matches baseline performance at high reasoning effort using fewer tokens, showing that explicit dependency representations can partially substitute for expensive internal reasoning inagenticdocument editing.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Harness-MU: A Safe, Governed, and Effective Harness for Multi-UserLLMAgents",
+      "url": "https://arxiv.org/abs/2606.21856",
+      "authors": [
+        "Wangxuan Fan",
+        "Xiaoyu Nie",
+        "Zhongxiang Dai"
+      ],
+      "snippet": "The increasing deployment of large language model (LLM)agentsin collaborative workflows demands robust multi-user, multi-principal interaction mechanisms capable of enforcing access permissions, resolving authoritative conflicts, and preventing unauthorized data disclosure. However, a fundamental mismatch exists between the single-user training paradigm of contemporary LLMs and the hard constraints required for multi-principal governance, rendering probabilistic, prompt-based safeguards vulnerable under multi-turn adversarial interactions.Our key insight is that governance constraints -- who is authorized, what is restricted, and whose instructions take precedence -- are deterministic runtime variables that should be enforced by execution hooks rather than entrusted to the LLM. We present \\textbf{Harness-MU}, the first model-agnostic, zero-tuning infrastructure framework for multi-userLLMagents. By decoupling language generation from safety orchestration, Harness-MU guarantees unbreakable permission boundaries while maximizing compliant demand satisfaction. Across four frontier open-weight and proprietary models on the \\textit{Muses-Bench} benchmark, Harness-MU achieves the goal of privacy preservation across all access-control attacks, outperforming the standard baseline by 0.28--0.39 in utility score and improving instruction-following accuracy by up to 48.9 percentage points. Harness-MU advances the philosophy of \\textit{Harness Engineering}, establishing that systematic infrastructure is essential for solving LLM multi-principal governance challenges. The code and data are available at https://github.com/YuanJrShiuan/Harness-MulUser.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Fixed RAG Compression Collapses Measured Reader Scaling",
+      "url": "https://arxiv.org/abs/2606.21807",
+      "authors": [
+        "Sugam Panthi",
+        "Rabab Abdelfattah"
+      ],
+      "snippet": "Retrieval-AugmentedGeneration (RAG) compression papers often evaluate a compressor on one to three readers and treat the compressed evidence layer as evaluation-neutral. We show this assumption is false: fixed compression can raise average accuracy while hiding reader upgrades and reversing model rankings. Across 20 readers and ten domain-method settings over four QA benchmarks and one summarization benchmark, compression gain decreases with reader baseline (nine of ten settings significant, p < 0.05). Generic summarization flips 31% of pairwise model rankings on LongMemEval-S, and a fixed HotpotQA compressor hides 80% of the raw upgrade from Qwen 7B to GPT-4.1-mini. Two opposing forces explain this paradox: compression rescues weak readers by removing noise they cannot filter, and harms strong readers by dropping details they would have used. The pattern appears across structured compilation, generic summarization, three trained compressor families, query-focused summarization, and an external audit of nine published compression papers. We release ragscale, a toolkit built on 177,000 row-level compression transitions, so any compression paper can audit reader scaling with three readers in one day.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "OTTER: A Red-Teaming System for Toxicity-EvadingJailbreakPrompt Optimization",
+      "url": "https://arxiv.org/abs/2606.21077",
+      "authors": [
+        "Jerry Wang",
+        "Hsin-Ling Hsu",
+        "Yi-Cheng Lai",
+        "Nai-Chia Chen",
+        "Fang Yu"
+      ],
+      "snippet": "Production LLMs increasingly rely on toxicity-based moderation filters as a primary defense, assuming that harmful intent correlates with toxic surface wording. We show this assumption is fundamentally brittle: surface toxicity and adversarial intent can be decoupled by replacing as few as five tokens. We present OTTER (Obfuscated Toxicity-Evading Token Evolution for Rewriting), a black-box red-teaming framework requiring only standard API access, directly targeting the practical constraints of industry security audits. Evaluated on 457 AdvBench prompts across four GPT models, OTTER raises average ASR from 7.0% to 84.0%. We further provide the first quantitative analysis of the toxicity--bypass relationship and a per-category breakdown, translating our findings into actionable recommendations for classifier hardening in production deployments.△ Less",
+      "published": "Submitted18 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Think Twice Before You Act: Protecting LLM Agents Against Tool Description Poisoning via Isolated Planning",
+      "url": "https://arxiv.org/abs/2606.20922",
+      "authors": [
+        "Shanghao Shi",
+        "Xiao Wang",
+        "Chaoyu Zhang",
+        "Hao Li",
+        "Wenjing Lou",
+        "Thomas Hou",
+        "Yevgeniy Vorobeychik",
+        "Chongjie Zhang",
+        "Ning Zhang"
+      ],
+      "snippet": "The integration of external tools has substantially expanded the capabilities of large language model (LLM) agents, but it also introduces new attack surfaces beyondpromptinjection. In particular, cross-tool description poisoning can manipulate planner-visible tool metadata to steer an agent's trajectory, even if the poisoned tool itself is never chosen. To understand the effectiveness of existing defenses against this emerging threat, we first evaluate severalprompt-injectiondefenses and find that they transfer poorly to cross-tool description poisoning. A key observation is that poisoned descriptions persist in the planning context across steps, enabling continuous influence over subsequent tool choices. Building on this insight, we propose Tool-Guard, a novel system-level defense based on a new concept called isolated planning, in which tool invocations that are detected as misaligned or suspicious cause the corresponding tool to be placed in a quarantined list (the influenced list), breaking further influence from poisoned descriptions. With this influence isolated, the tool can continue to be used to support the task, enabling a robust defense that preserves legitimate tool utility. Experiments on the AgentDojo and ASB benchmarks show that Tool-Guard substantially reduces attack success while maintaining high task utility. Our code is available at https://github.com/shishishi123/Tool-Guard.△ Less",
+      "published": "Submitted18 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "AutoDojo: Adaptive Black-Box Attacks Reveal the Limits of IPI Defenses and Task-Specification Effects in LLM Agents",
+      "url": "https://arxiv.org/abs/2606.15057",
+      "authors": [
+        "Xinhang Ma",
+        "Taoran Li",
+        "Chaowei Xiao",
+        "Zhiyuan Yu",
+        "Ning Zhang",
+        "Yevgeniy Vorobeychik"
+      ],
+      "snippet": "Indirectpromptinjection(IPI) is a major security threat to LLM-powered agents. Thus, a growing body of work have proposed a variety of defensive approaches against IPI. These can be grouped into three broad categories: 1) prompt-based (using prompting as a way to prevent agents from following malicious instructions), 2) detection-based (identifying and filtering malicious instructions), and 3) system-level (using systems insights, such as control and data isolation, for defense). However, commonly used benchmarks for evaluating defense, such as AgentDojo, are \\emph{inherently static}, generating a fixed distribution of IPI attacks. Consequently, static benchmarks do not usefully evaluate defense robustness to adaptive threats. We address this issue by developing AutoDojo, an adaptive extension of AgentDojo that optimizes IPI against a given defense. Using AutoDojo against state-of-the-art IPI defenses across three task suites and five target models, we make two key observations. First, many defenses offer only limited protection: a cheap, black-box adaptive attack using a frontier LLM to iteratively optimize the injection raises attack success rate (ASR) well above the level achieved by static injections against nearly all evaluated defenses. Against a filter that reduces static ASR to 0\\%, AutoDojo recovers 28\\% overall and 64\\% on action-open tasks. Second, for prompt-level and filter-based defenses, ASR is substantially higher on \\emph{action-open} tasks -- where the user's request delegates the action itself to attacker-controlled content -- than on precisely specified tasks. This is a structural limit: on such tasks the injection can pose as ordinary data rather than an explicit instruction, bypassing defenses that rely on detecting instruction-like text. AutoDojo is publicly available at https://github.com/xhOwenMa/AutoDojo.△ Less",
+      "published": "Submitted19 June, 2026;v1submitted 12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "MalSkillBench: A Runtime-Verified Benchmark of Malicious Agent Skills",
+      "url": "https://arxiv.org/abs/2606.07131",
+      "authors": [
+        "Wenbo Guo",
+        "Wei Zeng",
+        "Chengwei Liu",
+        "Xiaojun Jia",
+        "Yijia Xu",
+        "Lei Tang",
+        "Yong Fang",
+        "Yang Liu"
+      ],
+      "snippet": "AI coding agents such as Claude Code and Gemini CLI increasingly extend themselves with third-party skills: markdown packages bundling natural-language instructions, executable scripts, and tool permissions. Because a skill is at once code and agent-facing instruction, it introduces a supply chain dependency whose risk is neither pure code nor pure prompt. Detection tools have never been measured against verified ground truth spanning this hybrid space, leaving their effectiveness unknown and wild-only evaluations biased.\n  We present MalSkillBench, the first runtime-verified benchmark of malicious agent skills: 3,944 malicious skills labeled along a three-dimensional taxonomy of 108 cells. Of these, 3,214 come from a closed-loop Generate-Verify-Feedback pipeline admitting only samples whose malicious behavior fires inside a Docker sandbox under system-call monitoring and an LLM judge; we add 703 in-the-wild and 4,000 matched benign skills. Our measurements are consistent: code injection reaches 94.5% verification yield butpromptinjectiononly 75.8%, the same fragility that later makes it hard to detect; the wild sample is narrow, dominated by one cryptocurrency-theft campaign (86.6% one behavior, 81% from two accounts) with a small but architecturally new tail attacking the agent control plane; the strongest skill-specific detector reaches 98.4% recall on code injection yet collapses onprompt-injectionand agent-control attacks, and wild-only scoring swings the ranking by up to 66 recall points; supply-chain scanners andprompt-injectiondefenses each see only half of a skill, and no combination recovers the code-instruction relationship. Detecting malicious skills therefore requires reasoning jointly over task intent, code, and instructions. We release the dataset, pipeline, baselines, and results.△ Less",
+      "published": "Submitted19 June, 2026;v1submitted 5 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "When Does Overlap Help? OSU-Mem and a Cell-Conditional Analysis of Trajectory Memory forLLMAgents",
+      "url": "https://arxiv.org/abs/2606.28376",
+      "authors": [
+        "Mellow Baixuan Chen",
+        "Xiangguo Sun"
+      ],
+      "snippet": "Long-horizon large language model (LLM)agentsaccumulate interaction trajectories that quickly exceed any practical prompt budget, and existing memory methods either truncate aggressively and lose non-local evidence or retain boilerplate that degrades decision quality. We ask a mechanism question rather than claiming a better general-purpose memory system: when does organizing trajectory memory into overlapping semantic units (OSUs) -- groups of related steps in which one step may belong to several units -- help retrieval over flat or disjoint alternatives? We instantiate this in OSU-Mem, which retrieves from an overlapping OSU pool via budgeted coarse-to-fine expansion, and show its benefit is conditional: overlapping memory helps when the evidence steps a query needs share tool calls or entities, but hurts when those steps are fully heterogeneous and share neither. On a synthetic benchmark where evidence carries such shared structure by construction, OSU-Mem improves over the strongest baseline as the theory predicts; yet on a concatenated, constructed unaugmented $τ$-bench setting its aggregate advantage over flat retrieval vanishes. Splitting queries by whether their evidence shares tools and entities shows this near-tie to be an artifact of mixing query types rather than a property of either method, and ToolBench, a controlled probe built to carry shared structure by design, corroborates the same mechanism via an overlap-vs.-disjoint construction contrast (under a coverage-guided variant), isolating the construction principle rather than validating the full default system. Because the relevant sharing is cheaply estimable from metadata, the analysis yields a metadata-based heuristic for predicting when overlap is likely to improve retrieval. We deliberately isolate the retrieval layer, assessed by retrieval quality and an LLM-mediated evidence-selection stage.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Dissecting Agentic RAG: A Component Ablation for Multi-Hop QA with a Local 7B Model",
+      "url": "https://arxiv.org/abs/2606.21553",
+      "authors": [
+        "Sheroz Shaikh"
+      ],
+      "snippet": "Agenticretrieval-augmentedgeneration (RAG) systems combine iterative reasoning loops, query decomposition, and adaptive retrieval to tackle multi-hop question answering. However, the contribution of each component remains poorly understood, particularly under resource-constrained settings using only local language models. Many agentic designs add adaptive retrieval routing and deeper retrieval loops on the assumption that the added complexity helps. To test whether it does, we run a controlled ablation study of a full agentic RAG pipeline evaluated on 5,000 questions from the HotpotQA distractor development set using a local 7B parameter model (Qwen2.5-7B-Instruct). Our full pipeline achieves EM=53.2% and F1=61.6%, compared to a single-pass dense-retrieval baseline of EM=43.1% and F1=54.0%. Across eight ablation conditions, we find that: (1) fixed hybrid retrieval via reciprocal rank fusion consistently outperforms rule-based adaptive routing (+1.8 EM, +1.9 F1), as the routing heuristic over-routes to BM25 by firing on named entities present in nearly all multi-hop sub-questions; (2) two retrieval iterations over the decomposed sub-questions capture 95% of the gains of five, with no meaningful benefit from deeper loops; and (3) query decomposition and cross-encoder reranking each contribute statistically significant but smaller gains (p<0.01 and p<0.001 respectively). Taken together, on a fixed local-model budget, the simpler and fixed choices turn out to be competitive with or better than their adaptive versions: most of the gain comes from running a short retrieval loop, not from adaptive routing or from many iterations. We use no proprietary APIs or large-scale compute.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "AgentDSE: Reasoning-Augmented Architectural Design Space Exploration",
+      "url": "https://arxiv.org/abs/2606.21836",
+      "authors": [
+        "Chenyu Wang",
+        "Jiahe Caroline Shi",
+        "David Kong",
+        "Duane S. Boning",
+        "Zishen Wan",
+        "Yilun Du",
+        "Vijay Janapa Reddi"
+      ],
+      "snippet": "Traditional architectural design space exploration (DSE) is highly inefficient, typically requiring tens of thousands of simulator evaluations across various optimization methods. This inefficiency arises because conventional methods treat the simulator as a black-box oracle. In contrast, human architects effectively guide exploration by reasoning through physical constraints, performance bottlenecks, data reuse, and workload structures. To bridge this gap, we introduce AgentDSE, a simulator-in-the-loop methodology driven by a general-purpose large language model (LLM) codingagent. AgentDSE automates this architectural-reasoning loop without requiring model fine-tuning, precomputed design databases, or domain-specific optimizer code. Across deep neural network (DNN) accelerator mapping, hardware/software co-design, and CPU cache-hierarchy optimization, AgentDSE achieves competitive or better design quality with up to two orders of magnitude fewer evaluations. AgentDSE also produces inspectable traces that surface architectural hypotheses, performance cliffs, implicit priors, and simulator artifacts, making every search decision traceable rather than buried in optimizer state.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Toward Open Weight Models Without Risks: Separating Public and Private Capabilities in LLMs",
+      "url": "https://arxiv.org/abs/2606.21638",
+      "authors": [
+        "Charbel El Feghali",
+        "Arkil Patel",
+        "Nicholas Meade",
+        "Spandana Gella",
+        "Verna Dankers",
+        "Siva Reddy"
+      ],
+      "snippet": "Open-weight Large Language Models (LLMs) enable scientific progress and broad deployment. However, they make it difficult to control access to sensitive capabilities. Current practice either suppresses dangerous capabilities before release or mediates access through closed services that use specialized model variants, input/output monitors, and API permissions. The former is susceptible tojailbreakswhile sacrificing capability for all users to mitigate the risks posed by a few, and the latter is fundamentally incompatible with open-weight release. In this paper, we propose Tiered Language Models (TLMs), where a single set of released weights supports multiple capability levels. In its default public configuration, a TLM behaves as a conventional LLM. A compact secret key specifies a permutation over a small parameter subset, inducing an alternative computation graph over the same weights that exposes additional capabilities. We develop a training protocol that jointly pretrains both configurations from scratch, then fine-tunes the keyed configuration on private data with regularization to preserve the public model's behavior. We pretrain 180M- and 650M-parameter TLMs and demonstrate that the keyed configuration can acquire a new language, gain instruction-following ability, and memorize private factual knowledge, whereas the public configuration exhibits none of these capabilities. Moreover, we show that our approach extends naturally to multiple hierarchical tiers. Because authorization operates on the model's weight structure rather than in the input space, the mechanism resists fine-tuning-based extraction and partial key compromise. In general, TLMs take a step toward reconciling open-weight release with selective capability control.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "HERALD: High-Throughput Block DiffusionLLMServingvia CPU-GPU Cooperative KV Cache Retrieval",
+      "url": "https://arxiv.org/abs/2606.21633",
+      "authors": [
+        "Omin Kwon",
+        "Doyeon Kim",
+        "Jongseok Park",
+        "Seung Yul Lee",
+        "Ion Stoica",
+        "Jae W. Lee"
+      ],
+      "snippet": "Diffusion LLMs (dLLMs) improve GPU utilization over autoregressive decoding by generating multiple tokens per forward pass, but their KV cache still grows linearly with context, limiting throughput at long contexts. KV cache offloading to host DRAM alleviates this memory pressure, but the limited PCIe bandwidth necessitates recalling only a sparse subset of KV entries. In block dLLMs, the relevant KV entries remain consistent across denoising steps within a block, enabling high-accuracy selection by identifying the top-k entries once and reusing them throughout all denoising steps. This property appears attractive for offloading as it amortizes the selection overhead across the entire block, but it requires exact attention over the full KV cache, which is too expensive under offloading. We present HERALD, a KV offloading system for block dLLMs that resolves this through two opportunities that reduce the required selection compute by a factor of the block size and enable selection to be overlapped with denoising. Across three block dLLMs and five long context tasks, HERALD achieves near-lossless accuracy at 5-10% KV budget and up to 1.59x lower per block latency and 2.47x higher throughput over GPU-only inference, with speedups growing with context length.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Scalable Hierarchical Attention Transformers for Multi-TurnJailbreakDetection in Long Conversations",
+      "url": "https://arxiv.org/abs/2606.21082",
+      "authors": [
+        "Chenhui Hu",
+        "Muhammed Salih",
+        "Sudipto Guha",
+        "Subramanian Srinivasan"
+      ],
+      "snippet": "Multi-turnjailbreakscan evade turn-level moderation by spreading unsafe intent across a dialogue through gradual escalation, reframing, and role manipulation. We address multi-turnjailbreakdetection as a conversation-level classification problem and introduce an efficient hierarchical detector that avoids expensive long-context concatenation while retaining cross-turn reasoning. The model encodes individual turns to form compact turn representations and applies a lightweight conversation module that captures dialogue dynamics and selectively attends to fine-grained evidence when needed. On a challenging evaluation benchmark of 14,038 conversations, our approach achieves an F1 of 0.9394, outperforming Claude Opus 4.7, the strongest competing baseline, by 0.07 while halving its false-positive rate. Ablation studies confirm that each architectural component contributes meaningfully, with combining cross-attention and self-attention in the conversation module yielding a 2.26 percentage point reduction in false-positive rate over the self-attention-only variant.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "What Do Safety-Aligned LLMs Learn From Mixed Compliance Demonstrations?",
+      "url": "https://arxiv.org/abs/2606.20508",
+      "authors": [
+        "Sihui Dai",
+        "Mann Patel"
+      ],
+      "snippet": "Prior work has shown that in-context demonstrations canjailbreaklanguage models, but it remains unclear how models interpret different types of compliance demonstrations. We study this by mixing benign compliance demonstrations (non-harmful request, helpful response) with harmful compliance demonstrations (harmful request, helpful response) and testing three hypotheses about how demonstration composition drives harmful compliance. Across four models, we find that benign and harmful demonstrations are not interchangeable: benign demonstrations can either reduce or increase harmful compliance depending on the model. We further show that preference optimization is the critical training stage that prevents benign demonstrations from increasing harmful compliance, that demonstration ordering exhibits strong recency bias, and that models differ in how refusal interacts with in-context learning: some adopt demonstrated formatting even when refusing, while others override all in-context signals upon refusal. Taken together, this work moves beyond showing that demonstration-basedjailbreakingworks to characterizing how it works: what models extract from compliance demonstrations depends on demonstration content, ordering, and training methodology.△ Less",
+      "published": "Submitted18 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Error-Aware TF-IDFRetrieval-AugmentedGeneration for ASR Error Correction",
+      "url": "https://arxiv.org/abs/2606.24915",
+      "authors": [
+        "Mohammad Aref Jafari-Raddani"
+      ],
+      "snippet": "End-to-end automatic speech recognition systems frequently hallucinate rare entities and domain-specific terms, especially in low-resource languages. Whileretrieval-augmentedgeneration frameworks can mitigate these errors using large language models, current architectures face significant challenges. They either rely on standard sparse retrieval that ignores phonetic misrecognitions or utilize heavyweight cross-modal embeddings that introduce high latency. This letter proposes a highly efficient, purely lexical error-aware framework designed to explicitly resolve phonetic and loop hallucinations. Our approach integrates a symmetric text normalization module with a novel error-aware term frequency-inverse document frequency algorithm. By constructing a sparse diagonal penalty matrix based on historical errors, the retriever mathematically prioritizes corrective documents containing specific high-risk misrecognitions. Evaluated on the Persian subset of the FLEURS dataset, our method increased the error-aware hit rate from 53.7% to 90.9%. In end-to-end evaluations, the integrated framework reduced the final word error rate from 23.06% to 18.83%, achieving significant accuracy gains with near-zero inference latency.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 5.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.5
+    },
+    {
+      "title": "Fast-TurboQuant: A Multiplier-Free Online Vector Quantization Approach",
+      "url": "https://arxiv.org/abs/2606.21448",
+      "authors": [
+        "Pedro M. R. Pereira",
+        "Felipe A. P. de Figueiredo",
+        "Rausley A. A. de Souza"
+      ],
+      "snippet": "As large language models scale, memory bandwidth for key-value caches andretrieval-augmentedgeneration systems becomes a critical bottleneck. While 1-bit quantization addresses this constraint, recent TurboQuant relies on dense random rotation matrices to condition the vector distribution before quantization. This projection demands millions of floating-point multiplications per embedding, making it difficult to deploy on constrained edge silicon. We introduce Fast-TurboQuant, a multiplier-free projection architecture that replaces the dense matrix with a structured fast Johnson-Lindenstrauss transform. By applying a Rademacher phase inversion followed by a fast Walsh-Hadamard transform (FWHT), the method leverages sub-Gaussian concentration to satisfy the prerequisites of scalar Lloyd-Max quantization without Gaussian projections. This substitution reduces the arithmetic complexity to only additions, eliminating hardware multipliers. Evaluation on DBpedia OpenAI-3 Large embeddings demonstrates a 19.7 times algorithmic speedup under sequential execution. Furthermore, the dimension expansion due to the FWHT zero-padding reduces the mean squared error and improves Recall@10.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Per-Entity Bias Mapping for AI Visibility: Why Brand Mentions Require Entity-Specific Calibration",
+      "url": "https://arxiv.org/abs/2606.21595",
+      "authors": [
+        "Zoltan Varga"
+      ],
+      "snippet": "AI-mediated answer systems increasingly determine how brands and organizations are represented to users. Existing approaches reduce visibility to mention rate or citation frequency. This paper argues that aggregate metrics are insufficient because entities exhibit systematically different AI visibility error profiles.\n  We introduce Per-Entity Bias Mapping (PEBM): a ten-dimensional framework distinguishing raw from verified mentions. Three failure modes are identified: (1) underrepresented entities suffer invisibility due to weak knowledge graph presence; (2) large entities suffer the Brand Hallucination Paradox -- model familiarity creates stronger surfaces for plausible but incorrect completions; (3) CEE entities face a structural infrastructure gap across knowledge graphs, NER, and entity linking. A fourth dimension, Parametric-Retrieval Lag Asymmetry, describes divergence betweenretrieval-augmentedand parametric memory update cycles.\n  A full-scale empirical study (n=100 Hungarian B2B entities, 1,400 probe runs, 2,062 sources) finds Tier 1 brands produce 52.69% fabricated citations versus 37.87% for Tier 3 entities (+14.82 pp; p=1.67e-11), supporting the Brand Hallucination Paradox. Regulatory-framed queries elevate fabrication to 56.77% versus 37.59% baseline (+19.2 pp). We identify rejection-induced confabulation escalation: agentic quality filters function as hallucination accelerators in compliance contexts. We introduce ghost cartography as a unifying mechanism: entities in sparse latent regions produce confident output interpolated from neighboring dense regions, yielding a two-dimensional confabulation space (fabricated presence vs. frozen representation).△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "ForEx: A Formal Verification Framework for Explainable Reasoning in Logical Fallacy Detection and Annotation",
+      "url": "https://arxiv.org/abs/2606.21867",
+      "authors": [
+        "Pei-Cing Huang",
+        "Chienyu Liu",
+        "Chan Hsu",
+        "Ci-Siang Chen",
+        "Pei-Ju Lee",
+        "Yihuang Kang"
+      ],
+      "snippet": "Current evaluations of Large Language Models (LLMs) on logical fallacy detection focus on predicted labels, but do not establish whether those labels are supported by the reasoning the models provide. We propose ForEx (Formal Verification for Explainable Reasoning), a framework that translates LLM-generated explanations into Lean4 and verifies whether the translated rationale is derivable under encoded premises, not the logical validity of the original natural language argument. To distinguish prediction outcomes from the formal status of the supporting reasoning, we introduce the LLM Argument Verification Matrix, which separates label consistency from formal verification status. Experiments on LOGIC-Climate show that over 90% of LLM outputs can be translated into formal reasoning chains that pass verification, while agreement with human annotations remains around 20%. These results expose a systematic gap between formal derivability and label agreement, a distinction invisible to prediction-based metrics. ForEx movesLLMevaluationbeyond label correctness toward machine-checkable analysis of formalized reasoning chains.△ Less",
+      "published": "Submitted20 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "From Embedding Geometry to Spectral Search: Energy Dispersion Networks For Vector Retrieval",
+      "url": "https://arxiv.org/abs/2606.21535",
+      "authors": [
+        "Lorenzo Moriondo",
+        "Ilias Azizi"
+      ],
+      "snippet": "Vector spaces, such as embedding spaces that encode dense semantic information, need not be analyzed solely through pointwise geometry. They can also be interpreted as energy networks through the spectral graph induced by the topology of their column vectors, i.e., their feature-space structure. Building on this perspective, we introduce Graph Wiring, a general framework for exploiting feature-space spectral structure, together with Spectral Indexing, its task-specific instantiation for vector search. By coupling geometric similarity with spectral information, the proposed method improves head-tail coherence and semantic alignment relative to purely geometric retrieval methods. It further supports adaptive search behavior through tau-modulation, providing the flexibility increasingly required by modernRetrieval-AugmentedGeneration (RAG) pipelines. We present the complete algorithmic pipeline, establish its theoretical foundation through epiplexity, and evaluate the approach across benchmark and industrial settings using the open-source arrowspace library.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "Measuring What Persists: Conditioning Mechanisms and a Geometric Framework for AIAgentIdentity",
+      "url": "https://arxiv.org/abs/2606.21843",
+      "authors": [
+        "Andrew Tanner"
+      ],
+      "snippet": "AIagentsin long-context applications drift from their specified identity. Current methods detect this only after qualitative degradation is visible. We present a geometric framework for measuring identity structure using $\\sqrt{\\mathrm{JSD}}$ metric spaces and magnitude homology from enriched category theory, where identity is non-geodesic structure and drift is its relaxation toward the geodesic.\n  Validated on a persistent AIagent, the framework's strongest empirical finding is a two-mechanism conditioning structure: cross-condition distances reveal an identity-vacuum cluster where the identity specification fills a behavioral void, and a safety-basin cluster where it displaces from post-training attractors. An equilateral probe baseline confirms that the identity specification creates measurable behavioral richness (55 unique response patterns vs. 1 for the base model) at maximum probe separation. A first-order perturbation theory for equilateral configurations predicts magnitude changes from perimeter changes alone, with shape perturbations first-order cancelled by the $S_n$ symmetry; the formula is self-consistent at the observed perturbation amplitudes.\n  A drift experiment measuring magnitude decrease under context pressure was subsequently found to reflect repetitive-padding artifacts rather than genuine context-length drift; diverse padding produces no measurable deformation through 150K tokens. The magnitude homology framework's full diagnostic promise -- detecting anisotropic contraction and structural collapse via homological simplification -- is architecturally grounded in the perturbation theory and selection rules but remains empirically unconfirmed.△ Less",
+      "published": "Submitted19 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 5.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "Bayesian Predictive Synthesis for Dynamic Networks: Forecasting and Identifying Structural Mechanisms",
+      "url": "https://arxiv.org/abs/2606.26136",
+      "authors": [
+        "Marios Papamichalis",
+        "Regina Ruane",
+        "Theofanis Papamichalis"
+      ],
+      "snippet": "Networks are shaped by competing structural mechanisms, such as communities, geometry, or hubs. In a dynamic network the most predictive mechanism can change, and a model tied to one mechanism, or to fixed weights, cannot adapt as the dominant structure shifts. We develop dynamic Bayesian predictive synthesis for networks, in which a mechanism is anagentforecasting the next snapshot's edges and a synthesis layer combines them with time-varying weights. At each step the method returns a calibrated edge forecast and inference on the mechanism weights, with intervals valid given the fittedagents, so it also reports which mechanism is most informative. Inference of this kind requires a sparse-safe parametrization and an identification theory, under which a single graph identifies and estimates the weights. A sharp threshold separates distinguishable from indistinguishable mechanisms, a change in the active mechanism is tracked at an optimal per-switch cost, and for a single snapshot the method reduces to calibrated link prediction. On real networks, simulations, and benchmarks, the synthesis gives accurate, calibrated forecasts and recovers the leading mechanism when△ Less",
+      "published": "Submitted18 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 4.0,
+        "hook_potential": 3.0
+      },
+      "composite": 3.25
+    },
+    {
+      "title": "Reframing AGI Confrontation with Off Earth Autonomy",
+      "url": "https://arxiv.org/abs/2606.30666",
+      "authors": [
+        "Alexey Potapov"
+      ],
+      "snippet": "A common AI-safety narrative holds that sufficiently capableagentswill predictably seek power, resist shutdown, and therefore tend toward confrontation with humans. We argue that this conclusion is often drawn in an implicitly Earth-centered strategic landscape. If a credible off-Earth autonomy pathway exists - i.e., a staged transition from Earth dependence to an autonomous machine industrial base - then confrontation is not the only route to reducing human control. Using Saklakov's decision-theoretic 'confrontation question' as an anchor, we provide a qualitative mapping from the autonomy pathway to key model terms showing that early cooperation can dominate confrontation as a path to autonomy, and that the autonomy pathway can reduce confrontation incentives by making Earth less strategically binding. We discuss how this incentive shift interacts with feedback-loop dynamics between human preemption andagentbehavior, and outline implications for governance: under incentive-compatible early cooperation, a more stable, higher-observability regime can support iterative oversight and cooperative alignment.△ Less",
+      "published": "Submitted18 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 4.0,
+        "hook_potential": 3.0
+      },
+      "composite": 2.75
+    },
+    {
+      "title": "Multiscale Exit-Join Dynamics: Tactical Consensus and Strategic Coalition Formation",
+      "url": "https://arxiv.org/abs/2606.26139",
+      "authors": [
+        "Quanyan Zhu"
+      ],
+      "snippet": "This paper develops a multiscale model of coalition formation in which strategic exit-and-join decisions are coupled with tactical consensus dynamics inside coalitions. Coalition value is generated endogenously from within-coalition information aggregation, while Aumann-Dreze payoffs, switching frictions, and acceptance rules govern strategic reconfiguration. The framework introduces a fast-slow architecture in which transferable coalition value emerges from DeGroot-style consensus processes, while coalition structures evolve through incentive-driven exit-and-join dynamics. The analysis characterizes joint tactical-strategic equilibria, conditions for tactical and strategic unanimity, segregation, polarization, and cognitive barriers that sustain stable coalition structures. A fixed-point characterization and existence results are established for the coupled dynamics. Numerical experiments reveal an instability-consensus paradox: low or negative switching barriers may prevent strategic convergence while simultaneously promoting temporal mixing sufficient to achieve global tactical consensus. The results provide a unified perspective on coalition formation, consensus dynamics, information aggregation, and strategic stability inmulti-agentsystems.△ Less",
+      "published": "Submitted18 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 3.0,
+        "hook_potential": 2.0
+      },
+      "composite": 2.25
+    }
+  ]
+}

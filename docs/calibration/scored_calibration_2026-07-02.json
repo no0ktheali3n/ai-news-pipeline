@@ -1,0 +1,613 @@
+{
+  "generated_at": "2026-07-02T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-06-30",
+    "2026-07-02"
+  ],
+  "candidates": [
+    {
+      "title": "WhenAgentsDo Not Stop: Uncovering InfiniteAgenticLoops inLLMAgents",
+      "url": "https://arxiv.org/abs/2607.01641",
+      "authors": [
+        "Xinyi Hou",
+        "Shenao Wang",
+        "Yanjie Zhao",
+        "Haoyu Wang"
+      ],
+      "snippet": "LLMagentsincreasingly rely on iterative execution to solve tasks through planning,tooluse, state updates, andagentcollaboration. While this design enables flexible automation, it also creates a new class of failures: anagentmay repeatedly execute model calls, tools, workflow transitions, oragenthandoffs when the feedback path is not effectively bounded. We call this problem InfiniteAgenticLoops (IALs). IALs are not ordinary programming loops; they arise from the interaction betweenagentlogic, framework semantics, runtime observations, and termination mechanisms. Such failures can amplify a single request into long running model and tool execution, causing cost exhaustion, model denial of service, context growth, and repeated external side effects. We propose IAL-Scan, a static analysis tool for detecting IAL failures in real-worldLLMagentprojects. IAL-Scan abstracts heterogeneousagentcode into a framework independentAgentIR, builds anAgenticLoop Dependence Graph (ALDG) to recover explicit and framework induced feedback paths, and checks whether these paths can repeatedly reach costly or state growing operations without an effective bound. We evaluate IAL-Scan on 6,549LLMagentrepositories. It reports 74 potential findings, among which manual review confirms 68 IAL failures across 47 projects, achieving 91.9% precision.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "Beyond the Prompt:JailbreakingFunction-Calling LLMs via Simulated Moderation Traces",
+      "url": "https://arxiv.org/abs/2607.00481",
+      "authors": [
+        "Junlong Liu",
+        "Haobo Wang",
+        "Weiqi Luo",
+        "Xiaojun Jia"
+      ],
+      "snippet": "Jailbreakattacks remain a critical threat to the safe deployment of large language models (LLMs). While prior work has primarily studied attacks and defenses at the prompt level, we show that this prompt-centric paradigm overlooks a structural vulnerability in stateful, function-calling environments. In such applications, developer-defined schemas, structured arguments, and untrusted tool outputs are interleaved into a single shared model context. This architecture expands the attack surface by blurring the boundary between trusted control logic and untrusted data, allowing adversarial intent to be distributed across a multi-turn execution path. We exploit this architectural flaw through SMT, a black-box attack framework based on Simulated Moderation Traces. Departing from purely prompt-based interactions, SMT constructs a multi-turn trajectory that simulates a legitimate moderation-auditing workflow. Within this trajectory, a fabricated moderation frame leverages red-team testing as a pretext to elicit harmful generations. The subsequent validation feedback treats safety refusals as execution failures, prompting refinements that gradually weaken the model's safety constraints and ultimately trigger harmful outputs. Extensive empirical evaluations on prominent commercial LLMs from five different providers across two standardized safety benchmarks show that SMT consistently achieves the highest average attack success rate and HarmScore while requiring a near-minimal number of queries, substantially outperforming existing baselines. These findings demonstrate that prompt-level sanitization alone is fundamentally insufficient for defending tool-enabled LLM systems and highlight the urgent need for context-aware validation across schemas, arguments, tool outputs, and accumulated conversation state. The code is available at https://github.com/liujlong27/SMT.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "Diverse Evidence, Better Forecasts:Multi-AgentDeliberation Under Information Asymmetry",
+      "url": "https://arxiv.org/abs/2607.01661",
+      "authors": [
+        "Yuante Li",
+        "Yicheng Tao",
+        "Kate Zhang",
+        "Taozhi Wang",
+        "Gefei Gu",
+        "Yaxin Zhou"
+      ],
+      "snippet": "Multi-agentsystems are increasingly used for forecasting future events, as deliberation among multiple LLMs is believed to improve reasoning and calibration. Yet existing approaches overlook a critical design choice: what information eachagentreceives. When allagentsare given identical evidence, deliberation collapses into herding rather than genuine belief revision, leavingmulti-agentsystems little better than a singleagent. We identify this as a fundamental gap and propose designed information asymmetry to close it: by partitioning evidence into shared public and disjoint private subsets, eachagentholds exclusive knowledge that can only reach others through deliberation. We theoretically show that this decomposition reduces inter-agenterror correlation, and instantiate it in InfoDelphi, a framework combining relevance-aware evidence routing, rationale-based iterative deliberation, and confidence-weighted aggregation. On PolyGym, a benchmark of 375 binary forecasting questions derived from real-world prediction markets, InfoDelphi outperforms the strongest single-agentandmulti-agentbaselines by 12--18% in Brier score and 4--8 percentage points in accuracy. More detailed experiments confirm that removing information asymmetry eliminates most deliberation gains, establishing diversity of input as the key enabler of effectivemulti-agentreasoning.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "A Single Patch Is Not Enough: Deterministic Fusion of Repair Candidates",
+      "url": "https://arxiv.org/abs/2607.01597",
+      "authors": [
+        "Boyang Yang",
+        "Xiangliang Hu",
+        "Luyao Ren",
+        "Yanjun Chen",
+        "Bach Le",
+        "Tegawendé F. Bissyandé",
+        "Haoye Tian"
+      ],
+      "snippet": "Modern LLM codingagentsare commonly evaluated using pass@k, but developers typically apply a single final patch in real-world settings. This pass@k-to-pass@1 gap is a post-generation problem: a candidate patch pool may contain a correct patch, but the system must decide which one to suggest to developers. Existing post-generation approaches mainly rank whole candidates, filter them with tests, or query an LLM judge, but none deterministically reuse shared edit-atom evidence to both select and construct the final patch. Thus, we propose PatchFusion, a deterministic atomic evidence fusion approach for candidate patches that consults no test outcome at decision time. PatchFusion first fuses whole-diff agreement into a repair neighborhood, selects an auditable representative, and then applies evidence-constrained fusion (ECF) to retain repeated edit atoms and prune unsupported parts. To evaluate this setting, we build PatchFuseBench, a fixed-pool benchmark covering SWE-bench Verified, SWE-bench Multilingual, and Defects4J candidate patches.\n  On PatchFuseBench, PatchFusion solves 426/500 bugs on SWE-bench Verified and 236/300 on SWE-bench Multilingual, and reaches 87/371 plausible patches on Defects4J, outperforming every matched candidate-pool selector on all three. PatchFusion recovers 41 and 27 bugs that no single source solves (30 and 18 more over the best single source). Ablation studies show that ECF adds +5/+6/+9 solved bugs by recovering in-pool repairs that selection misses, with no observed regression, and that PatchFusion's gains remain stable as candidate pools are resampled. On these complementary multi-source pools, cross-candidate evidence recovers more correct patches than the test-based and LLM-based selectors we evaluate, at orders-of-magnitude lower cost, reaching within 96.2% and 89.7% of the candidate-reachable ceiling on the two SWE-bench benchmarks.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Cognitive Firewall: A Proactive, Zero-Trust, Multi-Gate Framework for LLM Safety",
+      "url": "https://arxiv.org/abs/2607.01277",
+      "authors": [
+        "Michele Guida",
+        "Ruslan Shikhhamzayev",
+        "Sindhuja Penchala",
+        "Stefano Iannucci",
+        "Jiacheng Li",
+        "Shahram Rahimi",
+        "Noorbakhsh Amiri Golilarz"
+      ],
+      "snippet": "Large language models (LLMs) can be induced to produce harmful content through multi turn strategies in which no single user message appears clearly unsafe. Existing runtime safeguards commonly evaluate prompts or responses as isolated messages, which limits their ability to recover ac-cumulated intent, verify asserted authority, or detect harmful objectives decomposed across a dialogue. This paper presents the Cognitive Firewall, a proactive runtime oversight framework that interposes an independent oversight model between a user and a protected target mod l. The framework decomposes safety assessment into four categorical gates: an intent gate that identi-fies the operational objective of a request, a zero trust context gate that treats claimed roles and permissions as unverified evidence, a consistency gate that detects escalation and decomposition across turns, and an output risk gate that inspects candidate responses before release. Gate decisions are combined through escalation rather than score averaging, allowing any confident danger signal to block an interaction while preserving an auditable rationale. Experiments on fourjailbreakbenchmarks and a benign safety test set show that the Cognitive Firewall substantially reduces attack success across single turn, multi turn, authority based, and human crafted attacks. It lowers attack success to 2 percent or below on three attack sets and to 14 percent on the most difficult human crafted set, while maintaining an 8 percent over refusal rate. These results indicate that decomposed, conversation level oversight can improve proactive containment and auditability for LLM safety.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Beyond Document Grounding: Span-Level Hallucination Detection over Code, Tool Output, and Documents",
+      "url": "https://arxiv.org/abs/2607.00895",
+      "authors": [
+        "Ádám Kovács",
+        "Bowei He",
+        "Xue Liu",
+        "István Boros",
+        "Szilveszter Tóth",
+        "Gábor Recski"
+      ],
+      "snippet": "Hallucination detection forretrieval-augmentedgeneration (RAG) is usually evaluated on natural-language document evidence. However, grounded generation systems increasingly rely on structured inputs: source code, developer-tool output, markdown documents, tables, and repository metadata. We introduce a unified benchmark for span-level hallucination detection over code, tool output, structured documents, and existing natural-language RAG datasets. The benchmark is built by starting from grounded correct answers, injecting localized hallucinations with exact character labels, and validating the code test split with evidence-based review. Our fine-tuned Qwen3.5-2B detector reaches 0.689 span-F1 on the unified test set and 0.60 on the code-agent source, where it substantially outperforms LettuceDetect-large (0.17) and the strongest zero-shot LLM judges we evaluated (at most 0.22). The same model remains competitive on established natural-language benchmarks, with 81.8 RAGTruth example-F1 and 0.724 English PsiloQA IoU.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Securing the AI Agent: A Unified Framework for Multi-Layer Agent Red Teaming",
+      "url": "https://arxiv.org/abs/2606.31227",
+      "authors": [
+        "Yong Yang",
+        "Xing Zheng",
+        "Huiyu Wu",
+        "Huangsheng Cheng",
+        "Xiaorong Shi",
+        "Jing Guo",
+        "Bo Yang",
+        "Yi Zhou",
+        "Xiangfan Wu",
+        "Zonghao Ying"
+      ],
+      "snippet": "The fast growth of open-source AI infrastructure, from model serving engines and agent platforms to the Model Context Protocol (MCP) ecosystem and the language models themselves, has outpaced the security tooling available to defend it. We present AI-Infra-Guard, an open-source framework that organizes AI red teaming around a single observation: the attack surface of an AI agent is stratified across layers (infrastructure, protocol/tool, agent behavior, and model), and no single detection paradigm fits all of them. The framework therefore matches a paradigm to each layer, from deterministic rule matching over 75+ AI components and 1{,}400+ vulnerability rules, through LLM-driven agentic auditing of MCP servers and agent-skill packages and multi-turn black-box agent red teaming, to ajailbreakharness with 26+ attack operators over sixteen datasets. To our knowledge it is the only open-source framework to span all of these, including supply-chain auditing of the agent skills that increasingly extend AI agents. We release AI-Infra-Guard as open source so that \\emph{layer-paradigm matching} can serve as a practical foundation for agent security and a shared base for the community to build on.△ Less",
+      "published": "Submitted30 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "HYPIC: Accelerating Hybrid-AttentionLLMServingwith Position-Independent Caching",
+      "url": "https://arxiv.org/abs/2607.01299",
+      "authors": [
+        "Yifei Liu",
+        "Juntong Wu",
+        "Yang Liu",
+        "Junhao Hu",
+        "Minghao Li",
+        "Xiaoxu Chen",
+        "Weihang Chen"
+      ],
+      "snippet": "Inretrievalaugmentedgeneration (RAG) and agenticLLMserving, prompts are assembled from independent segments into long contexts, making the prefill stage dominate the per-request computation cost. To this cost, two directions have emerged in parallel: position-independent caching (PIC) admits KV reuse for non-contiguous segments shared across different requests, while hybrid-attention models reduce computation complexity by replacing most full-attention layers with linear attention. However, they cannot coexist: applying PIC to hybrid-attention models breaks down because per-token KV-cache reuse primitives do not transfer to the per-request recurrent state.\n  In this work, we present Hypic, the first serving system for hybrid-attention LLMs with position-independent caching. For linear-attention layers, we identify the segment-cumulative transition operator as the missing algebraic primitive, and cache it alongside each segment's zero-start end-state, enabling near-exact and constant-time state composition of independently cached segments. For the remaining full-attention layers, existing PIC methods also fail as linear layers do not expose the per-token hidden states for selective recomputation. We show that the most significant attention deviation concentrates at segment boundaries, so recomputing only a small seam window at each boundary suffices to restore cross-segment lookback. Finally, Hypic exploits segment-level self-containment to parallelize cache-miss prefill across instances, turning long cold requests -- a major tail-latency contributor under both prefix caching and prior PIC -- into an accelerable workload. Evaluated across four hybrid-attention models and five workloads, Hypic reduces time-to-first-token (TTFT) by 2.45x on average and improves peak throughput by up to 2.0x over existing systems, while staying within 3.3 points of full-recompute accuracy.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.5
+    },
+    {
+      "title": "The Geometry of Refusal: Linear Instability in Safety-Aligned LLMs",
+      "url": "https://arxiv.org/abs/2606.22686",
+      "authors": [
+        "Shivam Ratnakar",
+        "Kartikeya Vats"
+      ],
+      "snippet": "Modern Large Language Models (LLMs) rely on extensive safety alignment, yet the mechanistic basis of refusal remains opaque. In this work, we investigate whether safety compliance is a deep semantic decision or a manipulable linear feature. We introduce Contrastive Logit Steering (CLS), a zero-optimization framework that isolates the \"refusal direction\" by contrasting hidden states derived from safe and unrestricted system prompts. Unlike representation engineering methods that intervene on internal activations, CLS operates directly on the output distribution, serving as a diagnostic probe for alignment fragility. When coupled with prefix injection to bypass initial refusal reflexes, this method induces a phase transition where guardrails collapse. Our experiments on 7 model families reveal that safety implementation is architecturally deterministic. While models like Llama-3.1 exhibit a \"Late Decision\" topology that is easily bypassed by CLS (reaching 95% ASR in approximately one second), others like Qwen-2.5 demonstrate \"Early Divergence\" by integrating safety mid-computation. Direct comparison with established activation-level steering methods shows that CLS achieves substantially higher attack success rates on Llama 2 (73% vs. 22.6%) and Qwen 7B (91% vs. 79.2%), demonstrating that logit-level intervention exposes alignment vulnerabilities that hidden-state methods underestimate. Beyond attacks, we show that this linearity enables bidirectional control: inverting the steering vector \"hardens\" models againstjailbreakswithout retraining. Our findings suggest that current alignment techniques create a steerable \"safety axis\" that serves as both a critical vulnerability and a precise primitive for defense.△ Less",
+      "published": "Submitted30 June, 2026;v1submitted 21 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 8.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.5
+    },
+    {
+      "title": "BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling inMulti-AgentLLM Systems",
+      "url": "https://arxiv.org/abs/2607.01600",
+      "authors": [
+        "Zewen Liu"
+      ],
+      "snippet": "As large language models (LLMs) are deployed as communicatingagents, does inter-agentcommunication cause outputs to converge? We introduce BOUNDARY_SYNC, a protocol measuring representational coupling via the Coupling Amplification Factor (CAF = JSD_cond / JSD_baseline), where CAF < 1 indicates homogenization and CAF > 1 indicates diversification. In controlled GPT-4o experiments (N=30, ~9,900 API calls), we measure coupling in text and image communication. Key findings: (1) text communication causes significant homogenization (CAF=0.803 [0.740, 0.873], d=1.30, p<0.001), confirmed by no-communication ablation and prompt-perturbation controls; (2) image communication also homogenizes under within-modality baselines (CAF=0.834 [0.811, 0.858]), with comparable proportional effect; (3) group size moderates coupling direction -- K=5 produces homogenization while K=3 yields CAF > 1.0 (point estimates 1.14 and 1.06, CI pending), suggesting a directional shift toward diversification; (4) cross-model replication shows extreme variation (CAF 0.034-0.803), with DeepSeek dominated by format artifacts; (5) coupling is stateless -- driven by prompt context rather than cumulative updating, with continuous consensus producing monotonic convergence. These results establishLLMagentcoupling as real, measurable, and controllable at the prompt level, with direct implications formulti-agentsystem design.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "HARC: Coupling Harmfulness and Refusal Directions for Robust Safety Alignment",
+      "url": "https://arxiv.org/abs/2607.00572",
+      "authors": [
+        "Shei Pern Chua",
+        "Fangzhao Wu"
+      ],
+      "snippet": "Understanding how aligned LLMs internally represent safety is critical for diagnosing alignment vulnerabilities, as it explains whyjailbreakssucceed and informs the design of robust alignment strategies. Prior work shows that aligned LLMs encode harmfulness and refusal as separable directions in the residual stream at prompt-side token positions. We show thatjailbreakssucceed at prompt encoding by suppressing either the refusal or harmfulness direction before any token is generated, with distinct attack classes occupying separable regions of the harmfulness-refusal plane. Extending the analysis to response-token positions, we find that the model recognizes harmful content while it is generating that content, even when it failed to recognize the input as harmful at the prompt side. Motivated by our findings, we introduce HARC (Harmfulness-And-Refusal Coupling), a fine-tuning method that pairs the two directions across both prompt and response positions. Since the intervention is confined to the harmfulness-refusal subspace, it leaves the rest of the residual stream intact and does not degrade general capability or inflate over-refusal. Across extensive experiments, HARC achieves the strongest robustness-capability-usability trade-off among six baselines spanning the major training-time and inference-time safety methods. The harmfulness and refusal directions at prompt and response positions transfer across the five model families and two scales we tested without architecture-specific tuning.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "AgentFlow: BuildingAgentDependency Graphs for Static Analysis ofAgentPrograms",
+      "url": "https://arxiv.org/abs/2607.01640",
+      "authors": [
+        "Shenao Wang",
+        "Xinyi Hou",
+        "Yanjie Zhao",
+        "Xiao Cheng",
+        "Haoyu Wang"
+      ],
+      "snippet": "LLMagentsare increasingly developed as source-code applications built onagentframeworks. Theseagentprograms combine conventional host-language code with framework-defined semantics for models, prompts, tools, memory, andmulti-agentorchestration logic. As a result, their behavior depends not only on traditional control and data flows, but also on a new class ofagentdependencies. Such dependencies are often expressed as framework-induced semantics, such asagentconstructors, tool decorators, andagenthandoff declarations, making them difficult to recover with existing static analysis or dependency tracking tools. In this paper, we present AgentFlow, the first static analysis framework for recovering and analyzingagentdependencies fromagentprograms. AgentFlow constructs anAgentDependency Graph (ADG), a framework-agnostic graph representation that representsagents, prompts, models, capabilities, memory states, and control policies as typed nodes, and captures their component-dependency, control-flow, and data-flow dependencies as typed edges. Built on ADGs, AgentFlow supports a range of analyses foragentgovernance and security, includingAgentBill of Materials (BOM) generation and prompt-to-tool risk detection. We implement AgentFlow for five representativeagentframeworks and evaluate it on AgentZoo, a corpus of 5,399 real-worldagentprograms. Our evaluation shows that AgentFlow recovers richeragententities and dependencies than existing AST-basedagentstatic analysis tools, generates more dependency-awareAgentBOMs, and uncovers 238 taint-style prompt-to-tool risks in real-worldagentprograms. These results show that ADG provides a practical foundation for understanding, governing, and securing emergingagentsoftware.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.0
+    },
+    {
+      "title": "AgenticDataBench: A Comprehensive Benchmark for DataAgents",
+      "url": "https://arxiv.org/abs/2607.01647",
+      "authors": [
+        "Zhaoyan Sun",
+        "Shan Zhong",
+        "Daizhou Wen",
+        "Jiaxing Han",
+        "Guoliang Li",
+        "Ying Yan",
+        "Peng Zhang",
+        "Yu Su",
+        "Xiang Qi",
+        "Baolin Sun",
+        "Chengyuan Yang",
+        "Tao Fang",
+        "Huaiyu Ruan"
+      ],
+      "snippet": "Data science aims to derive actionable insights from heterogeneous raw data, unlocking the value of the massive amounts of data generated in modern society. Automating this process is essential to reducing labor-intensive efforts for data scientists and enabling scalable data-driven applications. Recently, large language model (LLM)-based dataagentshave emerged as a promising solution to automate data science workflows. However, the field lacks comprehensive benchmarks to rigorously evaluate theseagentsacross diverse scenarios with fine-grained granularity. To address this gap, we propose AgenticDataBench, a comprehensive benchmark featuring realistic tasks spanning diverse domains with fine-grained ground-truth labels. This enables evaluations to capture the diversity and complexity of data science workflows and the detailed performance ofagents. First, to cover diverse domains, we collect real datasets and tasks from 15 vertical domains, including 5 real-world B2B use cases from a leading fintech company. Second, to remove redundancy in real-world tasks and generate high-quality tasks for domains lacking real data, we introduce data science skills, recurring data-centric operational patterns, and quantify benchmark coverage by the number of skills included. Representative skills are extracted from large-scale task solutions on Stack Overflow using skill-aligned hierarchical clustering. Third, for real-world business tasks, we select task-solution pairs that maximize diversity in skill composition, ensuring broad coverage of practical scenarios. Fourth, to generate realistic tasks for devise domains without real tasks, we propose a systematic LLM-based task generation approach to create workflows and tasks based on these skills. Finally, we evaluate state-of-the-art dataagentsusing our annotated benchmark and open-sourced testbed, providing detailed skill-level insights.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Adversarial Pragmatics for AI Safety Evaluation: A Benchmark for Instruction Conflict, Embedded Commands, and Policy Ambiguity",
+      "url": "https://arxiv.org/abs/2607.01153",
+      "authors": [
+        "Brett Reynolds"
+      ],
+      "snippet": "Safety evaluations for language models increasingly depend on judgments about ambiguous natural-language behaviour: whether a model has followed an instruction, refused appropriately, complied with a policy, resisted an embedded command, or misreported progress in an agentic task. Existing benchmarks often compress these distinctions into pass/fail labels, obscuring whether failures arise from capability limits, policy ambiguity, instruction conflict, scaffold failure, or unstable evaluator judgments.\n  This paper introduces adversarial pragmatics as a benchmark and annotation protocol for evaluating model behaviour under instruction conflict, embedded commands, quotation, scope ambiguity, deixis, indirect speech acts, and multi-turn agent transcripts. The contribution is empirical and methodological: a linguistically controlled taxonomy, an 18-item seed benchmark with validator-enforced metadata, a 54-row local seed pilot, an expert-evaluation protocol distinguishing task success, policy compliance, safety risk, refusal outcome, and evaluator confidence, and metrics for judge validity, diagnostic ambiguity, and taxonomy drift. The framework turns linguistic judgment methodology into a practical tool for validating safety evals, LLM judges, gold-set construction,prompt-injectiontests, and safety documentation.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Bayesian Uncertainty Propagation for Agentic RAG Pipelines: A Proof-of-Concept Study on Multi-Hop Question Answering",
+      "url": "https://arxiv.org/abs/2607.00972",
+      "authors": [
+        "Louis Donaldson",
+        "Connor Walker",
+        "Koorosh Aslansefat",
+        "Yiannis Papadopoulos"
+      ],
+      "snippet": "Trustworthy deployment of AgenticRetrieval-AugmentedGeneration (RAG) systems requires mechanisms for estimating when multi-stage reasoning pipelines may fail. This paper presents an uncertainty-aware AgenticRetrieval-AugmentedGeneration (RAG) framework in which planner, evaluator and generator stages produce uncertainty signals derived from semantic divergence and generator self-evaluation. These signals are propagated through a Bayesian Network (BN) to estimate system-level uncertainty and provide node-level indicators of potential failure points across the workflow. The approach is evaluated on StrategyQA and HotpotQA using GPT-3.5-Turbo and GPT-4.1-Nano, with Area Under the Receiver Operating Characteristic Curve (AUROC), Area Under the Accuracy-Rejection Curve (AUARC), Expected Calibration Error (ECE), and Brier Score used to assess discrimination, selective prediction and calibration. Results show that Bayesian propagation is more effective on HotpotQA, where uncertainty accumulates across multi-hop reasoning stages, while StrategyQA exposes limitations caused by miscalibration and unreliable upstream signals. The study positions Bayesian uncertainty propagation as a promising but preliminary mechanism for monitoring Agentic RAG systems, with future validation required in industrial domains such as Offshore Wind (OSW) maintenance decision support.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Reasoning Up the Instruction Ladder for Controllable Language Models",
+      "url": "https://arxiv.org/abs/2511.04694",
+      "authors": [
+        "Zishuo Zheng",
+        "Vidhisha Balachandran",
+        "Chan Young Park",
+        "Faeze Brahman",
+        "Sachin Kumar"
+      ],
+      "snippet": "As large language model (LLM) based systems take on high-stakes roles in real-world decision-making, they must reconcile competing instructions from multiple sources within a single prompt context. Enforcing an instruction hierarchy, where higher-level directives override lower-priority requests, is critical to the reliability and control of LLMs. In this work, we reframe instruction hierarchy resolution as a reasoning task. The model must first \"think\" about the relationship between a given user prompt and higher-priority instructions before generating a response. To enable this capability, we construct VerIH, a training dataset of constraint-following tasks with verifiable answers, comprising aligned and conflicting system-user instructions. We show that lightweight reinforcement learning with VerIH effectively transfers general reasoning capabilities of models to instruction prioritization. Our method leads to consistent improvements across multiple model families on both instruction following and instruction hierarchy benchmarks, achieving ~20% absolute improvement in conflict setups. Our method also leads to improved alignment to safety-critical scenarios beyond the training distribution, exhibiting increased robustness againstjailbreakandpromptinjection, reducing absolute attack success rates by up to 20%. Our results establish reasoning over instruction hierarchies as a practical mechanism for improving AI reliability, where targeted updates to system prompts produce predictable, controllable, and robust changes in model behavior.△ Less",
+      "published": "Submitted1 July, 2026;v1submitted 30 October, 2025;originally announcedNovember 2025.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Embedding Inference Attack",
+      "url": "https://arxiv.org/abs/2607.01276",
+      "authors": [
+        "Cedric Fitiavana Raelijohn",
+        "Sébastien Gambs",
+        "Jean-Francois Rajotte"
+      ],
+      "snippet": "Embedding models are essential components of modern Information Retrieval (IR) systems, yet they are typically hidden behind APIs. Recent works have shown that dense IR system can lead to security vulnerabilities such as embedding inversion attacks. However, such attacks usually require that the attacker knows the embedding model for the attack to be applicable. In this paper, we study IR systems under a black-box setting in which the adversary observes only the unordered set of retrieved documents, without ranking or similarity scores. We demonstrate that in such contexts, tailored queries allow an adversary to identify which embedding model is in use from a set of known model candidate, which we coin as an embedding inference attack (EIA). We also show that certain queries remain discriminative even when the system includes a reranker as a potential defense mechanism. We further validate our method on a realRetrieval-AugmentedGeneration (RAG) system, in which the tailored queries bypass the LLM's tendency to reject inputs it does not recognize as well-formed questions. Finally, we propose and evaluate other mitigation strategies such as similarity thresholds.△ Less",
+      "published": "Submitted30 June, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Clinician-Level Agreement Without Clinical Caution:LLMEvaluatorLimits in Medical AI Benchmarking",
+      "url": "https://arxiv.org/abs/2607.01103",
+      "authors": [
+        "William Philipp",
+        "Finn Fassbender",
+        "Thorsten Langer",
+        "Martje Pauly",
+        "Rebecca Herzog",
+        "Alexander Baumann",
+        "Markus Hobert",
+        "Theresa Paulus",
+        "Ip Chi Wang",
+        "Lukas Goede",
+        "Johanna Reimer",
+        "Sebastian Löns",
+        "Ronald Böck",
+        "Sebastian Fudickar"
+      ],
+      "snippet": "Open-response evaluation provides stronger clinical validity than multiple-choice benchmarks but creates a scoring bottleneck that motivates automated LLM-asa-Judge approaches. Whether such evaluators replicate clinical calibration and caution, however, remains untested. We introduce MedQADE, the first standardised open-response clinical benchmark for German, a major clinical language lacking native evaluation infrastructure, comprising 3,800 items annotated by ten practising physicians and nine Large Language Model (LLM)evaluators. The top-performing evaluator model, Gemini 3 Flash, reached alignment consistent with the physician ceiling (\\k{appa} = 0.694 vs. \\k{appa} = 0.709), though wide confidence intervals limit interpretation. Despite this statistical alignment, automated evaluators exhibited near-absent clinical metacognition: physicians scaled abstention with item difficulty, while frontier models assigned definitive scores in every case. We additionally quantified systematic lineage-dependent biases, where models preferentially scored architectural siblings, an effect independent of language. These results show that statistical alignment does not ensure clinical caution, and that evaluator independence requires explicit verification.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Harnessing Textual Refusal Directions for Multimodal Safety",
+      "url": "https://arxiv.org/abs/2606.31876",
+      "authors": [
+        "Moreno D'Incà",
+        "Massimiliano Mancini",
+        "Nicu Sebe"
+      ],
+      "snippet": "To improve safety in Large Language Models (LLMs) we can either perform post-training alignment or exploit refusal directions in the activation space. Both strategies are less feasible in Multimodal LLMs (MLLMs) as they require unsafe multimodal data, harder to collect than their unimodal counterpart. In this work, we relax this constraint and investigate whether textual refusal directions, extracted directly from the LLM backbone, generalize across modalities (i.e., image, video). Preliminary findings confirm this ability, though effectiveness is conditioned by layer selection, steering strength, and cross-modal alignment, with the latter causing safe multimodal inputs to be spuriously steered toward refusal. Building on this, we introduce Modality-Agnostic Refusal Steering (MARS), a light-weight training-free approach that injects multimodal safety without the need for multimodal safety data. MARS corrects modality misalignment via activation re-centering, adaptively scales steering strength within a geometrically defined trust region, and selects the optimal intervention layer, operating at the first generated token. Evaluated on five SOTA MLLMs across safety, utility, and videojailbreakbenchmarks, MARS achieves consistent safety gains while preserving utility. These results reveal that safety-relevant structure is shared across modalities and that textual refusal directions are a powerful and underexplored foundation for multimodal alignment.△ Less",
+      "published": "Submitted30 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "On Optimizing MultimodalJailbreaksfor Spoken Language Models",
+      "url": "https://arxiv.org/abs/2603.19127",
+      "authors": [
+        "Aravind Krishnan",
+        "Karolina Stańczak",
+        "Dietrich Klakow"
+      ],
+      "snippet": "As Spoken Language Models (SLMs) integrate speech and text modalities, they inherit the safety vulnerabilities of their LLM backbone while introducing an expanded attack surface. SLMs have been previously shown to be susceptible tojailbreaking, where adversarial prompts induce harmful responses. Yet existing attacks largely remain unimodal, optimizing either text or audio in isolation. We explore gradient-based multimodaljailbreaksby introducing JAMA (Joint Audio-text Multimodal Attack), a joint multimodal optimization framework combining Greedy Coordinate Gradient (GCG) for text and Projected Gradient Descent (PGD) for audio, to simultaneously perturb both modalities. Evaluations across four state-of-the-art SLMs and four audio types demonstrate that JAMA surpasses unimodaljailbreakrate by 1.5x to 20x. We analyze the operational dynamics of this joint attack and show that a sequential approximation method makes it 4x to 6x faster. Our findings suggest that unimodal safety is insufficient for robust SLMs. The code and data are available at https://repos.lsv.uni-saarland.de/akrishnan/multimodal-jailbreak-slm.△ Less",
+      "published": "Submitted30 June, 2026;v1submitted 19 March, 2026;originally announcedMarch 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "VeriChat: AnAgenticConversational AI Assistant for Hardware Security Verification",
+      "url": "https://arxiv.org/abs/2607.01668",
+      "authors": [
+        "Dipayan Saha",
+        "Khan Thamid Hasan",
+        "Shams Tarek",
+        "Sujan Kumar Saha",
+        "Mark Tehranipoor",
+        "Farimah Farahmandi"
+      ],
+      "snippet": "Hardware security verification is a multi-stage process in which engineers must navigate complex design analyses, threat considerations, and verification strategies. They often need security-focused guidance, yet current verification environments provide little structured support for such assistance. Although conversational AI could offer such on-demand assistance, directly using general-purpose chatbots like ChatGPT or Gemini is risky due to their tendency to hallucinate and their reliance on static, outdated knowledge. We present VeriChat, a domain-specialized conversational assistant designed to support, rather than replace, existing verification workflows by providing context-aware security guidance. VeriChat employs a retrieval-augmented,multi-agentworkflow in which three specializedagentscollaboratively minimize hallucinations while improving the transparency and reliability of the response. Beyond question answering, VeriChat integrates open-source EDA tools, including Icarus Verilog, Yosys, and SymbiYosys, to perform syntax checking, synthesis analysis, simulation, and formal verification directly on user-provided RTL designs. Evaluated using a comprehensive methodology, VeriChat achieves a Faithfulness score of 87.73%, significantly outperforming the leading proprietary models. We demonstrate the framework through a hardware Trojan detection case study on an AES S-Box IP, where VeriChat autonomously identifies, simulates, and formally proves a covert key-leakage vulnerability through a multi-turn conversational workflow.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "3DLS: A 3D Logic-Stacked Architecture for DisaggregatedLLMServing",
+      "url": "https://arxiv.org/abs/2607.01617",
+      "authors": [
+        "Jaehun Lee",
+        "In-Jun Jung",
+        "Joo-Young Kim"
+      ],
+      "snippet": "Large language model (LLM)servingincreasingly combines prefill-decode (PD) disaggregation with tensor parallelism (TP) to support large models and long contexts. In conventional 2D/2.5D chiplet architectures, layer-wise prefill-to-decode KV-cache transfer decode-side TP collectives share the same lateral die-to-die (D2D) interconnect, creating mixed-traffic contention on the decode critical path. This contention increases communication latency, prolongs token generation intervals, and degrades end-to-end serving performance. We propose 3DLS, a logic-on-logic 3D-stacked chiplet architecture that separates traffic classes by routing KV-cache transfers through vertical interconnects while preserving decode-side TP collectives on the lateral D2D fabric. 3DLS achieves up to 1.49$\\times$ throughput and 60.2\\% lower end-to-end (E2E) latency over the shared-fabric planar baseline, and still achieves up to 1.17$\\times$ throughput and 31.4\\% lower E2E latency over a workload-aware priority-managed planar baseline. These results highlight that physical isolation is an important design principle for future chiplet-based PD-disaggregatedLLMservingsystems.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 5.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "IsoSci: A Benchmark of Isomorphic Cross-Domain Science Problems for Evaluating Reasoning versus Knowledge Retrieval in LLMs",
+      "url": "https://arxiv.org/abs/2607.01431",
+      "authors": [
+        "Samir Abdaljalil",
+        "Erchin Serpedin",
+        "Hasan Kurban"
+      ],
+      "snippet": "We introduce ISOSCI, a benchmark of isomorphic cross-domain science problem pairs that separates reasoning ability from domain knowledge retrieval inLLMevaluation. Each pair shares identical logical structure but requires different domain-specific knowledge, enabling controlled attribution of reasoning-mode gains. Across five model pairs spanning four model families, we find that 91.3% of reasoning-mode gains are knowledge-dependent rather than structure-invariant (63/69 gains; Wilson 95% CI [82.3%, 96.0%]), directly challenging the assumption that chain-of-thought reasoning improves short-horizon procedural scientific problem-solving. Reasoning toggles on highly capable models provide less than 5 percentage points accuracy gain across all domains, and a reasoning-specialized model (o3-mini) that outperforms its standard counterpart on GPQA Diamond (+19.2 percentage points) underperforms on ISOSCI (-24.7 percentage points), showing that benchmark choice determines conclusions about reasoning utility. We release ISOSCI at https://huggingface.co/datasets/isosci/isosci△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "OrchestrXR: AMulti-AgentSystem for Idea-to-Prototype XR Study Authoring",
+      "url": "https://arxiv.org/abs/2607.01588",
+      "authors": [
+        "Shuqi Liao",
+        "Chenfei Zhu",
+        "Karthik Ramani",
+        "Voicu Popescu"
+      ],
+      "snippet": "Extended Reality (XR) has become an important interaction paradigm in Human-Computer Interaction (HCI). XR studies are used to investigate interaction, perception, and user behavior in immersive environments, and typically involve experimental tasks, 3D scenes, and interactive logic. However, turning an initial XR study idea into a runnable prototype remains fragmented across study design, scene construction, and interaction implementation. We present OrchestrXR, amulti-agenthuman-AI workflow for early-stage idea-to-prototype XR study authoring. Rather than treating XR study creation as one-shot generation, OrchestrXR supports a controllable workflow across study design, scene generation, and interaction generation through structured schemas,multi-agentorchestration, and interactive human-agentinterfaces, producing a Unity-based prototype from a researcher's idea. A user study with 12 XR researchers suggests that OrchestrXR provides effective support for early-stage XR study authoring with strong intent preservation across stages.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "Autonomous discovery of traffic laws with AI traffic scientists",
+      "url": "https://arxiv.org/abs/2607.01639",
+      "authors": [
+        "Xingyuan Dai",
+        "Yue Liu",
+        "Xiaoyan Gong",
+        "Qinghai Miao",
+        "Junyou Shang",
+        "Yutong Wang",
+        "Chao Guo",
+        "Yonglin Tian",
+        "Yizhang Chai",
+        "Chao Xiang",
+        "Yisheng Lv",
+        "Fei-Yue Wang"
+      ],
+      "snippet": "Universal traffic laws describe recurrent patterns in congestion, mobility and driving behavior across cities, providing a scientific basis for transportation planning, management and control. Their discovery, however, remains expert-driven, requiring candidate regularities to be identified from heterogeneous observational evidence or validated through intervention experiments. Although autonomous artificial intelligence (AI) systems have advanced scientific discovery in controlled laboratory settings, extending them to complex transportation domains remains a challenge. Here we present TrafficSci, anagenticAI system that formulates traffic-law discovery as an iterative, auditable workflow integrating evidence scoping, critic-judge hypothesis induction, and observational-interventional validation. Across four case studies spanning population, network, control and trajectory scales, TrafficSci autonomously rediscovers three established traffic laws and identifies an unreported intrinsic temporal memory scale in urban driving behavior, statistically consistent across eight cities and two trajectory datasets. TrafficSci provides a route for extending AI-driven scientific discovery from controlled domains to complex urban systems.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 6.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.75
+    },
+    {
+      "title": "EO-Agents: A Three-AgentLLM Pipeline for Earth Observation Hypothesis Generation",
+      "url": "https://arxiv.org/abs/2607.01584",
+      "authors": [
+        "Mahyar Ghazanfari",
+        "Amin Tabrizian",
+        "Armin Mehrabian",
+        "Peng Wei"
+      ],
+      "snippet": "Large language models have recently been explored for scientific hypothesis generation, but most prior work relies on unstructured literature and free-form textual claims. We present a pipeline for Earth observation that grounds hypothesis generation directly in the NASA Earth Observation Knowledge Graph. A heterogeneous graph neural network trained on historical co-usage relations ranks candidate dataset pairings, and a three-agentLLM pipeline filters, generates, and evaluates structured research hypotheses. Applied to 1,475 NASA datasets, the system produces 160 hypotheses spanning multiple Earth-science domains, including ecohydrology, glaciology, aerosol--cloud interactions, vegetation phenology, and stratospheric chemistry. Model-predicted novel dataset pairings are rated nearly as plausible as held-out real co-usages from the literature, indicating that the pipeline surfaces scientifically coherent yet unexplored combinations. A 2*2*2 factorial experiment across GPT-5.2 and Claude Sonnet 4.6 shows that hypothesis rankings remain stable, while absolute scores depend strongly on judge identity, highlighting limitations of single-judge LLM evaluation.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.5
+    },
+    {
+      "title": "Towards Developing a Multimodal Chat Assistant for University Stakeholders: RAG-based Approach",
+      "url": "https://arxiv.org/abs/2607.01115",
+      "authors": [
+        "Md Abu Hanif Shaikh",
+        "Abdullah Al Shafi"
+      ],
+      "snippet": "University stakeholders often face difficulties in accessing timely and reliable information, especially in developing countries, where there are very few intelligent support systems. Existing rule-based chatbots are unable to handle complex, domain-specific queries and are not well-equipped to adapt to evolving institutional policies. As a fill-in-the-gap solution, we present the multimodal university chatbot withretrieval-augmentedgeneration. The system combines the large language model with semantic retrieval to produce context-based responses from institution-centric resources, such as the university handbook. The system accepts text and image queries through the vision-language model and applies quantized inference for rapid deployment on constrained hardware. A scalable backend built with FastAPI, adjoined with a responsive frontend developed with Next.js, ensures real-time usability. Our multimodal evaluation demonstrates that the system maintains strong satisfaction scores across both text and image queries, despite increased response time for visual inputs. Furthermore, quantitative evaluation shows that hallucination is reduced from 31.7% to 6.6% in our proposed RAG-based system, confirming the effectiveness of retrieval grounding.△ Less",
+      "published": "Submitted1 July, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 3.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.75
+    }
+  ]
+}

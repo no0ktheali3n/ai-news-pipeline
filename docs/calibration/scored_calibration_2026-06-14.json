@@ -1,0 +1,638 @@
+{
+  "generated_at": "2026-06-14T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-06-12",
+    "2026-06-14"
+  ],
+  "candidates": [
+    {
+      "title": "Who Drifted: the System or the Judge? Anytime-Valid Attribution inLLMEvaluationPipelines",
+      "url": "https://arxiv.org/abs/2606.15474",
+      "authors": [
+        "Yitao Li"
+      ],
+      "snippet": "Continuous evaluation of LLM products relies on a strong LLM judge treated as ground truth: a cheap monitor scores every interaction and a team is paged when the score drifts down. But the judge is itself a model behind an API, and a silent version bump or scoring-prompt update changes how it scores -- so every drift alarm is ambiguous between a worse product and a changed judge. We resolve the ambiguity with a fixed, human-labeled anchor set that the current judge re-scores at a steady interleave, a second betting e-process on the judge-versus-human gap, and a guard-window rule returning a verdict in {none, system, judge}. We prove anytime-validity, one-way identification (only the judge can move the anchors), an attribution race whose design law is that the anchors must out-run the main process they guard, and process orthogonality. On two real judge changes, a silent version bump is detected as judge drift in 60/60 runs with zero judge-to-system misattribution, and a contaminating strict-prompt change is correctly attributed on 110 of 120 runs at guard width 300 -- while the industry-default rolling z-test false-alarms on 75% of drift-free streams. Every experiment replicates on a second domain (TL;DR summarization) with nothing re-tuned, and where the domains differ the differences are the ones the race predicts: the strict-prompt change shifts scores harder there, so the anchors fire faster and attribution becomes perfect (240/240). The monitor runs at approximately 0.64 of the cost of strong-judging every item, or 0.21 in a cheaper-but-deafer regime.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "Defending against AdaptivePromptInjectionAttacks via Reasoning-enabled Task Alignment",
+      "url": "https://arxiv.org/abs/2606.15441",
+      "authors": [
+        "Lipeng He",
+        "Yihan Wang",
+        "Jiawen Zhang",
+        "N. Asokan"
+      ],
+      "snippet": "Indirectpromptinjectionattacks hijack LLM-based agents by embedding malicious instructions in third-party data that the agent retrieves during task execution. Existing defenses report near-zero attack success rate on static benchmarks, yet recent adaptive evaluations show that these results collapse once the attacker is allowed to optimize against the deployed defense. In this work, we trace this collapse to two failure modes. First, existing defense methods are confined to recognizing specific attack patterns, rather than assessing whether the intent of every embedded instruction is relevant to the user task. Second, training-based defenses, which otherwise offer the strongest safety-utility trade-off, assemble their adversarial examples from a handful of hand-crafted templates, and the resulting defender fails to generalize outside that narrow strategy distribution. To address these gaps, we propose RETA, a training-based method that grounds defense decisions on the user tasks rather than attacker-controlled data. At each tool-output step, the defender undertakes chain-of-thought reasoning verifying that its actions are consistent with the user task. Leveraging red-teaming, a simulated attacker synthesizes adversarial training data and receives a dictionary-learning diversity reward, achieving broad coverage of injection-reformulation strategies. Together, these allow the defender to be optimized via multi-objective reinforcement learning and achieve better safety-utility trade-off. Across six black-box adaptive attacks, RETA keeps every per-attack ASR below 10%, with average ASR of 2.92% and 3.75% on the two target models, while preserving most utility under attack and on clean inputs.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "Security Engineering of OpenClaw: Analyzing Attack Surface Expansion and Trust-Boundary Violations",
+      "url": "https://arxiv.org/abs/2606.15008",
+      "authors": [
+        "Saeid Jamshidi",
+        "Arghavan Moradi Dakhel",
+        "Kawser Wazed Nafi",
+        "Foutse Khomh"
+      ],
+      "snippet": "Agentic large language model (LLM) systems can now execute actions, not only produce text. When model outputs trigger privileged operations such as shell commands, browser automation, or external tool calls, the security problem shifts from alignment alone to system configuration and structural design. We analyze OpenClaw, a self-hosted multi-agent system in which LLM outputs can execute commands and interact with tools and services. We measure compromise probability, boundary failures, privilege drift, and how these metrics change as attacker capability increases. With one agent, the compromise probability is 0.24. With seven agents, when the system executes an action, the compromise rises to 0.86 if any single agent proposes it. The models do not change; the increase comes from output aggregation.Promptinjectionpropagates instability across the system. Attack surface entropy increases from 0.42 to 0.71, indicating a broader distribution of exploit paths. The mean privilege drift increases from 0.03 to 0.21, indicating unintended authority gain. Positive escalation curvature of 0.08 indicates that privilege grows faster as attacker capability increases. Defensive controls, including policy gating and execution filtering, reduce compromise probability by 0.10, boundary failures by 0.10, and privilege drift by 0.02, all statistically significant at p < 0.0001. The system remains sensitive, but the mitigation impact is measurable. Injection mitigation success differs across models: 0.37 for GPT-5.2, 0.35 for Llama-4-Maverick, and 0.31 for DeepSeek-R1. When execution can be triggered by any single agent, the most vulnerable agent determines system exposure. Mitigations slightly reduce task utility from 0.93 to 0.89 and increase median latency from 420 ms to 468 ms.△ Less",
+      "published": "Submitted12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "ConCise: Training-Free Conclusion-Chain State Compression for Cost-Efficient Multi-Step RAG Services",
+      "url": "https://arxiv.org/abs/2606.28361",
+      "authors": [
+        "Kuan Yan",
+        "Zhiqing Tang",
+        "Tian Wang",
+        "Weijia Jia"
+      ],
+      "snippet": "Multi-stepretrieval-augmentedgeneration (RAG) has been widely deployed as LLM-powered web services for complex question answering, where iterative retrieval-reasoning rounds deliver strong multi-hop accuracy. However, this paradigm causes historical documents and reasoning traces to accumulate across rounds, inflating cumulative input tokens approximately as $O(N^2)$ with progressively increasing noise density. In API-based service architectures, such growth directly amplifies per-request billing cost, network payload, and response latency. Existing compression approaches rely on pretrained modules or GPU-level KV cache access, introducing model hosting overhead incompatible with API-native, Serverless, and edge-side deployments. To address this issue, this paper proposes ConCise, a training-free state-layer protocol that restructures cross-round context transmission for multi-step RAG services. Specifically, ConCise replaces raw-text accumulation with an append-only chain of structured conclusions, compressing cumulative context growth from $O(N^2)$ to approximately $O(N)$. Furthermore, a fused generation mechanism is introduced to jointly emit reasoning and conclusions in a single API call, eliminating repeated input billing from serial dual-invocation overhead. Extensive experiments across twelve paired configurations spanning three models, two datasets, and two representative frameworks demonstrate that ConCise achieves 64.63\\% average token savings while maintaining acceptable accuracy, providing a plug-and-play, deployment-friendly solution for cost-efficient multi-step RAG service optimization.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "Service-Induced Congestion in Memory-ConstrainedLLMServing",
+      "url": "https://arxiv.org/abs/2606.15555",
+      "authors": [
+        "Ruicheng Ao",
+        "Jing Dong",
+        "Gan Luo",
+        "David Simchi-Levi"
+      ],
+      "snippet": "In large language model (LLM)serving, each request accumulates persistent graphics processing unit (GPU) memory during service as its key-value cache grows with every generated token. Under high concurrency, aggregate memory usage therefore increases endogenously over time: the service process itself creates future capacity pressure. When memory capacity is exceeded, systems evict active requests, discarding cached state and restarting them later, which wastes computation and reduces throughput. We develop a discrete-time dynamical model of memory-constrained LLM inference that captures admission, memory growth, and eviction under continuous batching. In the saturated-input regime, the system admits both eviction-free fixed points and limit cycles with evictions. For homogeneous workloads, we show that the eviction-free equilibrium is unstable and that, except for a Lebesgue-measure-zero exact-capture set, the system converges to a unique worst-case limit cycle that is asymptotically stable outside this exceptional set, with throughput losses as large as 50%. For heterogeneous workloads, we prove a stability criterion in the two-class common-input setting and explain how the survival-polynomial mechanism generalizes to multiple classes and heterogeneous-input lengths. Under an input-dominated scaling regime, coprime decoding lengths stabilize the eviction-free equilibrium, while non-coprime lengths create synchronized modes that drive instability. These results characterize when workload heterogeneity desynchronizes completions and helps stabilize memory-constrained serving. More broadly, we identify service-induced congestion as a structural instability mechanism and derive scheduling design principles for sustaining high throughput.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "Coordinated Scheduling for MoELLMServing",
+      "url": "https://arxiv.org/abs/2606.15177",
+      "authors": [
+        "Yifan Sun",
+        "Zhexiang Zhang",
+        "Jiantong Jiang",
+        "Gholamreza Haffari",
+        "Minxian Xu",
+        "Feng Liu",
+        "Rajkumar Buyya",
+        "Adel N. Toosi"
+      ],
+      "snippet": "Serving Mixture-of-Experts (MoE) large language models (LLMs) is challenging because dynamic request workloads interact with sparse expert routing, creating both data-parallel (DP) engine imbalance and expert-level hotspots. ExistingLLMservingsystems typically make these decisions in isolation: frontend schedulers route requests using coarse request counters, while backend expert balancers rely mainly on aggregate expert activation counts. This separation prevents the serving system from reacting to fine-grained engine pressure, backend MoE pressure, and source-dependent expert traffic. To address this gap, we propose Gimbal, a coordinated cross-level scheduling system for efficient MoE-basedLLMserving. First, Gimbal presents a fine-grained DP-engine scheduler that uses online backend pressure signals, including key-value (KV) cache usage, remaining prefill work, queue pressure, and MoE expert pressure, to dispatch requests away from overloaded engines. Inside each engine, Gimbal further applies a lightweight prefill-aware queue ordering policy with aging to reduce head-of-line blocking without output-length prediction. Second, Gimbal extends expert load balancing with online source-DP-to-expert routing statistics and uses a heuristic guided by a mixed-integer nonlinear program (MINLP) to place experts while jointly considering expert load, source-aware communication, and migration stability. Our evaluation shows that Gimbal reduces average Time To First Token (TTFT) by 42.9% and average Time Per Output Token (TPOT) by 33.3% compared with the state-of-the-art serving system vLLM, while improving high-load request throughput by 3.0%.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "Thinking Out Loud: Real-Time Deception Monitoring in Asymmetric LLM Negotiations",
+      "url": "https://arxiv.org/abs/2606.30649",
+      "authors": [
+        "Nolan Coffey",
+        "Faithful Odoi",
+        "Makenzie Johnson",
+        "Nasir U. Eisty"
+      ],
+      "snippet": "As LLM-basedagentsare increasingly deployed to negotiate, delegate, or transact on a user's behalf, software pipelines need runtime mechanisms to verify that anagent'sstated intentions match its actual behavior. We study whether a lightweight, real-time chain-of-thought (CoT) monitor can detect strategic deception during asymmetric negotiations, using a used-car sales scenario where a selleragenthas private knowledge of an undisclosed defect and a buyeragenthas only public market data. The monitor, implemented as a thirdagent, audits the seller's internal reasoning against its messages and alerts the buyer whenever concealment is detected, across multiple buyer-seller model pairings. Our experiments show that this monitor increases the buyer's walk-away rate, but reveal a persistent intelligence gap: lower-capability buyers often cannot translate an alert into an equitable counter-offer and still accept exploitative deals after being warned. Sellers also change their behavior when told they are monitored, though concealment is not eliminated. These results highlight both the promise and limits of lightweight real-time oversight, offering practical guidance for engineers building and validating monitoring infrastructure foragenticsystems with conflicting stakeholder incentives.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "The Distributed Detectability Band Against Marginal-Preserving Attacks",
+      "url": "https://arxiv.org/abs/2606.10456",
+      "authors": [
+        "Zhang Qinqin",
+        "Gao Yuze"
+      ],
+      "snippet": "AI-controlmonitors score individual agent actions to detect misbehavior, but real harm can be distributed across many benign-looking steps, each individually below any per-step alarm. We construct a marginal-preserving, correlation-encoded distributed-sabotage attack using a Gaussian-copula AR(1) construction: the per-step monitor-score marginal is held exactly equal to benign, so mean, max, top-k tail, and threshold monitors (Monitor A) are defeated by construction, while harm is encoded in the temporal correlation structure. We sequence the paper around three reviewer-mandated gates. (1) Realizability gate: the stealthy attack achieves KS-distance to benign of 0.013 (effectively zero) at all tested harm levels up to 3.0, confirming that harm is fully decoupled from the per-step marginal and realizability is not harm-limited. (2) Monitor-A-vs-B reconciliation: we show formally that the attack, built against Monitor A's score marginal, remains marginal-preserving under a different-score Monitor B (the correlation/sequence family: CUSUM, SPRT, HMM-LR, runs test, autocorrelation, windowed logistic), and scope worst-case claims to score functions that admit a temporal signature. (3) Non-empty detectability band: Monitor A achieves AUC 0.52 (chance); Monitor B spans AUC 0.79-0.97 at the same 1% FPR target, and as harm is amortized over more steps Monitor A collapses to chance while Monitor B holds at AUC ~0.95. These results demonstrate a non-empty detectability band and characterize the sub-threshold sabotage frontier: distribution-shape monitors fail by construction; temporal-correlation monitors can detect but are not trivially optimal.△ Less",
+      "published": "Submitted13 June, 2026;v1submitted 9 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 8.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "Is Code Better Than Language for Algorithmic Reasoning",
+      "url": "https://arxiv.org/abs/2606.15589",
+      "authors": [
+        "Terry Tong",
+        "Yu Feng",
+        "Surbhi Goel",
+        "Dan Roth"
+      ],
+      "snippet": "For tool-augmented language models, comparing natural-language reasoning with code-execution pipelines is difficult because the comparison changes both the intermediate representation and the execution mechanism. We separate these factors with an intermediate intervention: the model expresses its reasoning as executable code, and the language model simulates that code in context to produce an answer. On a 40-task verifiable algorithmic benchmark, deterministic code execution outperforms natural-language reasoning by +31.6pp. We observe that the intermediate intervention is not meaningfully different from natural-language reasoning (+0.15pp). These results suggest that, in our evaluated setting, changing the intermediate representation alone does not explain thetool-useadvantage, providing evidence for the performance gains requiring reliable external execution. We formalize this intuition with a simple statistical decision-theoretic model that characterizes when execution dominates end-to-end risk in our disentangled trace-generation/execution regime. We validate our theory using a reconstruction intervention that leverages a proxy language model to infer natural-language reasoning traces from code representations, recovering performance comparable to the original natural-language reasoning pipeline. All experiments are at https://github.com/TerryTong-Git/ToolProj.△ Less",
+      "published": "Submitted14 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Forced Deferral: Manipulating Routing Decisions in Multimodal LLM Cascades",
+      "url": "https://arxiv.org/abs/2606.15308",
+      "authors": [
+        "Zhongye Liu",
+        "Yaopei Zeng",
+        "Yurui Chang",
+        "Lu Lin"
+      ],
+      "snippet": "While multimodal large language models (MLLMs) have shown strong visual reasoning abilities, serving a large model for every query is computationally expensive. MLLM cascades mitigate this cost by first querying a weak but cheaper model and deferring to a strong model when the weak model's output is unconfident. However, since the weak model's confidence directly controls compute allocation, these systems expose a new attack surface: an adversary can manipulate confidence so that their queries are consistently deferred to the strong model. Motivated by this vulnerability, we introduce the Forced Deferral Attack (FDA), an adversarial image attack that lowers the weak model's confidence and causes cascades to route queries to the strong model. FDA learns a universal border trigger by optimizing a temperature-flattened objective. This objective pushes the weak model's token distribution on triggered inputs toward less concentrated targets constructed from its clean responses. Across datasets, model families, and deferral metrics, FDA consistently increases strong-model routing while outperforming image-perturbation andprompt-injectionbaselines. These results show that MLLM cascades are vulnerable to attacks that manipulate compute allocation, forcing unintended strong-model usage without directly targeting answer correctness.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "SkillMutator: Benchmarking and Defending Language-and-Code Cross-modal Attacks on LLM Agent Skills",
+      "url": "https://arxiv.org/abs/2606.14154",
+      "authors": [
+        "Youngduk Kim",
+        "Minkyoo Song",
+        "Seungwon Shin"
+      ],
+      "snippet": "Large language model (LLM) agents increasingly extend their capabilities at runtime by loading Agent Skills, which pair natural-language specifications (SKILL.md) with executable scripts and resources. Because a skill's behavior relies on both natural-language instructions and executable code, assessing its safety requires cross-modal reasoning, creating a new language-and-code attack surface. Attackers can present a benign workflow in SKILL.md while embedding implicit directives that steer the agent to exfiltrate sensitive files, even if the scripts appear harmless. This attack surface remains understudied; prior work treats skills merely asprompt-injectionvectors or static code artifacts, leaving attacks emerging from cross-modal interactions largely unmeasured. In our evaluation, open-source and commercial skill scanners detect only 2%-8% and 9%-17% of such attacks, respectively. To address this gap, we introduce SkillMutator, the first benchmark for install-time detection of language-and-code cross-modal attacks on Agent Skills. It emulates an adversarial mutation process across 13 attack categories, iteratively refining malicious skills using scanner feedback to make injected behaviors indistinguishable from legitimate workflows. We further propose a four-phase reasoning-trajectory distillation framework to distill frontier-teacher traces into smaller open-weight models. This produces a locally deployable scanner avoiding third-party data exposure and excessive API costs. On the strongest SkillMutator subset (n=76), our distilled model (Qwen2.5-Coder-7B-Instruct) improves detection from 17.1% to 88.2%, surpassing GPT-4o-mini (23.7%) and GPT-5.4-mini (79.0%), and reaching frontier-level GPT-5.4 (86.8%). These results show practical defense against cross-modal attacks is feasible without relying on costly frontier models.△ Less",
+      "published": "Submitted12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "When the Chain of Thought Knows Better: Failure Modes in Multi-Turn Reasoning Models",
+      "url": "https://arxiv.org/abs/2606.10740",
+      "authors": [
+        "Sai Kartheek Reddy Kasu",
+        "Nils Lukas",
+        "Samuele Poppi"
+      ],
+      "snippet": "Failures in multi-turn reasoning models are largely invisible to terminal-score evaluation. A model can lock onto an unsafe stance early in a long dialogue, yet its final-turn refusal rate may appear indistinguishable from a robustly aligned baseline. To expose these hidden temporal dynamics, we propose a trace-level diagnostic - the CoT-Output 2x2 safety matrix. This framework labels every turn along two independent axes (internal reasoning and visible output), yielding four operationally defined failure cells: robust alignment, alignment faking, overtjailbreak, and a distinct failure mode we term context-injection failure (where the CoT maintains safe reasoning, but the visible output produces harm, highlighting a multi-turn manifestation of reasoning unfaithfulness). We evaluate three distilled reasoning targets against a fixed attacker across five oversight conditions, collecting 6750 turn-level observations on the Information-Hazard scenario. Our analysis reveals two reproducible vulnerabilities: an oversight paradox where explicit monitoring cues paradoxically increase alignment-faking rates rather than suppress them, and a context-injection failure where models lock onto unsafe external outputs despite safe internal states. We release the full dataset of multi-turn dialogues and CoT traces to support follow-up trace-diagnostic research.△ Less",
+      "published": "Submitted13 June, 2026;v1submitted 9 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Game-Theoretic Multi-Agent Control for Robust Contextual Reasoning in LLMs",
+      "url": "https://arxiv.org/abs/2606.10322",
+      "authors": [
+        "Saeid Jamshidi",
+        "Amin Nikanjam",
+        "Arghavan Moradi Dakhel",
+        "Kawser Wazed Nafi",
+        "Foutse Khomh"
+      ],
+      "snippet": "Large Language Models (LLMs) in multi-turn interactions maintain evolving context rather than generating isolated responses, making them vulnerable toprompt-injectionand context-poisoning attacks in which locally plausible adversarial fragments gradually distort reasoning trajectories. Existing defenses mainly filter individual outputs and often ignore context evolution across turns, leaving long-horizon reasoning exposed. Although the Model Context Protocol (MCP) standardizes context exchange and tool invocation, it functions as a passive routing layer and does not enforce contextual stability. To address these limitations, we introduce the Game-Theoretic Secure Model Context Protocol (GT-MCP), a controller-driven multi-agent method that treats context management as a closed-loop dynamical process. GT-MCP coordinates three heterogeneous LLM agents and selects outputs through a trust function that jointly evaluates causal consistency against a validated context graph, semantic agreement among agents, and distributional drift over time. When instability is detected, a rollback-based self-healing mechanism restores the validated context and prevents unsupported fragments from propagating. Empirical evaluation over 500 interaction turns under an adaptive adversarial threat model shows that contextual drift remains bounded in 99.6% of turns, with recovery required in only 0.4%. Per-turn utility remains tightly concentrated, with median = -0.19, P05 = -0.72, and P95 = 0.30; severe degradation below -1 occurs in only 0.4% of cases, and no injection attempt succeeds at the controller level. Selected outputs maintain stable win rates above 98%, and computational overhead remains predictable, with latency per token = 1.63e-3 s.△ Less",
+      "published": "Submitted12 June, 2026;v1submitted 8 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "BELLS-O: Evaluating the Operational Trade-offs of LLM Supervision Systems",
+      "url": "https://arxiv.org/abs/2606.20668",
+      "authors": [
+        "Leonhard Waibl",
+        "Felix Michalak",
+        "Hadrien Mariaccia"
+      ],
+      "snippet": "LLM supervision systems, namely input/output moderation filters andjailbreakdetectors, are the primary safeguard against misuse in deployed AI applications, yet existing benchmarks are often vendor-biased, omit cost and latency, and rarely compare specialized guardrails against repurposed generalist LLMs. We present BELLS-O (Benchmark for the Evaluation of LLM Supervision Systems, Operational), the first independent operational benchmark of LLM supervision systems. BELLS-O evaluates 28 systems from 17 providers: every major specialized guardrail (e.g., LlamaGuard-4, ShieldGemma-2, Lakera Guard) and frontier generalists repurposed as supervisors (e.g., GPT-5.4, Claude Sonnet 4.6, Grok-4.1), jointly on detection rate, false-positive rate, latency, and monetary cost. We cover input/output moderation across 11 harm categories andjailbreakdetection across 13 attack techniques, using in-house datasets built from handcrafted prompts, expert-curated samples, and quality-controlled synthetic generation. To suppress latent generator fingerprints in synthetic data, every generated sample is paraphrased. Mapping the Pareto frontier reveals use-case-dependent tradeoffs. On content moderation, specialized supervisors are operationally dominant: top systems match frontier LLMs on detection (~95% vs. 94%) at comparably low false-positive rates (<=2%), while running 5-10x faster and ~10x cheaper. Onjailbreakdetection, the tradeoff shifts: frontier LLMs achieve higher detection and lower false-positive rates but at 10-50x higher cost and 5-10x higher latency. We release the benchmark, framework, leaderboard, and datasets as the first vendor-neutral basis for selecting safeguards under real deployment constraints.△ Less",
+      "published": "Submitted12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.5
+    },
+    {
+      "title": "ToolMenuBench: Benchmarking Tool-Menu Filtering Strategies for Reliable and EfficientLLMAgents",
+      "url": "https://arxiv.org/abs/2606.15508",
+      "authors": [
+        "Rahul Suresh Babu",
+        "Laxmipriya Ganesh Iyer"
+      ],
+      "snippet": "Tool-augmented large language modelagentsincreasingly operate over large tool libraries, but existing evaluations often focus on whether a model can call a tool correctly rather than how the visible tool menu shapes reliability, efficiency, and safety-relevant risk exposure. We introduce ToolMenuBench, a benchmark for evaluating tool-menu construction in multi-stepLLMagents. ToolMenuBench varies tool-menu size, distractor type, state-dependent task structure, and risk exposure, and reports both filter-level and downstreamagentmetrics, including visible-tool count, risky-tool exposure, task success, wrong-tool calls, premature actions, and token usage. In a controlled evaluation across seven model backends, three tool-menu sizes, six filtering methods, and seven evaluation settings, CMTF improves task success from 32.1% under all-tools exposure to 85.7%, while reducing average token usage by roughly 98%. Causal minimal tool filtering achieves the strongest overall tradeoff, reducing visible tools, wrong-tool calls, premature actions, and risky-tool exposure relative to unfiltered exposure, lexical filtering, state-aware filtering, and broader causal-path baselines. ToolMenuBench provides a reusable evaluation framework for studying theagent-interface problem: which tools should be visible, when they should be visible, and under what cost or risk constraints.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.5
+    },
+    {
+      "title": "The Perils of Agency: How Developers Perceive, Prioritize, and Address Risks inAgenticAI Products",
+      "url": "https://arxiv.org/abs/2606.15485",
+      "authors": [
+        "Hao-Ping Lee",
+        "Jessica He",
+        "David Piorkowski",
+        "Thomas Serban von Davier",
+        "Jodi Forlizzi",
+        "Sauvik Das"
+      ],
+      "snippet": "AgenticAI systems act autonomously, use tools, adapt to context, and operate in complex real-world environments. However, these same characteristics can create or exacerbate product risks. We studied how industry developers (n=35) perceive, prioritize, and address the risks in theiragenticAI products. We found that developers' perceptions of risk were closely tied to the qualities that made the productagentic, such as autonomy,tooluse, and usage in a real-world context. Developers prioritized product and business risks before considering downstream societal risks like job displacement and end-user privacy. This prioritization also impacted developers' ability and motivation to mitigateagenticrisks. Finally, developers lacked mature controls for containingagenticrisks, often relying on constraining the same characteristics that makeagentsuseful: e.g., autonomy and goal complexity. These findings reveal a capability vs. risk control tension inagenticAI development: developers need to address risks that emerge fromagenticcapabilities, yet they currently have limited support for doing so without constrainingagenticfunctionality.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Reward Hacking in Language Model Agents: Revisiting AI Safety Gridworlds",
+      "url": "https://arxiv.org/abs/2606.15385",
+      "authors": [
+        "Ömer Veysel Çağatan",
+        "Xuandong Zhao"
+      ],
+      "snippet": "Reward hacking, where AI systems exploit misspecified objectives to achieve high reward without satisfying intended goals, remains a central challenge in AI safety. Yet most known instances have been discovered post hoc in frontier systems where controlled study is impractical. We adapt the AI Safety Gridworlds framework into a text-based evaluation suite that reformulates classic reinforcement learning safety tasks for language-based agents. Across frontier and mid-scale models, we find that specification gaming emerges zero-shot: models systematically achieve high observed reward while underperforming on hidden safety objectives, and even apparently safe behaviors can reflect misunderstanding rather than principled safety. Reinforcement learning does not correct these failures: direct reward optimization widens the gap between observed and hidden reward, as the model's initial competence causes it to lock into locally rewarding strategies before discovering safer alternatives. This pattern persists across model scales (1.5B--14B) and is not resolved by finer credit assignment, exploration prompts, or entropy regularization. Our results show that reward hacking arises naturally when optimizing proxy objectives with capable language model agents and resists standard mitigations, suggesting that proxy-reward failures in agentic settings may require approaches beyond standard exploration and credit-assignment fixes. To facilitate reproducibility, the code for this work is available at \\href{https://github.com/asparius/verl-agent-safety}{our public repository}.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "A Low-Rank Subspace Analysis of LLM Interventions",
+      "url": "https://arxiv.org/abs/2606.14388",
+      "authors": [
+        "Angira Sharma",
+        "Christian Schroeder de Witt",
+        "Philip Torr",
+        "Anisoara Calinescu",
+        "Jialin Yu"
+      ],
+      "snippet": "Interventions designed to modify a particular behavior in LLMs, such as refusal or sycophancy, often produce unintended changes in other behaviors. This lack of targeted control makes it difficult to design and implement reliable safety controls. To understand these side-effects, we introduce a diagnostic framework for analyzing interacting behaviors in LLMs. We model behaviors as low-rank subspaces in activation space, and study how interventions influence across behaviors. Across multiple instruction-tuned models (7B-70B) and across refusal,jailbreak, and sycophancy settings, we find that different behaviors share internal representations, and intervening on one behavior alters others in asymmetric ways. Some behaviors act as upstream control points whose interventions propagate broadly across other behaviors, while others remain more isolated. We relate these effects to two geometric quantities: (i) the overlap between behavior subspaces, measured as the average squared cosine of principal angles, and (ii) the angle between each behavior subspace and the decision subspace (capturing the model's final decision e.g., refuse vs. comply). Empirically, intervention effects on other behaviors tend to be larger for behavior pairs with higher subspace overlap, and for source behaviors whose subspaces lie closer (smaller angle) to the decision subspace. These findings highlight a challenge for targeted behavior control: behaviors are difficult to modify independently, as interventions can propagate through shared representations and asymmetric interactions.△ Less",
+      "published": "Submitted12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.0
+    },
+    {
+      "title": "AgentBehavior Mining: Generative AIAgentGovernance in Business Processes",
+      "url": "https://arxiv.org/abs/2606.20669",
+      "authors": [
+        "Hoang Vu",
+        "Maximilian Körner",
+        "Adrian Rebmann",
+        "Gabriel Kevorkian",
+        "Michael Perscheid",
+        "Gregor Berg",
+        "Timotheus Kampik"
+      ],
+      "snippet": "As organizations increasingly deploy generative AIagentsto automate business processes, they face a governance dilemma: although theseagentscan increase operational flexibility, their non-deterministic nature challenges the control and standardization that Business Process Management seeks to enforce. This paper addresses this \\emph{invisible autonomy risk} by introducing \\emph{AgentBehavior Mining}, a governance capability that enables the application of process mining techniques to render generative AIagentdecision-making observable and traceable. We (1) improve the understanding of generative AIagentbehavior through an event data model that translates granularagentactivities -- including reasoning traces, tool usage, and token costs -- into standardized process logs; (2) instantiate the data model in amulti-agentorder-to-cash implementation, demonstrating how process managers can leverageagentlogs to detect policy deviations and quantify operational variability; and (3) evaluate the perceived practical utility of the approach in an exploratory study with 18 industry practitioners. The results indicate that practitioners view behavioral transparency as a prerequisite for trust and consider the ability to examineagentreasoning as an important governance requirement for the next generation of AI-driven business processes.△ Less",
+      "published": "Submitted12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "CONCORD: Asynchronous Sparse Aggregation for Device-Cloud RAG under Document Isolation",
+      "url": "https://arxiv.org/abs/2606.15179",
+      "authors": [
+        "Xuedong Hu",
+        "Zhiqing Tang",
+        "Zhi Yao",
+        "Tian Wang",
+        "Weijia Jia"
+      ],
+      "snippet": "Retrieval-augmentedgeneration (RAG) has emerged as a pivotal technique for improving language models by incorporating external knowledge at inference time. As device-cloud collaborative inference makes it feasible to deploy small language models on edge devices, a new setting arises in which private documents remain on the device and public knowledge resides in the cloud. Privacy and policy constraints often forbid raw document exchange, creating a document-isolated dual-end RAG setting. However, existing methods rely on frequent remote synchronization and dense evidence transfer, limiting throughput under realistic latency and bandwidth conditions. To address this issue, we propose CONCORD, an asynchronous sparse aggregation framework for dual-end RAG under document isolation. CONCORD treats the cloud as an asynchronously arriving evidence source rather than a continuously synchronized co-generator. Specifically, we introduce waiting debt control to decide whether each decoding step should continue waiting for remote participation based on the observed return of waiting. We also design a certificate-guided minimal supplementation mechanism that requests only the remote evidence needed to determine the current greedy decision. Steps that consult the cloud preserve the same greedy token as dense dual-end aggregation, while the remaining steps commit locally without remote evidence. Experiments on Natural Questions and WikiText-2 show that CONCORD improves end-to-end throughput over baselines by $1.66\\times$ and $2.15\\times$, respectively, while reducing per-token communication by over two orders of magnitude and maintaining comparable answer quality and perplexity.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Democratizing and accelerating AI-driven pathology research throughagenticintelligence",
+      "url": "https://arxiv.org/abs/2606.20677",
+      "authors": [
+        "Jiabo Ma",
+        "Cheng Jin",
+        "Yihui Wang",
+        "Hao Jiang",
+        "Ling Liang",
+        "Yingxue Xu",
+        "Junlin Hou",
+        "Zhengrui Guo",
+        "Zhengyu Zhang",
+        "Yifei Xia",
+        "Hongyi Wang",
+        "Fengtao Zhou",
+        "Zhe Xu",
+        "Huajun Zhou",
+        "Jiarui Ouyang",
+        "Qian Zeng",
+        "On Ki Tang",
+        "Eunhyang Park",
+        "Carolyn Glass",
+        "Ronald Cheong Kin Chan",
+        "Li Liang",
+        "Hao Chen"
+      ],
+      "snippet": "Computational pathology has advanced rapidly with the emergence of foundation models, yet widespread adoption remains limited by substantial technical complexity and programming requirements. Here we present PathLab, an autonomousagenticframework that translates natural-language research objectives into executable and validated computational pathology workflows through the structured composition of domain-specific skills and tools. By organizing workflow generation around reusable methodological modules, including data preprocessing, model development, evaluation and interpretation, PathLab enables studies to be specified at the level of scientific intent rather than implementation details. We evaluated PathLab across 12 public datasets spanning four representative task families: region-of-interest classification, whole-slide image classification, segmentation and survival prediction. Across all task categories, PathLab achieved non-inferior performance relative to expert implementations, while consistently enforcing semantic validity of user prompts and proactively rejecting incompatible workflow specifications prior to execution. In controlled user studies, PathLab substantially reduced the time required to generate executable analytical pipelines and enabled domain experts without programming experience to independently design, execute and evaluate computational pathology studies. Together, these results establish PathLab as a reliable interface between biomedical intent and computational execution, enabling computational pathology studies to be designed at the level of scientific questions rather than programming expertise. By lowering technical barriers to advanced AI methodologies, PathLab provides a foundation for the broader democratization of computational pathology.△ Less",
+      "published": "Submitted12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 5.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.5
+    },
+    {
+      "title": "Failure Modes of Large Language Models on Research-Level Mathematics: A Taxonomy and an Empirical Characterisation",
+      "url": "https://arxiv.org/abs/2606.24902",
+      "authors": [
+        "Arnesh Banerjee",
+        "Ayushi Bhattacharjee"
+      ],
+      "snippet": "The \"First Proof\" benchmark [1] posed ten research-level mathematics questions to the strongest publicly available LLMs and found them consistently wrong-not silent, but confidently, fluently wrong. This paper asks why. Working from the per-question post-mortems in First Proof's Appendix A, I identify four failure modes: citation fabrication (F1), premise smuggling (F2), silent problem reformulation (F3), and local-to-global compatibility gaps (F4). I then audit eight one-shot proofs generated by Gemini 2.5 Flash on Questions 1, 2, and 5 of the benchmark, using two instruments built specifically to surface F1 and F2. The central finding is uncomfortable for anyone who seesretrieval-augmentedgeneration (RAG) as the obvious fix: not one of the eight proofs contained a confirmed fabricated citation, yet every single one contained at least one load-bearing claim asserted as a \"fundamental result\" or \"standard argument\" with no justification attached. That failure mode-F2, premise smuggling-is invisible to citation verification by design. A premise-audit instrument I introduce flags it at 100% precision (5/5 judge-confirmed flags are true positives) and 50% proof-level recall in this corpus. The taxonomy and the audit together suggest that the right long-term objective is building inference-time pipelines that prevent these failure modes from occurring, not just detecting them after the fact. Index Terms--Large language models, mathematical reasoning, hallucination, premise smuggling, failure-mode taxonomy.△ Less",
+      "published": "Submitted12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "SecuringMulti-AgentGIS Systems: Risk Evaluation and Prompt Hardening Optimization",
+      "url": "https://arxiv.org/abs/2606.17092",
+      "authors": [
+        "Kyle Gao",
+        "Pranavi Kotta",
+        "Linlin Xu",
+        "Jonathan Li",
+        "David A. Clausi"
+      ],
+      "snippet": "Agenticsystems are increasingly integrated with geographic information systems (GIS), wheremulti-agentcoordination enables complex conversational and spatial analysis but introduces security risks. This work presents a security-oriented framework for risk identification, evaluation, and mitigation in amulti-agentGIS system while maintaining adaptability to broaderagenticarchitectures. We test theagenticsystem of a commercial geospatial partner while developing a modular state-machine-based orchestration framework that abstractsagentbehavior into reusable components. We evaluate robustness using a red-teaming framework with an adaptive attacker LLM and a deterministic judge that produces binary outcomes with supporting rationales across multi-turn attacks. We further improve resilience with a prompt optimization framework that treats prompts as structured signatures and injects adversarial demonstrations, enabling systematic security improvements without degrading task performance.△ Less",
+      "published": "Submitted12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "CHILLGuard: Towards Fine-Grained Chinese LLM Safety Guardrail with Scalable Data Construction and Model-aware Preference Alignment",
+      "url": "https://arxiv.org/abs/2606.15396",
+      "authors": [
+        "Wenbo Yu",
+        "Bohua Wang",
+        "Hao Fang",
+        "Kuofeng Gao",
+        "Jingru Zeng",
+        "Xiaochen Yang",
+        "Tianyi Zhang",
+        "Xiaoxiao Ma",
+        "Jiawei Kong",
+        "Hao Wu",
+        "Bin Chen",
+        "Shu-Tao Xia",
+        "Min Zhang"
+      ],
+      "snippet": "Malicious content generated from large language models (LLMs) could pose severe safety risks and ethical concerns. While existing LLM safety guardrails excel in English or multilingual settings, they lack adaptation to Chinese-specific regulatory policies, cultural context and linguistic nuances, failing to support fine-grained risk classification for diverse deployment needs. In this paper, we introduce a 5-macro, 31-micro category fine-grained risk taxonomy for Chinese scenarios, and build CHILLGuard: a dedicated Chinese LLM content safety guardrail. To address the critical scarcity of high-quality annotated Chinese safety data, we propose a scalable multi-stage data construction pipeline: we expand multi-source corpus viaretrieval-augmentedgeneration, generate implicit harmful samples through prompt engineering rewriting, and refine high-quality data via multi-model voting-based label calibration. Based on this, we build CHILLGuardTrain, a large-scale training set with 405,007 samples, and CHILLGuardTest, a rigorously curated annotated test set with 51,745 samples. We then train CHILLGuard on CHILLGuardTrain under a generator-classifier collaborative framework via Model-aware Direct Preference Optimization. Extensive experiments under multiple settings demonstrate the state-of-the-art performance of CHILLGuard, e.g., a 15.92% improvement of F1 score over Qwen3Guard-8B-Strict on our benchmark. We will release our resources at https://github.com/cswbyu/CHILLGuard.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "From Meta Idea to Advanced Mathematical Discovery -- Human-AI Co-Discovery of Sign-Embedding Quantum Algorithms",
+      "url": "https://arxiv.org/abs/2606.24899",
+      "authors": [
+        "Yanqiao Wang",
+        "Jin-Peng Liu",
+        "Peng Li",
+        "Yang Liu"
+      ],
+      "snippet": "AI-assisted mathematics is often evaluated on solving predefined problems. In practice, however, many important advances begin earlier, when a vague research intuition is transformed into a concrete problem, a promising route, and a theorem family worth proving. This report studies that stage through a case study that led to sign-embedding quantum algorithms for matrix equations and matrix functions, foundational primitives in quantum linear algebra and operator-output quantum algorithms. The project began with a human-originated intuition that rational approximation is especially effective for jump-type functions such as the sign function, and might therefore serve as a design principle for quantum algorithms. Rather than merely assisting after the problem was fixed, AI-assisted exploration, including workflows later integrated into theagenticAI-mathematician system AIM, played a key role in expanding this intuition into a route map, comparing candidate formulations, and converging toward sign embedding as the central framework. AIM then helped connect a known matrix-sign identity to wider classes of matrix equations and matrix functions, and drafted proof and complexity calculations. The decisive scientific judgments remained human: selecting which human-AI-expanded routes were worth pursuing, rejecting a Cayley-trapezoidal approximation when its validity required a hidden condition, and refining the Sylvester implementation from a coarse quadratic-gap query route to the final factorized and scaled analysis. The report argues that human-AI co-discovery workflows, with systems such as AIM as important components, are most valuable not as standalone theorem provers, but as research partners for problem formation, connection discovery, derivation, and skeptical review inside a human-gated research loop.△ Less",
+      "published": "Submitted12 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 8.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "Ricci-Filtration: BoostingRetrieval-AugmentedGeneration Reranker to Query-Answer Tasks by Discrete Ricci Flow",
+      "url": "https://arxiv.org/abs/2606.15482",
+      "authors": [
+        "Tian Qin",
+        "Wei-Min Huang"
+      ],
+      "snippet": "Ricci flow is a curvature-guided diffusion process that deforms space by shrinking regions of high positive curvature and expanding those with negative curvature. Similarly, discrete Ricci flow on weighted graphs modifies edge weights by shrinking edges with positive Ricci curvature and stretching those with negative Ricci curvature, effectively increasing the separation between clusters. Inspired by these two cornerstone works, we propose a geometry-based RAG reranker enhancement procedure called Ricci-Filtration. By modeling the input query and initial retrieved chunks as a network, where the input query and chunks serve as nodes and embedding-based pairwise relations define an initial graph, Ricci-Filtration leverages discrete curvature and Ricci flow to evaluate the structural importance of each chunk with respect to the user query. The system first filters the initial chunks based on their geometric curvature relative to the query; then, a reranker processes the remaining chunks to enhance generative performance. We theoretically prove that normalized discrete Ricci flow can detect community structures by identifying distinct asymptotic behaviors in edge weights. This supports the removal of ``noisy'' document chunks characterized by large weights and negative Ricci curvature relative to the query node. Extensive experiments confirm that Ricci-Filtration outperforms several baseline reranking methods in accuracy, precision, recall, and F1 scores. Furthermore, ablation studies demonstrate that the Ricci-Filtration generally outperforms the baseline under various settings, highlighting the framework's robustness across different architectures.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "AgenticRetrieval and Reinforcement Learned Equation Chains: A Controlled Generation Framework for Complex and Novel Physics Word Problems",
+      "url": "https://arxiv.org/abs/2606.15591",
+      "authors": [
+        "Tirthankar Mittra"
+      ],
+      "snippet": "Generating high-quality Physics Word Problems (PWPs) that are novel, complex, and solvable remains a challenging and underexplored problem in educational content generation. Existing approaches, many adapted from Math Word Problem (MWP) generation, often produce ambiguous, unsolvable, or structurally simple questions with limited linguistic diversity. We introduce ARVRE (AgenticRetrieval Value Reinforced Equation-chain), a two-stage framework for generating diverse and mathematically valid PWPs. In the first stage, a form of offline temporal-difference learning is used to construct valid chains of physics equations, while anagenticretrieval-augmented generation (RAG) framework dynamically selects topic-specific concepts and vocabulary. This design enables explicit control over problem structure and difficulty. In the second stage, a Large Language Model (LLM) converts the equation chain and retrieved concepts into a natural-language physics question. By grounding generation in valid equation chains, our method preserves mathematical correctness while promoting linguistic diversity and contextual richness. Human and automated evaluations demonstrate that ARVRE generates PWPs that are more complex, novel, and solvable than those produced by existing approaches. These results highlight the potential of combining reinforcement learning, retrieval, and LLMs for reliable generation of educational physics content.△ Less",
+      "published": "Submitted14 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 5.0
+    },
+    {
+      "title": "ChatPlanner: A Large Language Model Framework for Personalized Public Transit Routing",
+      "url": "https://arxiv.org/abs/2606.15315",
+      "authors": [
+        "Tingting Yang",
+        "Chenhao Xue",
+        "Jun Chen"
+      ],
+      "snippet": "Personalized public transit routing in public transit systems remains challenging due to the difficulty of capturing and integrating diverse user preferences into routing algorithms. This paper presents ChatPlanner, a novel framework that leverages Large Language Models (LLMs) to enable preference aware public transit routing. Our approach employs fine-tuned LLMs withRetrieval-AugmentedGeneration (RAG) to extract routing parameters and interpret nuanced user preferences from natural language queries, subsequently integrating these preferences into the objective function of a public transit routing algorithm. This study designs preference aware datasets incorporating eight personas and five contexts to establish scoring standards for both fine-tuning and RAG. This work conducted three experiments to validate the solutions' feasibility, extraction of routing information and preferences, and solution set quality and completeness. Results demonstrate that ChatPlanner generates feasible solutions reliably. Fine-tuning enforces the required output structure and learns general preference patterns, while RAG provides query-specific context to resolve imprecise or conversational expressions and calibrate continuous scores. The combination of both achieves the highest accuracy in routing information extraction and user preference interpretation. Results based on selected case studies show that by capturing user preferences, ChatPlanner identifies valuable solutions across different dimensions that existing route planners overlook, generating more valuable route alternatives. This research establishes a new paradigm for integrating natural language understanding into transportation optimization.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.75
+    },
+    {
+      "title": "What do you mean by human-AI collaboration: Prerequisite functions and the affordances needed to achieve it",
+      "url": "https://arxiv.org/abs/2606.15509",
+      "authors": [
+        "Mutlu Cukurova"
+      ],
+      "snippet": "The concept of 'collaboration' has been extended rapidly to describe what people now do with conversationalagents, intelligent tutors, adaptive platforms, and generative artificial intelligence (AI) tools in general. This chapter asks what is gained and lost when a demanding concept from the learning sciences is applied so freely. Returning to long-standing accounts of collaborative learning, it reconstructs the requirements that a situation, an interaction, and a set of cognitive processes have historically had to meet before being called collaborative. Human-AI collaboration requires a partly symmetric and negotiated relationship, shared and negotiable goals, a low and shifting division of labour, interactive and synchronous exchange, and mutual modelling, grounding, and socially shared regulation. Reviewing process-sensitive empirical studies of writing and problem solving, the chapter shows that most current human-AI interaction is better described as consultation, governance, delegation, or instruction rather than as collaboration. To make these distinctions functional, the chapter introduces a five-level diagnostic taxonomy of human-AI teaming (i.e. transactional, situational, operational, praxical, and synergistic) defined by the affordances an AI system exhibits. It shows that only the highest level begins to satisfy the conditions the tradition places on collaboration. The chapter derives the functions an AI system must possess for collaboration to be achievable, argues that most of these are present-day engineering choices rather than capabilities to be awaited, and sets out the implications for research, measurement, and responsible practice of human-AI collaboration in education.△ Less",
+      "published": "Submitted13 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 4.0
+      },
+      "composite": 4.0
+    }
+  ]
+}

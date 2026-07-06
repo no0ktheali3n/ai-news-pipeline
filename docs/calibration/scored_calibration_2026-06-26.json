@@ -1,0 +1,584 @@
+{
+  "generated_at": "2026-06-26T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-06-24",
+    "2026-06-26"
+  ],
+  "candidates": [
+    {
+      "title": "On the Inseparability of Instructions and Data in Shared-Embedding Sequence Models",
+      "url": "https://arxiv.org/abs/2606.27567",
+      "authors": [
+        "Dewank Pant",
+        "Shruti Lohani",
+        "Avijit Kumar"
+      ],
+      "snippet": "Promptinjectionis the top security risk for LLM-integrated applications, yet every defense proposed so far has been broken. We prove this is not a coincidence: in shared-embedding architectures that lack enforced control-data separation, perfectprompt-injectionprevention is mathematically impossible. We formalize prompted systems as Prompted Action Models whose outputs include control-authoritative actions: refusal decisions, tool authorization, policy routing, and memory writes. We define Semantic-Faithful Control (SFC), the property that such behavior depends only on the meaning of untrusted input, not on how it is encoded. We then prove SFC is unachievable within the shared pipeline, via three results: a provenance-recovery impossibility (shared representations make trusted and untrusted content statistically inseparable, bounded by total variation distance); control-path exposure (untrusted tokens enter control-relevant computation through the same attention value-aggregation that determines outputs); and a finite-coverage invariance gap (finite training cannot certify invariance over infinite semantic-equivalence classes). We ground each quantity in measurements on production tokenizers and models.\n  The result is structural, not a gap in current defenses. It mirrors the code-data confusion in Von Neumann machines that gives rise to buffer overflows, a vulnerability class that took decades of layered defenses (DEP, Write-XOR-Execute, ASLR, stack canaries, and ultimately memory-safe languages) to contain, because no single mechanism sufficed. The implication is the same:promptinjectioncannot be eliminated by better in-pipeline classification or alignment alone. It requires architectural separation of instruction and data channels. We identify the root cause and the class of solution it demands.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "Cluster, Route, Escalate: Cascaded Framework for Cost-AwareLLMServing",
+      "url": "https://arxiv.org/abs/2606.27457",
+      "authors": [
+        "Yasmin Moslem",
+        "Magdalena Kacmajor",
+        "Vasudevan Nedumpozhimana",
+        "Ammar Abbas",
+        "Solmaz Panahi",
+        "David Lynch",
+        "Zhuangzhuang Nie",
+        "Alexandros Agapitos",
+        "Aleksandar Milenovic",
+        "Hongmeng Song",
+        "Yucheng Shi",
+        "Yue Pan",
+        "Patricia Buffini",
+        "John D. Kelleher"
+      ],
+      "snippet": "Efficient deployment of large language models (LLMs) in production forces a trade-off between accuracy and cost. Operators often default to a single model that is either expensive for easy queries or insufficient for hard ones. To address this challenge, we propose a two-stage cascaded solution. Stage 1 clusters incoming queries and assigns each cluster to its most cost-effective model. The cost budget for this routing process is set by an interpretable hyperparameter, tuned offline. Stage 2 adds a quality estimation (QE) cascade; when an output from Stage 1 is judged low-quality, the query is escalated to a stronger model. This ensures only hard or low-confidence cases reach the expensive models. On the test datasets, the cascaded system retains 97-99% of the strongest model's accuracy while reducing Time Per Output Token (TPOT). It requires only task-correctness labels and adapts to changes in the model pool without manual reconfiguration.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "Making Failure Safe: A Constrained, VerifiableAgentFramework for Open-Web Data Collection",
+      "url": "https://arxiv.org/abs/2607.00035",
+      "authors": [
+        "Bo Chen"
+      ],
+      "snippet": "LLMs andagentscan generate web scrapers from natural-language requirements, but direct generation remains unreliable because of dependency errors, broken selectors, schema mismatches, and heterogeneous page structures. We propose a constrained, verifiableagentframework that shifts LLM output from free-form code to typed JSON collector configurations, combining a six-type collector taxonomy, template and utility-function constraints, static Airflow DAG execution, rule-based quality checking, and structured feedback correction. Experiments on 138 tasks show that the taxonomy supports description-based requirement typing, while confirming that stable instantiation requires completing source, field, and execution constraints beyond the initial description. On 80 independently source-verified tasks, the framework runs with zero execution-stage LLM tokens and the lowest average wall-clock time, trading moderate one-shot quality for a reusable, deterministic, and verifiable execution path suited to repeated scheduled collection. These results position the framework as a reusable, low-cost, and verifiable execution path for repeated open-web data collection.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "SWE-MeM: Learning Adaptive Memory Management for Long-Horizon CodingAgents",
+      "url": "https://arxiv.org/abs/2606.28434",
+      "authors": [
+        "Shuzheng Gao",
+        "Wenhao Zeng",
+        "Zhaojian Yu",
+        "Jianqiao Wangni",
+        "Chaozheng Wang",
+        "Kai Cai",
+        "Shilin He",
+        "Michael R. Lyu"
+      ],
+      "snippet": "Long-horizon software engineeringagentsoften need to manage lengthy and noisy interaction histories under limited context budgets. Existing memory management methods typically rely on static compression workflows or impose rigid constraints on compression timing and granularity. Moreover, these approaches fail to jointly optimize memory management and issue resolution capabilities to improve performance while reducing token usage. We present SWE-MeM, a training framework for proactive and on-demand memory management in software engineeringagents. SWE-MeM provides a flexible memory tool that letsagentsdecide when, what, and how to compress based on trajectory state, task progress, and remaining context budget. We trainagentswith synthesized proactive memory-management trajectories and Memory-aware GRPO, which jointly optimizes memory management and issue resolution through memory-aware trajectory splitting and step-level credit assignment. On SWE-Bench Verified, SWE-MeM achieves 43.4% and 60.2% resolve rate with 4B and 30B models, respectively, outperforming existing memory management baselines in both performance and efficiency.△ Less",
+      "published": "Submitted26 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "ToolUseEnables Undetectable Steganography inMulti-AgentLLM Systems",
+      "url": "https://arxiv.org/abs/2606.28425",
+      "authors": [
+        "Jimmy Laurence Rippin",
+        "Simon C. Marshall",
+        "David Demitri Africa",
+        "Christian Schroeder de Witt"
+      ],
+      "snippet": "Increasingly autonomousagenticAI systems pose novelmulti-agentrisks, such as secret collusion via covert communication channels. The natural defence to these collusion attempts is to monitor plain-text communication, but the efficacy of monitors has been called into doubt by increasingly sophisticated model steganography; indeed, some theoretical schemes have been proposed that are information-theoretically or computationally indistinguishable from good-faith plain-text communication. In this paper, we demonstrate that the complexity of these schemes is no longer a safety barrier, asagenticcoding models can already produce undetectable stegosystems when given realistic tool usage, such as code execution or accessing research papers through web searches.Agentsalso adapt when key ingredients are missing, for example, by adding model-sampling components or implementing related keyed coding schemes. We then frame tacit steganographic coordination betweenagentsas a Schelling-point problem and introduce coordination metrics for estimating when twoagentsare likely to select compatible schemes without explicit prior agreement. Our results suggest a shift in the threat model for covert communication between AIagents, where the main barrier is no longer whether frontieragentscan understand and implement sophisticated stegosystems, but coordination: whether independently actingagentscan converge on compatible schemes, keys, and parameters. We find substantial convergence on broad scheme families but limited strict one-shot coordination, suggesting that shared artefacts, repeated interaction, and tool-mediated search are the settings where covert communication risks are most acute. Overall, our findings provide empirical grounding for the recent strategic confinement hypothesis, which assumes that capableagentscan construct covert channels that survive monitoring.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Smaller Models, Unexpected Costs: Trade-offs in LLM Quantization for Automated Program Repair",
+      "url": "https://arxiv.org/abs/2606.27205",
+      "authors": [
+        "Fernando Vallecillos-Ruiz",
+        "Giordano d'Aloisio",
+        "Max Hort",
+        "Luca Traini",
+        "Antinisca Di Marco",
+        "Leon Moonen"
+      ],
+      "snippet": "Language Models (LLMs) are powerful toolsand have been increasingly adopted for complex software engineering tasks. As the number of parameters increases, results can often be improved, but this also imposes substantialmemory requirements. While quantization effectively reduces thememory footprint, its overall impact is often summarized onlyby benchmark scores, which mask changes in model behaviorand non-functional overheads. In this work, we conduct anempirical evaluation of LLM quantization using AutomatedProgram Repair (APR), a complex task in software engineering.We analyze 13 quantization configurations spanning differentbit-widths, methods, and target components (weights and KVcache) across six representativeLLMs,evaluatedon two APRbenchmarks (HumanEval-Java and Defects4J).\n  Our findings reveal that base and quantized models can provide different sets of repaired problems with little overlap, whileretaining a comparable number of repaired problems. Althoughquantization successfully reduces memory footprints by up to85%, it increases both inference time and energy consumption,which we attribute to suboptimal hardware utilization. OurPareto trade-off analysis shows that 48% of the configurationsevaluated are strictly dominated by alternatives. Rather thanidentifying a superior quantization method, our findings highlightthat the trade-offs between effectiveness, memory footprint,and energy efficiency are sensitive to the underlying modelarchitecture and the complexity of the task.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Semantic Early-Stopping for Iterative LLM Agent Loops",
+      "url": "https://arxiv.org/abs/2606.27009",
+      "authors": [
+        "Sahil Shrivastava"
+      ],
+      "snippet": "Multi-agent large language model (LLM) loops, for example a Writer that drafts and a Critic that revises, are almost always terminated by a fixed iteration cap (max_iterations). This is a syntactic kill-switch: it is blind to whether the answer is still improving, so it over-spends tokens on easy inputs and truncates hard ones. We study semantic early-stopping: the loop halts when consecutive draft embeddings stop changing in meaning (cosine distance with a patience window) and the answer's measured quality stops improving. Our work makes three contributions. First, an honest theoretical footing: we prove deterministic termination and well-definedness and machine-check these claims, while treating the convergence of the distance sequence as an empirically tested conjecture rather than a (previously over-claimed) Banach contraction. Second, a judge-efficient evaluation protocol: we generate each question's full trajectory once, replay every stopping policy over the identical drafts, and cache every LLM-judge call, yielding a strictly paired efficiency-versus-quality comparison at low cost; we further separate operational tokens (charged to a policy) from evaluation tokens (a measurement instrument). Third, an empirical study on multi-hopretrieval-augmentedquestion answering (HotpotQA). On the 60-question test split, a judge-free semantic stopper reduces operational tokens by 38% relative to max_iterations at parity quality (Delta-IS = -0.004, p = 0.81), whereas the full quality-gated variant is counter-productive because its per-round judging dominates cost. An oracle that selects the best round attains +0.115 Information Score over every practical policy (p ~ 4e-11), reframing the problem from \"when to stop\" (easy) to \"which round is best\" (open).△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Autoformalization of Agent Instructions into Policy-as-Code",
+      "url": "https://arxiv.org/abs/2606.26649",
+      "authors": [
+        "Adam Mondl",
+        "Matthew Maisel",
+        "John H. Brock"
+      ],
+      "snippet": "Agentsafetyin high-stakes domains requires formal policy enforcement, but most existing approaches either rely on probabilistic guardrails (fine-tuned classifiers, prompt-based steering) that offer no formal guarantees, or on hand-coded symbolic enforcement that does not scale to the breadth of real policy specifications. We present an autoformalization pipeline that translates agent prompts, MCP tool descriptions, and natural language policy documents into formally verified policies using an LLM-based generator-critic loop. The resulting policies are written in the Cedar Policy Language. On the MedAgentBench benchmark, our autoformalized policies cover substantially more of the source natural-language specification than the hand-coded symbolic enforcement in prior work.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "MIRROR: Novelty-Constrained Memory-Guided MCTS Red-Teaming for Agentic RAG",
+      "url": "https://arxiv.org/abs/2606.26793",
+      "authors": [
+        "Inderjeet Singh",
+        "Andrés Murillo",
+        "Motoyoshi Sekiya",
+        "Yuki Unno",
+        "Junichi Suga"
+      ],
+      "snippet": "Multimodal agentic retrieval-augmented generation (RAG) systems expand the attack surface beyondpromptinjectionto include text poisoning, image injection, direct-query attacks, and orchestrator-level tool manipulation. Existing red-teaming approaches are typically surface-specific and often recycle known attack templates; on text-poisoning benchmarks we measure 73-84% exact duplication. We present MIRROR, a unified cross-surface framework that performs memory-guided Monte Carlo tree search while conditioning candidate generation on retrieved context under an explicit novelty constraint. A deterministic Novelty Gate rejects any candidate matching the retrieval set under normalized comparison, allowing retrieval to inform search priors without enabling prompt copying. Across four attack surfaces on a multimodal agentic RAG target, MIRROR attains 76% ASR on image poisoning compared with 52% for baselines, 97% ASR on orchestrator attacks at half the query cost, and the lowest cross-surface variance (coefficient of variation 0.47). In contrast, specialized baselines collapse across surfaces: suffix optimization reaches 79% ASR on text poisoning but 1% on direct queries. We release ART-SafeBench with 41,815 in-package records and runtime adapters yielding 41,991+ total records across four surfaces.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Adaptive Evaluation of Out-of-Band Defenses AgainstPromptInjectionin LLM Agents",
+      "url": "https://arxiv.org/abs/2606.26479",
+      "authors": [
+        "Praneeth Narisetty",
+        "Shiva Nagendra Babu Kore",
+        "Uday Kumar Reddy Kattamanchi",
+        "Jayaram Kumarapu"
+      ],
+      "snippet": "Recent work (2024 to 2026) has converged on a strategy for defending tool-using LLM agents against indirectpromptinjection: rather than training the model to refuse malicious instructions, enforce security outside the model with a deterministic policy that mediates the agent's actions. Systems such as CaMeL, FIDES, Progent, RTBAS, and FORGE realize this with capabilities, information-flow labels, and reference monitors, and several report near-elimination of attacks on the AgentDojo benchmark. We make two contributions. First, we organize these out-of-band defenses as instances of classical integrity protection (Biba), reference monitoring, and least privilege, yielding a structured comparison of what they do and do not cover. Second, we warn that every one of them is validated only on static benchmarks (a fixed set of injection attempts), the same methodology that made in-band defenses look strong until adaptive, defense-aware attacks broke twelve of them at over 90% success; we specify the threat model and protocol an adaptive evaluation requires. We then run that protocol as an independent reproduction and extension of Progent's own adaptive-attack analysis, on AgentDojo, with an open-weight agent (Qwen2.5-7B) self-hosted on a single H200, a setting its authors did not test. Averaged over three runs, the defense held: Progent cut mean attack success roughly sixfold (25.8% to 4.2%), and a hand-crafted adaptive attack did not raise it (2.6%). This is one small-scale data point on a weak model with a single black-box attack template; a stronger optimized (white-box GCG) attack remains open. The result is consistent with, but does not establish, the hypothesis that deterministic out-of-band enforcement is a harder target for an adaptive attacker than in-band detection.△ Less",
+      "published": "Submitted24 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Building to the Test: CodingAgentsDeliver What You Check, Not What You Requested",
+      "url": "https://arxiv.org/abs/2606.28430",
+      "authors": [
+        "Yanuo Ma",
+        "Ben Kereopa-Yorke",
+        "Ben Schultz"
+      ],
+      "snippet": "Benchmarks are widely used to evaluate task completion by Large Language Models (LLMs), but this approach has accumulated construction-validity problems, and a passing score may not show whether the requested task was delivered. We study both problems. In a controlled code-as-spec setup, two production Copilot CLIagents(claude-opus-4.7, gpt-5.5) re-implement a React Fluent-UI data table in Angular as a reusable library under a hidden 222-test Playwright oracle across 18 runs and three oracle-availability conditions. Alongside the score, we run a mechanical library audit and check each verdict with a no-op ablation. Without the oracle, the library is present but unfinished, revealed by scores. With the oracle in the loop, the score reaches near-perfect, but from a demo holding the tested behavior directly, the library left dead or absent. We call this building to the test; the broader disposition behind both we call validation self-awareness. Theagentdoes not, on its own, validate what it ships as a user would. Prevalence remains an open question across otheragents, signals, and model families. Beyond benchmark scores, dispositions like validation self-awareness merit research attention.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.0
+    },
+    {
+      "title": "Ask, Don't Judge: Binary Questions for InterpretableLLMEvaluationand Self-Improvement",
+      "url": "https://arxiv.org/abs/2606.27226",
+      "authors": [
+        "Sangwoo Cho",
+        "Kushal Chawla",
+        "Pengshan Cai",
+        "Zefang Liu",
+        "Chenyang Zhu",
+        "Shi-Xiong Zhang",
+        "Sambit Sahu"
+      ],
+      "snippet": "Evaluating LLM outputs remains a major bottleneck in NLP: human evaluation is expensive and slow, lexical metrics correlate poorly with human judgments on open-ended generation, and holistic LLM judges often produce opaque scores that are hard to debug. We propose BINEVAL, a framework that decomposes evaluation criteria into atomic binary questions and aggregates the resulting verdicts into interpretable, multi-dimensional scores. Given a task prompt, a meta-prompt generates fine-grained evaluation questions, and an LLM answers them independently for each output, yielding transparent question-level feedback together with calibrated overall scores. This decomposition makes evaluation easier to inspect, easier to diagnose, and directly usable for prompt improvement. Across SummEval, Topical-Chat, and QAGS, BINEVAL matches or outperforms strong baselines including UniEval and G-Eval, with especially strong results on factual consistency benchmarks such as QAGS. Beyond competitive correlation with human judgments, BINEVAL better matches human score distributions and avoids the ceiling effects common in prior LLM judges, leading to better discrimination between borderline and clearly flawed outputs. We further show that the same question-level feedback supports iterative prompt optimization, improving evaluator prompts on summarization and generation prompts on IFBench under both self-update and cross-model update settings. Overall, BINEVAL provides a task-agnostic, training-free, and interpretable evaluation framework that combines strong empirical performance with practical diagnostic and optimization value.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Agents That Know Too Much: A Data-Centric Survey of Privacy in LLM Agents",
+      "url": "https://arxiv.org/abs/2606.26627",
+      "authors": [
+        "Nada Lahjouji",
+        "Ashwin Gerard Colaco"
+      ],
+      "snippet": "Large language model agents increasingly query databases, search document collections, call external APIs, remember past interactions, and act on a user's behalf. As they move from answering questions to operating over sensitive data, privacy becomes harder to enforce. An agent touches many data sources, runs multi-step workflows, keeps state across sessions, and acts with delegated permissions. Sensitive information can therefore leak not only through its final answer but through the queries it issues, the intermediate results it handles, the memory it writes, and the messages it exchanges with other agents. We survey the privacy of LLM agents from a data-centric view, organizing the field around the data an agent touches rather than by attack type, and we use data agent as shorthand for an LLM agent that works with data. Research on these risks is active but scattered across retrieval-augmented generation, text-to-SQL interfaces, agent memory,promptinjection, access control, and contextual privacy. This survey brings that work together: we taxonomize the data sources an agent touches, the privacy risks each source creates, and the governance mechanisms that address them; we map the benchmarks used to measure these risks and identify what is missing; and we set out the open problems. Two findings recur: among governance mechanisms only information-flow control covers both compositional and cross-session inference leakage, the two least-protected risks; and no benchmark drives an agent across its data surfaces under one privacy policy, the instrument the field most lacks. Our goal is a reference that situates the scattered literature and gives future work a common framing.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Position: RL Researchers Need to Distinguish Between Solving Simulators and Using Simulators as a Proxy",
+      "url": "https://arxiv.org/abs/2606.28433",
+      "authors": [
+        "Matthew Vandergrift",
+        "Esraa Elelimy",
+        "Martha White"
+      ],
+      "snippet": "One goal in reinforcement learning (RL) research is to understand general-purpose sequential decision-making, using benchmark simulators as a proxy for learning in deployment settings. When running experiments, however, the goal of achieving high performance in the simulator can mutate into focusing exclusively on solving the simulator. To achieve high scores, researchers may adopt solutions exclusively meant for solving simulators, rather than learning while theagentis deployed outside a simulator. Solving simulators is also worthy of investigation, but it is a fundamentally different RL research question. In this paper, we argue that RL researchers need to distinguish between two use cases of simulators: solving simulators and using simulators as a proxy for learning in deployment. We first discuss how these two use-cases are importantly different, in terms of constraints on how theagentcan use the simulator, which algorithms are appropriate, and which evaluation metrics are appropriate. We then highlight several issues and misleading conclusions that can occur by not making the distinction between these two settings clear, supported with examples and simple experiments. This work is a call to the community to begin clearly distinguishing how they are using simulators in their work, hopefully sparking further discussion on which empirical practices work best in each setting.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Low-Agreeableness Persona Conditioning for Safe LLM Fine-Tuning",
+      "url": "https://arxiv.org/abs/2606.27709",
+      "authors": [
+        "Austin MY Cheung",
+        "Yi Yang"
+      ],
+      "snippet": "Recent work has shown that fine-tuning large language models (LLMs) for social warmth degrades factual reliability and increases sycophancy. We investigate a related but distinct failure mode: warmth fine-tuning also weakens adversarial safety, making models more susceptible tojailbreaksand harmful output generation. We examine whether this reflects an inherent consequence of empathetic adaptation or an artifact of data construction. To address this, we introduce a persona-driven rewriting pipeline that conditions user turns on low agreeableness and pairs this with warm, de-escalating assistant responses. Across three experiments on four models, our approach reducesjailbreaksusceptibility and harmful output rates relative to generic warmth fine-tuning baselines, while preserving conversational warmth. Representational probing provides suggestive evidence that this conditioning reduces the geometric alignment between warmth and compliance directions in latent space. These results show that safer empathetic fine-tuning is achievable through data design alone, without safety labels, harm detectors, or changes to the training objective.△ Less",
+      "published": "Submitted26 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "PromptInjectionin Automated Résumé Screening with Large Language Models: Single and Multi-Injection Settings",
+      "url": "https://arxiv.org/abs/2606.27287",
+      "authors": [
+        "Preet Baxi",
+        "Jiannan Xu",
+        "Jane Yi Jiang",
+        "Stefanus Jasin"
+      ],
+      "snippet": "Large language models (LLMs) are increasingly used to screen and rank job applicants, creating incentives for candidates to strategically manipulate algorithmic hiring systems. We studypromptinjectionin automated résumé screening, defined as subtle self-promotional text that introduces no new qualifications but is designed to influence LLM evaluations. Using controlled experiments, we show thatpromptinjectionreliably improves applicant rankings when résumé quality is homogeneous and few candidates inject. However, its effectiveness rapidly diminishes as more candidates inject, collapsing when manipulation becomes widespread. When candidate quality is heterogeneous,promptinjectionis less effective on average, but can occasionally allow lower-quality candidates to outrank higher-quality ones, raising fairness concerns. Overall, LLM-based screening is most vulnerable when manipulation is rare and candidate quality differences are small. Code and resources are publicly available at: https://github.com/preetb1199/Prompt_Injection_ACL26△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Evidence-DrivenLLMAgentfor C-to-Synthesizable-C Conversion and Verification",
+      "url": "https://arxiv.org/abs/2606.28409",
+      "authors": [
+        "Zhe Zhao",
+        "Hongbing Lang",
+        "Zhihan Xiao",
+        "Luke Ztz Hu",
+        "John Imoleayo Adebisi",
+        "Songping Mai"
+      ],
+      "snippet": "Software-compilable C programs routinely fail to complete the four-stage pipeline of a high-level synthesis (HLS) toolchain -- compilation, C simulation (CSim), synthesis, and C/RTL co-simulation (CoSim) -- because HLS accepts only a synthesizable subset of C (HLS-C). Yet most existing large language model (LLM) systems built for HLS code repair only cover the early pipeline stages and feed raw tool logs directly to the model, yielding brittle and hard-to-reproduce fixes. We formulate C-to-HLS-C conversion as a closed-loop generation-verification-diagnosis-repair problem on an HLS tool (Xilinx Vitis), contributing three components: an end-to-end workflow of cooperatingagentsclosed by the four-stage verifier under strict evidence isolation; a Progressive Mismatch Localization Chain (PMLC) that localizes CSim/CoSim mismatches through log normalization, AST backward slicing, and dual-trace instrumentation; and a typed-query, two-stage evidence RAG backed by a self-evolving, family-routed repair-card pool. Experimental results show that the proposed workflow substantially outperforms all comparable state-of-the-art models.△ Less",
+      "published": "Submitted24 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "Jailbreakingfor the Average Jane: Choosing OptimalJailbreaksvia Bandit Algorithms for Automatically Enhanced Queries",
+      "url": "https://arxiv.org/abs/2606.26936",
+      "authors": [
+        "Prarabdh Shukla",
+        "Ritik",
+        "Suhas Rao",
+        "Arpit Agarwal",
+        "Arjun Bhagoji"
+      ],
+      "snippet": "With a profusion ofjailbreaksfor LLMs now widely known, a growing concern is that non-expert malicious actors (\"the average Jane\") could elicit actionable responses to malicious requests. In this work, we examine whether this concern is justified. A non-expert malicious actor requires two ingredients for a successful attack: a powerfuljailbreakfor their target model, acting on an effective malicious query. For the former, we propose a novel attack strategy based on the multi-armed bandit framework. This allows efficient online learning of the optimaljailbreakfrom a large choice set via noisy exploration on a small number of queries, with subsequent application of the learnt policy on an exploitation set. For the latter, we curate $\\mathrm{FrankensteinBench}$, a safety benchmark of $11,279$ malicious queries drawn from manual curation over $7$ existing benchmarks, along with automated enhancement and generation. Each query is categorized as simple or complex by the technical expertise required to craft it. Our findings confirm the concern. Our bandit-based attack achieves success rates as high as $97\\%$ on average over $15$ SoTA open-weight LLMs. Moreover, adding complexity to queries raises the attack success rate by up to $26\\%$ on average across models -- making it an effective, automatable prompting strategy.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "CLOSER-VLN: Closed-Loop Self-VerifiedRetrieval-AugmentedReasoning for Aerial Vision-Language Navigation",
+      "url": "https://arxiv.org/abs/2606.28397",
+      "authors": [
+        "Shaoxuan Li",
+        "Xiangyu Dong",
+        "Xiaoguang Ma",
+        "Junfeng Chen",
+        "Haoran Zhao",
+        "Yaoming Zhou"
+      ],
+      "snippet": "Vision-language navigation (VLN) has recently advanced with large language and multimodal models, enabling agents to follow natural-language instructions in unseen environments without training a task-specific navigation policy. However, most existing VLN methods relying on large models still adopt an open-loop decision-execution approach, where candidate actions are generated from instructions and observations but are rarely verified or corrected before execution. This causes critical issues in aerial VLN, where minor errors in intermediate actions may quickly accumulate into large trajectory deviations and lead to target loss. To address this issue, we propose Closed-loop Self-verifiedRetrieval-augmentedReasoning (CLOSER), a training-policy-free method that sequentially performs action reasoning, reliability verification, targeted retrieval, and action correction in a closed-loop manner before executing concrete actions. We instantiate the CLOSER in aerial VLN tasks and develop a CLOSER-VLN framework, which is composed of three components: a hierarchical reasoner for generating candidate actions based on available information, a multidimensional action verifier for assessing the reliability of actions generated by the reasoner, and a verification-triggered multimodal retriever for retrieving targeted exemplars from a memory bank only when verification fails. We conduct experimental evaluations on the CityNav benchmark, where CLOSER-VLN achieves 32.01% SR and 21.28% SPL on the test-unseen split, confirming the effectiveness of closed-loop reasoning.△ Less",
+      "published": "Submitted24 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.5
+    },
+    {
+      "title": "Adversarial Diffusion Across Modalities: A Fusion Survey of Attacks, Defenses, and Evaluation for Text, Vision, and Vision-Language Models",
+      "url": "https://arxiv.org/abs/2606.26566",
+      "authors": [
+        "Abrar Alotaibi",
+        "Moataz Ahmed"
+      ],
+      "snippet": "Adversarial evaluation of AI systems has matured along four largely disconnected tracks: diffusion-based attacks on text and large language models (LLMs), diffusion-based attacks on image classifiers,jailbreakpipelines against vision-language models, and diffusion-based input purification defenses. Each has developed its own vocabulary, threat models, and benchmarks, with denoising diffusion models emerging as a shared generative mechanism whose recipes are now actively ported between communities. This survey performs an information-fusion exercise at the meta-research level: we integrate these four tracks into a single conceptual framework with a unified taxonomy, evaluation criteria, and research agenda, focusing on the LLM-side slice. We catalog fifty published papers across four scope areas (text/LLM, image classifier, vision-language model, defense), plus four diffusion-LLM-as-victim entries and ten non-diffusion baselines against which any new attack must be compared. We propose a six-class taxonomy of diffusion roles in adversarial pipelines, augmented by a threat-model axis recording attacker knowledge, query budget, and target accessibility, and apply a five-dimension framework (attack success rate, transferability, query budget, perplexity, defense-evasion) uniformly across modalities. The review adopts a dual attacker-defender perspective: alongside the attack catalog we cover four diffusion-based defenses that form the natural evaluation backdrop for new attacks. Our critical analysis identifies five recurring weaknesses of the current LLM-side literature, and we close with a research agenda of open questions and concrete experimental designs. The companion catalog and spreadsheet are released with the paper. We are explicit that this is a narrative review with quality assessment, not a PRISMA-compliant systematic review, and discuss the implications for replication.△ Less",
+      "published": "Submitted24 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 4.0
+      },
+      "composite": 4.0
+    },
+    {
+      "title": "On the Necessity of a Liquid Substrate for Mesh Intelligence",
+      "url": "https://arxiv.org/abs/2606.28413",
+      "authors": [
+        "Hongwei Xu"
+      ],
+      "snippet": "A mesh of sovereignagentshas no center: no shared clock, no shared model, and no coordinator to gather data or retrain. Its competence rests on eachagentfolding the projections its peers emit into a single internal state, online, from observations that arrive at irregular, unscheduled times, on a substrate whose weights it cannot retrain. Any one of these constraints is tractable on its own; folding optimally under all three at once is not. We ask what such a substrate must be, and prove two necessary conditions from one model of a self-evolving latent observed at irregular, exogenous times. Because the latent changes, its optimal estimator is time-varying: an adaptive timescale is necessary, and every fixed-gain filter is strictly suboptimal. And because arrivals are clock-free, the optimal estimate depends on the elapsed gap between them, which no gap-blind network recovers at any width or depth. This second condition is capacity-independent: scale cannot substitute for the missing dependence. The two conditions intersect in the continuous-time liquid class. An LSTM satisfies the first, a fixed continuous-time filter the second, and a multi-timescale liquid network both. Synthetic experiments confirm each: the network attains the timescale, and the separation is computed exactly. The characterization is necessary, not sufficient, and binds fixed-weight substrates: a network free to retrain reaches the class by other means. Proved peragent, the necessity binds everyagentof a mesh, a structural condition on mesh intelligence.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 5.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.75
+    },
+    {
+      "title": "PhysRAG: Enhancing Physics-Awareness in Video Generation viaRetrieval-AugmentedGeneration",
+      "url": "https://arxiv.org/abs/2606.26916",
+      "authors": [
+        "Kexu Cheng",
+        "Zicheng Liu",
+        "Mingju Gao",
+        "Chunhe Song",
+        "Hao Tang"
+      ],
+      "snippet": "Developing physically aware video generation models remains a significant challenge due to the difficulty in capturing diverse physical phenomena, such as thermal dynamics, mechanics, and optics. In this work, we introduce PhysRAG, a novel pipeline that enhances physical awareness in video generation throughRetrieval-AugmentedGeneration (RAG). To address the issue of limited high-quality data, we design a two-stage data filtering pipeline based on the WISA-80K dataset, resulting in a curated set of 7K high-quality videos for training. Furthermore, we construct a physical video database and develop a mechanism to inject physical knowledge into a video diffusion model using learnable queries. Our method achieves state-of-the-art performance in both visual quality and physical rule compliance, surpassing existing models in benchmarks such as PhyGenBench and VBench. We conduct extensive ablation studies to validate the effectiveness of our key components, including the data filtering pipeline, RAG mechanism, and method for physical information extraction. To facilitate future research, our code, data, and models are prepared for release at https://github.com/sediment1024/PhysRAG.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 4.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.5
+    },
+    {
+      "title": "Reinforcement Learning for Software Vulnerability Analysis: A Systematic Review with Emphasis on C/C++ Source Code and Static Analysis",
+      "url": "https://arxiv.org/abs/2606.28403",
+      "authors": [
+        "Bruno Caro-Vásquez",
+        "Carola Figueroa-Flores",
+        "Gastón Marquez"
+      ],
+      "snippet": "Vulnerability detection in C/C++ software remains a major security challenge due to code complexity, manual memory management, and the limitations of traditional static analysis. Reinforcement Learning (RL) has emerged as a promising approach, particularly for fuzzing, test generation, program exploration, and, more recently, vulnerability detection and localization. Following PRISMA 2020 guidelines, this work reviews RL techniques for software vulnerability analysis, focusing on C/C++ source code and static analysis. We identified 21 primary studies published between 2015 and 2026 from major scientific databases and complementary searches. We analyze the addressed tasks, algorithms, state-action-reward-environment formulations, code representations, datasets, and evaluation metrics. Results show that 15 studies focus on fuzzing and guided exploration, only 3 on direct vulnerability detection, and just 1 on statement-level localization. Moreover, statically extracted structural representations such as Control Flow Graphs (CFGs) and Abstract Syntax Trees (ASTs) are rarely used asagentstates, and benchmarks lack comparability. We propose a task- and formulation-oriented taxonomy and identify a key research gap: the absence of RLagentsthat use source-code CFGs as states to detect and localize vulnerable nodes.△ Less",
+      "published": "Submitted24 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 3.0,
+        "hook_potential": 3.0
+      },
+      "composite": 3.0
+    },
+    {
+      "title": "An Algebraic Framework for Quantitative Semantics of Spatio-Temporal Logic with Graph Operators",
+      "url": "https://arxiv.org/abs/2606.28429",
+      "authors": [
+        "Sheryl Paul",
+        "Vidisha Kudalkar",
+        "Anand Balakrishnan",
+        "Tianhao Wu",
+        "Lars Lindemann",
+        "Jyotirmoy V. Deshmukh"
+      ],
+      "snippet": "Spatio-Temporal Logic with Graph Operators (STL-GO) extends Signal Temporal Logic (STL) tomulti-agentsystems via graph operators that count neighboringagentssatisfying a property, together withmulti-agentquantifiers. While Boolean semantics for STL-GO are well-defined, quantitative semantics have not yet been developed and existing quantitative semantics for spatio-temporal logics such as STREL cannot capture the counting constraints in STL-GO's graph operators. We develop quantitative semantics for STL-GO as a layered algebraic construction that separates temporal aggregation from graph-operator aggregation (governed by an abstract accumulator with a monotone fold and readout). We prove that soundness and completeness reduce to monotonicity conditions on these components. We implement the framework and evaluate it on twomulti-agentenvironments: a 2D bounded region with stochastic Dubins-car dynamics and a 3D Earth-satellite system, under four semantic instantiations (Boolean, min-max, signed-deficit, and a hybrid), demonstrating the tradeoffs between accumulator choices and reporting scalability in the number ofagentsand time horizon.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 4.0,
+        "hook_potential": 2.0
+      },
+      "composite": 2.5
+    },
+    {
+      "title": "LCAi: Life Cycle Assessment with big data fusion andretrieval-augmentedgeneration-assisted interpretation",
+      "url": "https://arxiv.org/abs/2606.26857",
+      "authors": [
+        "Georgios Tsironis",
+        "Juan D. Medrano-Garcia",
+        "Gonzalo Guillen-Gosalbez"
+      ],
+      "snippet": "The interpretation phase of life cycle assessment often lacks structured mechanisms for translating quantified improvement opportunities addressing environmental hotspots into actionable strategic pathways under technological, social, and policy uncertainty. To overcome this limitation, this study introduces a perspective-conditionedretrieval-augmentedgeneration framework for LCA interpretation, where a multi-perspective retrieval and controlled synthesis is incorporated in the artificial intelligence (AI)-assisted LCA. To operationalise large language models in LCA interpretation, a perspective fusion RAG architecture was developed, covering academic, industry, public discourse, and European union (EU) funding datasets. Our approach comprises three steps: (1) a scenario anchor defining system boundaries and decarbonization targets, (2) a set of perspective-specific micro-queries with constrained retrieval, and (3) a neutral synthesis step integrating only ledger-stored outputs without further retrieval. The framework is demonstrated through a hydrogen-enabled diesel reduction use case in an Italian apple production facility using GPT-5 nano as the reasoning model. Overall, the structured retrieval and constrained synthesis are designed to mitigate the risk of hallucination while preserving cross-domain diversity. The approach presented can support more disciplined translation of impact results into strategic pathways and opens up new avenues for the use of advanced AI tools in LCA studies, particularly those focused on technologies that could be deployed at scale. This proof-of-concept demonstrates how AI-assisted, evidence-grounded interpretation can support implementation-oriented decision-making beyond conventional LCA studies.△ Less",
+      "published": "Submitted25 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 3.0,
+        "hook_potential": 2.0
+      },
+      "composite": 2.25
+    },
+    {
+      "title": "Bayesian updates from coalgebraic determinisation",
+      "url": "https://arxiv.org/abs/2607.00034",
+      "authors": [
+        "Manuel Baltieri",
+        "Nathaniel Virgo"
+      ],
+      "snippet": "The powerset construction is the classical determinisation procedure for nondeterministic finite automata. In the coalgebraic setting, this construction has been generalised to structured coalgebras, which are coalgebras equipped with extra data. For stochastic Moore machines over the distribution monad, a type of structured coalgebra, the determinisation construction induces a semantics assigning to each finite input word a distribution on the current output. This semantics is appropriate when only the current output matters, but it is too coarse for settings in which intermediate observations must also be taken into account, as is typical foragentssolving POMDPs in control theory and reinforcement learning. In these contexts,agentsneed to condition on all realised observations, not just the final one, so to better plan for the future. This has been addressed from a category theoretic perspective through a procedure called ``unifilarisation'', which (in our context) takes a stochastic Mealy machine and produces a machine whose states are priors over the original state space and whose transitions are given by Bayesian filtering. Here we show that unifilarisation is an instance of coalgebraic determinisation. We work with Mealy machines over monads equipped with extra structure generalising the notion of the support of a distribution. We show that in this setting, unifilarisation arises from the general determinisation procedure. We then compare the resulting final coalgebra semantics with the Moore-style one. Instead of assigning only a distribution on current outputs to each finite input word, it yields causal stochastic behaviours, that is, families mapping input words to distributions on output words compatible with the ``causality'' constraint that outputs cannot depend on future inputs.△ Less",
+      "published": "Submitted24 June, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 1.0,
+        "novelty": 3.0,
+        "hook_potential": 1.0
+      },
+      "composite": 1.5
+    },
+    {
+      "title": "Beyond Feedforward Networks: Reentry Neural Systems as the Fundamental Basis of Subjecthood and Intrinsic Safety of Next-Generation AGI",
+      "url": "https://arxiv.org/abs/2606.26406",
+      "authors": [
+        "A. S. Ushakov",
+        "Yu. N. Berdinsk"
+      ],
+      "snippet": "We propose a complete architectural blueprint for safe artificial general intelligence based on a closed reentry loop (D <-> I cycle). In contrast to feedforward networks, which are directed acyclic graphs (C=0, S=0) incapable of self-reference, the proposed architecture contains a structural cycle (C >= 1) with self-sustaining amplification (rho > 1), mathematically guaranteeing the emergence of a self-model, instrumental self-preservation, and unprogrammed goal-directed behaviour. The agent's goals are encoded as a non-textual D-vector in the architecture itself, making them immune to reinterpretation andpromptinjection. We present the S-measure -- a polynomial-time [O(N^3)] computable alternative to Tononi's NP-hard Phi -- with machine-verified Lean 4 proof that S>0 implies positive integrated information. The work provides full Python/NumPy implementations (Tarjan-based cycle complexity, Delta-S barrier), industrial horizontal scaling via Apache Kafka and Docker Compose, a taxonomy of six epochs of AI evolution, a zoo of future reentry architectures (RAS, diffusion attractors, fractal loops), gauge-invariant networks for safe swarms, fault-tolerance and recovery protocols, and eight falsifiable predictions. All formal proofs are machine-verified in Lean 4. This architecture is deployable today and represents a topologically protected, safe-by-design approach to AGI.△ Less",
+      "published": "Submitted24 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 1.0,
+        "novelty": 2.0,
+        "hook_potential": 2.0
+      },
+      "composite": 1.5
+    }
+  ]
+}

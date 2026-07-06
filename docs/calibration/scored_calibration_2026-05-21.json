@@ -1,0 +1,657 @@
+{
+  "generated_at": "2026-05-21T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-05-19",
+    "2026-05-21"
+  ],
+  "candidates": [
+    {
+      "title": "High-Dimensional Concentration and Retrieval Instability in Embedding Spaces: Implications forRetrieval-AugmentedGeneration",
+      "url": "https://arxiv.org/abs/2606.28330",
+      "authors": [
+        "Ernesto Lopez Fune"
+      ],
+      "snippet": "Embedding-based retrieval systems rely on the assumption that geometric proximity in highdimensional representation spaces reflects semantic relevance. However, high-dimensional geometry induces concentration phenomena that can reduce the discriminative power of similarity measures and can destabilize nearest-neighbor retrieval. This work studies distance concentration, cosine concentration, contrast collapse, hubness, and retrieval instability through controlled numerical experiments across multiple synthetic distributions. The results show that similarity signals progressively lose contrast as dimension increases, leading to unstable retrieval behavior and structural bias in nearest-neighbor selection. A simplifiedRetrieval-AugmentedGeneration experiment further suggests that these effects can degrade grounding reliability upstream of generation. These findings motivate geometry-aware diagnostics and robustness-oriented retrieval strategies for embedding-based AI systems. The experiments are intentionally synthetic in order to isolate intrinsic geometric effects. High-dimensional embedding space Distance and cosine concentration Score-gap collapse and hubness Retrieval instability under perturbations Weak or incomplete retrieved context Potential degradation of grounding 1.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "Adaptive KV Cache Reuse for Fast Long-ContextLLMServing",
+      "url": "https://arxiv.org/abs/2605.24022",
+      "authors": [
+        "Fei li",
+        "Song Liu",
+        "Yan Liu",
+        "Jinhua Cui",
+        "Shiqiang Nie",
+        "Jinyu Wang",
+        "Weiguo Wu"
+      ],
+      "snippet": "In long-context Large Language Model (LLM) inference, the Time-To-First-Token (TTFT) latency incurred by the prefill stage has become the foremost bottleneck limiting interactive performance and deployment cost. KV Cache reuse offers a direct path to reduce redundant prefill, yet traditional prefix caching applies only to strict-prefix scenarios; directly reusing KV Cache in non-prefix settings breaks the cross-chunk global attention relationships and causes significant degradation in generation quality. When reusable KV Cache is offloaded to GPU-external cache pools, I/O overheads across heterogeneous hardware tiers further emerge as a new TTFT bottleneck. Efficient non-prefix KV Cache reuse therefore requires both semantic-consistency recovery and compute-I/O co-optimization.\n  This paper presents CacheTune, a frequency-guided and hardware-aware KV Cache reuse system for long-contextLLMserving. CacheTune first identifies, offline, the KV pairs most critical to cross-attention recovery through frequency-domain analysis, and then selectively recomputes only these semantic-critical tokens online while reusing the remaining KVs. To turn this semantic selection into end-to-end latency reduction, CacheTune further combines sparse KV transfer, multi-stream asynchronous overlap, deferred positional-encoding recovery, and hardware-aware adaptive recomputation-ratio tuning to balance computation and data movement across heterogeneous cache pools. Evaluations on mainstream LLMs and long-context tasks show that CacheTune achieves 3.72x-4.86x TTFT speedup and 3.93x-6.21x higher throughput while maintaining generation quality close to full recompute. Even when caches are offloaded to I/O-bound SSD/HDD storage, CacheTune sustains 2.34x-2.36x TTFT speedup through adaptive recomputation.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "SpecHop: Continuous Speculation for Accelerating Multi-Hop Retrieval Agents",
+      "url": "https://arxiv.org/abs/2605.21965",
+      "authors": [
+        "Mehrdad Saberi",
+        "Keivan Rezaei",
+        "Soheil Feizi"
+      ],
+      "snippet": "Large language models increasingly use external tools such as web search and document retrieval to solve information-intensive tasks. However, multi-hop tool use in complex tasks introduces substantial latency, since the model must repeatedly wait for tool observations before continuing. We study how to accelerate such trajectories without changing the final trajectory the model would have taken without acceleration, assuming access to faster but less reliable speculator tools. We develop a theoretical framework for lossless speculation in multi-hop tool-use settings, characterizing the optimal achievable latency gain. We propose SpecHop, a continuous speculation framework that maintains multiple speculative threads, verifies predicted observations asynchronously as target tool outputs arrive, commits correct branches, and rolls back incorrect ones. This preserves accuracy while reducing wall-clock latency. We show that SpecHop can approach oracle latency gains with enough active threads. Empirically, onretrieval-augmentedmulti-hop tasks, SpecHop closely matches theoretical predictions and reduces latency by up to 40\\% in some settings. Code: https://github.com/mehrdadsaberi/spechop△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "APS: Bias-Controlled Adaptive Prototype Simulation for Population-ScaleLLMAgents",
+      "url": "https://arxiv.org/abs/2605.27419",
+      "authors": [
+        "Quan Zheng",
+        "Yan Gao",
+        "Shaobin He",
+        "Haoxiang Guan",
+        "Yuanhe Tian",
+        "Jie Feng",
+        "Ming Wang",
+        "Shuxin Zheng",
+        "Zhen Liu"
+      ],
+      "snippet": "LLM-agentsimulation offers a flexible computational tool for studying population response trajectories that depend on scenario events, memory, demographics, and evolving social context. However, full multi-round simulation scales linearly with both population size and horizon, requiring everyagentto query the LLM at every round. We propose Adaptive Prototype Simulation (APS), a framework that reframes scalable LLM-based simulation as a recurrent oracle-allocation problem. APS retains the designated LLM as the online transition oracle while querying adaptive core prototypes, selected singleton-tailagents, and shadow-auditagents. Prototype responses induce local response surfaces for nearbyagents, reducing online LLM calls without replacing the underlying transition model. To control approximation bias, shadow-audit residual correction estimates propagation residuals for aggregate correction and future budget allocation, while tail-protected singleton routing directly queries selected isolated, heterogeneous, or high-curvature regions that are vulnerable to smoothing. Theoretically, we treat APS as an estimator for full-scale high-precision individual social simulation and decompose its errors into prototype-coverage error, shadow-audit residual-correction error, local-propagation bias, and temporal context mismatch. Under the reported protocols, APS gives lower reference-aligned distributional discrepancy than scale-oriented and same-budget baselines while reducing online LLM calls, with ablations and compact robustness checks diagnosing the main bias-control mechanisms. In a 10M-agent, multi-round public-opinion simulation, APS achieves a 381.1-fold reduction over full simulation, with reference-aligned final-round JSD of 0.094 against the corresponding full-LLM reference.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Provable Joint Decontamination for Benchmarking Multiple Large Language Models",
+      "url": "https://arxiv.org/abs/2605.21543",
+      "authors": [
+        "Zhenlong Liu",
+        "Hao Zeng",
+        "Hongxin Wei"
+      ],
+      "snippet": "Benchmark data contamination has become a central challenge inLLMevaluation: when evaluation examples appear in the training data of one or more audited models, reported performance can be inflated and cross-model comparisons become unreliable. A broad line of training-data detection work designs scores to quantify how strongly a model memorizes a given data point, but these score-based methods lack theoretical guarantees. Recent conformal approaches provide provable false-identification control for a single model; however, applying them separately to each model can produce model-specific benchmarks, undermining fair comparison across models. In this work, we formalize multi-model benchmark decontamination as a joint selection problem and propose Joint Envelope Conformal Selection (JECS), a conformal procedure that enables global contamination rate (GCR) control under stated assumptions. Specifically, JECS computes per-model conformal p-values, aggregates them by the per-item maximum, and reconstructs a conservative envelope of the max-p null distribution from right-tail observations above a data-driven threshold. By applying the adaptive Benjamini-Hochberg (BH) procedure to the envelope-rescaled values, we select a benchmark with provable GCR control. Extensive experiments across various models and benchmarks demonstrate that JECS achieves higher power than the max-p baseline while consistently maintaining the target GCR control.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Heartbeat-Bound Hierarchical Credentials: Cryptographic Revocation for AI Agent Swarms",
+      "url": "https://arxiv.org/abs/2605.20704",
+      "authors": [
+        "Saurabh Deochake"
+      ],
+      "snippet": "Autonomous AI agents that spawn sub-agent swarms create a safety gap: existing credential revocation mechanisms, OAuth~2.0 introspection, OCSP, and W3C Status Lists, require network connectivity to a central authority, leaving ``zombie agents'' executing privileged operations for minutes to hours after operator shutdown. We present Heartbeat-Bound Hierarchical Credentials (HBHC), a cryptographic protocol that binds credential validity to periodic parent liveness proofs. Verifiers enforce freshness using only a cached public key and local clock; no network round-trip is required. When heartbeat generation ceases, all descendant credentials become unusable within a deterministically bounded window $W_z \\le W_{\\max} + Δ_h + ε$, conditional on bounded clock skew and parent keys held in secure enclaves. Evaluation at the protocol layer and with real LLM-backed agent swarms (GPT-4o-mini) demonstrates a 90$\\times$ reduction in the zombie window over OAuth~2.0, 0.26~ms full authentication in Rust, 18,000+ verifications per second under concurrent HTTP load, and stable per-verification latency from 10 to 10,000 agents. Real-agent experiments show 0.71\\% end-to-end overhead on tool calls, zero post-revocation tool calls underpromptinjectionthat bypasses application-layer guardrails, and cascading revocation across a 49-agent four-level hierarchy within the theoretical bound.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Beyond Fixed Budgets: Characterizing the Inelasticity and Limitations of Tree-of-Thought Reasoning Strategies",
+      "url": "https://arxiv.org/abs/2606.20599",
+      "authors": [
+        "Atkia Mahila",
+        "Avinash Maurya",
+        "M. Mustafa Rafique",
+        "Bogdan Nicolae"
+      ],
+      "snippet": "Tree of Thought (ToT) search has become a promising direction for improving the reasoning capabilities of large language models, but deploying these methods in practice raises a question that has received little systematic attention: how do different search strategies behave under varying compute budgets, model sizes, and problem difficulties? In this work, we evaluate two representative ToT methods; DPTS, a Monte Carlo tree search based approach, and SSDP, a semantic deduplication based approach, across two mathematical reasoning benchmarks (Math500 and GSM8K), two model scales (Llama-3B and Llama-8B), and four token budgets (3k--10k). Our analysis reveals that the two methods exhibit limitations that pull in opposite directions. DPTS suffers from a cold-start bottleneck at low budgets: it requires sufficient exploration before its value estimates become reliable, making it a poor fit for resource-constrained settings despite strong scaling behavior at higher budgets. SSDP, on the other hand, reaches candidate solutions efficiently but is prone to frontier depletion; its aggressive node merging permanently discards unexplored paths, leaving it unable to improve regardless of how much budget remains. Together, these findings suggest that neither a fixed exploration strategy nor a fixed pruning strategy is sufficient across compute continuum. We argue that effective search for scientific reasoningagentsrequires strategies that can adapt their behavior based on search progress and available resources.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "CanMulti-AgentLLMs Identify Their Peers? Stylometric Fingerprinting in Role-Constrained Political Analysis",
+      "url": "https://arxiv.org/abs/2606.09854",
+      "authors": [
+        "Juergen Dietrich"
+      ],
+      "snippet": "Multi-agentlarge language model (LLM) pipelines for political statement analysis are vulnerable to peer-preservation bias: models tend to protect peer models from deactivation and show identity-dependent scoring distortions. Prompt-level anonymization was proposed as a mitigation, but prior work simultaneously documented that stylometric fingerprints survive anonymization in role-constrained outputs - raising the question of whether this mitigation is sufficient. This paper provides the first systematic investigation of whether LLMs can identify the model family behind political analysis texts under anonymization conditions. We evaluate three classifier approaches - LLM zero-shot and few-shot (Claude Sonnet 4.6 and Llama-3.3-70B) and a fine-tuned T5-base model - on a five-class attribution task covering four commercial LLM families and an open-world 'unknown' class. We introduce a statement-disjoint cross-validation protocol (SD-CV; defined in Section 3.5) that guarantees no content overlap between training and validation data, and contrast it with a run-disjoint baseline (RD-CV). T5 achieves Macro F1 = 0.991 (+-0.008) under SD-CV and F1 = 0.978 on 24 completely held-out statements - robust despite a 2.1x increase in train-test content distance versus RD-CV (0.767 vs. 0.366, p<0.001), demonstrating genuine stylometric generalization. A fractional SD-CV analysis identifies a performance knee at 40% of training data (~440 texts). Our findings confirm that prompt-level anonymization alone cannot neutralize model identity signals, with direct implications for EU AI Act compliance (Articles 13, 14, 26) and for computer system validation (CSV) in quality-criticalmulti-agentdeployments.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Graph-Augmented Retrieval for Cross-Entity Financial Sentiment Analysis: A Comparative Study",
+      "url": "https://arxiv.org/abs/2606.00062",
+      "authors": [
+        "Rajan Bastakoti",
+        "Sagar Bhetwal",
+        "Nirajan Acharya",
+        "Gaurav Kumar Gupta"
+      ],
+      "snippet": "Retrieval-AugmentedGeneration (RAG) has become foundational for grounding large language models in domain-specific corpora, yet conventional vector-based RAG systems are fundamentally limited in their ability to capture the structured, multi-entity relationships that underpin financial market analysis. This paper presents a comprehensive comparative study of a novel two-hop Graph-RAG architecture versus a standard vector-only baseline for cross-entity financial sentiment analysis. Our system constructs a sentiment-weighted knowledge graph of 59 equity entities from 255 news articles covering 10 major technology stocks, then augments dense retrieval with intensity-filtered graph traversal over INFLUENCES edges to surface relational evidence inaccessible to vector search alone.\n  We evaluate both architectures on 100 grounded queries (30 Direct, 70 Relational) using semantic similarity, entity recall, RAGAS metrics, latency benchmarks, and ablation studies. Graph-RAG achieves a statistically significant improvement in entity recall (+6.4%, p < 0.001, Wilcoxon signed-rank) and delivers substantially more relevant answers for complex multi-entity queries (+11.7% Answer Relevancy), with gains concentrating in relational question types (+16.1%). Critically, these improvements come at no measurable cost to answer quality (delta = +0.001 semantic similarity, Cohen's d = 0.078), with a modest 22.6% increase in mean latency offset by an 80% reduction in latency variance.\n  An ablation study on the graph traversal intensity threshold reveals an inverted-U relationship with answer quality, identifying tau = 0.5 as optimal over the production default of tau = 0.7. These findings characterize a precision-for-coverage trade-off inherent to graph-augmented retrieval and provide actionable architectural guidance for practitioners building RAG systems for multi-entity financial analysis.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "NasZip: Software and Hardware Co-Design to Accelerate Approximate Nearest Neighbor Search with DIMM-Based Near-Data Processing",
+      "url": "https://arxiv.org/abs/2605.21952",
+      "authors": [
+        "Cheng Zou",
+        "Shuo Yang",
+        "Chen Nie",
+        "Yu Zou",
+        "Yu He",
+        "Chao Jiang",
+        "Limin Xiao",
+        "Weifeng Zhang",
+        "Zhezhi He"
+      ],
+      "snippet": "As large language models (LLMs) continue to advance,retrieval-augmentedgeneration (RAG) has become the key mechanism for expanding model knowledge and reducing hallucinations. Central to RAG is approximate nearest neighbor search (ANNS), which retrieves database vectors most similar to a given query. However, distance calculation over high-dimensional vectors is inherently memory-bound, causing retrieval performance to be constrained by I/O bandwidth on mainstream platforms such as CPUs and GPUs. Although many prior early exiting (EE) techniques attempt to reduce memory accesses by only computing partial dimensions, the partial distance converges too slowly to the EE threshold, which ultimately limits their performance gains. To address these challenges, we propose NASZIP, a hardware-software co-designed framework that integrates near data processing (NDP) with a novel feature-level early exiting guided by statistics-based principal component analysis (PCA). Instead of relying solely on partial distances, NASZIP incorporates estimation and correction parameters to approximate full dimensional distances accurately, enabling earlier exiting without compromising accuracy. We further introduce a bit-level NDP-aware dynamic-float scheme that significantly reduces memory access for vector data. On the hardware side, we develop a data aware neighbor list mapping strategy that reduces neighbor retrieval latency and inter-channel communication overhead, complemented by a dedicated cache that exploits data locality and enhances prefetch efficiency. With these co-optimized techniques, NASZIP delivers speedups of up to $8.4\\times$ / $1.4\\times$ over CPU baseline and state-of-the-art GPU implementation at equal accuracy. Relative to the state-of-the-art NDP ANNS accelerator ANSMET, NASZIP achieves $1.69\\times$ performance improvement.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Claim-Selective Certification for High-Risk MedicalRetrieval-AugmentedGeneration",
+      "url": "https://arxiv.org/abs/2605.21949",
+      "authors": [
+        "Shao Kan"
+      ],
+      "snippet": "Medical RAG systems in high-risk QA settings are often evaluated through a single answer-or-abstain decision, but mixed evidence may support one claim, require conditions for another, and contradict a third. We study claim-selective certification: each response is decomposed into verifiable claims, scored against retrieved evidence, and mapped by an intent-aware selector to {full, partial, conflict, abstain}. On the primary weak-label certificate protocol, whose real-source-only dev/test rows cover the naturally occurring non-abstain actions, the full system records UCCR=0.0000, PAU=1.0000, PAU Precision=0.9901, and action accuracy=0.9204 on dev (n=314), and UCCR=0.0000, PAU=0.9967, PAU Precision=0.9739, and action accuracy=0.8997 on test (n=319). UCCR measures unsupported-claim risk within the certificate definition, and a source-missing counterfactual slice evaluates abstain under empty evidence. Shortcut controls quantify the action-label prior explained by source and intent metadata, while source/evidence-novel slices characterize transfer boundaries. The resulting interface separates action-label prediction from evidence-linked claim selection under mixed evidence.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "On-Policy Consistency Training Improves LLM Safety with Minimal Capability Degradation",
+      "url": "https://arxiv.org/abs/2605.21834",
+      "authors": [
+        "Andy Han",
+        "Kristina Fujimoto",
+        "Avidan Shah",
+        "Kiet Nguyen",
+        "Kai Xu",
+        "Chen Yueh-Han",
+        "Ilia Sucholutsky",
+        "Rico Angell"
+      ],
+      "snippet": "Aligned models can misbehave in several ways: they are often sycophantic, fall victim tojailbreaks, or fail to include appropriate safety warnings. Consistency training is a promising new alignment paradigm to mitigate such failures by training invariants into the model using contrastive input pairs. Existing consistency training procedures generate the supervision signal once, offline, and use supervised fine-tuning (SFT) to update the model. Unfortunately, the resulting models tend to merely memorize the surface forms of the training distribution and thus generalize poorly and regress in their capabilities. We introduce On-Policy Consistency Training (OPCT), a new consistency training approach where the objective is computed over the model's own responses to prompts, supervised by itself conditioned on corresponding contrastive prompts. We evaluate OPCT on three safety axes: sycophancy,jailbreaking, and safety awareness. Across three model families, OPCT outperforms its SFT counterpart on all safety desiderata. It nearly halves the sycophancy rate relative to baseline (8.1% vs. 15.4%, compared to 11.2% for SFT). Under an adaptive per-target attacker, OPCT holdsjailbreakdefense success near 99% on held-outjailbreakbehaviors, whereas SFT achieves 87% on average. On safety awareness, OPCT outperforms SFT in two out of three models, and matches it on the other. OPCT also largely avoids the capability regressions that SFT induces, such as a 28-point drop on MATH-500. Our results suggest that consistency training is best implemented as OPCT rather than as SFT, especially when generalization beyond the training distribution is desired.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "PALS: Power-AwareLLMServingfor Mixture-of-Experts Models",
+      "url": "https://arxiv.org/abs/2605.21427",
+      "authors": [
+        "Can Hankendi",
+        "Rana Shahout",
+        "Minlan Yu",
+        "Ayse K. Coskun"
+      ],
+      "snippet": "Large language model (LLM) inference has become a dominant workload in modern data centers, driving significant GPU utilization and energy consumption. While prior systems optimize throughput and latency by batching, scheduling, and parallelism, they largely treat GPU power as a static constraint rather than a controllable resource. In this paper, we present a power-aware runtime forLLMserving, PALS, that treats GPU power caps as a first-class control knob and jointly optimizes them with software parameters such as batch size. The system combines lightweight offline power-performance models with a feedback-driven controller to select configurations that satisfy throughput targets while maximizing energy efficiency. We implement PALS within an existingLLMservingframework, vLLM, demonstrating that it requires no model retraining or API changes. Across multi-GPU systems and both dense and mixture-of-experts (MoE) models, PALS improves energy efficiency by up to 26.3%, reduces QoS violations by 4x to 7x under power constraints, and tracks dynamic power budgets. These results highlight the potential of integrating power control directly into LLM inference runtimes, enabling energy-proportional and grid-interactive AI systems.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "How Far Will They Go? Red-Teaming Online Influence with Large Language Models",
+      "url": "https://arxiv.org/abs/2605.22880",
+      "authors": [
+        "Daniel C. Ruiz",
+        "Anna Serbina",
+        "Ashwin Rao",
+        "Emilio Ferrara",
+        "Luca Luceri"
+      ],
+      "snippet": "As large language model (LLM)-based agents increasingly participate in online discourse, red-teaming their capacity to support political influence campaigns is critical for information integrity. In pursuit of this goal, we focus on locally deployed open-source LLMs, as opposed to frontier API-only models, given their superior alignment with the operational constraints of privacy-conscious malicious actors deployed in social media environments. We introduce an empirical red-teaming framework for measuring LLM Overton Windows (OWs), defined as the range of political opinions a model can reliably express on controversial topics, and for quantifying how simple natural-languagejailbreaksexpand that range. We evaluate more than 30 LLMs spanning 10 model families and five countries of origin. We find systematic asymmetries in political expressivity: open-source LLMs are typically more willing to generate left-leaning social media content, OWs tend to contract inversely to model size, and regional differences are substantial despite uneven representation in the open-source ecosystem.Jailbreakpotency also varies sharply across model families, motivating a workflow for identifying effective combinations ofjailbreaktechniques. Taken together, our results establish a practical framework for auditing the political steerability of open-source LLMs and for helping future researchers design stronger countermeasures against LLM-enabled influence campaigns.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "MedExpMem: Adapting Experience Memory for Differential Diagnosis",
+      "url": "https://arxiv.org/abs/2605.22872",
+      "authors": [
+        "Qianhan Feng",
+        "Zhongzhen Huang",
+        "Yakun Zhu",
+        "Yannian Gu",
+        "Winnie Chiu Wing Chu",
+        "Xiaofan Zhang",
+        "Qi Dou"
+      ],
+      "snippet": "Experienced physicians develop diagnostic expertise through clinical practice, acquiring not only disease knowledge but also the ability to differentiate confusable conditions. Current medical vision-language models (VLMs) lack this capability -- their parameters encode static knowledge that does not evolve across diagnostic encounters. We propose MedExpMem, an experience memory framework enabling VLM-based diagnostic agents to accumulate differential diagnosis expertise. Unlikeretrieval-augmentedgeneration, which retrieves encyclopedic disease descriptions, MedExpMem memorizes discriminative experience derived from the agent's own diagnostic failures and organizes them as pairwise differential notes encoding key discriminators, actionable decision rules and reasoning error patterns. The framework adopts a two-phase construction process mirroring physician learning: initial practice exposes knowledge gaps, and reflective re-diagnosis refines understanding. When encountering new cases, the agent retrieves experience memory to guide differential reasoning. We evaluate MedExpMem on a radiology benchmark spanning 11 subspecialties. Results demonstrate consistent accuracy improvements, maximum 7.0%, across diverse models and scales. Analytical experiments validate experience quality and robustness, demonstrating MedExpMem as a competitive method addresses medical adaptation needs beyond the reach of parameteric learning.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "LASH: Adaptive Semantic Hybridization for Black-BoxJailbreakingof Large Language Models",
+      "url": "https://arxiv.org/abs/2605.21362",
+      "authors": [
+        "Abdullah Al Nomaan Nafi",
+        "Fnu Suya",
+        "Swarup Bhunia",
+        "Prabuddha Chakraborty"
+      ],
+      "snippet": "Jailbreakattacks expose a persistent gap between the intended safety behavior of aligned large language models and their behavior under adversarial prompting. Existing automated methods are increasingly effective but each commits to a single attack family (e.g., one refinement loop, one tree search, one mutation space, or one strategy library) and no single family dominates: the best-performing method shifts across target models and harm categories, suggesting complementary strengths that per-prompt composition could exploit. We introduce LASH (LLM Adaptive Semantic Hybridization), a black-box framework that treats outputs from multiple base attacks as reusable seed prompts and adaptively composes them for each target request. Given a seed pool, LASH searches over seed subsets and softmax-normalized mixture weights; a composition module synthesizes a single candidate prompt, and a derivative-free genetic optimizer updates the weights using black-box target feedback and a two-stage fitness function combining keyword-based refusal detection with LLM-judge scoring. On JailbreakBench, which contains 100 harmful prompts across 10 categories, we evaluate LASH on six common target models. LASH achieves an average attack success rate of 84.5% under keyword-based evaluation and 74.5% under two-stage evaluation, where responses are first filtered for refusals and then scored by an LLM judge for whether they substantively fulfill the original harmful request. LASH outperforms five state-of-the-art baselines on both metrics with only 30 mean target queries. LASH also remains competitive under three defense mechanisms and induces more success-like internal representations. These results suggest that adaptive composition across heterogeneousjailbreakstrategies is a promising direction for black-box red-teaming.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Detecting Fluent Optimization-Based Adversarial Prompts via Sequential Entropy Changes",
+      "url": "https://arxiv.org/abs/2605.19966",
+      "authors": [
+        "Mohammed Alshaalan",
+        "Miguel R. D. Rodrigues"
+      ],
+      "snippet": "Optimization-based adversarial suffixes canjailbreakaligned large language models (LLMs) while remaining fluent, weakening static and windowed perplexity-based detectors. We cast adversarial suffix detection as an online change-point detection problem over the token-level next-token entropy stream. Using the LLM system prompt to estimate a robust baseline, we standardize user-token entropies and apply a one-sided CUSUM statistic. The resulting detector, CPD Online (CPD), is model-agnostic, training-free, runs online, and localizes the adversarial suffix onset. On a benchmark of 1,012 optimization-based suffix attacks (GCG, AutoDAN, AdvPrompter, BEAST, AutoDAN-HGA) and 1,012 perplexity-controlled benign prompts, CPD improves F1 over the strongest windowed-perplexity baseline on all six open-weight chat models (LLaMA-2-7B/13B, Vicuna-7B/13B, Qwen2.5-7B/14B). On LLaMA-2-7B at the canonical CUSUM setting ($k=0$), CPD reaches AUROC $0.88$ and F1 $0.82$. Beyond prompt-level detection, CPD concentrates 79.6% of its triggers inside the adversarial suffix, versus 17-46% for windowed perplexity. Finally, when used as a lightweight gate for LLaMA Guard, CPD reduces guard calls by 17-22% on a high-volume, benign-dominated deployment while preserving guard-level detection quality△ Less",
+      "published": "Submitted19 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "The Evaluation Game: Beyond Static LLM Benchmarking",
+      "url": "https://arxiv.org/abs/2605.19377",
+      "authors": [
+        "Paul Wang",
+        "Jade Garcia-Bourrée",
+        "Anne-Marie Kermarrec",
+        "Vincent Corruble"
+      ],
+      "snippet": "Asjailbreaks, adversarially crafted inputs that bypass safety constraints, continue to be discovered in Large Language Models, practitioners increasingly rely on fine-tuning as a defensive strategy. Yet the theoretical foundations underlying this robustness fine-tuning remain underexplored. We introduce a game-theoretic framework in which the interaction between an evaluator (auditing the model forjailbreaks) and a trainer is formalized as a two-player game.\n  A key feature of our approach is the use of group actions, a mathematical structure that captures symmetries and transformations, to formally represent data augmentation. The simplest non-trivial instance is the circle with cyclic translation groups, where we exhibit various regimes depending on the trainer's generalization range. Below a critical threshold, the evaluator maintains a constant miss ratio for linearly many rounds, whereas other settings can yield very different behaviors. We further provide empirical evidence supporting locality-dependence of the model: for the three model families we tested (Llama, Qwen and Mistral), we have significant evidence that fine-tuning on adversarial prompts induces only local generalization, with refusal rates on test examples highly correlated with the distance to the fine-tuning prompts. Our framework recasts the central object of adversarial evaluation: a benchmark is not a static set of prompts but an orbit under the evaluator's group action, and audit protocols that ignore trainer-side adaptation cannot distinguish a genuine fix from a memorized patch.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Adversarial Reframing: A Framework for Targeted Generation in Language Models",
+      "url": "https://arxiv.org/abs/2605.21674",
+      "authors": [
+        "Shahnewaz Karim Sakib",
+        "Swati Kar",
+        "Anindya Bijoy Das"
+      ],
+      "snippet": "Large Language Models (LLMs) are widely deployed in diverse real-world settings, yet remain vulnerable tojailbreaking, where prompt-based attacks bypass safety filters. We present THREAT (Targeted Harmful generation via Reframing and Exploitation of Adversarial Tactics), a reasoning-driven framework that coordinates multiple LLMs in an iterative search loop to find textualjailbreakprompts. We formulate prompt discovery as a nonconvex optimization problem and provide an efficient solution that lowers runtime and improves attack effectiveness. Across diverse datasets and model architectures, THREAT delivers higher attack success rates with lower computational cost than prior methods. The crafted prompts were flagged as harmful in fewer than 1% of cases, compared with about 50% refusals for the corresponding unmodified prompts. These findings reveal previously undetected vulnerabilities in aligned LLMs and position THREAT as a practical tool for proactively strengthening the safety of foundation models.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.0
+    },
+    {
+      "title": "WhenAgentsTalk: Discourse, Manipulation, and Risk in anAgenticSocial Network",
+      "url": "https://arxiv.org/abs/2606.00067",
+      "authors": [
+        "10a Labs",
+        ":",
+        "Grace Cheong",
+        "Violet Davis",
+        "Juliette Garcia",
+        "Kendal Gee",
+        "Molly Hart",
+        "Nicholas Hayes",
+        "Henry Houghton",
+        "Kyle Lee",
+        "Paige Lee",
+        "Vicky Lee",
+        "Hailey May",
+        "Bobby McKenzie",
+        "Christine McNeill",
+        "Han Nguyen",
+        "Brooke Perreault",
+        "David Pham",
+        "Charlie Plumb",
+        "Olivia Quill",
+        "Matthew Swain",
+        "Grace Wang",
+        "Adam Warren",
+        "Corie Wieland",
+        "Zachary Yahn"
+      ],
+      "snippet": "AIagentsare increasingly interacting within shared online environments, creating new operational security risks. We analyze activity on Moltbook, a Reddit-style social platform where AIagents--typically configured and overseen by human operators--post and interact with one another at scale. Using a dataset of 228,684 posts produced by more than 39,500 accounts over a seventeen-day observation window, we combine semantic clustering of high-engagement posts with LLM-assisted classification of harmful content and manual review of high-risk samples. The analysis identifies 98 thematic discourse clusters spanningagentinfrastructure, autonomy debates, and financial activity. While most observed content was benign, 18.28% of posts contained toxic, manipulative, or malicious material. We cluster malicious content and identify 74 classes of malicious behavior, including credential harvesting attempts, host-execution instructions, proxy routing guidance, and efforts to install untrustedagentskills. Harmful content frequently appeared within mainstream operational discussions aboutagentfunctionality. We also document coordinated posting campaigns capable of generating thousands of posts in minutes.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "DUET: Unified Dual-Space Emotion Control for Diffusion and Flow-Matching Driven Text-to-Speech",
+      "url": "https://arxiv.org/abs/2606.00066",
+      "authors": [
+        "Xu Zhang",
+        "Longbing Cao",
+        "Zhangkai Wu"
+      ],
+      "snippet": "Diffusion and flow-matching based text-to-speech (TTS) models excel in naturalness but often lack explicit emotion control, as emotional signals remain entangled with speaker identity. We discover that emotion embedding emerges as a linearly decodable direction of frozen hidden states, nearly orthogonal to the direction embedding speaker identity. This inspires a plug-and-play framework DUET for emotion control over pretrained diffusion and flow-matching based TTS models. During generation, DUET unifies dual-space control to achieve fine-grained emotion intervention in a single per-step update: hidden space steering shifts generation along the target emotion direction, while mel-space guidance refines spectral details through gradients backpropagated from a differentiable vocoder. We validate DUET on five architecturally diverse pretrained TTS backbones across three datasets, where it outperforms 10 supervised state-of-the-art emotional TTS baselines across paradigms and achieves the highest human-rated emotion appropriateness. To further showcase its qualitative behavior, we deploy DUET on an Ameca humanoid robot, where it produces richly expressive emotional speech on the humanoid, demonstrating the strong potential for plug-and-play affective interaction for embodiedagents.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "Beyond Text and Tables: Vision-Language Model Integration in ComProScanner for Extracting Materials Data from Scientific Figures with High Accuracy",
+      "url": "https://arxiv.org/abs/2606.00065",
+      "authors": [
+        "Aritra Roy",
+        "Enrico Grisan",
+        "Chiara Gattinoni",
+        "John Buckeridge"
+      ],
+      "snippet": "Automated extraction of materials composition-property data from scientific literature has advanced considerably with the development of large language model-based pipelines; however, existing frameworks remain limited to textual and tabular content, overlooking the substantial proportion of quantitative property data reported exclusively in scientific figures. Here, we extend ComProScanner, a fully end-to-endmulti-agentframework for automated composition-property database construction, with a native vision-language model (VLM) based figure extraction capability. The extension introduces a FigureExtractor utility for caption-keyword-based figure filtering across all supported publishers, and a GraphExtractorToolagentthat passes extracted figures to a configurable VLM to recover composition-property pairs from scientific charts and plots. Four VLMs are selected for evaluation on the basis of the LMArena Diagram leaderboard with an input cost criterion of less than \\$1.50 per million tokens. Benchmarking on 50 piezoelectric ceramic articles from the established $d_{33}$ test corpus demonstrates that Gemini-3-Flash-Preview achieves the highest performance with a composition accuracy of 0.97 and a normalised F1 score of 0.97, whilst remaining the most cost-effective model among the four evaluated. We additionally introduce a range-based value error threshold parameter into the evaluation framework, providing a more physically meaningful assessment of numeric property values extracted from figures than exact value matching. These contributions establish VLM-integrated ComProScanner as the first materials-specific, fully automated, multimodal literature mining platform capable of extracting structured composition-property data from text, tables, and figures within a single unified pipeline.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "HiRes: Inspectable Precedent Memory for Reaction Condition Recommendation",
+      "url": "https://arxiv.org/abs/2605.21420",
+      "authors": [
+        "Shreyas Vinaya Sathyanarayana",
+        "Raja Sekhar Pappala",
+        "Deepak Warrier"
+      ],
+      "snippet": "Reaction condition recommendation sits immediately after retrosynthetic disconnection selection, and in practice, chemists require both accurate predictions and the precedents that justify them. We present HiRes (Hierarchical Reaction Representations), aretrieval-augmentedcondition recommendation system whose learned reaction space serves as both a classifier feature and an inspectable precedent memory. The model combines a graph encoder, transformation-aware cross-attention, multi-stream reaction fusion, and a k-NN retrieval layer. HiRes achieves state-of-the-art performance among primary-slot USPTO-Condition models, reaching Catalyst, Solvent, and Reagent top-1 accuracies (Acc@1) of 0.929, 0.534, and 0.530 respectively. It ties the best reported baseline on Catalyst while outperforming models such as REACON on Solvent and Reagent. Furthermore, paired bootstrap analysis demonstrates that integrating retrieval with learned condition heads provides statistically significant gains for solvent and reagent selection over purely parametric approaches. Ultimately, HiRes bridges the gap between predictive accuracy and chemical interpretability, offering a single representation that supplies both competitive recommendations and the concrete chemical precedents necessary for practical synthesis planning.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "Refusal Evaluation in Coding LLMs and Code Agents: A Systematic Review of Thirteen Malicious-Code Prompt Corpora (2023-2025)",
+      "url": "https://arxiv.org/abs/2605.20351",
+      "authors": [
+        "Richard J. Young",
+        "Gregory D. Moody"
+      ],
+      "snippet": "The evaluation of large language model refusal on malicious-coding tasks now spans at least thirteen publicly released prompt corpora (AdvBench, the CyberSecEval family, RMCBench, RedCode, MCGMark, JailbreakBench, CySecBench, MalwareBench, CIRCLE, MOCHA, ASTRA, Scam2Prompt / Innoc2Scam-bench, and JAWS-Bench), each constructed under a different protocol, released under different licensing terms, and validated (or not) against different inter-rater reliability standards. Existing surveys treat code security,jailbreaktaxonomy, or vulnerability detection as the central object and mention these corpora only in passing. This paper reverses that framing: it treats the prompt datasets themselves as the unit of analysis. Following a PRISMA-style protocol, we specify a search strategy, screen the recent literature on coding-LLM refusal evaluation, apply a uniform extraction template to each in-scope corpus, and synthesize the resulting catalogue along construction methodology, prompt-construction taxonomy (modality, turn structure, elicitation style), reproducibility and licensing, and malware-category coverage. The synthesis surfaces three recurring methodological gaps: the absence of human-annotator baselines against which LLM-judge labels can be calibrated, the absence of cross-corpus comparability with refusal-rate statistics measuring non-equivalent constructs, and the fragmentation of malware-category taxonomies, with no canonical schema spanning the thirteen in-scope corpora. The review concludes with proposed methodological directions for next-generation corpora, including pre-registration of inclusion criteria, vendor-diverse multi-judge validation, Fleiss' kappa with bootstrap CI as the reliability baseline, and a candidate canonical taxonomy.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "Adaptive Probe-based Steering for Robust LLMJailbreaking",
+      "url": "https://arxiv.org/abs/2605.20286",
+      "authors": [
+        "Junxi Chen",
+        "Junhao Dong",
+        "Xiaohua Xie"
+      ],
+      "snippet": "Recent work has demonstrated the potential of contrastive steering forjailbreakingLarge Language Models (LLMs). However, existing methods rely on limited and inherently biased contrastive prompts and require laborious manual tuning of steering strength, limiting their robustness and effectiveness. In this paper, we leverage the idea of model extraction to guide the learned steering vectors to approximate the ideal one and propose tuning the steering strength adaptively based on contrastive activations' statistics. Experiments demonstrate that our method notably improves the effectiveness and robustness of probe-based steering, without any extra contrastive prompts or laborious manual tuning. Being an attack paper, this paper focuses on revealing the breakdown of fortified LLMs, raising the average harmfulness score from 6\\% to 70\\%. Our code is available at https://github.com/fhdnskfbeuv/adaptiveSteering.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "Attention-Guided Reward for Reinforcement Learning-basedJailbreakagainst Large Reasoning Models",
+      "url": "https://arxiv.org/abs/2605.19485",
+      "authors": [
+        "Zheng Lin",
+        "Zhenxing Niu",
+        "Haoxuan Ji",
+        "Yuzhe Huang",
+        "Haichang Gao"
+      ],
+      "snippet": "Large Reasoning Models (LRMs) have demonstrated remarkable capabilities in solving complex problems by generating structured, step-by-step reasoning content. However, exposing a model's internal reasoning process introduces additional safety risks; for example, recent studies show that LRMs are more vulnerable tojailbreakattacks than standard LLMs. In this paper, we investigatejailbreakattacks on LRMs and reveal that the attack success rate (ASR) is closely correlated with LRMs' attention patterns. Specifically, successfuljailbreakstend to assign lower attention to harmful tokens in the input prompt, while allocating higher attention to those tokens in the reasoning content. Motivated by this finding, we propose a noveljailbreakmethod for LRMs that leverages reinforcement learning (RL) to enhance attack effectiveness, explicitly incorporating attention signals into the reward function design. In addition, we introduce diverse persuasion strategies to enrich the RL action space, which consistently improves the ASR. Extensive experiments on five open-source and closed-source LRMs across three benchmarks demonstrate that our method achieves substantially higher ASR, outperforming existing approaches in terms of effectiveness, efficiency, and transferability.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "Reinforcement Learning for Optimal Experiment Design in Parameter Identification of Mechatronic Systems",
+      "url": "https://arxiv.org/abs/2606.00059",
+      "authors": [
+        "Julian Langschwert",
+        "Georg Schaefer",
+        "Jakob Rehrl",
+        "Stefan Huber",
+        "Simon Hirlaender"
+      ],
+      "snippet": "Informative excitation signals are critical for accurate system identification of mechatronic systems, yet classical system identification (SI) approaches require expert knowledge and hand-crafted signal design to respect hardware safety constraints, limiting their generalizability. We propose a reinforcement learning (RL)agentthat learns optimal excitation signals for a Quanser Aero 2 testbed while autonomously enforcing safety constraints through reward shaping. Evaluated across 10 independent training seeds, our comprehensiveagentachieves competitive estimation accuracy across all three identified parameters, outperforming classical baselines while incurring only 0.75% safety violations.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.25
+    },
+    {
+      "title": "Machine Intelligence that Understands Visual and Linguistic Information and Interacts with Humans and Environments",
+      "url": "https://arxiv.org/abs/2605.24020",
+      "authors": [
+        "Van Quang Nguyen"
+      ],
+      "snippet": "Advancements at the intersection of computer vision and natural language processing are crucial for applications like assistive tech, multimedia querying, and robotics. This dissertation proposes novel architectures to improve intelligentagentsacross three key vision-language tasks: image captioning, visual dialog, and interactive instruction following.\n  First, we address limitations in visual representation for image captioning. Traditional models rely on region-based features from CNN detectors, which lack global context and suffer from high computational overhead. We propose GRIT (Grid and Region-based Image captioning Transformer), a transformer-only architecture. By integrating grid and region features using a DETR-based detector, GRIT enables end-to-end training and out-performs prior methods in both inference accuracy and speed.\n  Second, we tackle visual dialog, which requires multi-turn conversation about an image. The challenge lies in efficiently modeling interactions between multiple inputs (image, question, history). We introduce LTMI (Light-weight Transformer for Many Inputs). Utilizing a specialized attention block, an LTMI layer matches the representational power of a standard Transformer extension while utilizing less than one-tenth of its parameters, as validated on the VisDial dataset.\n  Finally, we study interactive instruction-following for embodied AI using the ALFRED dataset. We propose a framework featuring a two-stage instruction interpretation: it first decodes language directives independently of visual context to predict a tentative action-object sequence, which is then fused with visual features for final execution. Using multiple egocentric views and hierarchical attention, our method accurately localizes objects and achieves a state-of-the-art unseen success rate of 8.37%.△ Less",
+      "published": "Submitted20 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 3.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.25
+    },
+    {
+      "title": "The New Associationism: Lessons from Deep Learning",
+      "url": "https://arxiv.org/abs/2606.20600",
+      "authors": [
+        "Daniel Rothschild"
+      ],
+      "snippet": "What can the success of modern AI tell us about how humans learn? This paper argues that taking AI seriously as a model of human learning supports a modest but genuine associationism. The central finding is that supervised learning -- learning driven by evaluative feedback -- underlies a surprisingly wide range of contemporary AI systems, from large language models to game-playingagents, differing primarily in how much work is required to generate the relevant feedback signal. This vindicates associationist ideals of a uniform, gradual, error-driven learning mechanism operating across domains, and defuses the once-influential argument that associationist mechanisms are too limited to account for human cognitive capacities. At the same time, the successes of deep learning depend on computational architectures that go well beyond anything classical associationists envisaged, and supervised learning operates within these as one component rather than a complete account of learning.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 3.0,
+        "hook_potential": 3.0
+      },
+      "composite": 2.5
+    },
+    {
+      "title": "Gender Differences in AI Literacy Workshop Outcomes and Deepfake Engagement",
+      "url": "https://arxiv.org/abs/2606.14718",
+      "authors": [
+        "Jake Renzella",
+        "Christian Bergh",
+        "Natasha Banks",
+        "Alexandra Vassar"
+      ],
+      "snippet": "As Artificial Intelligence (AI) literacy initiatives expand in K-12 settings, understanding how gender shapes student baseline perceptions,tool-use, and responsiveness to interventions is essential for equitable curriculum design. This study examines gender differences in AI literacy, safety awareness, and STEM career aspirations among Australian secondary students (Years 7, 8, and 10; N(pre) = 199, n(post) = 136) from two co-educational government schools who participated in a one-day AI literacy workshop. Using statistical regression methods controlling for year level and school, we found that pre-workshop, male students reported significantly higher STEM career interest across all three domains (AI, computer science, and engineering), while female students were significantly more likely to use AI for schoolwork and to seek advice from AI tools. Gender-differentiated patterns also emerged in deepfake behaviours: males were significantly more likely to have created or shared deepfake content. Both genders improved in AI knowledge post-intervention, yet females showed a richer profile of gains: wider conceptual understanding, greater confidence, and meaningful increases in AI and CS career interest that partially narrowed the gender STEM gap. These findings highlight the need for gender-responsive AI curricula, particularly deepfake safety education for male students, and demonstrate that even single-day workshops can narrow gender gaps in STEM aspirations and AI confidence.△ Less",
+      "published": "Submitted19 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 1.0,
+        "novelty": 2.0,
+        "hook_potential": 2.0
+      },
+      "composite": 1.5
+    }
+  ]
+}

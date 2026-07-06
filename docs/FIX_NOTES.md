@@ -71,3 +71,10 @@ All items from the original v0.6.x list (4-hour schedule, venv/snapshot repo blo
 - Evening min_score slot needs threshold calibration from ≥10 scored runs before enabling (Phase 3 — do not assume 7.5).
 - Rotate the Make webhook (low priority; value moved to `MAKE_WEBHOOK_URL` env in v0.7.0).
 - Phases 1.5 (free buzz signal), 2 (thread contract), 4 (self-built analytics) are designed but not built — see `docs/superpowers/specs/2026-07-03-content-engine-design.md`.
+
+## 2026-07-06 — v0.12.0: provider fallback + thread contract live
+- All LLM calls route through `utils/llm.complete` — Bedrock primary, OpenRouter fallback on any primary failure (key via NoEcho param; deploys with key ONLY via `scripts/deploy-full-stack.sh` — `--parameter-overrides` REPLACES the samconfig list).
+- Thread contract A/B: SHIP GATE PASS (8/8 unanimous, 2 judged rounds; `docs/ab-test/2026-07-05-writer-verdict.md`). Writer = Sonnet 4.6 (`us.anthropic.claude-sonnet-4-6` — Bedrock id is UN-dated); over-length non-hook tweets sentence-split/word-trimmed instead of rejected.
+- X API limits re-verified 2026-07-05: pay-per-usage; 2M/month cap applies to READS; writes rate-limited 100/15min/user, no monthly write cap (~132 writes/month worst case unconstrained).
+- Phase 3 evening-slot `min_score` calibrated: 8.25 (rank-2 distribution, 13 validated historical windows; `docs/calibration/`).
+- First live contract thread: Mon 2026-07-06 16:01 UTC, 4 tweets, posted via OpenRouter rescue (Bedrock still quota-throttled).

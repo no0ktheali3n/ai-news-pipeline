@@ -7,7 +7,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).parent))
-from stubs import install_stubs, FAKE_S3, FAKE_BEDROCK, FAKE_SNS  # noqa: E402
+from stubs import install_stubs, FAKE_S3, FAKE_BEDROCK, FAKE_SNS, FAKE_HTTP  # noqa: E402
 install_stubs()
 
 LAYER = REPO / "lambda" / "layers" / "common" / "python"
@@ -35,6 +35,7 @@ def check(name, fn):
 
 
 import utils.scoring as scoring  # noqa: E402
+import utils.buzz as buzz_mod  # noqa: E402
 
 print("\n[1] scoring: pure functions")
 
@@ -183,7 +184,7 @@ check("lanes merge, dedup, tag query_source, sort newest-first", test_scrape_lan
 
 print("\n[5] scraper handler: scoring, sidecar, gate, fallback")
 
-def _run_handler(event, batches=None, scoring_mode="ok"):
+def _run_handler(event, batches=None, scoring_mode="ok", scoring_response=None, http_routes=None):
     """Harness: fake lanes + bedrock mode, clean S3, run scraper handler."""
     batches = batches or {
         "ai-security": [{"url": "https://arxiv.org/abs/2607.00002", "title": "Sec",
@@ -201,7 +202,9 @@ def _run_handler(event, batches=None, scoring_mode="ok"):
             return list(batches[self.lane])
 
     FAKE_BEDROCK.mode = scoring_mode
-    FAKE_BEDROCK.scoring_response = None
+    FAKE_BEDROCK.scoring_response = scoring_response
+    FAKE_HTTP.reset()   # buzz fetches must never leak routes between tests
+    FAKE_HTTP.routes.update(http_routes or {})
     orig_client, orig_sleep = scraper_lambda.ScraperClient, scraper_lambda.time.sleep
     scraper_lambda.ScraperClient = FakeClient
     scraper_lambda.time.sleep = lambda *_: None
@@ -338,7 +341,8 @@ def test_ledger_entry_carries_provenance():
     art = {"title": "Scored", "url": "https://arxiv.org/abs/2607.00009",
            "summary": "s", "hashtags": [],
            "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
-           "composite": 7.25, "query_source": ["agents"]}
+           "composite": 7.25, "query_source": ["agents"],
+           "buzz": 7.5, "buzz_raw": {"hn_points": 120}}
     key = "out/summarizer/final_summarized_RUN.json"
     FAKE_S3.store[key] = json.dumps([art]).encode()
 
@@ -348,7 +352,9 @@ def test_ledger_entry_carries_provenance():
                                        "thread_url": "https://t/1",
                                        "scores": a.get("scores"),
                                        "composite": a.get("composite"),
-                                       "query_source": a.get("query_source")}
+                                       "query_source": a.get("query_source"),
+                                       "buzz": a.get("buzz"),
+                                       "buzz_raw": a.get("buzz_raw")}
     try:
         resp = poster.handler({"summary_key": key, "dry_run": False, "post_limit": 1}, None)
     finally:
@@ -357,6 +363,7 @@ def test_ledger_entry_carries_provenance():
     entry = json.loads(FAKE_S3.store[poster.POSTED_LEDGER_KEY])["https://arxiv.org/abs/2607.00009"]
     for field in ("builder_relevance", "novelty", "hook_potential", "composite", "query_source"):
         assert field in entry, f"missing {field}: {entry}"
+    assert entry["buzz"] == 7.5 and entry["buzz_raw"] == {"hn_points": 120}
 
 
 def test_post_thread_returns_provenance():
@@ -369,14 +376,82 @@ def test_post_thread_returns_provenance():
     art = {"title": "T", "url": "https://arxiv.org/abs/2607.00009",
            "summary": "s", "hashtags": [],
            "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
-           "composite": 7.25, "query_source": ["agents"]}
+           "composite": 7.25, "query_source": ["agents"],
+           "buzz": 7.5, "buzz_raw": {"hn_points": 120}}
     md = ptt.post_thread(art, dry_run=False)
     for f in ("scores", "composite", "query_source"):
         assert md[f] is not None, f
+    assert md["buzz"] == 7.5 and md["buzz_raw"] == {"hn_points": 120}
 
 
 check("ledger entry carries all five provenance fields", test_ledger_entry_carries_provenance)
 check("post_thread return carries scores/composite/query_source", test_post_thread_returns_provenance)
+
+print("[8] scraper: buzz enrichment")
+
+# LLM scores: A=2607.00001 {8,6,9} → composite 7.75; B=2607.00002 {9,6,6} → 7.5.
+# LLM order is [A, B]. HF buzz 100 upvotes → buzz 10 for B ONLY (HF payload is
+# per-id; HN/S2 routed dead). Blend(B) = 7.5 − 0.125*6 + 0.125*10 = 8.0 > 7.75,
+# so the blended order is [B, A].
+BUZZ_SCORES = json.dumps([
+    {"id": "2607.00001", "builder_relevance": 8, "novelty": 6, "hook_potential": 9},
+    {"id": "2607.00002", "builder_relevance": 9, "novelty": 6, "hook_potential": 6},
+])
+BUZZ_ROUTES_B_ONLY = {
+    "huggingface.co/api/daily_papers": [{"paper": {"id": "2607.00002", "upvotes": 100}}],
+    "hn.algolia.com": Exception("down"),
+    "semanticscholar.org": Exception("down"),
+}
+
+
+def test_buzz_reranks_selection():
+    FAKE_S3.store.clear()
+    resp, body = _run_handler({"scrape_limit": 5, "max_new_articles": 1},
+                              scoring_response=BUZZ_SCORES,
+                              http_routes=BUZZ_ROUTES_B_ONLY)
+    assert resp["statusCode"] == 200 and body["scoring_used"] is True
+    picked = _pipeline_file()
+    assert picked[0]["url"].endswith("2607.00002"), f"buzzed B must win: {picked[0]['url']}"
+    assert picked[0]["buzz"] == 10.0 and picked[0]["buzz_raw"] == {"hf_upvotes": 100}
+    assert picked[0]["composite"] == 8.0, picked[0]["composite"]
+    sidecars = [k for k in FAKE_S3.store if k.startswith("out/scored/scored_candidates_")]
+    rows = json.loads(FAKE_S3.store[sidecars[0]])["candidates"]
+    assert all("buzz" in r and "buzz_raw" in r for r in rows), "sidecar rows must carry buzz fields"
+
+
+def test_buzz_failure_keeps_llm_order():
+    FAKE_S3.store.clear()
+    dead = {"huggingface.co": Exception("down"), "hn.algolia.com": Exception("down"),
+            "semanticscholar.org": Exception("down")}
+    resp, body = _run_handler({"scrape_limit": 5, "max_new_articles": 1},
+                              scoring_response=BUZZ_SCORES, http_routes=dead)
+    assert resp["statusCode"] == 200 and body["scoring_used"] is True
+    picked = _pipeline_file()
+    assert picked[0]["url"].endswith("2607.00001"), "LLM order must hold when buzz is dark"
+    assert picked[0]["buzz"] is None and picked[0]["buzz_raw"] is None
+    assert picked[0]["composite"] == 7.75
+
+
+def test_buzz_disabled_no_http():
+    FAKE_S3.store.clear()
+    old = buzz_mod.BUZZ_ENABLED
+    buzz_mod.BUZZ_ENABLED = False
+    try:
+        resp, body = _run_handler({"scrape_limit": 5, "max_new_articles": 1},
+                                  scoring_response=BUZZ_SCORES)
+    finally:
+        buzz_mod.BUZZ_ENABLED = old
+    assert resp["statusCode"] == 200
+    buzz_hosts = [u for _, u in FAKE_HTTP.calls
+                  if any(h in u for h in ("huggingface", "algolia", "semanticscholar"))]
+    assert not buzz_hosts, f"kill switch must mean zero buzz HTTP calls: {buzz_hosts}"
+    picked = _pipeline_file()
+    assert picked[0]["url"].endswith("2607.00001") and "buzz" not in picked[0]
+
+
+check("buzz re-ranks selection", test_buzz_reranks_selection)
+check("buzz failure keeps LLM order", test_buzz_failure_keeps_llm_order)
+check("buzz disabled makes no HTTP calls", test_buzz_disabled_no_http)
 
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

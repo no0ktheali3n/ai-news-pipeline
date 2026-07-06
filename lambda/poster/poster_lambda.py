@@ -115,6 +115,8 @@ def handler(event, context):
                 "hook_potential": scores.get("hook_potential"),
                 "composite": metadata.get("composite"),
                 "query_source": metadata.get("query_source"),
+                "buzz": metadata.get("buzz"),
+                "buzz_raw": metadata.get("buzz_raw"),
             }
             save_posted_ledger(ledger)
 

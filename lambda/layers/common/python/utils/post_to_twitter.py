@@ -167,6 +167,8 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
         "scores": article.get("scores"),
         "composite": article.get("composite"),
         "query_source": article.get("query_source"),
+        "buzz": article.get("buzz"),
+        "buzz_raw": article.get("buzz_raw"),
     }
 
 # CLI Interface

@@ -109,6 +109,49 @@ class FakeSNS:
 FAKE_SNS = FakeSNS()
 
 
+class _HttpResp:
+    def __init__(self, payload=None, status=200):
+        self._payload = {} if payload is None else payload
+        self.status_code = status
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise Exception(f"HTTP {self.status_code}")
+
+    def json(self):
+        return self._payload
+
+
+class FakeHttp:
+    """Routes fake GET/POST responses by URL substring; records every call.
+    Unrouted URLs get an empty 200 JSON (keeps webhook posts harmless)."""
+
+    def __init__(self):
+        self.routes = {}   # url substring -> JSON payload | Exception
+        self.calls = []    # (method, url)
+
+    def _resolve(self, method, url):
+        self.calls.append((method, url))
+        for frag, payload in self.routes.items():
+            if frag in url:
+                if isinstance(payload, Exception):
+                    raise payload
+                return _HttpResp(payload)
+        return _HttpResp({})
+
+    def get(self, url, params=None, timeout=None, **kwargs):
+        return self._resolve("GET", url)
+
+    def post(self, url, params=None, json=None, timeout=None, **kwargs):
+        return self._resolve("POST", url)
+
+    def reset(self):
+        self.routes, self.calls = {}, []
+
+
+FAKE_HTTP = FakeHttp()
+
+
 def install_stubs():
     boto3 = types.ModuleType("boto3")
 
@@ -158,12 +201,8 @@ def install_stubs():
     sys.modules["dotenv"] = dotenv
 
     requests = types.ModuleType("requests")
-
-    class _Resp:
-        def raise_for_status(self):
-            pass
-
-    requests.post = lambda *a, **k: _Resp()
+    requests.get = FAKE_HTTP.get
+    requests.post = FAKE_HTTP.post
     requests.exceptions = types.SimpleNamespace(RequestException=Exception)
     sys.modules["requests"] = requests
 

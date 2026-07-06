@@ -83,7 +83,9 @@ def _word_trim(text, limit):
     """Trim to <= limit at a word boundary, appending an ellipsis."""
     if len(text) <= limit:
         return text
-    head = text[: limit - 1]
+    # reserve 2: X counts "…" as 2 weighted chars, so raw limit-1 could still
+    # render as limit+1 on the platform (final review 2026-07-05)
+    head = text[: limit - 2]
     if any(c.isspace() for c in head):
         head = head.rsplit(None, 1)[0]
     return head.rstrip(" ,;:") + "…"

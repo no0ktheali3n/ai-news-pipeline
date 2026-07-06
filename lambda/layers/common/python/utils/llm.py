@@ -35,9 +35,10 @@ _MODEL_TABLE = {
     "global.anthropic.claude-sonnet-4-5-20251001-v1:0": "anthropic/claude-sonnet-4.5",
 }
 
-# Regex for generic Bedrock ids: (us|global).anthropic.claude-<name>-<maj>-<min>...
+# Regex for generic Bedrock ids: optional region prefix (us/eu/apac/global),
+# then anthropic.claude-<name>-<maj>-<min>...
 _BEDROCK_RE = re.compile(
-    r"^(?:us|global)\.anthropic\.claude-([a-z]+)-(\d)-(\d)"
+    r"^(?:(?:us|eu|apac|global)\.)?anthropic\.claude-([a-z]+)-(\d)-(\d)"
 )
 
 
@@ -239,4 +240,10 @@ def complete(
         try:
             return fallback_fn(prompt, model, max_tokens, temperature)
         except Exception as fallback_exc:
-            raise LLMError(fallback, str(fallback_exc)) from fallback_exc
+            # Keep the primary error text in the message: callers key retry
+            # behavior off substrings like "ThrottlingException" and would
+            # otherwise lose it when the fallback also fails.
+            raise LLMError(
+                fallback,
+                f"{fallback_exc} (primary {primary}: {primary_exc})",
+            ) from fallback_exc

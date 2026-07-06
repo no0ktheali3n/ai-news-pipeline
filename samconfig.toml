@@ -3,21 +3,11 @@
 version = 0.1
 
 [default]
-[default.deploy]
-stack_name = "ai-research-pipeline"
-region = "us-east-1"
-confirm_changeset = true
-capabilities = "CAPABILITY_IAM"
-parameter_overrides = [
-  "S3OutputBucket=aws-sam-cli-managed-default-samclisourcebucket-k0ga8ni5vmbc",
-  "ScraperOutputPrefix=ai-research-pipeline/output/scraper/",
-  "SummarizerOutputPrefix=ai-research-pipeline/output/summarizer/",
-  "PosterOutputPrefix=ai-research-pipeline/output/poster/",
-  "BedrockModelId=us.anthropic.claude-haiku-4-5-20251001-v1:0",
-  # writer = Sonnet 4.6: A/B 2026-07-05 showed Haiku never fits the hook budget
-  # (Bedrock quota still pending — OpenRouter fallback carries the writer meanwhile)
-  "BedrockWriterModelId=us.anthropic.claude-sonnet-4-6-20260101-v1:0"
-]
+# NOTE: sam deploy reads ONLY [default.deploy.parameters] below. A duplicate
+# [default.deploy] block that once lived here was dead config — removed
+# (final review 2026-07-05). For deploys WITH the OpenRouter key use
+# scripts/deploy-full-stack.sh (--parameter-overrides replaces this list
+# wholesale; the script carries the full set).
 [default.deploy.parameters]
 stack_name = "ai-research-pipeline"
 resolve_s3 = true

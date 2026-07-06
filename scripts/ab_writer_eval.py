@@ -365,10 +365,13 @@ def main() -> None:
     args = parser.parse_args()
 
     # Set provider env BEFORE any model call (utils.llm reads envs at call time).
+    # The A/B must test ONE provider per side: kill any inherited fallback so a
+    # "bedrock" run can never silently rescue itself via OpenRouter.
     os.environ["LLM_PROVIDER"] = args.provider
+    os.environ.pop("LLM_FALLBACK_PROVIDER", None)
 
-    # Convenience: load OpenRouter key from local key file if env not already set.
-    if not os.environ.get("OPENROUTER_API_KEY"):
+    # Convenience: load OpenRouter key from local key file, only when needed.
+    if args.provider == "openrouter" and not os.environ.get("OPENROUTER_API_KEY"):
         key_file = Path.home() / "projects" / "00-cr" / "openrouter-key.txt"
         if key_file.exists():
             os.environ["OPENROUTER_API_KEY"] = key_file.read_text(encoding="utf-8").strip()

@@ -93,7 +93,7 @@ def handler(event, context):
                 "article_count": article_count,
                 "article_keys": [str(key) for key in article_keys],
                 "has_summaries": has_summaries,
-                "hashtags": [a.get("hashtags", []) for a in content] if isinstance(content, list) else []
+                "tweet_counts": [len(a.get("tweets") or []) for a in content] if isinstance(content, list) else []
             }, default=str)
         }
     

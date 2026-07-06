@@ -36,6 +36,7 @@ def check(name, fn):
 
 import utils.scoring as scoring  # noqa: E402
 import utils.buzz as buzz_mod  # noqa: E402
+import utils.summarizer as summarizer  # noqa: E402
 
 print("\n[1] scoring: pure functions")
 
@@ -452,6 +453,320 @@ def test_buzz_disabled_no_http():
 check("buzz re-ranks selection", test_buzz_reranks_selection)
 check("buzz failure keeps LLM order", test_buzz_failure_keeps_llm_order)
 check("buzz disabled makes no HTTP calls", test_buzz_disabled_no_http)
+
+print("\n[9] summarizer: writer contract")
+
+import tempfile  # noqa: E402
+
+_WRITER_ARTICLE = {
+    "url": "https://arxiv.org/abs/2607.00001",
+    "title": "Paper Title",
+    "snippet": "An abstract snippet about agents.",
+    "authors": ["Author One", "Author Two"],
+    "scores": {"builder_relevance": 8, "novelty": 6, "hook_potential": 7},
+    "composite": 7.5,
+    "query_source": ["agents"],
+    "buzz": 8.05,
+    "buzz_raw": {"hf_upvotes": 40},
+}
+
+
+def test_writer_produces_validated_tweets():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.writer_response = None
+    try:
+        result = summarizer.write_thread_with_claude(_WRITER_ARTICLE)
+        assert isinstance(result, dict), f"expected dict, got {type(result)}"
+        assert "tweets" in result and "summary" in result
+        tweets = result["tweets"]
+        assert isinstance(tweets, list) and len(tweets) == 3, f"expected 3 tweets, got {tweets}"
+        assert "https://arxiv.org/abs/2607.00001" in tweets[-1], f"final tweet missing url: {tweets[-1]}"
+        assert result["summary"] == "A plain fallback summary."
+    finally:
+        FAKE_BEDROCK.mode = "denied"
+        FAKE_BEDROCK.writer_response = None
+
+
+def test_writer_contract_violation_falls_back_to_summary_only():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.writer_response = json.dumps({"tweets": ["only one tweet"], "summary": "still a good summary"})
+    try:
+        result = summarizer.write_thread_with_claude(_WRITER_ARTICLE)
+        assert result["tweets"] is None, f"expected tweets=None on contract violation, got {result['tweets']}"
+        assert result["summary"] == "still a good summary", f"summary not preserved: {result['summary']}"
+    finally:
+        FAKE_BEDROCK.mode = "denied"
+        FAKE_BEDROCK.writer_response = None
+
+
+def test_summarize_articles_output_carries_tweets_and_provenance():
+    FAKE_BEDROCK.mode = "ok"
+    FAKE_BEDROCK.writer_response = None
+    orig_in = summarizer.INPUT_FILE
+    orig_out = summarizer.OUTPUT_FILE
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as fin:
+        json.dump([_WRITER_ARTICLE], fin)
+        tmp_in = fin.name
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as fout:
+        tmp_out = fout.name
+    summarizer.INPUT_FILE = tmp_in
+    summarizer.OUTPUT_FILE = tmp_out
+    try:
+        summarizer.summarize_articles(limit=1)
+        with open(tmp_out, "r") as f:
+            output = json.load(f)
+        assert len(output) == 1, f"expected 1 output article, got {len(output)}"
+        art = output[0]
+        assert "tweets" in art, "output article must have tweets key"
+        assert "summary" in art, "output article must have summary key"
+        assert "hashtags" not in art, f"output must not carry hashtags key, got: {list(art.keys())}"
+        # provenance spread intact
+        assert "scores" in art and isinstance(art["scores"], dict), "scores must survive spread"
+        for axis in ("builder_relevance", "novelty", "hook_potential"):
+            assert axis in art["scores"], f"missing scores.{axis}"
+        for key in ("composite", "query_source", "buzz", "buzz_raw"):
+            assert key in art, f"missing provenance key: {key}"
+    finally:
+        FAKE_BEDROCK.mode = "denied"
+        FAKE_BEDROCK.writer_response = None
+        summarizer.INPUT_FILE = orig_in
+        summarizer.OUTPUT_FILE = orig_out
+
+
+check("writer produces validated tweets", test_writer_produces_validated_tweets)
+check("writer contract violation falls back to summary-only", test_writer_contract_violation_falls_back_to_summary_only)
+check("summarize_articles output carries tweets and provenance", test_summarize_articles_output_carries_tweets_and_provenance)
+
+print("\n[10] poster: thread contract")
+
+import utils.post_to_twitter as _ptt  # noqa: E402 — imported once, reused below
+
+_VALID_URL = "https://arxiv.org/abs/2607.00099"
+
+
+def test_contract_tweets_posted_verbatim_no_hashtags():
+    """Valid contract tweets are posted byte-for-byte (after sanitization); no # anywhere."""
+    captured = []
+    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    art = {
+        "title": "Hook title",
+        "url": _VALID_URL,
+        "summary": "Fallback summary sentence one. Sentence two.",
+        "tweets": [
+            "First tweet hook sentence for the thread.",
+            "Second tweet with more detail about the paper.",
+            f"Third and final tweet. {_VALID_URL}",
+        ],
+    }
+    md = _ptt.post_thread(art, dry_run=False)
+    assert md is not None, "post_thread must return metadata"
+    assert captured == art["tweets"], f"posted texts differ: {captured}"
+    assert all("#" not in t for t in captured), f"hashtag found in contract path: {captured}"
+    assert captured[0] == art["tweets"][0], "hook tweet (tweet 1) must be verbatim"
+
+
+def test_missing_tweets_falls_back_to_summary_no_hashtags():
+    """tweets=None triggers summary fallback; final tweet has url; no # anywhere."""
+    captured = []
+    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    art = {
+        "title": "Paper Title",
+        "url": _VALID_URL,
+        "summary": "Sentence one about the paper. Sentence two with more info.",
+        "tweets": None,
+    }
+    md = _ptt.post_thread(art, dry_run=False)
+    assert md is not None
+    assert any(_VALID_URL in t for t in captured), f"url missing from thread: {captured}"
+    assert all("#" not in t for t in captured), f"hashtag found in fallback path: {captured}"
+
+
+def test_invalid_transit_tweets_fall_back():
+    """tweets list where final tweet lacks url → fallback to summary path."""
+    captured = []
+    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    art = {
+        "title": "Paper Title",
+        "url": _VALID_URL,
+        "summary": "Sentence one. Sentence two.",
+        "tweets": ["ok hook", "no link final"],  # final tweet lacks url → re-check fails
+    }
+    md = _ptt.post_thread(art, dry_run=False)
+    assert md is not None
+    # Fallback path → a real multi-tweet thread was posted, not the rejected contract list
+    assert len(captured) >= 2, f"fallback thread too short: {captured}"
+    assert captured != art["tweets"], "rejected contract tweets were posted verbatim"
+    assert any(_VALID_URL in t for t in captured), f"fallback url missing: {captured}"
+    # The literal "ok hook" string must NOT be the first posted tweet (contract was rejected)
+    assert captured[0] != "ok hook", "contract rejected; should have used summary path"
+
+
+def test_hook_over_240_fails_transit_recheck():
+    """Hook of 250 chars (valid ≤280 but >240) must fail the transit re-check → summary fallback."""
+    captured = []
+    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    long_hook = "A" * 250   # 250 chars: passes TWEET_MAX(280) but fails HOOK_MAX(240)
+    art = {
+        "title": "Paper Title",
+        "url": _VALID_URL,
+        "summary": "Sentence one. Sentence two.",
+        "tweets": [long_hook, f"Paper details\n{_VALID_URL}"],
+    }
+    md = _ptt.post_thread(art, dry_run=False)
+    assert md is not None
+    # Transit re-check must have rejected it; fallback path posts summary thread
+    assert captured[0] != long_hook, "hook with 250 chars should be rejected by transit re-check"
+    assert any(_VALID_URL in t for t in captured), f"fallback url missing: {captured}"
+
+
+def test_default_hashtags_constant_deleted():
+    """DEFAULT_HASHTAGS must not exist on the ptt module."""
+    assert not hasattr(_ptt, "DEFAULT_HASHTAGS"), \
+        "DEFAULT_HASHTAGS still present — must be deleted from post_to_twitter"
+
+
+check("contract tweets posted verbatim, no hashtags", test_contract_tweets_posted_verbatim_no_hashtags)
+check("missing tweets falls back to summary, no hashtags", test_missing_tweets_falls_back_to_summary_no_hashtags)
+check("invalid transit tweets fall back to summary path", test_invalid_transit_tweets_fall_back)
+check("hook >240 chars fails transit re-check → summary fallback", test_hook_over_240_fails_transit_recheck)
+check("DEFAULT_HASHTAGS constant deleted", test_default_hashtags_constant_deleted)
+
+print("\n[11] poster: mid-thread policy")
+
+import utils.post_to_twitter as ptt  # noqa: E402 — alias for section 11
+
+
+def _scripted_post_tweet(script):
+    calls = []
+    def fake(text, reply_to_id=None):
+        calls.append(text)
+        return script.pop(0) if script else None
+    return fake, calls
+
+
+def test_mid_thread_retry_succeeds():
+    """Tweet 2 fails once, retry succeeds → status=posted, 3 ids, 4 calls."""
+    orig_sleep = ptt.time.sleep
+    script = ["id1", None, "id2", "id3"]
+    fake, calls = _scripted_post_tweet(script)
+    ptt.post_tweet = fake
+    ptt.time.sleep = lambda *_: None
+    try:
+        art = {
+            "title": "T", "url": "https://arxiv.org/abs/2607.00099",
+            "summary": "s", "hashtags": [],
+            "tweets": [
+                "First tweet hook sentence for the thread.",
+                "Second tweet with more detail about the paper.",
+                "Third and final tweet. https://arxiv.org/abs/2607.00099",
+            ],
+            "scores": None, "composite": None, "query_source": None,
+            "buzz": None, "buzz_raw": None,
+        }
+        md = ptt.post_thread(art, dry_run=False)
+        assert md is not None, "should return metadata"
+        assert md["status"] == "posted", f"expected posted, got {md['status']}"
+        assert len(md["tweet_ids"]) == 3, f"expected 3 ids: {md['tweet_ids']}"
+        assert len(calls) == 4, f"expected 4 post_tweet calls: {len(calls)}"
+    finally:
+        ptt.time.sleep = orig_sleep
+
+
+def test_mid_thread_double_failure_posts_closing_reply_and_partial():
+    """Tweet 2 fails twice → closing reply with arXiv url, status=partial, provenance intact."""
+    orig_sleep = ptt.time.sleep
+    script = ["id1", None, None, "id9"]
+    fake, calls = _scripted_post_tweet(script)
+    ptt.post_tweet = fake
+    ptt.time.sleep = lambda *_: None
+    try:
+        art = {
+            "title": "T", "url": "https://arxiv.org/abs/2607.00099",
+            "summary": "s", "hashtags": [],
+            "tweets": [
+                "First tweet hook sentence for the thread.",
+                "Second tweet with more detail about the paper.",
+                "Third and final tweet. https://arxiv.org/abs/2607.00099",
+            ],
+            "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
+            "composite": 7.25, "query_source": ["agents"],
+            "buzz": 7.5, "buzz_raw": {"hn_points": 120},
+        }
+        md = ptt.post_thread(art, dry_run=False)
+        assert md is not None, "should return metadata on partial"
+        assert md["status"] == "partial", f"expected partial, got {md['status']}"
+        # The closing reply text must contain the arXiv url
+        assert any("https://arxiv.org/abs/2607.00099" in t for t in calls), \
+            f"no closing reply with arXiv url in calls: {calls}"
+        # Provenance fields must still be present
+        assert md["scores"] is not None, "scores must be in partial metadata"
+        assert md["composite"] == 7.25, "composite must be in partial metadata"
+        assert md["query_source"] == ["agents"], "query_source must be in partial metadata"
+    finally:
+        ptt.time.sleep = orig_sleep
+
+
+def test_first_tweet_double_failure_returns_none():
+    """Tweet 1 fails twice → returns None (nothing posted, no ledger)."""
+    orig_sleep = ptt.time.sleep
+    script = [None, None]
+    fake, calls = _scripted_post_tweet(script)
+    ptt.post_tweet = fake
+    ptt.time.sleep = lambda *_: None
+    try:
+        art = {
+            "title": "T", "url": "https://arxiv.org/abs/2607.00099",
+            "summary": "s", "hashtags": [],
+            "tweets": [
+                "First tweet hook sentence for the thread.",
+                "Second tweet with more detail about the paper.",
+                "Third and final tweet. https://arxiv.org/abs/2607.00099",
+            ],
+            "scores": None, "composite": None, "query_source": None,
+            "buzz": None, "buzz_raw": None,
+        }
+        md = ptt.post_thread(art, dry_run=False)
+        assert md is None, f"expected None on tweet-1 double failure, got {md}"
+    finally:
+        ptt.time.sleep = orig_sleep
+
+
+def test_ledger_stores_status():
+    """record_posted persists the status field from metadata."""
+    import poster_lambda as poster
+    FAKE_S3.store.clear()
+    art = {"title": "Scored", "url": "https://arxiv.org/abs/2607.00009",
+           "summary": "s", "hashtags": [],
+           "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
+           "composite": 7.25, "query_source": ["agents"],
+           "buzz": 7.5, "buzz_raw": {"hn_points": 120}}
+    key = "out/summarizer/final_summarized_RUN.json"
+    FAKE_S3.store[key] = json.dumps([art]).encode()
+
+    orig = ptt.post_thread
+    ptt.post_thread = lambda a, **kw: {"article_title": a["title"], "url": a["url"],
+                                       "variant": "summary", "tweet_ids": ["1"],
+                                       "thread_url": "https://t/1",
+                                       "scores": a.get("scores"),
+                                       "composite": a.get("composite"),
+                                       "query_source": a.get("query_source"),
+                                       "buzz": a.get("buzz"),
+                                       "buzz_raw": a.get("buzz_raw"),
+                                       "status": "posted"}
+    try:
+        resp = poster.handler({"summary_key": key, "dry_run": False, "post_limit": 1}, None)
+    finally:
+        ptt.post_thread = orig
+    assert resp["statusCode"] == 200, resp
+    entry = json.loads(FAKE_S3.store[poster.POSTED_LEDGER_KEY])["https://arxiv.org/abs/2607.00009"]
+    assert "status" in entry, f"status missing from ledger entry: {entry}"
+    assert entry["status"] == "posted", f"expected posted, got {entry['status']}"
+
+
+check("mid-thread retry succeeds → posted", test_mid_thread_retry_succeeds)
+check("mid-thread double failure → partial + closing reply", test_mid_thread_double_failure_posts_closing_reply_and_partial)
+check("first-tweet double failure → None", test_first_tweet_double_failure_returns_none)
+check("ledger stores status field", test_ledger_stores_status)
 
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

@@ -5,9 +5,11 @@ import re
 import json
 import time
 import random
+import logging
 import boto3
 from datetime import datetime
 from dotenv import load_dotenv
+from utils.thread_contract import ContractError, build_writer_prompt, validate_and_repair
 
 # Load environment variables
 load_dotenv()
@@ -17,6 +19,9 @@ aws_access_key = os.getenv("AWS_ACCESS_KEY_ID")
 aws_secret_key = os.getenv("AWS_SECRET_ACCESS_KEY")
 aws_region = os.getenv("AWS_REGION", "us-east-1")
 model_id = os.getenv("BEDROCK_MODEL_ID", "us.anthropic.claude-haiku-4-5-20251001-v1:0")
+WRITER_MODEL_ID = os.getenv("BEDROCK_WRITER_MODEL_ID", "us.anthropic.claude-sonnet-4-6")
+
+logger = logging.getLogger(__name__)
 
 # Give up on an article after this many failed summarization attempts instead of
 # retrying it forever (retry-forever + Lambda timeout 600s meant no chunk file was
@@ -34,6 +39,7 @@ INPUT_FILE = os.path.join(PROJECT_ROOT, "test_output.json")
 OUTPUT_FILE = os.path.join(PROJECT_ROOT, "summarized_output.json")
 
 # Prompt builders
+# legacy path, kept for A/B harness + fallback tooling
 def build_summary_prompt(article):
     return (
         f"You are a social media manager summarizing AI research for a tech-savvy audience.\n\n"
@@ -45,6 +51,7 @@ def build_summary_prompt(article):
     )
 
 
+# legacy path, kept for A/B harness + fallback tooling
 def build_hashtag_prompt(article):
     return (
         f"Provide a list of 3-5 relevant and concise hashtags for the following AI paper. "
@@ -53,7 +60,7 @@ def build_hashtag_prompt(article):
         f"Abstract: {article['snippet']}"
     )
 
-#OMEGAPROMPT hashtag prompt engineering
+#OMEGAPROMPT hashtag prompt engineering — legacy path, kept for A/B harness + fallback tooling
 def build_summary_and_hashtag_prompt(article):
     # Scraped fields are untrusted (anyone can publish to arXiv): delimit them
     # explicitly and truncate so page content can't restyle the task or blow
@@ -190,6 +197,34 @@ def retry_until_timeout(func, max_seconds=900, base_delay=10):
     return {"summary": "[Summary unavailable after max retry time]", "hashtags": []}, 0
 
 
+def write_thread_with_claude(article):
+    """One writer-model call → {"tweets": [...]|None, "summary": str}.
+    Contract violations demote to summary-only (tweets=None) — the poster's
+    legacy formatter handles those. Raises on transport/parse failure so the
+    existing retry/abort semantics in summarize_articles apply."""
+    payload = {
+        "anthropic_version": "bedrock-2023-05-31",
+        "max_tokens": 1500,
+        "temperature": 0.4,
+        "messages": [{"role": "user", "content": build_writer_prompt(article)}],
+    }
+    response = bedrock.invoke_model(
+        modelId=WRITER_MODEL_ID, contentType="application/json",
+        accept="application/json", body=json.dumps(payload))
+    result = json.loads(response["body"].read())
+    text = " ".join(p["text"] for p in result.get("content", []) if p.get("type") == "text")
+    data = parse_model_json(text)
+    summary = str(data.get("summary") or "").strip()
+    if not summary:
+        raise ValueError("writer returned no summary")
+    try:
+        tweets = validate_and_repair(data.get("tweets"), article.get("url") or "")
+    except ContractError as e:
+        logger.warning(f"Thread contract violated ({e}); falling back to summary-only.")
+        tweets = None
+    return {"tweets": tweets, "summary": summary}
+
+
 # Main summarizer logic
 def summarize_articles(limit=None, max_runtime=900):
     start_time = time.time()
@@ -219,19 +254,22 @@ def summarize_articles(limit=None, max_runtime=900):
         print(f"[🔍] Attempting article {idx + 1}/{len(articles)} (attempt {attempts + 1}/{MAX_ATTEMPTS_PER_ARTICLE})")
 
         def attempt_summary():
-            return summarize_with_claude(build_summary_and_hashtag_prompt(article))
+            # Writer path: no per-prompt token tracking (report 0). Transport
+            # failures raise; retry_until_timeout catches them into the
+            # existing "[Summary unavailable]" sentinel dict, so the sentinel
+            # gate below keeps its exact meaning.
+            return write_thread_with_claude(article), 0
 
         result_obj, tokens_used = retry_until_timeout(attempt_summary, max_seconds=max_runtime - int(time.time() - start_time))
 
         summary = result_obj.get("summary", "")
-        hashtags = result_obj.get("hashtags", [])
 
         # Only append if summary is valid
         if "[Summary unavailable" not in summary and summary.strip():
             summarized.append({
                 **article,
+                "tweets": result_obj.get("tweets"),
                 "summary": summary,
-                "hashtags": hashtags
             })
             total_tokens += tokens_used
             idx += 1

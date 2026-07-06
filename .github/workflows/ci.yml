@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+    branches: ["main", "feat/**", "fix/**"]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      - name: Sync dev environment
+        run: uv sync
+
+      # Suites are dependency-free scripts with local fakes (no AWS, no network) —
+      # run each directly; any nonzero exit fails the job.
+      - name: Unit suites
+        run: |
+          for t in test_fixes test_content_engine test_buzz test_thread_contract test_ab_harness; do
+            echo "=== tests/$t.py ==="
+            uv run python tests/$t.py
+          done
+
+  template:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      # --lint is cfn-lint based: validates the template offline, no AWS credentials.
+      - name: sam validate
+        run: sam validate --lint --region us-east-1

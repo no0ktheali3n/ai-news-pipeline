@@ -117,6 +117,7 @@ def handler(event, context):
                 "query_source": metadata.get("query_source"),
                 "buzz": metadata.get("buzz"),
                 "buzz_raw": metadata.get("buzz_raw"),
+                "status": metadata.get("status", "posted"),
             }
             save_posted_ledger(ledger)
 

@@ -183,7 +183,7 @@ def handler(event, context):
                 "chunk_size": chunker_result.get('chunk_size', 0) if isinstance(chunker_result, dict) else 0,
                 "article_count": chunker_result.get('article_count', 0) if isinstance(chunker_result, dict) else 0,
                 "article_titles": chunker_result.get('article_titles', []) if isinstance(chunker_result, dict) else [],
-                "hashtags": chunker_result.get('hashtags', []) if isinstance(chunker_result, dict) else [],
+                "tweet_counts": chunker_result.get('tweet_counts', []) if isinstance(chunker_result, dict) else [],
                 "has_summaries": chunker_result.get('has_summaries', False) if isinstance(chunker_result, dict) else False
             }, default=str)
         }

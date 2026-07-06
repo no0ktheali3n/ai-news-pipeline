@@ -1,0 +1,53 @@
+{
+  "pairs": [],
+  "failures": [
+    {
+      "index": 0,
+      "title": "Steerability via constraints: a substrate for scalable oversight of codingagents",
+      "url": "https://arxiv.org/abs/2607.02389",
+      "error": "AccessDeniedException: An error occurred (AccessDeniedException) when calling the InvokeModel operation: Model access is denied due to IAM user or service role is not authorized to perform the required AWS Marketplace actions (aws-marketplace:ViewSubscriptions, aws-marketplace:Subscribe) to enable access to this model. Refer to the Amazon Bedrock documentation for further details. Your AWS Marketplace subscription for this model cannot be completed at this time. If you recently fixed this issue, try again after 2 minutes."
+    },
+    {
+      "index": 1,
+      "title": "Distributed Attacks in Persistent-StateAIControl",
+      "url": "https://arxiv.org/abs/2607.02514",
+      "error": "AccessDeniedException: An error occurred (AccessDeniedException) when calling the InvokeModel operation: Model access is denied due to IAM user or service role is not authorized to perform the required AWS Marketplace actions (aws-marketplace:ViewSubscriptions, aws-marketplace:Subscribe) to enable access to this model. Refer to the Amazon Bedrock documentation for further details. Your AWS Marketplace subscription for this model cannot be completed at this time. If you recently fixed this issue, try again after 2 minutes."
+    },
+    {
+      "index": 2,
+      "title": "Beyond the Prompt:JailbreakingFunction-Calling LLMs via Simulated Moderation Traces",
+      "url": "https://arxiv.org/abs/2607.00481",
+      "error": "AccessDeniedException: An error occurred (AccessDeniedException) when calling the InvokeModel operation: Model access is denied due to IAM user or service role is not authorized to perform the required AWS Marketplace actions (aws-marketplace:ViewSubscriptions, aws-marketplace:Subscribe) to enable access to this model. Refer to the Amazon Bedrock documentation for further details. Your AWS Marketplace subscription for this model cannot be completed at this time. If you recently fixed this issue, try again after 2 minutes."
+    },
+    {
+      "index": 3,
+      "title": "Security--Fidelity Tradeoffs: The Hidden Cost ofPromptInjectionDefense",
+      "url": "https://arxiv.org/abs/2606.30783",
+      "error": "AccessDeniedException: An error occurred (AccessDeniedException) when calling the InvokeModel operation: Model access is denied due to IAM user or service role is not authorized to perform the required AWS Marketplace actions (aws-marketplace:ViewSubscriptions, aws-marketplace:Subscribe) to enable access to this model. Refer to the Amazon Bedrock documentation for further details. Your AWS Marketplace subscription for this model cannot be completed at this time. If you recently fixed this issue, try again after 2 minutes."
+    },
+    {
+      "index": 4,
+      "title": "Understanding and Evaluating Claw-like Agent Security Through a Computer-Systems Lens",
+      "url": "https://arxiv.org/abs/2606.30755",
+      "error": "AccessDeniedException: An error occurred (AccessDeniedException) when calling the InvokeModel operation: Model access is denied due to IAM user or service role is not authorized to perform the required AWS Marketplace actions (aws-marketplace:ViewSubscriptions, aws-marketplace:Subscribe) to enable access to this model. Refer to the Amazon Bedrock documentation for further details. Your AWS Marketplace subscription for this model cannot be completed at this time. If you recently fixed this issue, try again after 2 minutes."
+    },
+    {
+      "index": 5,
+      "title": "Reasoning effort, not tool access, buys first-try reliability inagenticcode generation: an observational study",
+      "url": "https://arxiv.org/abs/2607.02436",
+      "error": "AccessDeniedException: An error occurred (AccessDeniedException) when calling the InvokeModel operation: Model access is denied due to IAM user or service role is not authorized to perform the required AWS Marketplace actions (aws-marketplace:ViewSubscriptions, aws-marketplace:Subscribe) to enable access to this model. Refer to the Amazon Bedrock documentation for further details. Your AWS Marketplace subscription for this model cannot be completed at this time. If you recently fixed this issue, try again after 2 minutes."
+    },
+    {
+      "index": 6,
+      "title": "HARC: Coupling Harmfulness and Refusal Directions for Robust Safety Alignment",
+      "url": "https://arxiv.org/abs/2607.00572",
+      "error": "AccessDeniedException: An error occurred (AccessDeniedException) when calling the InvokeModel operation: Model access is denied due to IAM user or service role is not authorized to perform the required AWS Marketplace actions (aws-marketplace:ViewSubscriptions, aws-marketplace:Subscribe) to enable access to this model. Refer to the Amazon Bedrock documentation for further details. Your AWS Marketplace subscription for this model cannot be completed at this time. If you recently fixed this issue, try again after 2 minutes."
+    },
+    {
+      "index": 7,
+      "title": "Forensic Trajectory Signatures for Agent Memory Poisoning Detection",
+      "url": "https://arxiv.org/abs/2606.30566",
+      "error": "AccessDeniedException: An error occurred (AccessDeniedException) when calling the InvokeModel operation: Model access is denied due to IAM user or service role is not authorized to perform the required AWS Marketplace actions (aws-marketplace:ViewSubscriptions, aws-marketplace:Subscribe) to enable access to this model. Refer to the Amazon Bedrock documentation for further details. Your AWS Marketplace subscription for this model cannot be completed at this time. If you recently fixed this issue, try again after 2 minutes."
+    }
+  ]
+}

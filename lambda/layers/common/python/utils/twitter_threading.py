@@ -13,7 +13,7 @@ def generate_tweet_thread(summary, title="", url="", hashtags=None):
     Converts a long summary into a tweet thread (list of strings), respecting the 280-character limit.
     Automatically appends a final tweet with hashtags and URL.
     """
-    hashtags = hashtags or ["#AI"]
+    hashtags = hashtags or []
     sentences = split_sentences(summary)
     thread = []
     current = ""
@@ -35,12 +35,11 @@ def generate_tweet_thread(summary, title="", url="", hashtags=None):
         else:
             thread.insert(0, title)
 
-    # Final tweet: hashtags and url
+    # Final tweet: url (+ hashtags if any)
     tag_block = " ".join(hashtags)
-    closing = f"{url}\n{tag_block}".strip()
+    closing = f"{url}\n{tag_block}".strip() if tag_block else url
     if len(closing) > MAX_TWEET_LENGTH:
-        tag_block = "#AI" if "#AI" in hashtags else ""
-        closing = f"{url}\n{tag_block}".strip()
+        closing = url
 
     thread.append(closing)
     return thread

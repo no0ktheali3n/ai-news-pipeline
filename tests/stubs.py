@@ -61,6 +61,27 @@ class FakeBedrock:
 
     mode = "denied"  # "ok" | "fenced"
     scoring_response = None  # None → auto-valid; str → returned verbatim
+    writer_response = None  # None → auto-valid default; str → returned verbatim
+
+    def _writer_reply(self, body=None):
+        if self.writer_response is not None:
+            return self.writer_response
+        # Extract the article URL from the prompt so validate_and_repair passes
+        # regardless of which article is being written.
+        url = "https://arxiv.org/abs/2607.00001"
+        if body:
+            import re as _re
+            req = json.loads(body)
+            prompt = req["messages"][0]["content"]
+            m = _re.search(r"https?://\S+", prompt)
+            if m:
+                url = m.group(0).rstrip(".,;)")
+        return json.dumps({
+            "tweets": ["A concrete hook under the limit.",
+                       "Middle substance for builders.",
+                       f"Paper Title\n{url}"],
+            "summary": "A plain fallback summary.",
+        })
 
     def _scoring_reply(self, body):
         req = json.loads(body)
@@ -81,6 +102,17 @@ class FakeBedrock:
             if self.mode == "denied":
                 raise Exception("AccessDeniedException: no model access")
             return self._scoring_reply(kw["body"])
+        if "you write twitter/x threads" in content.lower():
+            if self.mode == "denied":
+                raise Exception(
+                    "An error occurred (AccessDeniedException) when calling the "
+                    "InvokeModel operation: You don't have access to the model."
+                )
+            text = self._writer_reply(kw["body"])
+            if self.mode == "fenced":
+                text = f"```json\n{text}\n```"
+            payload = {"content": [{"type": "text", "text": text}]}
+            return {"body": FakeBody(json.dumps(payload).encode())}
         # --- existing summarizer routing, unchanged from test_fixes.py ---
         if self.mode == "denied":
             raise Exception(

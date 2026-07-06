@@ -96,7 +96,9 @@ def test_summarizer_success_path_still_works():
     FAKE_BEDROCK.mode = "ok"
     result = summarizer.summarize_articles(max_runtime=300)
     assert len(result) == 2, f"expected 2 summaries, got {len(result)}"
-    assert result[0]["summary"] == "A fine summary."
+    assert result[0]["summary"] == "A plain fallback summary.", result[0]["summary"]
+    assert isinstance(result[0]["tweets"], list) and len(result[0]["tweets"]) > 0, \
+        f"expected non-empty tweets list, got {result[0].get('tweets')}"
     FAKE_BEDROCK.mode = "denied"
 
 
@@ -104,7 +106,9 @@ def test_summarizer_handles_markdown_fenced_json():
     FAKE_BEDROCK.mode = "fenced"
     result = summarizer.summarize_articles(max_runtime=300)
     assert len(result) == 2, f"expected 2 summaries from fenced output, got {len(result)}"
-    assert result[0]["summary"] == "A fine summary."
+    assert result[0]["summary"] == "A plain fallback summary.", result[0]["summary"]
+    assert isinstance(result[0]["tweets"], list) and len(result[0]["tweets"]) > 0, \
+        f"expected non-empty tweets list, got {result[0].get('tweets')}"
     FAKE_BEDROCK.mode = "denied"
 
 
@@ -158,7 +162,7 @@ def test_pipeline_passes_final_key_to_poster():
     resp, poster_called, calls = run_pipeline_with(
         {"statusCode": 200, "body": json.dumps(
             {"article_count": 1, "has_summaries": True,
-             "article_titles": ["T"], "hashtags": [], "chunk_size": 1,
+             "article_titles": ["T"], "tweet_counts": [], "chunk_size": 1,
              "final_key": "out/summarizer/final_summarized_RUN.json"})}
     )
     assert resp["statusCode"] == 200, resp

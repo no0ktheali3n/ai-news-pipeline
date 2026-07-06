@@ -71,6 +71,11 @@ Parameters:
     AllowedValues: ["true", "false"]
     Description: Kill switch for Phase 1.5 buzz enrichment (no redeploy of code needed).
 
+  BedrockWriterModelId:
+    Type: String
+    Default: us.anthropic.claude-sonnet-4-6
+    Description: Bedrock model for thread writing (Sonnet-tier); scoring stays on BedrockModelId.
+
 Globals:
   Function:
     Timeout: 600
@@ -247,7 +252,8 @@ Resources:
           SCRAPER_OUTPUT_PREFIX: !Ref ScraperOutputPrefix
           SUMMARIZER_OUTPUT_PREFIX: !Ref SummarizerOutputPrefix
           BEDROCK_MODEL_ID: !Ref BedrockModelId
-      
+          BEDROCK_WRITER_MODEL_ID: !Ref BedrockWriterModelId
+          THREAD_MAX_TWEETS: "5"
 
   PosterFunction:
     Type: AWS::Serverless::Function

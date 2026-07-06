@@ -1,0 +1,608 @@
+{
+  "generated_at": "2026-06-02T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-05-31",
+    "2026-06-02"
+  ],
+  "candidates": [
+    {
+      "title": "PIXELRAG: Web Screenshots Beat Text for Retrieval-Augmented Generation",
+      "url": "https://arxiv.org/abs/2606.28344",
+      "authors": [
+        "Yichuan Wang",
+        "Zhifei Li",
+        "Zirui Wang",
+        "Paul Teiletche",
+        "Lesheng Jin",
+        "Matei Zaharia",
+        "Joseph E. Gonzalez",
+        "Sewon Min"
+      ],
+      "snippet": "Augmenting large language models (LLMs) with retrieved web text has become a dominant paradigm, yet the web is not natively textual: existing systems depend on complex parsing pipelines that linearize HTML and discard layout, visual structure, and formatting. We introduce PixelRAG, a new retrieval-augmented method that represents websites in their native visual form and performs retrieval and reading entirely in pixel space, enabling an end-to-end architecture that eliminates text abstraction. PixelRAG is, to our knowledge, the first pipeline to operate over a full Wikipedia corpus in this form, scaling to a datastore of 30 million screenshot images with an efficient visual retrieval index. Built on an existing visual embedding model (i.e., Qwen3-VL-Embedding), PixelRAG further fine-tunes this model on screenshot data with carefully curated contrastive training data. Retrieved screenshots are then fed directly as pixel inputs to a VLM, without intermediate text conversion. PixelRAG consistently outperforms both no-retrieval and text-based RAG baselines, most surprisingly on widely studied text-centric tasks such as NQ and SimpleQA. It also achieves strong gains on multimodal open-domain QA (e.g., MMSearch), benchmarks over noisy news corpora (e.g., LiveVQA), andagenticbenchmarks (e.g., MoNaCo), improving accuracy by up to 18.1% over text-based baselines. Finally, pixel representations enable a new efficiency lever for RAG through image compression, achieving up to 3x token cost reduction at lower resolutions while maintaining accuracy. Our results challenge the necessity of text representations in web retrieval, suggesting that web RAG can operate directly in the web's native visual form while improving both performance and efficiency.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "From Confident Closing to Silent Failure: Characterizing False Success inLLMAgents",
+      "url": "https://arxiv.org/abs/2606.09863",
+      "authors": [
+        "Laksh Advani"
+      ],
+      "snippet": "LLMagentscan fail silently by asserting task completion when the environment state shows otherwise. We study this failure mode, false success, across twoagentbenchmarks: 9,876 tau2-bench trajectories from 8 model families and 1,879 AppWorld trajectories from 4 model families with text-independent ground truth. False success is common but varies by setting: 45--48% of failures in single-control tau2-bench domains, 3% in dual-control telecom, and 75.8% among AppWorld self-assessing coding-agenttrajectories with explicit status claims. LLM judges fail reliably: no configuration across 5 judges, 5 prompt strategies, and full task specifications exceeds AUROC 0.65 on tau2-bench, and the same judges reach only 0.54 AUROC on AppWorld API-call traces. Judges rely on surface completion proxies -- confident closing language in tau2-bench and coarse action-sequence volume in AppWorld -- rather than verified state changes. Lightweight TF-IDF detectors achieve task-disjoint AUROC 0.83 on tau2-bench and 0.95 on AppWorld, recovering 4--8x more false successes than the best judge at the same flag rate with 3,300x lower latency. These results suggest that production monitoring should use lightweight, domain-calibrated detectors as triage signals rather than relying on LLM judges as the primary monitor for false success.△ Less",
+      "published": "Submitted31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "Neither Layer Alone: Epistemic Integrity Requires Hierarchical Joint Design for Long-Running AIAgents",
+      "url": "https://arxiv.org/abs/2606.04017",
+      "authors": [
+        "Zhihong Shen"
+      ],
+      "snippet": "Long-running AIagentsfail not only when inference fails or tools are underspecified, but when independently evolving model and harness layers change the semantics of belief, capability, and goal commitments across their boundary - a failure class this paper terms Interface Volatility. This paper argues thatAgentEpistemic Integrity (AEI) must be treated as a first-class architectural constraint, achievable only through joint model-harness design organized around an explicit interface contract. The central claim is that the model-harness interface contract is the precondition for joint design; its operational form is a four-level hierarchy - goal validity, action-archetype sequencing, tool-instance selection, and invocation-level failure discrimination - that specifies what the boundary must preserve and what structured outputs the model must return for the contract to hold across levels. This reframes long-runningagentdesign away from flat action loops and toward contract-preserving control over persistent state. Evaluation and training should therefore derive from the contract itself, testing whether belief, tool, and goal commitments hold across session boundaries and independent layer upgrades.△ Less",
+      "published": "Submitted31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Which Defense Closes Which Threat? Attributing OWASP-LLM-Top-10 Coverage and Its Brittleness Under Paraphrasing",
+      "url": "https://arxiv.org/abs/2606.02822",
+      "authors": [
+        "Alexandre Cristovão Maiorano"
+      ],
+      "snippet": "Production LLM applications stack several defense families -- refusal-phrase filters, token-budget controls, model allowlists, rate limits, tool-registry authentication -- yet existing breach-and-attack-simulation (BAS) benchmarks report a single aggregate coverage number, hiding which family closes which threat. We measure attribution. We add four OWASP-LLM-Top-10-aware agents to a 21-agent baseline scanner and target a lattice of four synthetic LLM endpoints: $L_0$ (no defenses), $L_1$ (refusal-only), $L_2$ (budget-only), and $L_3$ (full stack). $L_1$ and $L_2$ are sibling single-axis ablations, not subsets of each other; $L_3$ is their union plus tool-registry authentication and credential scrubbing. Across $N=10$ replications, the per-OWASP finding count is clean: refusal alone removes all LLM01 (jailbreak) and LLM07 (system-prompt leakage) findings; budget alone removes all LLM02 (sensitive-info disclosure) and LLM10 (unbounded consumption) findings by terminating multi-step sequences; LLM06 (excessive agency) requires the full stack. We probe brittleness under paraphrasing: with 300 Gemini-generated paraphrases ($K=5$ over a 60-template brittleness corpus), $L_1$ refusal block rate falls 15 pp on LLM01 and 25 pp on LLM07. A fifth target, $L_4$-real, swaps the stub backend for Gemini-2.5-flash behind the same $L_3$ regex and matches $L_1$ exactly, indicating no measurable alignment contribution beyond the regex (not a general claim about alignment). Budget controls show no drop (0 pp once the rate-limit floor is factored out). A refusal whitelist that clears a static benchmark can be defeated by an LLM-driven paraphraser without changing attack intent; a budget control resists the same mutation.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "THRD: A Training-Free Multi-Turn Defense Framework forJailbreakAttacks on Large Language Models",
+      "url": "https://arxiv.org/abs/2606.01738",
+      "authors": [
+        "Zhiqing Ma",
+        "Zhonghao Xu",
+        "Dong Yu",
+        "Chen Kang",
+        "Changliang Li",
+        "Pengyuan Liu"
+      ],
+      "snippet": "Multi-turnjailbreakattacks pose a growing threat to LLMs by exploiting conversational dynamics such as gradual escalation and cross-turn coordination. Existing defenses either rely on costly retraining -- often degrading model utility -- or apply single-turn analysis independently at each turn, failing to capture how risk accumulates along interaction trajectories. We observe that safety behavior in multi-turn interaction is trajectory-dependent: dialogue history continuously reshapes the model's conditioning context, making it insufficient to evaluate each turn in isolation. Motivated by this insight, we present THRD, the first training-free framework that explicitly models temporal risk accumulation for multi-turnjailbreakdefense. THRD integrates four modules: a Turn-level Risk Assessor (TRA) for instantaneous risk estimation, a Historical Context Analyzer (HCA) for cross-turn intent escalation detection, a Response Evaluator (RE) for identifying facilitative outputs, and a Decision Module that combines these signals through a time-evolving scoring mechanism with attenuation-based modulation and trend-aware adjustment. Experiments against state-of-the-art multi-turn attacks -- including tree-search-based and multi-agent collaborative methods -- across two target models show that THRD reduces ASR to 0.2--4.0% while preserving model utility within 1.5% degradation on MMLU and GSM8K. Ablation studies confirm non-redundant module contributions and stable cross-architecture generalization. Analysis of first rejection triggers reveals that over 70% of multi-turn attacks require Turn~2 or later to detect, validating the necessity of explicit temporal aggregation.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "The Crowded Embedding Space: A Mean-Field Mechanism for Emergent Marginalization in Retrieval-AugmentedAgents",
+      "url": "https://arxiv.org/abs/2606.28343",
+      "authors": [
+        "Shwan Ashrafi",
+        "Dan Roth"
+      ],
+      "snippet": "Retrieval-augmented generativeagentsrely on retrieval for grounding, yet are typically evaluated on a query-by-query basis. This isolates interactions that are geometrically coupled in a shared embedding space. For example, we show that the high document density required to serve majority interests (e.g., generic \"Crime\" movies) can geometrically overcrowd the retrieval neighborhood of a semantically similar minority (e.g., \"Film Noir\"), effectively expelling minority content from top-$k$ results. We introduce a formal framework to analyze how such goal collisions in dense retrieval induce fundamental performance limits and emergent fairness issues inherent to spatial crowding. In our static analysis, we demonstrate that for a fixed embedding space, a phase transition occurs where minority user goals suffer a catastrophic collapse in performance as the density of majority goals increases. We then extend this to a dynamic model and derive a non-linear Fokker-Planck equation that governs the evolution of document embeddings as theagentupdates them to maximize retrieval accuracy. Our analysis reveals that this local relevance objective triggers an emergent global mechanism that systematically marginalizes minority interests. We prove that such objectives drive the system to self-organize into a state that exclusively serves majority interests. These results provide a theoretical foundation for understanding a critical grounding failure mode in retrieval-augmentedagents.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 8.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.5
+    },
+    {
+      "title": "MaskForge: Structure-Aware Adaptive Attacks forJailbreakingDiffusion Large Language Models",
+      "url": "https://arxiv.org/abs/2606.04027",
+      "authors": [
+        "Yingzi Ma",
+        "Zhengyue Zhao",
+        "Xiaogeng Liu",
+        "Minhui Xue",
+        "Yue Zhao",
+        "Chaowei Xiao"
+      ],
+      "snippet": "Diffusion large language models (dLLMs) generate text by iteratively denoising partially masked sequences under bidirectional context, exposing a safety surface distinct from autoregressive LLMs. Because mask tokens are native inputs and tokens are committed by confidence rather than position, harmful content can be induced through infilling and outside the monitored prefix. Existingjailbreakseither miss this native infill capability or rely on low-diversity mask-bearing templates applied uniformly across goals, with little structural adaptation or accumulated attack experience. We propose MaskForge, a fully black-box adaptive attack that casts dLLM red-teaming as optimized search over a growing library of structural patterns. MaskForge abstracts successful attempts into reusable schemas, selects goal-compatible patterns with a UCB bandit, and invokes a scorer-guided fallback when the current library fails. Successful attempts are distilled back into the pattern library, enabling experience to accumulate across goals. Across five public dLLMs and three benchmarks, MaskForge achieves an average attack success rate of 79.3%, a 17.6% relative improvement over the strongest competing dLLM baseline. The matured pattern library further transfers to AdvBench without any updates, achieving a 88.2% attack success rate and a 67% relative improvement over the strongest competing baseline.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "ACRONYM: Accelerated Approximate Nearest Neighbor Search in Memory for Dynamic Vector Databases",
+      "url": "https://arxiv.org/abs/2606.03151",
+      "authors": [
+        "Md Mizanur Rahaman Nayan",
+        "Tianqi Zhang",
+        "Flavio Ponzina",
+        "Tajana Rosing",
+        "Azad J Naeemi"
+      ],
+      "snippet": "Vector database search with frequent updates is increasingly critical in applications such asretrievalaugmentedgeneration, recommendation systems, and large-scale embedding retrieval. Existing solutions, such as graph-based and partition-based approximate nearest neighbor search (ANNS), suffer from frequent index rebuilding due to data distribution-dependent indexing that impacts continuous deployment and causes long rebuilding latency. This paper proposes an algorithm-hardware co-designed platform, ACRONYM, that addresses key problems with state of the art database search. Algorithmically, it leverages efficient encoding independent of data distribution and Hamming-distance based search for efficient hardware acceleration. Architecturally, we propose CAM-based in-memory parallel distance computation followed by time multiplexed approximated top-k selection to enable the exhaustive search. We propose two-stage search that includes coarse search followed by binary refinement to achieve high recall in CAM based search which is heavily limited to small vector dimension due to capacity and wordline parasitic. ACRONYM supports continuous update without stalling and integrates novel XOR-and-Accumulate (XAC) based systolic-array encoder for efficient on chip encoding during search. Across million-scale datasets, while serving dynamic database ACRONYM achieves >90% recall at a throughput of 8e6 queries per second, with a memory footprint of only 32MB and an average energy consumption of 2.56uJ per query, speedup over HNSW (CPU) of about 400x and FAISS-IVF (GPU) of about 80x.△ Less",
+      "published": "Submitted2 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "PsychoPass: Geometric Profiling of Multi-Turn Adversarial LLM Conversations",
+      "url": "https://arxiv.org/abs/2606.03136",
+      "authors": [
+        "Muberra Ozmen",
+        "Subhabrata Majumdar"
+      ],
+      "snippet": "Multi-turnjailbreakattacks on large language models (LLMs) reveal a mismatch in current guardrails: they operate on individual turns, while attacks unfold as trajectories across conversations. We propose a shift from content to dynamics, modeling conversations as paths in representation space and asking whether adversarial intent is encoded early in their geometry. We introduce PsychoPass, a framework that extracts geometric features from conversation trajectories in embedding space to predict a potential attack before harmful content is produced. These features achieve near-perfect performance in naïve classifiers, which is largely explained by the inclusion of number of turns as a feature. After removing this confound, a smaller but consistent geometric signal remains, with classification performance that does not depend meaningfully on encoder choice. Crucially, this signal appears early in the conversation: attack outcomes remain above chance from short prefixes alone, more reliably than baseline guardrails. A supporting theoretical analysis explains these findings via a decomposition of length and shape, a detection bound based on prefix length, and encoder invariance. Together, these results show that adversarial conversations leave an early, representation-robust geometric fingerprint suitable for online monitoring.△ Less",
+      "published": "Submitted2 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Gate AI:LLMSecurityBenchmark Evaluation Methodology and Results",
+      "url": "https://arxiv.org/abs/2606.02959",
+      "authors": [
+        "Ryle Goehausen",
+        "Marcus Sousa"
+      ],
+      "snippet": "Published evaluations ofprompt-injectionandjailbreakdetectors for Large Language Models often suffer from two systematic weaknesses: per-dataset threshold tuning and undisclosed operating points. We describe an evaluation harness that addresses both. The detector under evaluation is scored across 16 public benchmarks (12,111 samples) using 5-fold cross-validation. StratifiedKFold (by row) is the headline pass; a parallel StratifiedGroupKFold pass over a composite key (parent-prompt id plus MinHash + LSH near-duplicate clusters at Jaccard $\\gtrsim 0.8$) runs alongside it as a leakage-premium diagnostic. A single global operating point is selected on the held-out folds (max F1 subject to FPR $\\leq 1\\%$) and applied uniformly to every dataset, so per-dataset results reflect one threshold rather than per-benchmark optimisation. Generalisation is examined through a battery of diagnostics (leave-one-dataset-out cross-validation, a random-label control, adversarial validation, permutation feature importance, length-bias correlation, classifier-head agreement, cross-source near-duplicate detection, threshold transferability, train-vs-OOF agreement, and a paraphrase-invariance probe), most with a quantitative pass threshold and the remainder with a stated failure mode. For every external comparison, the detector's threshold is re-tuned to the competitor's published false-positive rate so head-to-head values are evaluated at matched operating points.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Inference Cost Attacks forRetrieval-AugmentedLarge Language Models",
+      "url": "https://arxiv.org/abs/2606.02643",
+      "authors": [
+        "Chengliang Liu",
+        "Liangbo Ning",
+        "Yujuan Ding",
+        "Wenqi Fan"
+      ],
+      "snippet": "Retrieval-AugmentedGeneration (RAG)-enhanced LLM systems, while powerful, introduce substantial inference costs due to the inclusion of an extra multi-stage pipeline that dynamically retrieves and synthesizes information from external knowledge sources. This high operational cost exposes a critical vulnerability to Inference Cost Attacks (ICAs). However, existing ICAs often rely on the impractical assumption of direct prompt manipulation. We argue that a more feasible and potent threat to RAG-enhanced LLM systems arises from poisoning external knowledge bases (e.g., web knowledge from the Internet). In this work, we introduce theRetrieval-AugmentedInference Cost Attack (RA-ICA), a novel attacking paradigm that targets the computational cost of RAG-enhanced LLM systems by injecting malicious documents into external knowledge corpus. To operationalize this attack, we propose Computational Resource Exhaustion via External Poisoning (CREEP), a novel framework that leverages LLM agents to automatically craft malicious documents that are both semantically relevant for retrieval and potent for inducing an abnormal increase in token consumption during the inference phase. To enhance the attack's effectiveness, we introduce Memory-Augmented Group Relative Policy Optimization (MA-GRPO), a novel reinforcement learning algorithm that fine-tunes the agents by learning from a dynamic memory of historical best adversarial documents. Extensive experiments across three real-world datasets demonstrate that RA-ICA increases token consumption by up to 13.12 times with an over 90% success rate, without degrading the integrity of the generated answer.△ Less",
+      "published": "Submitted31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Crayotter: TraceableMulti-AgentWorkflows for Long-Form Video Editing",
+      "url": "https://arxiv.org/abs/2606.07636",
+      "authors": [
+        "Lecheng Yan",
+        "Yichong Zhang",
+        "Ben Pan",
+        "Xiaoyu Zheng",
+        "Jiawei Qian",
+        "Anqi Wu",
+        "Wenxi Li",
+        "Chenyang Lyu"
+      ],
+      "snippet": "Editing a long-form video from heterogeneous footage requires more than selecting clips: anagentmust preserve narrative intent across material preparation, timeline construction, post-production, and revision while leaving enough evidence to diagnose failures. We present \\textbf{Crayotter}, an open-source multimodalmulti-agentsystem for prompt-driven video editing. Crayotter organizes production into three phases: coverage-aware material preparation, artifact-based editing research, and tool-grounded timeline execution. Each phase externalizes inspectable artifacts, including coverage reports, multimodal analyses, editing blueprints, tool calls, and intermediate renders. These artifacts make an editing run traceable and allow failed segments to be diagnosed and selectively revised instead of requiring a full restart. We evaluate Crayotter on 23 editing themes against CapCut-Mate and CutClaw. Under human evaluation, Crayotter achieves an average score of 3.40/5, compared with 2.44 and 1.70 for the two baselines, with consistent gains in theme alignment, narrative coherence, and editing smoothness. We additionally describe a replayable trajectory schema and verifiable reward design that prepare these workflows for future policy optimization. Code, traces, and examples are publicly available at https://github.com/idwts/Crayotter.△ Less",
+      "published": "Submitted31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "D-Judge: Disrupting Multi-TurnJailbreaksusing Semantics-Preserving Output Rewriting",
+      "url": "https://arxiv.org/abs/2606.02640",
+      "authors": [
+        "Huanli Gong",
+        "Zhipeng Wei",
+        "Yu Fu",
+        "Haz Sameen Shahgir",
+        "Ananya Gupta",
+        "Yue Dong",
+        "N. Benjamin Erichson"
+      ],
+      "snippet": "Multi-turnjailbreakattacks pose a growing threat to large language model (LLM) safety because they exploit feedback from auxiliary judge models to iteratively refine prompts toward harmful goals. Existing defenses largely detect or block unsafe content at individual turns or at the final response, leaving the judge-driven refinement loop intact and allowing attackers to extract informative feedback from intermediate interactions. We introduce D-Judge, a semantics-preserving output rewriting defense that intervenes directly in this loop by rewriting the victim LLM's responses before they are evaluated by the attacker's judge. By misaligning the judge's feedback signal without changing the meaning of the original response, D-Judge derails the attacker's prompt-refinement process, causing subsequent queries to be optimized against a distorted signal of attack progress. To improve D-Judge's ability to produce such rewrites, we construct a dataset of semantically equivalent response pairs that induce different judge-assigned harmfulness scores, and use it for supervised fine-tuning followed by direct preference optimization. Experiments on HarmBench show that D-Judge reduces the success rate of state-of-the-art multi-turnjailbreakswhile preserving performance on benign benchmarks.△ Less",
+      "published": "Submitted31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "JailbreakingMultimodal Large Language Models using Multi-Clip Video",
+      "url": "https://arxiv.org/abs/2606.02111",
+      "authors": [
+        "Choongwon Kang",
+        "Seungjong Sun",
+        "Hyunmin Jun",
+        "Jang Hyun Kim"
+      ],
+      "snippet": "As multimodal large language models (MLLMs) have advanced to process video inputs, concerns have emerged about their potential for malicious misuse. Priorjailbreakstudies have shown that safety alignment in MLLMs can be bypassed through visual inputs, yet it remains unclear which properties of video inputs induce this vulnerability. To address this gap, we introduce Multi-Clip Video (MCV) SafetyBench, a dataset of 2,920 videos designed to evaluate how the diversity of video inputs affects the vulnerability of MLLMs. Each video consists of multiple short clips depicting diverse contexts related to a harmful query. Experiments on eight representative video MLLMs show that attack success consistently increases with the number of clips. Our results further indicate that the video modality is (1) more vulnerable than the image modality, (2) more vulnerable to dynamic videos than to static videos, and (3) more vulnerable when videos contain more diverse contexts. Building on these findings, we propose a defense strategy that leverages the relative robustness of the image modality.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Benign Inputs, Harmful Outputs: Cross-ModalJailbreakingvia Distributed Semantic Recomposition",
+      "url": "https://arxiv.org/abs/2606.01837",
+      "authors": [
+        "Yani Wang",
+        "Yilong Yang",
+        "Yang Liu",
+        "Zhuzhu Wang",
+        "Zuobin Ying",
+        "Zhuo Ma"
+      ],
+      "snippet": "Multimodal Large Language Models (MLLMs) have recently demonstrated remarkable capabilities in content synthesis and autonomous reasoning. Previous safety guardrails are primarily designed for unimodal textual input interception, leaving them vulnerable to cross-modaljailbreakattacks. However, regardless unimodal textual attack or cross-modaljailbreak, typically inclusive part of explicit harmful or sensitive content at the input level, which is called Harm-Bearing. It allow the model's safety filters to detect and block such content easily. To address this limitations, we propose Distributed Semantic Recomposition (DSR), a novel cross-modaljailbreakframework that decomposes harmful intent into a set of benign textual and visual primitives. By exploiting the model's reasoning ability, DSR enables the latent fusion of these seemingly innocent components into harmful outputs during the cross-modal inference phase. Extensive experiments on multiple commercial MLLMs pipelines demonstrate that DSR achieves superior attack success rates while maintaining an extremely low or even negligible input toxicity rate. Our findings uncover a critical Utility-Safety Paradox in MLLMs, where the model's instruction-following proficiency facilitates its own cognitive exploitation. Content Warning: This paper contains harmful model responses.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "TriEval: A Resource-Efficient Pipeline for LLM Bias, Toxicity, and Truthfulness Assessment",
+      "url": "https://arxiv.org/abs/2606.03036",
+      "authors": [
+        "Akshatha Srikantha",
+        "Manpreet Singh",
+        "Yash Jajoo",
+        "Shyamal Lakhanpal"
+      ],
+      "snippet": "LLMs have evolved from basic chatbots to the backbone of the AI ecosystem, now widely used in healthcare, schools, and government services. The domain-wide adoption of LLMs necessitates continuous evaluation to ensure their safety and fairness. Common issues encountered after deploying LLMs include inconsistent outputs and hallucinations of incorrect information. Although numerousLLMevaluationtools exist, most are limited to testing a single parameter at a time or require massive computational resources that are not accessible to most researchers. TriEval addresses these challenges by evaluating LLM outputs across multiple parameters, including bias, toxicity, and truthfulness together, while minimizing computing resources. The pipeline is compatible with both open- and closed-source models and runs on a standard laptop without a GPU cluster. TriEval has been tested on four models: Llama 3 8B, Mistral 7B, Gemma 2 9B, and Claude Haiku. The results show clear differences between open-source and closed-source models, especially in terms of toxicity and truthfulness. TriEval is being released as open source to enable broader access for researchers with limited computational resources.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "TukaBench: A Culturally GroundedJailbreakBenchmark for African Languages",
+      "url": "https://arxiv.org/abs/2606.01322",
+      "authors": [
+        "Victor Akinode",
+        "Senyu Li",
+        "Wassim Hamidouche",
+        "Waqas Zamir",
+        "Inbal Becker-Reshef",
+        "David Ifeoluwa Adelani"
+      ],
+      "snippet": "Safety evaluation of Large Language Models (LLMs) remains heavily English-centric, leaving Low-Resource Languages (LRLs), particularly African ones, critically underexplored. We introduce TUKABENCH, ajailbreakbenchmark for seven African languages that extends JailbreakBench (JBB) beyond direct translation through four settings: human translation of JBB prompts, English adaptation to African contexts followed by human translation, human-curated prompts validated through interactions with GPT-5.2, and code-switched prompts combining English and African languages, isolating the effect of language, cultural grounding, and prompt evasiveness on model safety. Across closed and open models, prompting in African languages reduces refusal relative to English, with culturally adapted prompts leading to least refusal. The evaluation also surfaces two structural limitations: model comprehension failures and reduced LLM-as-a-judge reliability in LRLs. To capture the first, we introduce Deflection alongside Refused and Jailbroken; to assess the second, we validate outputs with human annotations, showing that judge-human agreement drops in lower-resource languages and less commonly supported scripts.△ Less",
+      "published": "Submitted31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Traj-Evolve: A Self-Evolving Multi-Agent System for Patient Trajectory Modeling in Lung Cancer Early Detection",
+      "url": "https://arxiv.org/abs/2606.02812",
+      "authors": [
+        "Sihang Zeng",
+        "Matthew Thompson",
+        "Ruth Etzioni",
+        "Meliha Yetisgen"
+      ],
+      "snippet": "Modeling patient trajectories from longitudinal electronic health records (EHRs) requires reasoning over sparse, noisy, and long-context multimodal sequences. Existing LLM-based multi-agent systems address context length but process patients in isolation, failing to mirror how clinicians leverage accumulated experience from similar prior cases. We present Traj-Evolve, a self-evolving multi-agent system with two complementary evolving mechanisms. First, an Experience Pool (ExPool) acts as a non-parametric memory, indexing rejection-sampled reasoning traces to retrieve similar patients as few-shot contexts. Second, multi-agent reinforcement learning (MARL) via reward-ranked fine-tuning parametrically optimizes inter-agent and agent-memory collaboration. A leave-one-out cross-retrieval strategy unifies the two, aligning training- and inference-time behavior underretrievalaugmentation. On a lung cancer prediction task utilizing up to five years of multimodal EHRs, Traj-Evolve outperforms 9 strong baselines on the overall population and a challenging never-smoker population. Analysis of the evolving dynamics highlights three key findings: (1) expanding the ExPool shifts optimal retrieval from diverse to specific samples; (2) under MARL, the manager agent's prediction loss converges quickly while the worker agents' temporal reasoning continues to benefit from more verified patients; and (3) the two mechanisms are complementary on the predicted risk, where ExPool improves specificity while MARL improves sensitivity.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 6.0
+    },
+    {
+      "title": "A Practice Auditing Framework for Large Language Model Use: Collective Empiricism, Pseudo-Rational Cognition, and Governance of AI-Generated Content",
+      "url": "https://arxiv.org/abs/2607.01248",
+      "authors": [
+        "Yang Zhao",
+        "Yingshuo Li",
+        "Zeyu Zhang"
+      ],
+      "snippet": "Large language models are increasingly used for knowledge acquisition, code generation, academic writing, andagent-based automation. In these settings, users may obtain highly structured answers, plans, and judgments without sufficient domain practice. This paper proposes a practice auditing framework for LLM use and AI-generated content governance. It introduces collective empiricism to describe how LLMs compress and reorganize large-scale human experience into outputs that appear empirical and rational, and pseudo-rational cognition to describe how users may mistake AI-generated structured expression for their own rational understanding. The paper analyzes AI subjectivity illusion, subjectivity structures in input materials, template loops in AI-AI conversations, statistical misjudgment in AIGC detection, and memory pollution when generated content enters future contexts, long-term memory, retrieval spaces, oragentskill systems. To reduce these risks, the paper proposes an auditing process based on requirement definition, problem-boundary identification, evidence-source auditing, practical validation, reverse questioning, logging, version management, rollback, and renewed cognition. The framework does not reject AI productivity; it argues that LLM outputs should be returned to verifiable, reproducible, and intervenable processes of practice. The paper provides a conceptual and auditable framework for cognitive risks in LLM interaction, AI-generated content governance, long-term memory systems, and human-AI interaction.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "FineGen: A VLM-basedMulti-AgentFramework for Fine-Grained Image-Text Dataset Construction",
+      "url": "https://arxiv.org/abs/2606.07645",
+      "authors": [
+        "Chang Kong",
+        "Yuebing Li",
+        "Peng Mo",
+        "Haigang Zhang",
+        "Qiuming Luo"
+      ],
+      "snippet": "The scarcity of hard negative samples in current vision-language datasets significantly hinders fine-grained perception. To address this, we propose FineGen, a VLM-basedMulti-Agentframework for automated dataset construction. By employing a collaborative Generation-Verification-Correction pipeline with a closed-loop feedback mechanism, FineGen ensures synthesized hard negatives are semantically valid yet strictly contradictory to visual content. Applying this to ImageNet, we construct FineGen-100K, a hierarchical dataset containing over 147,000 attribute-specific hard negatives with a rigorous 1:10 positive-to-negative ratio. Extensive evaluations confirm a 96.7% attribute validity rate. Crucially, downstream validation on the FG-OVD benchmark shows that fine-tuning on FineGen-100K yields a substantial +14.4% accuracy improvement on hard samples, significantly outperforming state-of-the-art methods.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "LongLive-RAG: A GeneralRetrieval-AugmentedFramework for Long Video Generation",
+      "url": "https://arxiv.org/abs/2606.02553",
+      "authors": [
+        "Qixin Hu",
+        "Shuai Yang",
+        "Wei Huang",
+        "Song Han",
+        "Yukang Chen"
+      ],
+      "snippet": "Autoregressive (AR) video diffusion enables variable-length synthesis, but long-horizon generation often suffers from accumulated errors and identity drift. For efficiency, existing methods commonly adopt sliding-window attention during generation. This creates an irreversible generation trajectory: once the active window accumulates appearance errors, subsequent generations can only condition on this degraded trajectory and drift further away. We address this limitation by formulating long video generation as aretrieval-augmentedgeneration (RAG) problem. Rather than relying solely on the recent window, we treat previously generated latents as a dynamic, searchable history. We propose LongLive-RAG, a general retrieval framework for AR video generation. At each new block, LongLive-RAG uses a query embedding to retrieve relevant historical latents. This lightweight retrieval step adds only a small overhead relative to generation and lets the generator condition on non-local context instead of only the recent window. To make retrieval more discriminative, we introduce the Window Temporal Delta Loss that suppresses redundant local similarity and encourages embeddings to capture meaningful temporal changes. Together, these components help reduce error accumulation caused by sliding-window attention. Experiments across multiple AR backbones and generation lengths show improved long-video quality and the best average VBench-Long rank. To our knowledge, among open-ended AR long video generation methods, LongLive-RAG is the first to formulate self-generated latent history as content-addressable retrieval memory. Code is available at https://github.com/qixinhu11/LongLive-RAG.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 5.0
+    },
+    {
+      "title": "Retrieve What's Missing: Coverage-Maximizing Retrieval for Consistent Long Video Generation",
+      "url": "https://arxiv.org/abs/2606.02479",
+      "authors": [
+        "Minseok Joo",
+        "Dogyun Park",
+        "Taehoon Lee",
+        "Kyujin Lee",
+        "Hyunwoo J. Kim"
+      ],
+      "snippet": "Maintaining long-term geometric consistency remains challenging for long-horizon autoregressive video generation. Memory-augmented generative models address this by retrieving historical frames, but their effectiveness depends on two key design choices: what 3D-geometric evidence should represent past observations, and how memory frames should be selected from this evidence. Existing methods often rely on camera poses or field-of-view overlap, which are lightweight but too coarse to reason about pixel-wise visibility, or use explicit 3D reconstruction, which provides fine-grained evidence but is costly to maintain over long rollouts. We propose Coverage-MaximizingRetrieval-AugmentedGeneration (COVRAG), a depth-based memory retrieval framework that uses pretrained 3D priors to construct a target-view coverage map as lightweight 3D memory evidence. For frame selection, COVRAG maximizes residual coverage gain, iteratively retrieving frames that explain target-view regions not covered by the current context or previously selected memories. To improve scalability in long-video generation, we introduce sliding-window depth caching for efficient geometry estimation. Experiments on RealEstate10K and DL3DV10K show that COVRAG improves long-horizon geometric consistency while maintaining low latency compared to baselines.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 5.0
+    },
+    {
+      "title": "EstRTL: Functional Estimation Guided RTL Code Generation",
+      "url": "https://arxiv.org/abs/2606.09867",
+      "authors": [
+        "Qi Xiong",
+        "Renzhi Chen",
+        "Bowei Wang",
+        "Yuqing Xiong",
+        "Libo Huang",
+        "Lei Wang"
+      ],
+      "snippet": "Optimizing register transfer level (RTL) code is of vital importance in hardware design. Large language models (LLMs) provide new methods for the automatic generation and optimization of RTL code, offering the potential to significantly accelerate the design process and reduce human effort. However, existing methods for generating RTL code often focus on model fine-tuning and the use of various expansion techniques to enhance the RTL code generation capabilities, lacking attention to the functional correctness. Ensuring that the generated RTL code not only compiles successfully but also behaves as intended in real hardware implementations remains a critical challenge. To address this issue, we propose EstRTL, an LLM-powered collaborativeagentframework for RTL code generation based on static functional score estimation. EstRTL operates a three-stage paradigm: Generation, Estimation and Correction. During the stages, the functional estimationagentstatically evaluates the generated code based on score and assessment results, and decides whether to output the code directly, return it for regeneration, or forward it to the code correctionagent. This framework can be applied to various LLMs that designed for RTL code generation, further enhancing the correctness of the generated code. By providing quantitative scores and human-readable requirements comparisons, it improves the transparency of AI-assisted RTL code generation. Experiments show that EstRTL significantly improves the correctness of RTL code generation by generic LLM by 3.2\\%-9.0\\%, demonstrating the practical value of our system. The codes and experimental results are open-sourced at link: https://anonymous.4open.science/status/EstRTL-E200/.△ Less",
+      "published": "Submitted31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.75
+    },
+    {
+      "title": "Do VLMs See What Sensors Feel? A Scalable Expert-Guided Design for Wheelchair Accessibility Assessment from Street View",
+      "url": "https://arxiv.org/abs/2606.07642",
+      "authors": [
+        "Dongdong Wang",
+        "Alina Hagen",
+        "Isabelle Gatmaitan",
+        "Hao Zhou",
+        "Yiwen Dong",
+        "Shabboo Valipoor",
+        "Vivian W. H. Wong",
+        "Lingyao Li"
+      ],
+      "snippet": "Assessing built-environment interaction, such as wheelchair accessibility, is difficult because real-world mobility is shaped by distributed, context-dependent, and temporary barriers that are hard to capture at scale. To support scalable assessment, this paper examines whether vision-language models (VLMs) can identify accessibility barriers from Google Street View (GSV) imagery. We propose an expert-guidedretrieval-augmentedframework that combines GSV images, ADA-informed guidance, and expert-derived rubrics to evaluate accessibility dimensions. We collect a campus-scale dataset at the University of Florida, linking 407 unique GSV locations with GPS-derived wheelchair dwell behavior as a mobility-friction signal. Results show that VLM ratings are both negatively correlated and distributionally similar with dwell time, indicating partial but consistent alignment with a behavioral proxy for mobility friction. Visual cue analysis shows that certain environmental objects, such as curb ramps and crosswalks, are associated with higher VLM accessibility scores, while alignment remains limited for subtle surface conditions, transient obstructions, and viewpoint-dependent barriers. Overall, our findings show the potential of expert-guided VLMs for scalable accessibility assessment aligning with sensor-derived indicators of real-world wheelchair navigation.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.5
+    },
+    {
+      "title": "EURO-5K: When Does Domain Pretraining Matter? Benchmarking Transformers for EU Reporting Obligation Extraction",
+      "url": "https://arxiv.org/abs/2606.02971",
+      "authors": [
+        "Marios Koniaris",
+        "Vasileios Kotronis",
+        "Eugenia Giannini",
+        "Panayiotis Tsanakas"
+      ],
+      "snippet": "Extracting reporting obligations from EU legislation is critical for assessing and reducing regulatory reporting burden. However, distinguishing reporting requirements from structurally similar provisions requires specialised legal understanding. Current legal NLP methods lack specialised datasets with clear guidelines and comparative evaluation of extraction paradigms and domain adaptation strategies. We curate EURO-5K, a corpus of sentence-level reporting obligations and challenging negative examples from 136 EU legislative acts. On this dataset, we train and compare discriminative token-classification models (BERT-style) and generative span-extraction models (LLMs),evaluatingboth full fine-tuning and parameter-efficient QLoRA against baselines (pattern and dependency-based extraction, few-shot prompting). Results show that fully fine-tuned generic and legal BERT models achieve similar performance (0.89 F1), while fine-tuned LLMs match encoder accuracy for sentence-level extraction. Legal pretraining offers only small gains for generative models. In contrast, it is clearly beneficial when adaptation capacity is constrained, as parameter-efficient tuning of Legal-BERT outperforms its generic counterpart. Learning curve analysis demonstrates that legal pretraining accelerates early learning with minimal data. All approaches converge around 3K samples with diminishing returns thereafter, validating dataset sufficiency. Cross-dataset evaluation on two external regulatory corpora shows that our models behave as specialised reporting obligation extractors rather than generic regulatory classifiers. We release EURO-5K, trained models, and an interactive demo with explainability visualizations and structured RDF export. These demonstrate that both paradigms and parameter-efficient training provide practical tools for regulatory compliance automation.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 4.0
+      },
+      "composite": 4.0
+    },
+    {
+      "title": "AGORA: Can Deliberation and Governance Gates Absorb Participation Bias in Transit Planning?",
+      "url": "https://arxiv.org/abs/2606.13696",
+      "authors": [
+        "Jung-Hoon Cho",
+        "Cathy Wu"
+      ],
+      "snippet": "Transit network design depends not only on the optimization algorithm but also on who shows up to the public hearing. Current practice often collects one-directional comments from self-selected attendees, leaving participant mix as an uncontrolled source of outcome variation. We present AGORA, a framework that holds the network, demand, and solver fixed while systematically varying meeting composition through stakeholderagents, structured deliberation, and governance gates. Across two standard benchmark networks at different scales, we find that (i) aggregate outcomes vary little across compositions, but on tail risk and fairness disparity, representative sampling still tends to outperform skewed compositions; (ii) without deliberation, composition produces no variation at all, showing that deliberation is the mechanism through which who attends affects outcomes; and (iii) governance gates compress cross-profile variance without shifting the average outcome on Mandl, but low acceptance on Mumford0 shows thresholds require instance-specific calibration. These findings reframe participation bias from an uncontrollable input to a process-design problem: even without guaranteed representative attendance, well-structured deliberation and governance criteria can substantially reduce how much outcomes depend on who is in the room.△ Less",
+      "published": "Submitted31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 4.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.5
+    },
+    {
+      "title": "Self-Regulation through Communication in Evolved Neural Agents",
+      "url": "https://arxiv.org/abs/2606.02840",
+      "authors": [
+        "Joshua Nunley"
+      ],
+      "snippet": "Communication is typically understood as indication: signals that transfer information from sender to receiver. We present a minimal predator avoidance task in which pairs of evolved CTRNN agents use communication for robust survival, and in which agents hear their own vocalizations, as in natural systems. Across 112 perfect-fitness agents from over 2,000 evolutionary runs, three dominant strategies emerge (accounting for 81% ofagents):safetycalling (39%), where agents signal from safe cover; alarm indication (22%), where agents vocalize when a threat is present without relying on self-hearing; and self-regulatory calling (20%), where agents depend on hearing their own call to sustain escape behavior. Self-hearing dependency is common among agents that call during an active threat (47%), but rare among agents that call only after reaching safe cover (10%; p < 10^-4). This pattern is consistent with a difference in causal order: safety callers act then communicate, while self-regulatory callers communicate in order to act. Removing self-hearing selectively impairs self-regulatory callers (fitness 0.40) while safety callers remain functional (0.90; p < 10^-9). These results show that communication can evolve to serve the caller's own behavioral regulation, not just information transfer to others.△ Less",
+      "published": "Submitted1 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 4.0,
+        "hook_potential": 3.0
+      },
+      "composite": 2.75
+    },
+    {
+      "title": "Multi-AgentDRL for QoS and Energy Optimization in RIS-Enabled Open-RAN Industrial 6G TN/NTN Networks",
+      "url": "https://arxiv.org/abs/2606.28339",
+      "authors": [
+        "Marwan Dhuheir",
+        "Thang X. Vu",
+        "Symeon Chatzinotas"
+      ],
+      "snippet": "Industrial 6G networks require ultra-reliable, low-latency, and energy-efficient connectivity in dynamic and blockage-prone environments, where conventional terrestrial deployments often fail to ensure stable coverage. Hence, in this paper, we propose a RIS-enabled Open-RAN framework for integrated terrestrial/non-terrestrial (TN/NTN) industrial 6G networks, in which UAVs-mounted reconfigurable intelligent surfaces (RISs) cooperate with ground radio units and a high-altitude platform (HAP) to enhance connectivity for dense industrial IoT devices. Owing to the high dimensionality and strong coupling among decision variables, conventional optimization techniques become computationally intractable. To overcome this limitation, the joint optimization problem of data rates, latency, and energy consumptions is formulated as a decentralized partially observable Markov decision process (Dec-POMDP) and solved using amulti-agentdeep reinforcement learning framework. Simulation results show improvements of up to 75\\% in data rate, 25\\% latency reduction, and 16\\% energy savings compared with state-of-the-art learning-based and non-RIS baselines, demonstrating the effectiveness of RIS-assisted Open-RAN intelligence for industrial 6G networks.△ Less",
+      "published": "Submitted31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 3.0,
+        "hook_potential": 2.0
+      },
+      "composite": 2.25
+    }
+  ]
+}

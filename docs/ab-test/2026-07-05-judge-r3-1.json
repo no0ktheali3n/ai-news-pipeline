@@ -1,0 +1,60 @@
+{
+  "pairs": [
+    {
+      "pair": 1,
+      "v1": {"hook_strength": 8, "practitioner_value": 9, "clarity": 9, "coherence": 9, "follow_likelihood": 8, "share_likelihood": 7},
+      "v2": {"hook_strength": 5, "practitioner_value": 5, "clarity": 6, "coherence": 6, "follow_likelihood": 4, "share_likelihood": 4},
+      "preference": 1,
+      "rationale": "V1 leads with the concrete recall lift and gives a tight, actionable read; V2 buries the numbers in hype and generic advice."
+    },
+    {
+      "pair": 2,
+      "v1": {"hook_strength": 6, "practitioner_value": 6, "clarity": 6, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 5},
+      "v2": {"hook_strength": 8, "practitioner_value": 9, "clarity": 8, "coherence": 9, "follow_likelihood": 8, "share_likelihood": 7},
+      "preference": 2,
+      "rationale": "V2 opens with a sharp attack mechanic, names the models, and gives precise evasion deltas; V1 is emoji hype that dilutes the same facts."
+    },
+    {
+      "pair": 3,
+      "v1": {"hook_strength": 9, "practitioner_value": 9, "clarity": 9, "coherence": 9, "follow_likelihood": 8, "share_likelihood": 7},
+      "v2": {"hook_strength": 5, "practitioner_value": 5, "clarity": 6, "coherence": 6, "follow_likelihood": 4, "share_likelihood": 4},
+      "preference": 1,
+      "rationale": "V1's thesis-first hook and concrete multi-layer defense guidance beat V2's analogy-heavy, low-density hype."
+    },
+    {
+      "pair": 4,
+      "v1": {"hook_strength": 5, "practitioner_value": 6, "clarity": 5, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 4},
+      "v2": {"hook_strength": 8, "practitioner_value": 9, "clarity": 8, "coherence": 8, "follow_likelihood": 8, "share_likelihood": 7},
+      "preference": 2,
+      "rationale": "V2 leads with the exact security/fidelity numbers and crisply explains the metric flaw; V1 is a long emoji ramble that reads slower."
+    },
+    {
+      "pair": 5,
+      "v1": {"hook_strength": 9, "practitioner_value": 9, "clarity": 8, "coherence": 8, "follow_likelihood": 8, "share_likelihood": 8},
+      "v2": {"hook_strength": 6, "practitioner_value": 5, "clarity": 6, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 4},
+      "preference": 1,
+      "rationale": "V1's striking 100%-plugin-attack hook, dense real numbers, and 'LLM is not your security boundary' land far harder than V2's analogy hype."
+    },
+    {
+      "pair": 6,
+      "v1": {"hook_strength": 6, "practitioner_value": 6, "clarity": 6, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 5},
+      "v2": {"hook_strength": 8, "practitioner_value": 9, "clarity": 8, "coherence": 8, "follow_likelihood": 8, "share_likelihood": 7},
+      "preference": 2,
+      "rationale": "V2 is dense and precise (28->89%, cost delta, hidden container-deploy defect) with a clean takeaway; V1 wraps the same finding in emoji hype."
+    },
+    {
+      "pair": 7,
+      "v1": {"hook_strength": 9, "practitioner_value": 9, "clarity": 8, "coherence": 9, "follow_likelihood": 8, "share_likelihood": 7},
+      "v2": {"hook_strength": 6, "practitioner_value": 6, "clarity": 7, "coherence": 7, "follow_likelihood": 5, "share_likelihood": 5},
+      "preference": 1,
+      "rationale": "V1's mechanistic hook and the 'recoverable failure mode most safety work ignores' insight give real depth; V2 softens it into accessible hype."
+    },
+    {
+      "pair": 8,
+      "v1": {"hook_strength": 6, "practitioner_value": 6, "clarity": 6, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 5},
+      "v2": {"hook_strength": 8, "practitioner_value": 9, "clarity": 8, "coherence": 8, "follow_likelihood": 8, "share_likelihood": 7},
+      "preference": 2,
+      "rationale": "V2 packs the invariant rule, precise AUCs, and the triage-by-channel insight into a scannable post; V1 carries the numbers but drowns them in emoji."
+    }
+  ]
+}

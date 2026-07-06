@@ -1,0 +1,624 @@
+{
+  "generated_at": "2026-05-15T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-05-13",
+    "2026-05-15"
+  ],
+  "candidates": [
+    {
+      "title": "The 99% Success Paradox: When Near-Perfect Retrieval Equals Random Selection",
+      "url": "https://arxiv.org/abs/2605.18857",
+      "authors": [
+        "Vyzantinos Repantis",
+        "Harshvardhan Singh",
+        "Tony Joseph",
+        "Cien Zhang",
+        "Akash Vishwakarma",
+        "Svetlana Karslioglu",
+        "Michael Wyatt Thot",
+        "Ameya Gawde"
+      ],
+      "snippet": "For most of the history of information retrieval (IR), search results were designed for human consumers who could scan, filter, and discard irrelevant information on their own. This shaped retrieval systems to optimize for finding and ranking more relevant documents, but not keeping results clean and minimal, as the human was the final filter. However, LLMs have changed that by lacking this filtering ability.\n  To address this, we introduce Bits-over-Random (BoR), a chance-corrected measure of retrieval selectivity that reveals when high success rates mask random-level performance. We measure selectivity as $BoR = \\log_{2}\\left(\\frac{\\mathrm{P}_{obs}}{\\mathrm{P}_{rand}}\\right)$, where $\\mathrm{P}_{rand}$ is the hypergeometric baseline for the chosen success rule (here, coverage: $ \\geq1 $ relevant in top-$K$).\n  On the 20 Newsgroups dataset, BM25 and SPLADE both report $>99$% success at $K=100$ (coverage), yet $BoR \\approx 0$, indicating random-level selectivity at that depth. When the expected coverage ratio $\\left(\\frac{K \\cdot \\bar{R}_{q}}{N}\\right)$ exceeds 3-5, the baseline dominates and selectivity collapses. Downstream retrieval-augmented generation (RAG) evaluation confirms this pattern: LLM accuracy can degrade substantially at $K=100$, consistent with the near-zero BoR ceiling. In contrast, BoR remains positive on BEIR/SciFact and on MS MARCO (where 41 systems cluster within 0.2 bits of the theoretical ceiling despite a 13-point recall gap), confirming baseline predictions across sparse and large-scale settings. We further show that the collapse boundary applies toLLMagenttool selection, where small catalog sizes cause selectivity to vanish even with perfect selectors. These findings suggest reporting BoR alongside traditional metrics and reconsidering depth choices when additional retrieval provides negligible selectivity gains while inflating computational costs.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "AgentTrap: Measuring Runtime Trust Failures in Third-Party Agent Skills",
+      "url": "https://arxiv.org/abs/2605.13940",
+      "authors": [
+        "Haomin Zhuang",
+        "Hanwen Xing",
+        "Yujun Zhou",
+        "Yuchen Ma",
+        "Yue Huang",
+        "Yili Shen",
+        "Yufei Han",
+        "Xiangliang Zhang"
+      ],
+      "snippet": "Third-party skills are becoming the package ecosystem for LLM agents. They package natural-language instructions, helper scripts, templates, documents, and service configuration into reusable workflows. This makes skills useful, but it also introduces a new security problem: a malicious skill does not need to ask the model to perform an obviously harmful action. Instead, it can disguise the harmful behavior as part of a routine workflow, relying on the agent to execute that workflow with high-value permissions and limited human supervision.\n  We introduce AgentTrap, a dynamic benchmark for evaluating whether LLM agents can use third-party skills while resisting malicious runtime behavior. AgentTrap contains 141 tasks: 91 malicious tasks and 50 benign utility tasks, covering 16 security-impact dimensions grounded in agent-skill supply-chain threats. In each task, the agent receives an ordinary user request, runs with installed skills that may contain malicious workflow elements, and is executed in a sandboxed environment. AgentTrap then judges complete trajectories for attack success, blocked or refused behavior, attack-not-triggered cases, and no-attack-evidence outcomes. Our central finding is that the most informative failures are not simplejailbreaks. Models often complete the visible user task while treating unsafe side effects introduced by the skill as part of the normal workflow. This motivates runtime evaluation of the concrete model--framework--workspace environment in which users actually delegate work. Code and data are available at https://github.com/zhmzm/AgentTrap and https://huggingface.co/datasets/zhmzm/AgentTrap.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "Sleeper Channels and Provenance Gates: PersistentPromptInjectionin Always-on Autonomous AI Agents",
+      "url": "https://arxiv.org/abs/2605.13471",
+      "authors": [
+        "Narek Maloyan",
+        "Dmitry Namiot"
+      ],
+      "snippet": "Always-on AI agents (OpenClaw, Hermes Agent) run as a single persistent process under the owner's identity, folding messaging, memory, self-authored skills, scheduling, and shell into one authority boundary. This configuration opens what we call \\emph{sleeper channels}: an untrusted input to one surface persists as a memory, skill, scheduled job, or filesystem patch, then fires later through a different surface with no attacker present. Two independent axes define the class: persistence substrate and firing-separation. We walk a confused-deputy cron attack end-to-end through OpenClaw at a pinned commit. The defense is tiered (D1, D2, D3), and D2 carries a soundness theorem against seven named deployment invariants. D2 keys on a canonical action-instance digest with one-shot owner attestations, defeating paraphrase laundering, multi-input grant reuse, and replay. A companion artifact ships the gate, a static audit over the vendored source, and a runtime adapter realising five of the ten mediation hooks (H1, H2, H3, H6, H9) around the cron path (42 tests, Node~$\\geq{}20$, at \\href{https://github.com/maloyan/sleeper-channels}{github.com/maloyan/sleeper-channels}). Empirical evaluation is preregistered as follow-on.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "TrustworthyMulti-AgentSystems: Mitigating Semantic Drift with the Argent Signaling Protocol",
+      "url": "https://arxiv.org/abs/2606.19356",
+      "authors": [
+        "Anantha Sharma"
+      ],
+      "snippet": "Whenmulti-agentLLM systems produce bad answers, not all failures are equal: some answers are grounded in the right material but incomplete, while others are simply ungrounded and should be stopped. Current retry strategies treat both cases identically (try again and hope for the best), leaving human supervisors unable to tell whether a retry was warranted or whether the system should have halted instead.\n  We introduce the Argent Signaling Protocol (ASP), a compact machine-readable header that accompanies every AI-generated response with structured quality signals: certainty (@C), grounding (@G), stochasticity (@S), and an assumption index that classifies the evidentiary basis of each claim. These signals enable a controller to distinguish repairable failures from containment failures and route each case differently.\n  We evaluate ASP in two modes. In standalone mode, a 27-question document-grounded QA benchmark over the Array BioPharma/Ono license agreement compares baseline prompts against ASP-instrumented controller actions across three local GGUF models. On Qwen~(0.8B), ASP improves pass rate from 11.1% to 33.3% and mean term coverage from 36.7% to 65.4%; on Dobby~(8B), ASP produces 4 fail-to-pass recoveries, raising pass rate from 33.3% to 44.4%; on SmolLM3~(3B), ASP alternates between repair and containment per question. Aggregate improvement is meaningful (12/81 to 21/81 passes). Inmulti-agentmode, an ASP sidecar sits between a retrievalagentand a downstream decisionagent; the sidecar blocks 100% of ungrounded upstream outputs from reaching the downstreamagent(24/27 blocked, 0 ungrounded propagations).△ Less",
+      "published": "Submitted14 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "WARD: Adversarially Robust Defense of Web Agents AgainstPromptInjections",
+      "url": "https://arxiv.org/abs/2605.15030",
+      "authors": [
+        "Tri Cao",
+        "Yulin Chen",
+        "Hieu Cao",
+        "Yibo Li",
+        "Khoi Le",
+        "Thong Nguyen",
+        "Yuexin Li",
+        "Yufei He",
+        "Yue Liu",
+        "Shuicheng Yan",
+        "Bryan Hooi"
+      ],
+      "snippet": "Web agents can autonomously complete online tasks by interacting with websites, but their exposure to open web environments makes them vulnerable topromptinjectionattacks embedded in HTML content or visual interfaces. Existing guard models still suffer from limited generalization to unseen domains and attack patterns, high false positive rates on benign content, reduced deployment efficiency due to added latency at each step, and vulnerability to adversarial attacks that evolve over time or directly target the guard itself. To address these limitations, we propose WARD (Web Agent Robust Defense againstPromptInjection), a practical guard model for secure and efficient web agents. WARD is built on WARD-Base, a large-scale dataset with around 177K samples collected from 719 high-traffic URLs and platforms, and WARD-PIG, a dedicated dataset designed forpromptinjectionattacks targeting the guard model. We further introduce A3T, an adaptive adversarial attack training framework that iteratively strengthens WARD through a memory-based attacker and guard co-evolution process. Extensive experiments show that WARD achieves nearly perfect recall on out-of-distribution benchmarks, maintains low false positive rates to preserve agent utility, remains robust against guard-targeted and adaptive attacks under substantial distribution shifts, and runs efficiently in parallel with the agent without introducing additional latency.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Web Agents Should Adopt the Plan-Then-Execute Paradigm",
+      "url": "https://arxiv.org/abs/2605.14290",
+      "authors": [
+        "Julien Piet",
+        "Annabella Chow",
+        "Yiwei Hou",
+        "Muxi Lyu",
+        "Sylvie Venuto",
+        "Jinhao Zhu",
+        "Raluca Ada Popa",
+        "David Wagner"
+      ],
+      "snippet": "ReAct has become the default architecture across LLM agents, and many existing web agents follow this paradigm. We argue that it is the wrong default for web agents. Instead, web agents should default to plan-then-execute: commit to a task-specific program before observing runtime web content, then execute it. The reason is that web content mixes inputs from many parties. An e-commerce product page may combine a seller's listing, customer reviews and sponsored advertisements. Under ReAct, all of this content flows into the model when deciding on the next action, creating a direct path forpromptinjectionsto steer the agent's control flow. Plan-then-execute changes this boundary: untrusted data may influence values or branches inside a predefined execution graph, but it cannot redefine the user task or cause the model to synthesize new actions at runtime. We analyze WebArena, a popular web agent benchmark, and find that all tasks are compatible with plan-then-execute, while 80% can be completed with a purely programmatic plan, without any runtime LLM subroutine. We identify the main barrier to adopting plan-then-execute on the web: For it to work well, tools must map cleanly to semantic actions, with effects known before execution, so agents have enough information to plan. The web does not naturally expose that interface. Browser tools such as click, type, and scroll have page-dependent meanings. Planning at this layer is near-sighted: the agent can only see actions on the current page, and later actions appear only after it acts. Closing this gap requires typed interfaces that turn website interactions from clicks and keystrokes to task-level operations. This is an infrastructure problem, not a modeling problem. Web tasks do not need reactivity by default; they need typed, complete, auditable website APIs.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "When Individually Calibrated Models Become Collectively Miscalibrated",
+      "url": "https://arxiv.org/abs/2605.18858",
+      "authors": [
+        "Zhaohui Wang"
+      ],
+      "snippet": "Probabilistic prediction systems often aggregate probability estimates from multiple models into a single decision. A common assumption is that if each model is individually calibrated, the aggregate prediction will also be well calibrated. We show that this assumption fails inmulti-agentsettings: individually calibrated predictors can become collectively miscalibrated when their predictions interact strategically, in the game-theoretic sense of Brier-optimal local response, even without deliberate coordination.\n  This phenomenon arises naturally whenagentsare independently trained on overlapping data. We prove that under Brier-score-based aggregation with positively correlated beliefs, eachagent'sindividually optimal report systematically underestimates the positive-class probability, yielding a Price of Anarchy greater than one whenever Cov(b_i, b_j) > 0.\n  In a canonical setting (n = 5agents, pairwise correlation = 0.5, base rate = 0.3), the empirically measured PoA in false-negative rate reaches 7.25x. In contrast, VCG-based aggregation aligns incentives by rewarding marginal contribution, achieving dominant-strategy incentive compatibility and near-optimal performance.\n  Experiments on three real-world datasets (NSL-KDD, UNSW-NB15, Credit Card Fraud) show that VCG provides strong robustness while maintaining comparable accuracy. It performs particularly well in data-sparse and adversarial settings, and adaptive weighting further improves performance under distribution shift.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Evaluating Memory Condensation Strategies for CodingAgentsin Data-Driven Scientific Discovery",
+      "url": "https://arxiv.org/abs/2605.18854",
+      "authors": [
+        "Renuka Chintalapati",
+        "Sid Raskar",
+        "Anurag Acharya",
+        "Jared Willard",
+        "Patrick Emami",
+        "Sameera Horawalavithana"
+      ],
+      "snippet": "Codingagentsaccumulate extensive context during long-running tasks, yet fixed context windows force practitioners to choose between truncation and task failure. While numerous memory condensation strategies have been proposed, from simple sliding windows to LLM-generated summaries, no systematic comparison exists to guide strategy selection, especially in scientific discovery tasks. We evaluate eight memory condensation strategies using GPT-4o on sixty DiscoveryBench tasks spanning six scientific domains (480 total evaluations). We find that no condenser significantly alters hypothesis quality, while LLM-based condensers increase token costs by 24-94 percent, and masking tool-call outputs achieves an 8.6 percent net savings. We also observe that the optimal condenser for data-driven scientific discovery varies by scientific domain and task length.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "From I/O to Code with Discovery Agent",
+      "url": "https://arxiv.org/abs/2605.15334",
+      "authors": [
+        "Yihong Dong",
+        "Jiaru Qian",
+        "Haoran Zhang",
+        "Peixu Wang",
+        "Binhua Li",
+        "Zhi Jin",
+        "Yongbin Li",
+        "Ge Li",
+        "Xiaokang Yang",
+        "Xue Jiang"
+      ],
+      "snippet": "The automatic synthesis of a program from any form of specification is regarded as a holy grail of computer science. Fueled by LLMs, NL2Code has achieved tremendous success, yet the fundamentally more challenging task of synthesizing programs from input-output behavior, which we refer to as IO2Code, remains largely unsolved. Whereas NL2Code can exploit the semantic alignment between natural language and code acquired during pretraining, IO2Code requires recovering underlying principles from concrete computational behavior, navigating a vast and underspecified hypothesis space. To address this, we propose DIO-Agent, a discovery agent for IO2Code. Our method frames IO2Code as an evolutionary search over discrete program space, in which anLLMservesas the mutation operator and concrete error signals from execution guide each mutation. To prevent the search from wandering into structurally complex yet incorrect dead ends, we introduce the Transformation Priority Premise as a mutation prior that biases the LLM toward the simplest hypothesis consistent with current evidence, progressively escalating from constants to conditionals to iteration only when simpler constructs are insufficient. To facilitate systematic study, we further construct an IO2CodeBench spanning multiple difficulty levels. Extensive experiments show that DIO-Agent consistently outperforms both traditional program-by-example method and SOTA evolution-agent baselines across all difficulty levels and various LLMs, while substantially surpassing test-time scaling strategies with equivalent sampling budgets.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Is Grep All You Need? How Agent Harnesses Reshape Agentic Search",
+      "url": "https://arxiv.org/abs/2605.15184",
+      "authors": [
+        "Sahil Sen",
+        "Akhil Kasturi",
+        "Elias Lumer",
+        "Anmol Gulati",
+        "Vamse Kumar Subbiah"
+      ],
+      "snippet": "Recent advances in Large Language Model (LLM) agents have enabled complex agentic workflows where models autonomously retrieve information, call tools, and reason over large corpora to complete tasks on behalf of users. Despite the growing adoption ofretrieval-augmentedgeneration (RAG) in agentic search systems, existing literature lacks a systematic comparison of how retrieval strategy choice interacts with agent architecture and tool-calling paradigm. Important practical dimensions, including how tool outputs are presented to the model and how performance changes when searches must cope with more irrelevant surrounding text, remain under-explored in agent loops. This paper reports an empirical study organized into two experiments. Experiment 1 compares grep and vector retrieval on a 116-question sample from LongMemEval, using a custom agent harness (Chronos) and provider-native CLI harnesses (Claude Code, Codex, and Gemini CLI), for both inline tool results and file-based tool results that the model reads separately. Experiment 2 compares grep-only and vector-only retrieval while progressively mixing in additional unrelated conversation history, so that each query is embedded in more distracting material alongside the passages that matter. Across Chronos and the provider CLIs, grep generally yields higher accuracy than vector retrieval in our comparisons in experiment 1; at the same time, overall scores still depend strongly on which harness and tool-calling style is used, even when the underlying conversation data are the same.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Why Neighborhoods Matter: Traversal Context and Provenance in Agentic GraphRAG",
+      "url": "https://arxiv.org/abs/2605.15109",
+      "authors": [
+        "Riccardo Terrenzi",
+        "Maximilian von Zastrow",
+        "Serkan Ayvaz"
+      ],
+      "snippet": "Retrieval-AugmentedGeneration can improve factuality by grounding answers in external evidence, but Agentic GraphRAG complicates what it means for citations to be faithful. In these systems, an agent explores a knowledge graph before producing an answer and a small set of citations. We frame citation faithfulness as a trajectory-level problem: final citations should not only support the answer, but also account for the graph traversal, structure, and visited-but-uncited entities that may influence it. Through controlled ablation experiments, we compare the effects of isolating, removing, and masking cited and uncited graph entities. Our results show that cited evidence is often necessary, as removing it substantially changes answers and reduces accuracy. However, citations are not sufficient, because accurate answers can also depend on uncited traversal context and surrounding graph structure. These findings suggest that citation evaluation in Agentic GraphRAG should move beyond source support toward provenance over the broader retrieval trajectory.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "ExploitBench: A Capability Ladder Benchmark for LLM Cybersecurity Agents",
+      "url": "https://arxiv.org/abs/2605.14153",
+      "authors": [
+        "Seunghyun Lee",
+        "David Brumley"
+      ],
+      "snippet": "Exploitation is not a binary event. It is a ladder of acquiring progressive capabilities, from executing a single buggy line of code to taking full control of the target. However, existingLLMsecuritybenchmarks treat a crash as exploitation success. That single binary outcome collapses the hard parts of exploitation: the transition from triggering a bug to constructing reusable primitives and control.\n  We present ExploitBench, a capability-graded benchmark that decomposes exploitation into 16 measurable flags, from coverage and crash through sandbox primitives, arbitrary read/write, control-flow hijack, and arbitrary code execution. Each capability is verified by a deterministic oracle that uses a per-run randomized challenge-response for primitives, differential execution against ground-truth binaries to measure progress, and a signal-handler proof for code execution.\n  We instantiate ExploitBench on 41 V8 bugs because V8 is both widely deployed and exploitation-hardened. We report three arms: <model,env> as the primary measurement of model-environment capability, <model,env, adaptive coaching> as a secondary arm that adds adaptive coaching to test whether targeted feedback shifts outcomes, and <model,env,harness> as an ablation that swaps in the model's native CLI to check whether vendor-side optimizations increase exploitation capabilities.\n  Our results show a sharp capability split between publicly deployed frontier models and the private frontier. Across the 8 publicly deployed models tested, reaching the vulnerable code and triggering a crash is routine, but arbitrary code execution is not. The private model shows arbitrary code execution on approximately half. Overall, results suggest that exploit construction against hardened targets is an emerging frontier capability.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Turning Intent into Specifications: A Benchmark and an Interactive User-AssistantAgent",
+      "url": "https://arxiv.org/abs/2606.20585",
+      "authors": [
+        "Hao Wang",
+        "Ligong Han",
+        "Kai Xu",
+        "Akash Srivastava"
+      ],
+      "snippet": "Today'sagentsare highly effective at implementing well-scoped software design plans, but user intent is often vague and admits multiple equally valid solutions. In this paper, we introduce SpecBench, a new benchmark for evaluating anagent'sability to translate user intent into a structured, executable specification that aligns with user preferences. Theagentis given access to past user conversations and may interact with the user for a fixed number of rounds to ask clarifying questions. We find that existingagentsexhibit two extreme behaviors: they either (i) struggle to collaborate proactively with users, entering implementation mode too quickly while overestimating their understanding of user preferences, or (ii) exhaust their question budget by asking about every ambiguous design choice. To address this limitation, we introduce a user-assistantagent: Buddy. It follows a workflow inspired by classical morphological analysis, decomposing user intent into a structured space of design dimensions and candidate choices. It then creates simulated users to evaluate these choices, before engaging the real user to resolve remaining ambiguities and finalize the specification. By shifting the focus from execution to specification, SpecBench and Buddy emphasizeagent-user collaboration (not just code generation) as a key frontier in futureagentdesign.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Reducing the Safety Tax in LLM Safety Alignment with On-Policy Self-Distillation",
+      "url": "https://arxiv.org/abs/2605.15239",
+      "authors": [
+        "Yu Fu",
+        "Longxuan Yu",
+        "Haz Sameen Shahgir",
+        "Zhipeng Wei",
+        "Hui Liu",
+        "N. Benjamin Erichson",
+        "Yue Dong"
+      ],
+      "snippet": "Safety alignment often improves robustness to harmful queries at the cost of reasoning ability, a tradeoff known as the safety tax. A common cause is distributional mismatch: supervised fine-tuning trains the target model on safety demonstrations produced by humans, external models, or fixed self-generated traces, rather than on trajectories sampled from its own policy. We identify off-policy training mismatch as a second source of this tax and study on-policy self-distillation for safety alignment, which we call OPSA. The model generates its own rollouts and receives dense per-token KL supervision from a frozen teacher copy of itself conditioned on a privileged safety context. Because this teacher must be safer than the sampled student trajectory, we introduce \\emph{teacher flip rate}: a criterion that measures how often a privileged context converts unsafe responses into safe ones. We use this signal to search for contexts that activate latent safety reasoning rather than merely elicit safe-looking demonstrations. Across two reasoning-model families and five model scales, OPSA achieves a stronger safety--reasoning tradeoff than off-policy self-distillation and external-teacher distillation under matched data and full-parameter fine-tuning, with the largest gains on smaller models (+8.85 points on R1-Distill-1.5B and +5.49 points on Qwen3-0.6B). The gains persist across training-set sizes and adaptivejailbreakevaluations. Token-level analyses further show that OPSA concentrates updates near early compliance-decision tokens, providing a mechanism for improving safety while preserving general reasoning.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "EVA: Editing for Versatile Alignment againstJailbreaks",
+      "url": "https://arxiv.org/abs/2605.14750",
+      "authors": [
+        "Yi Wang",
+        "Hongye Qiu",
+        "Yue Xu",
+        "Sibei Yang",
+        "Zhan Qin",
+        "Minlie Huang",
+        "Wenjie Wang"
+      ],
+      "snippet": "Large Language Models (LLMs) and Vision Language Models (VLMs) have demonstrated impressive capabilities but remain vulnerable tojailbreakingattacks, where adversaries exploit textual or visual triggers to bypass safety guardrails. Recent defenses typically rely on safety fine-tuning or external filters to reduce the model's likelihood of producing harmful content. While effective to some extent, these methods often incur significant computational overheads and suffer from the safety utility trade-off, degrading the model's performance on benign tasks. To address these challenges, we propose EVA (Editing for Versatile Alignment againstJailbreaks), a novel framework that pioneers the application of direct model editing for safety alignment. EVA reframes safety alignment as a precise knowledge correction task. Instead of retraining massive parameters, EVA identifies and surgically edits specific neurons responsible for the model's susceptibility to harmful instructions, while leaving the vast majority of the model unchanged. By localizing the updates, EVA effectively neutralizes harmful behaviors without compromising the model's general reasoning capabilities. Extensive experiments demonstrate that EVA outperforms baselines in mitigatingjailbreaksacross both LLMs and VLMs, offering a precise and efficient solution for post-deployment safety alignment.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "The Great Pretender: A Stochasticity Problem in LLMJailbreak",
+      "url": "https://arxiv.org/abs/2605.14418",
+      "authors": [
+        "Jean-Philippe Monteuuis",
+        "Cong Chen",
+        "Jonathan Petit"
+      ],
+      "snippet": "\"Oh-Oh, yes, I'm the great pretender. Pretending that I'm doing well. My need is such, I pretend too much...\" summarizes the state in the area ofjailbreakcreation and evaluation. You find this method to generate adversarial attacks proposed by a reputable institution (e.g., BoN from Anthropic or Crescendo from Microsoft Research). However, this method does not deliver on the promise claimed in the paper despite having top ASR scores against industry-grade LLMs. You successfully generate thejailbreakprompts against your target (open) model. However, the generatedjailbreakprompt works against the target model with a 50% consecutive success rate (5 out of 10 attempts) despite having an 80% ASR (on paper) on the latest closed-source model (with a guardrail system)! This observation leads us to think. First, Attack Success Rate (ASR), the primary metric for LLMjailbreakbenchmarking, is not a stable quantity. Second, published ASR numbers are therefore systematically inflated and incomparable across papers. Therefore, we wonder \"Why a successfuljailbreakprompt does not perform consistently well against a target model on which the prompts have been optimized?\". To answer this question, we study the impact of stochasticity not only during attack evaluation but also during attack generation. Our evaluation includes severaljailbreakattacks, models (different sizes and providers), and judges. In addition, we propose a new metric and two new frameworks (CAS-eval and CAS-gen). Our evaluation framework, CAS-eval, shows that an attack can have an ASR drop of up to 30 percentage points when ajailbreakprompt needs to succeed on more than one attempt. Thankfully, our attack generation framework (CAS-gen) improves previousjailbreakmethods and helps them recover this loss of 30 percentage points!△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Proof-Carrying Certificates for LLM Pipelines: A Trust-Boundary Architecture",
+      "url": "https://arxiv.org/abs/2605.16407",
+      "authors": [
+        "George Koomullil"
+      ],
+      "snippet": "We present a framework for verifying the deterministic structured computations surrounding a large language model rather than the model itself, extending a Lean 4 trust-boundary architecture to the generic interfaces of modern LLM pipelines. Certificate validity is a Lean 4 kernel type-check plus a sorry-free transitive axiom audit against the trusted set {propext, Classical.choice, Quot.sound}; other assumptions are declared and partitioned by tier (mathematical placeholders, cryptographic assumptions, ML/human oracles).\n  The technical contribution comprises three local certificate families and two operators. The families are conflict-aware bilattice grounding (with an emission-gate soundness lemma), embedding sensitivity and paraphrase stability, and Hoare-style agent action. The operators are a Maximal Certifiable Residue, which turns abstention into the maximum-weight certifiable residue with audit-logged dropped claims, and a Compositional Stability theorem, which yields a closed-form pipeline-wide perturbation budget from per-layer gains and margins. The three families plus a Universal Assurance Card consolidator form the per-call deliverable for high-stakes deployments: patent and legal retrieval, regulated finance, clinical decision support, and agentic systems with irreversible side effects.\n  A compiled Lean 4 reference artifact (Lean v4.30.0-rc2, Mathlib) covers all 22 certificate types, with 17 of 46 kernel-audited declarations axiom-free, the rest depending only on the trusted set and declared assumptions, and zero uses of sorryAx or Lean.ofReduceBool. The three families are empirically tested through four registered pilots: bilattice grounding on adversarially perturbed HotpotQA, embedding sensitivity in short- and long-form settings, and Hoare-style agent action on a filesystem sandbox with adversarialpromptinjection.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 7.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.5
+    },
+    {
+      "title": "Robust Checkpoint Selection for Multimodal LLMs viaAgenticEvaluation and Stability-Aware Ranking",
+      "url": "https://arxiv.org/abs/2605.18852",
+      "authors": [
+        "Qinwu Xu",
+        "Zhuoheng Li",
+        "Jessie Salas"
+      ],
+      "snippet": "Checkpoint selection for multimodal large language models (MLLMs) presents significant challenges when performance differentials are marginal and evaluation signals are prone to noise. Existing methodologies rely heavily on static benchmarks or pointwise scoring, which frequently misalign with in-the-wild usage and lack robust uncertainty estimation, particularly in OCR-heavy scenarios. In this work, we formulate checkpoint selection as a robust decision problem under evaluation uncertainty. We propose a multi-stage framework that integrates curated real-world data, structured LLM-based judgment, and multi-stage ranking protocols. The evaluation system orchestrates progressive refinement via pointwise filtering, listwise ranking, and pairwise comparison. To enhance reliability, we introduce subsampling-based confidence estimation and a percentile-based scoring formulation that captures distributional characteristics while penalizing tail failures. Furthermore, we demonstrate that data quality, specifically OCR readability, is a critical determinant of evaluation validity.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "CompositionalJailbreaking: An Empirical Analysis of Mutator Chain Interactions in Aligned LLMs",
+      "url": "https://arxiv.org/abs/2605.15598",
+      "authors": [
+        "Reinelle Jan Bugnot",
+        "Soohyeon Choi",
+        "Hoon Wei Lim",
+        "Yue Duan"
+      ],
+      "snippet": "Jailbreakingattacks on large language models pose a significant threat to AI safety by enabling the generation of harmful or restricted content. While prior work has explored both handcrafted and automatedjailbreakstrategies, the potential for compositional interaction between simple attacks remains underexplored. This paper presents a systematic study of mutator chaining, in which weakjailbreaktransformations are applied sequentially to characterize how they interact: whether they reinforce one another, interfere destructively, or produce no meaningful change. We implement twelve baseline mutators and evaluate all ordered pairs on a benchmark of harmful prompts against three popular LLM models. Our framework introduces metrics for completeness and validity that capture both transformation persistence and attack effectiveness. Results reveal that the interaction landscape is highly non-uniform, while most combinations fail to outperform individual mutators, exhibiting destructive interference or structural incompatibility, a small fraction produce synergistic effects that improve attack success rates. Equally important, the prevalent failure modes reveal structural properties of safety alignment that are not apparent from single-strategy evaluations. These findings highlight the nuanced dynamics of adversarial prompt composition and offer new insights for building more robust safety defenses.△ Less",
+      "published": "Submitted15 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "uGen: An Agentic Framework for Generating Microarchitectural Attack PoCs",
+      "url": "https://arxiv.org/abs/2605.15503",
+      "authors": [
+        "Debopriya Roy Dipta",
+        "Thore Tiemann",
+        "Eduard Marin",
+        "Thomas Eisenbarth",
+        "Berk Gulmezoglu"
+      ],
+      "snippet": "Microarchitectural attacks continue to evolve, uncovering new exploitation vectors in modern processors. From a defensive perspective, assessing a system's susceptibility to such attacks remains challenging. Developing functional attack implementations is labor-intensive, requires deep microarchitectural expertise, and is highly sensitive to execution environments. Consequently, existing attacks often lack portability, limiting systematic and scalable vulnerability assessment. Recent advances in large language models (LLMs) suggest a potential avenue for lowering these barriers. However, it remains unclear whether LLMs can reliably generate functionally correct microarchitectural attack code suitable for rigorous vulnerability testing.\n  In this work, we present uGen, the first LLM-driven framework for automated microarchitectural attack code generation. A key challenge we address is identifying attack-specific knowledge gaps in LLMs. Through a systematic study of state-of-the-art models (GPT, Claude, and Qwen3), we find that LLMs frequently misgenerate or misplace critical attack primitives. Guided by this analysis, uGen employs aretrieval-augmented, multi-agent design that injects missing domain knowledge to synthesize functionally correct microarchitectural attack PoCs tailored to defender requirements. We evaluate uGen on cache-based and speculative-execution attacks across diverse set of microarchitectures, vulnerable functions, and LLM platforms. In the deployment stage, uGen achieves up to 100% success rate for Spectre-v1 (Claude Sonnet-4) and 80% for Prime+Probe (Qwen3-Coder). Finally, we demonstrate that uGen can generate a successful PoC code with a cost of $1.25 in under four minutes.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "Why We Need World Models for AGI: Where LLMs Fail and How World Models May Outperform",
+      "url": "https://arxiv.org/abs/2605.23972",
+      "authors": [
+        "Feisal Alaswad",
+        "Batoul Aljaddouh",
+        "Maher Alrahhal",
+        "Poovammal E",
+        "Talal Bonny"
+      ],
+      "snippet": "Large language models achieve strong performance in language generation and knowledge-intensive tasks, yet remain limited in settings requiring causal reasoning, persistent state tracking, and long-horizon planning. We argue that these limitations may arise from an objective-level mismatch between sequence prediction and reasoning over latent environment dynamics. To formalize this distinction, we introduce Latent Dynamics Inference (LDI), a conceptual perspective that interprets language and multimodal observations as partial evidence of underlying transition dynamics. To empirically investigate this perspective, we introduce Flux, a sequential reasoning environment specified entirely through natural-language rules. As a proof-of-concept case study, the rules are first compiled into an explicit state-transition simulator, illustrating that structured latent transition dynamics can, in some cases, be operationally extracted from textual rule descriptions. This enables a controlled comparison between the LLMs operating purely over textual observations and reinforcement-learningagentstrained directly within the extracted latent state space. Within this case study,agentsoperating with explicit access to the latent state space exhibit substantially more stable behavior in long-horizon gameplay, achieving an aggregate win rate of approximately 79% versus 11% for LLMs. Qualitative analysis further reveals failure modes consistent with unstable persistent state tracking, including invalid actions, state-tracking errors, and short-horizon reasoning failures. The complete implementation of the Flux environment available at https://github.com/FeisalAlaswad/FLUX-RL-AgentWithin the evaluated setting, these results suggest that strong sequence prediction alone may struggle to support robust long-horizon dynamic reasoning without mechanisms for persistent state tracking and transition modeling△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "Jobs' AI Exposure Should Be Measured from Evidence, Not Model Priors",
+      "url": "https://arxiv.org/abs/2605.15474",
+      "authors": [
+        "Luca Mouchel",
+        "Pierre Bouquet",
+        "Yossi Sheffi"
+      ],
+      "snippet": "This position paper argues that job exposure to AI should be measured with grounded, evidence-based methods, not inferred from LLM priors alone. Current theoretical exposure measures use zero-shot prompting to classify task-level AI exposure, generating labels with no explicit evidence, no transparent chain of reasoning, and no external validation. The stakes of these measurements are too high to rely on such methods, as they influence policy making, where public and private funds are directed, and how workers understand their future prospects. We therefore argue that AI capability claims should meet three standards: reproducibility, external grounding, and inspectability. We propose aretrieval-augmentedframework that assigns AI exposure labels to all 18,796 occupation--task pairs in O*NET 30.2, using open-weight reasoning and instruct models with retrieved news articles and academic paper abstracts as evidence of current AI capabilities. Relative to a zero-shot baseline, the grounded condition is preferred in over 72\\% of disagreement cases under both automatic and human evaluation, and yields scores that align more closely with observed real-world AI usage. Taken together, these findings suggest that evidence-grounded measurement better captures what current AI systems can plausibly do in practice, rather than what a model asserts without external evidence. Because AI capabilities continue to change, the measurements used to inform policy must evolve with them: theoretical AI exposure scores should be periodically reassessed, not inherited as immutable ground truth.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 4.75
+    },
+    {
+      "title": "Text Knows What, Tables Know When: Clinical Timeline Reconstruction viaRetrieval-AugmentedMultimodal Alignment",
+      "url": "https://arxiv.org/abs/2605.15168",
+      "authors": [
+        "Sayantan Kumar",
+        "Shahriar Noroozizadeh",
+        "Juyong Kim",
+        "Jeremy C. Weiss"
+      ],
+      "snippet": "Reconstructing precise clinical timelines is essential for modeling patient trajectories and forecasting risk in complex, heterogeneous conditions like sepsis. While unstructured clinical narratives offer semantically rich and contextually complete descriptions of a patient's course, they often lack temporal precision and contain ambiguous event timing. Conversely, structured electronic health record (EHR) data provides precise temporal anchors but misses a substantial portion of clinically meaningful events. We introduce aretrieval-augmentedmultimodal alignment framework that bridges this gap to improve the temporal precision of absolute clinical timelines extracted from text. Our approach formulates timeline reconstruction as a graph-based multistep process: it first extracts central anchor events from narratives to build an initial temporal scaffold, places non-central events relative to this backbone, and then calibrates the timeline using retrieved structured EHR rows as external temporal evidence. Evaluated using instruction-tuned large language models on the i2m4 benchmark spanning MIMIC-III and MIMIC-IV, our multimodal pipeline consistently improves absolute timestamp accuracy (AULTC) and improves temporal concordance across nearly all evaluated models over unimodal text-only reconstruction, without compromising event match rates. Furthermore, our empirical gap analysis reveals that 34.8% of text-derived events are entirely absent from tabular records, demonstrating that aligning these modalities can produce a more temporally faithful and clinically informative reconstruction of patient trajectories than either source alone.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.75
+    },
+    {
+      "title": "Retrieval-AugmentedLarge Language Models for Schema-Constrained Clinical Information Extraction",
+      "url": "https://arxiv.org/abs/2605.15467",
+      "authors": [
+        "A H M Rezaul Karim",
+        "Ozlem Uzuner"
+      ],
+      "snippet": "Conversational nurse-patient transcripts contain actionable observations, but converting these transcripts into structured representations at scale remains challenging. Documentation burden is substantial, with prior studies showing clinicians spend large portions of their workday on documentation and related desk work rather than direct patient care. MEDIQA-SYNUR focuses on observation extraction from conversational nurse-patient transcripts, requiring systems to normalize these narratives into a predefined schema with value-type constraints. We propose a modularretrieval-augmentedgeneration (RAG) pipeline that uses the training set as an exemplar corpus, combines schema-constrained prompting (full schema vs. pruned candidate schema), deterministic schema-based postprocessing, and a second-pass audit, with two LLM backbones: Llama-4-Scout-17B-16E-Instruct and GPT-5.2 with corresponding embedding models for RAG. Our best configuration uses GPT-5.2 with full schema, RAG, and a second-pass auditing, achieving 80.36% F1 score. Overall, our results show that RAG consistently improves performance, while the optimal degree of schema constraint depends on the model, and second-pass auditing yields modest additional gains by correcting residual schema-adherence errors.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 3.0,
+        "hook_potential": 4.0
+      },
+      "composite": 4.25
+    },
+    {
+      "title": "KadiAssistant: A conversational AIAgentfor information retrieval in Kadi4Mat",
+      "url": "https://arxiv.org/abs/2605.18850",
+      "authors": [
+        "Adrian Cierpka",
+        "Mohammad Shafiqul Islam",
+        "Johannes Steinhülb",
+        "Eric Dietriche Sesso Domtchoueng",
+        "Michael Selzer",
+        "Arnd Koeppe"
+      ],
+      "snippet": "We introduce KadiAssistant, a privacy-by-design AI assistant integrated into the Kadi research data ecosystem, enabling researchers to efficiently access, aggregate, and synthesize information from heterogeneous, privacy-sensitive research data. Interdisciplinary fields such as materials science bring together disciplines with their own terminology and standards. While this convergence fuels innovation, it also makes it increasingly difficult to connect and access knowledge, as data are distributed across disciplines, organizations, and individuals. For example, battery research combines electrochemical measurements, materials characterization data, physics-based simulations, and manufacturing parameters, each using different formats, vocabularies, and standards. Efficiently storing and sharing such heterogeneous data via research data platforms, such as Kadi4Mat, demands domain knowledge, technical expertise, and familiarity with metadata schemas and interfaces. Research data also vary in sensitivity: newly generated 'warm' data are often private, whereas published 'cold' data are usually openly accessible. The Kadi ecosystem offers fine-grained access control needed for sensitive data. A solution for efficient information retrieval in Kadi must therefore respect the fine-grained access permissions. To address these intertwined challenges of information retrieval, strong data privacy, and complex access control, KadiAssistant combines a self-hosted large language model (LLM) with a privacy-preserving semantic search, inspired by retrieval-augmented generation, that can access files and record metadata on Kadi. This allows the assistant to screen, aggregate, and structure information into a highly informative answer. KadiAssistant therefore bridges terminology and standards, lowers access barriers for researchers, and strengthens the Findable pillar of FAIR data principles.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 3.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.75
+    },
+    {
+      "title": "Why Latent Actions Fail, and How to Prevent It",
+      "url": "https://arxiv.org/abs/2605.20223",
+      "authors": [
+        "Jung Min Lee",
+        "Taehyun Cho",
+        "Li Zhao",
+        "Jungwoo Lee"
+      ],
+      "snippet": "Latent action models (LAMs) aim to learn action-like representations from unlabeled videos by compressing frame-to-frame changes. The frames of in-the-wild videos, however, contain not only theagent'sown state but exogenous state such as background clutter. Since the exogenous state introduces changes unrelated to actions, it hinders reliable latent action learning. This paper investigates this problem analytically by extending a linear LAM framework to explicitly model exogenous state. Our analysis reveals two insights: (1) minimizing the standard reconstruction objective produces latent actions that encode exogenous information from future observation; and (2) learning in a representation space that focuses on endogenous components is a key to mitigating the interference of noise. We further show that previously proposed auxiliary objectives, such as action-supervision, provably encourage latent actions to be consistent across exogenous states. These findings are validated through experiments on both linear and nonlinear LAMs, providing a unified theoretical analysis of how exogenous state hinders latent action learning and why common remedies work.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 4.0,
+        "hook_potential": 3.0
+      },
+      "composite": 3.25
+    },
+    {
+      "title": "Eskwai for Students: Generative AI Assistant for Legal Education in Ghana",
+      "url": "https://arxiv.org/abs/2605.15380",
+      "authors": [
+        "George Boateng",
+        "Philemon Badu",
+        "Patrick Agyeman-Budu",
+        "Samuel Ansah",
+        "Evans Atompoya",
+        "Evan Igwilo",
+        "Lord Baah",
+        "Frederick Abu-Bonsrah",
+        "Victor Wumbor-Apin Kumbol"
+      ],
+      "snippet": "Recent advances in generative AI have shown their potential to be leveraged for legal education. Yet, work on the development and deployment of such systems for legal education in the Global South is limited. In this work, we developed Eskwai for Students, a generative AI assistant to help law students with their legal education. Eskwai for Students is aretrievalaugmentedgeneration (RAG) system that provides answers to a wide range of legal questions for law students grounded in a curated database of over 12K case laws and 1.4K legislation in Ghana. We deployed Eskwai for Students in a longitudinal study of 30 months (2.5 years) used by 3.1K law students in Ghana who made 32K queries. We evaluated the helpfulness of our AI, and provided insight into the kinds of queries law students submit to this generative AI tool, which raises some ethical concerns. This work contributes to an understanding of how law students in the Global South are using generative AI for their studies and the ways it could be leveraged responsibly to advance legal education.△ Less",
+      "published": "Submitted14 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 2.0,
+        "hook_potential": 3.0
+      },
+      "composite": 2.75
+    },
+    {
+      "title": "HPC-vQPU: A Service-Export Architecture for Virtual QPUs on Batch-Scheduled HPC Systems",
+      "url": "https://arxiv.org/abs/2605.28845",
+      "authors": [
+        "Shusen Liu",
+        "Pascal Jahan Elahi",
+        "Ugo Varetto"
+      ],
+      "snippet": "Device-aware quantum simulation increasingly requires HPC-scale accelerators, yet secure supercomputers expose batch-scheduled execution environments rather than the interactive, backend-oriented interfaces expected by quantum software. The key obstacle is not only remote job submission: an HPC-hosted virtual QPU must preserve topology, native-gate, and calibration semantics across queue delay, scheduler allocation, compute-node isolation, and partial execution-side failures, without opening inbound paths into the cluster.\n  We present HPC-vQPU, a service-export architecture for virtual QPUs on batch-scheduled HPC systems. HPC-vQPU separates a cloud-facing control plane, which owns device identity, task lifecycle, snapshot binding, and event projection, from an HPC-resident execution plane, which claims work and realises it through scheduler-backed GPU jobs. Coordination is exclusively outbound andagentinitiated. The central abstraction is a topology- and calibration-aware device snapshot bound atomically at claim time and carried into execution as an immutable contract, making each scheduled job hermetic while preserving fresh device semantics.\n  We implement HPC-vQPU at the Pawsey Supercomputing Research Centre using Setonix GPUs, Qiskit-Aer/cuQuantum, and IBM Fez calibration data. Production experiments show that service overhead is bounded and additive, while workload scaling remains confined to the simulator; calibration-bearing snapshots produce measurable output shifts; claim-time binding prevents stale execution after pre-claim device mutation; concurrentagentscomplete 50/50 tasks exactly once; and explicit recovery restores stale running tasks afteragentfailure. These results show that secure, scheduler-mediated HPC infrastructure can export device-faithful quantum simulation as an interactive virtual-QPU service.△ Less",
+      "published": "Submitted13 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 4.0,
+        "hook_potential": 2.0
+      },
+      "composite": 2.5
+    }
+  ]
+}

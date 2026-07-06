@@ -1,0 +1,635 @@
+{
+  "generated_at": "2026-04-21T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-04-19",
+    "2026-04-21"
+  ],
+  "candidates": [
+    {
+      "title": "WorldDB: A Vector Graph-of-Worlds Memory Engine with Ontology-Aware Write-Time Reconciliation",
+      "url": "https://arxiv.org/abs/2604.18478",
+      "authors": [
+        "Harish Santhanalakshmi Ganesan"
+      ],
+      "snippet": "Persistent memory is the bottleneck separating stateless chatbots from long-running agentic systems.Retrieval-augmentedgeneration (RAG) over flat vector stores fragments facts into chunks, loses cross-session identity, and has no first-class notion of supersession or contradiction. Recent bitemporal knowledge-graph systems (Graphiti, Memento, Hydra DB) add typed edges and valid-time metadata, but the graph itself remains flat: no recursive composition, no content-addressed invariants on nodes, and edge types carry no behavior beyond a label. We present WorldDB, a memory engine built on three commitments: (i) every node is a world -- a container with its own interior subgraph, ontology scope, and composed embedding, recursive to arbitrary depth; (ii) nodes are content-addressed and immutable, so any edit produces a new hash at the node and every ancestor, giving a Merkle-style audit trail for free; (iii) edges are write-time programs -- each edge type ships on_insert/on_delete/on_query_rewrite handlers (supersession closes validity, contradicts preserves both sides, same_as stages a merge proposal), so no raw append path exists. On LongMemEval-s (500 questions, ~115k-token conversational stacks), WorldDB with Claude Opus 4.7 as answerer achieves 96.40% overall / 97.11% task-averaged accuracy, a +5.61pp improvement over the previously reported Hydra DB state-of-the-art (90.79%) and +11.20pp over Supermemory (85.20%), with perfect single-session-assistant recall and robust performance on temporal reasoning (96.24%), knowledge update (98.72%), and preference synthesis (96.67%). Ablations show that the engine's graph layer -- resolver-unified entities and typed refers_to edges -- contributes +7.0pp task-averaged independently of the underlying answerer.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 8.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "SDOF: Taming the Alignment Tax inMulti-AgentOrchestration with State-Constrained Dispatch",
+      "url": "https://arxiv.org/abs/2605.15204",
+      "authors": [
+        "Zhantao Wang"
+      ],
+      "snippet": "Multi-agentorchestration frameworks such as LangChain, LangGraph, and CrewAI route tasks through graph-based pipelines but do not enforce the stage constraints that govern real business processes. We present SDOF, a framework that treatsmulti-agentexecution as a constrained state machine. SDOF operates through two primary defensive layers, implemented by three components: (1) an Online-RLHF Specialized Intent Router trained via Generative Reward Modeling (GRPO) and (2) a StateAwareDispatcher with GoalStage finite-automaton checks and precondition/postcondition SkillRegistry validation for auditable execution control. On a recruitment system backed by the Beisen iTalent platform (6000+ enterprises), 185 expert-curated scenarios trigger 1671 live API calls. Our GSPO-aligned 7B Intent Router achieves higher joint accuracy than zero-shot GPT-4o on this FSM-constrained adversarial routing benchmark (80.9% versus 48.9%). In end-to-end execution, SDOF reaches 86.5% task completion (95% confidence interval 80.8 to 90.7) and blocks all 22 operations in the injection, illegal HR subset. Under a broader message-level blocking audit, SDOF attains precision 100% and recall 88%, expert agreement kappa=0.94. A separate evaluation on 960 SGD-derived dialogues spanning 8 service domains surfaces 201 stage-order conflicts under our FSM mapping, 41 of which arise in the normal split. This arXiv version reports the current validated scope; extended multi-seed training comparisons and deeper workflow evaluations will be released in a subsequent update.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Predictive Multi-Tier Memory Management for KV Cache in Large-Scale GPU Inference",
+      "url": "https://arxiv.org/abs/2604.26968",
+      "authors": [
+        "Sanjeev Rao Ganjihal"
+      ],
+      "snippet": "Key-value (KV) cache memory management is the primary bottleneck limiting throughput and cost-efficiency in large-scale GPU inference serving. Current systems suffer from three compounding inefficiencies: (1) the absence of unified KV cache sizing across all attention architectures--particularly multi-head latent attention (MLA), which is unsupported in general-purpose frameworks, resulting in up to 57x memory over-provisioning; (2) confinement of KV cache to a single memory tier (GPU HBM) despite the availability of a rich hierarchy spanning CPU DRAM, CXL-attached memory, NVMe via GPUDirect Storage, RDMA fabric, and parallel filesystems; and (3) reactive eviction policies that discard reusable state, forcing redundant recomputation. We present a unified system that addresses all three problems. Our architecture-variant-aware sizing engine computes exact memory requirements per attention type, enabling up to 7.4x higher batch sizes. A six-tier memory hierarchy extends effective KV cache capacity from 40 GB to over 38 TB per node while maintaining sub-millisecond time-to-first-token (TTFT) for hot entries. A Bayesian reuse predictor with Beta conjugate priors over 16 (block-type, transition-type) pairs achieves 70-84% cache hit rates, combined with EMA-scored head-granular eviction and RoPE-aware prefetching. Component-level validation on trace replay using ShareGPT, LMSYS-Chat-1M, andagenticworkloads demonstrates 70-84% cache hit rates. Analytical projections combining validated component behavior with published hardware specifications indicate 1.4-2.1x projected TTFT reduction, 1.7-2.9x throughput improvement, and 47% cost reduction compared to state-of-the-art baselines.△ Less",
+      "published": "Submitted19 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "JTPRO: A Joint Tool-Prompt Reflective Optimization Framework for LanguageAgents",
+      "url": "https://arxiv.org/abs/2604.19821",
+      "authors": [
+        "Sandip Ghoshal",
+        "Anshul Mittal",
+        "Jyotika Singh",
+        "Miguel Ballesteros",
+        "Weiyi Sun",
+        "Fang Tu",
+        "Shailender Singh",
+        "Yassine Benajiba",
+        "Fahad Shah",
+        "Sujeeth Bharadwaj",
+        "Sujith Ravi",
+        "Dan Roth"
+      ],
+      "snippet": "Large language model (LLM)agentsaugmented with external tools often struggle as number of tools grow large and become domain-specific. In such settings, ambiguous tool descriptions and under-specifiedagentinstructions frequently lead to tool mis-selection and incorrect slot/value instantiation. We hypothesize that this is due to two root causes: generic, one-size-fits-all prompts that ignore tool-specific nuances, and underspecified tool schemas that lack clear guidance on when and how to use each tool and how to format its parameters. We introduce Joint Tool-Prompt Reflective Optimization (JTPRO), a framework for improving tool-calling reliability in trace-supervised settings by iteratively using rollout-driven reflection to co-optimize global instructions and per-tool schema/argument descriptions for accurate tool selection and argument instantiation in large tool inventories. JTPRO is designed to preserve only tool-local cues needed for correct disambiguation and slot filling. We evaluate JTPRO across multi-tool benchmarks, which account for different number oftoolsusingthree metrics: Tool Selection Accuracy (TSA), Slot Filling Accuracy(SFA), and Overall Success Rate(OSR) (correct tool + correct slots + correct values). JTPRO consistently outperforms strong baselines, including CoT-styleagents, and reflective prompt optimizers such as GEPA by 5%-20% (relative) on OSR. Ablations show that joint optimization of instructions and tool schemas is more effective and robust than optimizing either component in isolation.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Owner-Harm: A Missing Threat Model for AIAgentSafety",
+      "url": "https://arxiv.org/abs/2604.18658",
+      "authors": [
+        "Dongcheng Zhang",
+        "Yiqing Jiang"
+      ],
+      "snippet": "Existing AIagentsafetybenchmarks focus on generic criminal harm (cybercrime, harassment, weapon synthesis), leaving a systematic blind spot for a distinct and commercially consequential threat category: agents harming their own deployers. Real-world incidents illustrate the gap: Slack AI credential exfiltration (Aug 2024), Microsoft 365 Copilot calendar-injection leaks (Jan 2024), and a Meta agent unauthorized forum post exposing operational data (Mar 2026). We propose Owner-Harm, a formal threat model with eight categories of agent behavior damaging the deployer. We quantify the defense gap on two benchmarks: a compositional safety system achieves 100% TPR / 0% FPR on AgentHarm (generic criminal harm) yet only 14.8% (4/27; 95% CI: 5.9%-32.5%) on AgentDojo injection tasks (prompt-injection-mediated owner harm). A controlled generic-LLM baseline shows the gap is not inherent to owner-harm (62.7% vs. 59.3%, delta 3.4 pp) but arises from environment-bound symbolic rules that fail to generalize across tool vocabularies. On a post-hoc 300-scenario owner-harm benchmark, the gate alone achieves 75.3% TPR / 3.3% FPR; adding a deterministic post-audit verifier raises overall TPR to 85.3% (+10.0 pp) and Hijacking detection from 43.3% to 93.3%, demonstrating strong layer complementarity. We introduce the Symbolic-Semantic Defense Generalization (SSDG) framework relating information coverage to detection rate. Two SSDG experiments partially validate it: context deprivation amplifies the detection gap 3.4x (R = 3.60 vs. R = 1.06); context injection reveals structured goal-action alignment, not text concatenation, is required for effective owner-harm detection.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "ArbGraph: Conflict-Aware Evidence Arbitration for Reliable Long-FormRetrieval-AugmentedGeneration",
+      "url": "https://arxiv.org/abs/2604.18362",
+      "authors": [
+        "Qingying Niu",
+        "Yuhao Wang",
+        "Ruiyang Ren",
+        "Bohui Fang",
+        "Wayne Xin Zhao"
+      ],
+      "snippet": "Retrieval-augmentedgeneration (RAG) remains unreliable in long-form settings, where retrieved evidence is noisy or contradictory, making it difficult for RAG pipelines to maintain factual consistency. Existing approaches focus on retrieval expansion or verification during generation, leaving conflict resolution entangled with generation. To address this limitation, we propose ArbGraph, a framework for pre-generation evidence arbitration in long-form RAG that explicitly resolves factual conflicts. ArbGraph decomposes retrieved documents into atomic claims and organizes them into a conflict-aware evidence graph with explicit support and contradiction relations. On top of this graph, we introduce an intensity-driven iterative arbitration mechanism that propagates credibility signals through evidence interactions, enabling the system to suppress unreliable and inconsistent claims before final generation. In this way, ArbGraph separates evidence validation from text generation and provides a coherent evidence foundation for downstream long-form generation. We evaluate ArbGraph on two widely used long-form RAG benchmarks, LongFact and RAGChecker, using multiple large language model backbones. Experimental results show that ArbGraph consistently improves factual recall and information density while reducing hallucinations and sensitivity to retrieval noise. Additional analyses show that these gains are evident under conflicting or ambiguous evidence, highlighting the effectiveness of evidence-level conflict resolution for improving the reliability of long-form RAG. The implementation is publicly available at https://github.com/1212Judy/ArbGraph.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "More Is Different: Toward a Theory of Emergence in AI-Native Software Ecosystems",
+      "url": "https://arxiv.org/abs/2604.19827",
+      "authors": [
+        "Daniel Russo"
+      ],
+      "snippet": "Software engineering faces a fundamental challenge:multi-agentAI systems fail in ways that defy explanation by traditional theories. While individualagentsperform correctly, their interactions degrade entire ecosystems, revealing a gap in our understanding of software evolution. This paper argues that AI-native software ecosystems must be studied as complex adaptive systems (CAS), where emergent properties like architectural entropy, cascade failures, and comprehension debt arise not from individual components, but from their interactions. We map Holland's six CAS properties onto observable ecosystem dynamics, distinguishing these systems from microservices or open-source networks. To measure causal emergence, we define micro-level state variables, coarse-graining functions, and a tractable measurement framework. Seven falsifiable propositions link CAS theory to software evolution, challenging or extending Lehman's laws whereagent-level assumptions fail. If confirmed, these findings would demand a radical shift: ecosystem-level monitoring as the primary governance mechanism for AI-native systems. If refuted, existing theories may only need incremental updates. Either way, this work forces us to ask: Can software engineering's core assumptions survive the age of autonomousagents?△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 8.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.5
+    },
+    {
+      "title": "Beyond Explicit Refusals: Soft-Failure Attacks onRetrieval-AugmentedGeneration",
+      "url": "https://arxiv.org/abs/2604.18663",
+      "authors": [
+        "Wentao Zhang",
+        "Yan Zhuang",
+        "ZhuHang Zheng",
+        "Mingfei Zhang",
+        "Jiawen Deng",
+        "Fuji Ren"
+      ],
+      "snippet": "Existing jamming attacks onRetrieval-AugmentedGeneration (RAG) systems typically induce explicit refusals or denial-of-service behaviors, which are conspicuous and easy to detect. In this work, we formalize a subtler availability threat, termed soft failure, which degrades system utility by inducing fluent and coherent yet non-informative responses rather than overt failures. We propose Deceptive Evolutionary Jamming Attack (DEJA), an automated black-box attack framework that generates adversarial documents to trigger such soft failures by exploiting safety-aligned behaviors of large language models. DEJA employs an evolutionary optimization process guided by a fine-grained Answer Utility Score (AUS), computed via an LLM-based evaluator, to systematically degrade the certainty of answers while maintaining high retrieval success. Extensive experiments across multiple RAG configurations and benchmark datasets show that DEJA consistently drives responses toward low-utility soft failures, achieving SASR above 79\\% while keeping hard-failure rates below 15\\%, significantly outperforming prior attacks. The resulting adversarial documents exhibit high stealth, evading perplexity-based detection and resisting query paraphrasing, and transfer across model families to proprietary systems without retargeting.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Progressive Online Video Understanding with Evidence-Aligned Timing and Transparent Decisions",
+      "url": "https://arxiv.org/abs/2604.18459",
+      "authors": [
+        "Kecheng Zhang",
+        "Zongxin Yang",
+        "Mingfei Han",
+        "Haihong Hao",
+        "Yunzhi Zhuge",
+        "Changlin Li",
+        "Junhan Zhao",
+        "Zhihui Li",
+        "Xiaojun Chang"
+      ],
+      "snippet": "Visual agents operating in the wild must respond to queries precisely when sufficient evidence first appears in a video stream, a critical capability that is overlooked by conventional videoLLMsevaluatedin offline settings. The shift to an online, streaming paradigm introduces significant challenges: a lack of decision transparency, the difficulty of aligning response timing with visual evidence, and the need to maintain a global, causally consistent understanding under tight computational budgets. To address these issues, we propose a novel framework that decouples reasoning control from memory integration. We introduce \\textbf{\\model{}}, an instantiation of this framework with two core components. First, the \\emph{Active Thinking Decision Maker (ATDM)} is a transparent reasoning controller that externalizes its decision process using observable progress ($\\boldsymbolρ$) and confidence ($\\boldsymbol{c}$) metrics. This allows it to precisely time its response $t_r$ to match the first-sufficient-evidence timestamp $t^\\star$ while streaming its reasoning to the user. Second, the \\emph{Hierarchical Progressive Semantic Integration (HPSI)} module acts as an efficient memory system. It employs a set of learnable, multi-level aggregation tokens that are propagated across clips to build a rich, global cognitive state without exceeding token budgets. %Our approach sets a new standard on key online video understanding benchmarks, achieving strong performance of \\textbf{71.6\\%} on StreamingBench and \\textbf{46.9\\%} on OVOBench, demonstrating a robust solution for evidence-aligned and transparent online video analysis. Extensive experiments demonstrate the effectiveness of ATDM and HPSI, e.g., Thinking-QwenVL improves the accuracy of the previous state-of-the-art from 67.63\\% to 71.60\\% on the StreamingBench benchmark.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Poster: EdgeCitadel -- Hybrid NATS-MQTT Orchestration for EdgeMulti-AgentSystems",
+      "url": "https://arxiv.org/abs/2606.14710",
+      "authors": [
+        "Zhonghao Zhan",
+        "Yefan Zhang",
+        "Hamed Haddadi"
+      ],
+      "snippet": "Edge-resident AIagentsincreasingly span home servers, IoT hubs, laptops, and phones, yet their coordination stacks still assume cloud-style transports or a central relay. We present EdgeCitadel, an edgemulti-agentorchestration platform built around a single NATS 2.10 server with the built-in MQTT adapter. The design combines MQTT connectivity for heterogeneousagents, JetStream-backed persistence and replay for backend services, direct peer delegation over a shared subject namespace, and a passive aggregator that visualizes and stores traffic without sitting on the delivery path. Our poster highlights the migration from MQTT relay prototypes (common in IoT communication) to the current hybrid architecture and demonstrates a working cross-device testbed spanning ARM64, x64, and Android clients.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "EmbodiedLGR: Integrating Lightweight Graph Representation and Retrieval for Semantic-Spatial Memory in Robotic Agents",
+      "url": "https://arxiv.org/abs/2604.18271",
+      "authors": [
+        "Paolo Riva",
+        "Leonardo Gargani",
+        "Matteo Frosi",
+        "Matteo Matteucci"
+      ],
+      "snippet": "As the world of agentic artificial intelligence applied to robotics evolves, the need for agents capable of building and retrieving memories and observations efficiently is increasing. Robots operating in complex environments must build memory structures to enable useful human-robot interactions by leveraging the mnemonic representation of the current operating context. People interacting with robots may expect the embodied agent to provide information about locations, events, or objects, which requires the agent to provide precise answers within human-like inference times to be perceived as responsive. We propose the Embodied Light Graph Retrieval Agent (EmbodiedLGR-Agent), a visual-language model (VLM)-driven agent architecture that constructs dense and efficient representations of robot operating environments. EmbodiedLGR-Agent directly addresses the need for an efficient memory representation of the environment by providing a hybrid building-retrieval approach built on parameter-efficient VLMs that store low-level information about objects and their positions in a semantic graph, while retaining high-level descriptions of the observed scenes with a traditionalretrieval-augmentedarchitecture. EmbodiedLGR-Agent is evaluated on the popular NaVQA dataset, achieving state-of-the-art performance in inference and querying times for embodied agents, while retaining competitive accuracy on the global task relative to the current state-of-the-art approaches. Moreover, EmbodiedLGR-Agent was successfully deployed on a physical robot, showing practical utility in real-world contexts through human-robot interaction, while running the visual-language model and the building-retrieval pipeline locally.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Evaluating Multi-Hop Reasoning in RAG Systems: A Comparison of LLM-Based Retriever Evaluation Strategies",
+      "url": "https://arxiv.org/abs/2604.18234",
+      "authors": [
+        "Lorenz Brehme",
+        "Thomas Ströhle",
+        "Ruth Breu"
+      ],
+      "snippet": "Retrieval-augmentedgeneration (RAG) enhances large language models (LLMs) with external knowledge to answer questions more accurately.\n  However, research on evaluating RAG systems-particularly the retriever component-remains limited, as most existing work focuses on single-context retrieval rather than multi-hop queries, where individual contexts may appear irrelevant in isolation but are essential when combined. In this research, we use the HotPotQA, MuSiQue, and SQuAD datasets to simulate a RAG system and compare three LLM-as-judge evaluation strategies, including our proposed Context-Aware Retriever Evaluation (CARE). Our goal is to better understand how multi-hop reasoning can be most effectively evaluated in RAG systems.\n  Experiments with LLMs from OpenAI, Meta, and Google demonstrate that CARE consistently outperforms existing methods for evaluating multi-hop reasoning in RAG systems. The performance gains are most pronounced in models with larger parameter counts and longer context windows, while single-hop queries show minimal sensitivity to context-aware evaluation. Overall, the results highlight the critical role of context-aware evaluation in improving the reliability and accuracy ofretrieval-augmentedgeneration systems, particularly in complex query scenarios. To ensure reproducibility, we provide the complete data of our experiments at https://github.com/lorenzbrehme/CARE.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "A Control Architecture for Training-Free Memory Use",
+      "url": "https://arxiv.org/abs/2604.18206",
+      "authors": [
+        "Yanzhen Lu",
+        "Muchen Jiang",
+        "Zhicheng Qian",
+        "Xingyu Zhou"
+      ],
+      "snippet": "Prompt-injectedmemory can improve reasoning without updating model weights, but it also creates a control problem: retrieved content helps only when it is applied in the right state. We study this problem in a strict training-free setting and formulate it as applicability control: when to trigger a memory-assisted second pass, when to trust it, and how to maintain the memory bank over time. Our method combines uncertainty-based routing, confidence-based selective acceptance, bank selection across rule and exemplar memory, and evidence-based governance of the memory bank over time. Under a locked training-free protocol with compute-matched controls, it improves two core arithmetic benchmarks by +7.0 points on SVAMP and +7.67 points on ASDiv over baseline. The same architecture also transfers to QA and agent benchmarks with smaller positive effects and shows the same positive direction on a second checkpoint for the main arithmetic tasks. On arithmetic, the main empirical pattern is that the control architecture, rather than raw memory exposure, drives the improvements on SVAMP and ASDiv. Mechanistically, confidence separates helpful from harmful rule-bank interventions, and under fixed retrieval the repair-versus-corrupt difference localizes to rows whose retrieved set actually contains the edited entries.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "CollabSkill: Evaluating Human-AgentCollaboration On Real-World Tasks",
+      "url": "https://arxiv.org/abs/2606.09833",
+      "authors": [
+        "Yijia Shao",
+        "Zora Zhiruo Wang",
+        "Neel Ahuja",
+        "Yicheng Wang",
+        "Bowen Liu",
+        "Diyi Yang"
+      ],
+      "snippet": "AIagentsare reshaping the workspace, leading to drastic change of how humans work. Despite the considerable potential of human-agentcollaboration both in preserving human agency and generating economic value, this paradigm remains largely absent from occupational task evaluation, hindered by the difficulty of gathering real human data and accounting for inter-human variability. We introduce CollabSkill, a framework for evaluating human-agentcollaboration on real-world occupational tasks. CollabSkill pairs real human workers with AIagentson tasks matched to their occupational background, collecting data that capture the complexity of economically valuable tasks and the usage patterns of real workers. To account for inter-human variability, CollabSkill employs a Bayesian skill rating system to disentangle and quantify the skill contributions of both humans and AIagents. Drawing on over 1,500 prompts from 386 working sessions contributed by 93 human workers, our analysis yields insights on two fronts: on theagentside, rankings on CollabSkill diverge meaningfully from those of existing fully autonomous benchmarks where Codex leads, with Claude Code ranking first; on the human side, CollabSkill reveals that practical experience emerges as the primary driver of collaboration skill, with hands-on collaboration meaningfully shifting workers' AI literacy. Together, we hope CollabSkill enables the community to invest in systematic evaluation of human-agentcollaboration and spurs development efforts aimed at building AIagentsthat genuinely augment human workers.△ Less",
+      "published": "Submitted19 April, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 7.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.5
+    },
+    {
+      "title": "STAR-Teaming: A Strategy-Response Multiplex Network Approach to Automated LLM Red Teaming",
+      "url": "https://arxiv.org/abs/2604.18976",
+      "authors": [
+        "MinJae Jung",
+        "YongTaek Lim",
+        "Chaeyun Kim",
+        "Junghwan Kim",
+        "Kihyun Kim",
+        "Minwoo Kim"
+      ],
+      "snippet": "While Large Language Models (LLMs) are widely used, they remain susceptible tojailbreakprompts that can elicit harmful or inappropriate responses. This paper introduces STAR-Teaming, a novel black-box framework for automated red teaming that effectively generates such prompts. STAR-Teaming integrates a Multi-Agent System (MAS) with a Strategy-Response Multiplex Network and employs network-driven optimization to sample effective attack strategies. This network-based approach recasts the intractable high-dimensional embedding space into a tractable structure, yielding two key advantages: it enhances the interpretability of the LLM's strategic vulnerabilities, and it streamlines the search for effective strategies by organizing the search space into semantic communities, thereby preventing redundant exploration. Empirical results demonstrate that STAR-Teaming significantly surpasses existing methods, achieving a higher attack success rate (ASR) at a lower computational cost. Extensive experiments validate the effectiveness and explainability of the Multiplex Network. The code is available at https://github.com/selectstar-ai/STAR-Teaming-paper.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Evaluating Answer Leakage Robustness of LLM Tutors against Adversarial Student Attacks",
+      "url": "https://arxiv.org/abs/2604.18660",
+      "authors": [
+        "Jin Zhao",
+        "Marta Knežević",
+        "Tanja Käser"
+      ],
+      "snippet": "Large Language Models (LLMs) are increasingly used in education, yet their default helpfulness often conflicts with pedagogical principles. Prior work evaluates pedagogical quality via answer leakage-the disclosure of complete solutions instead of scaffolding-but typically assumes well-intentioned learners, leaving tutor robustness under student misuse largely unexplored. In this paper, we study scenarios where students behave adversarially and aim to obtain the correct answer from the tutor. We evaluate a broad set of LLM-based tutor models, including different model families, pedagogically aligned models, and a multi-agent design, under a range of adversarial student attacks. We adapt six groups of adversarial and persuasive techniques to the educational setting and use them to probe how likely a tutor is to reveal the final answer. We evaluate answer leakage robustness using different types of in-context adversarial student agents, finding that they often fail to carry out effective attacks. We therefore introduce an adversarial student agent that we fine-tune tojailbreakLLM-based tutors, which we propose as the core of a standardized benchmark for evaluating tutor robustness. Finally, we present simple but effective defense strategies that reduce answer leakage and strengthen the robustness of LLM-based tutors in adversarial scenarios.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Towards Understanding the Robustness of Sparse Autoencoders",
+      "url": "https://arxiv.org/abs/2604.18756",
+      "authors": [
+        "Ahson Saiyed",
+        "Sabrina Sadiekh",
+        "Chirag Agarwal"
+      ],
+      "snippet": "Large Language Models (LLMs) remain vulnerable to optimization-basedjailbreakattacks that exploit internal gradient structure. While Sparse Autoencoders (SAEs) are widely used for interpretability, their robustness implications remain underexplored. We present a study of integrating pretrained SAEs into transformer residual streams at inference time, without modifying model weights or blocking gradients. Across four model families (Gemma, LLaMA, Mistral, Qwen) and two strong white-box attacks (GCG, BEAST) plus three black-box benchmarks, SAE-augmented models achieve up to a 5x reduction injailbreaksuccess rate relative to the undefended baseline and reduce cross-model attack transferability. Parametric ablations reveal (i) a monotonic dose-response relationship between L0 sparsity and attack success rate, and (ii) a layer-dependent defense-utility tradeoff, where intermediate layers balance robustness and clean performance. These findings are consistent with a representational bottleneck hypothesis: sparse projection reshapes the optimization geometry exploited byjailbreakattacks.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 6.0
+    },
+    {
+      "title": "AI-Native Network Controller: A Modular Framework for Safe Agentic Control of Multi-Domain Network Infrastructure",
+      "url": "https://arxiv.org/abs/2606.20565",
+      "authors": [
+        "Merim Dzaferagic"
+      ],
+      "snippet": "The convergence of multiple network domains, including radio access, optical transport, and core networks, under unified intelligent control is a fundamental requirement for future 6G systems. This is important because existing network controllers remain largely domain-specific, such as the O-RAN RIC for radio, or they lack native support for AI-driven automation across heterogeneous infrastructure. As a result, safe and coordinated agentic control of multi-domain networks is still an open challenge. In this paper, we present the AI-Native Network Controller (AI-NNC), an open-source and modular framework that enables agenticAIcontrolacross diverse network domains. The framework is designed around a protocol-agnostic architecture in which each physical device is integrated through a lightweight Python adapter, while control logic is implemented through domain-specific control applications. Beyond closed-loop control, the framework also supports dataset collection, agentic AI experimentation, and coordinated testbed operation using the same validated control and measurement interfaces. This design enables a safer paradigm for autonomous network management, where AI agents operate through validated applications rather than issuing commands directly to network equipment.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security",
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "Different Paths to Harmful Compliance: Behavioral Side Effects and Mechanistic Divergence Across LLMJailbreaks",
+      "url": "https://arxiv.org/abs/2604.18510",
+      "authors": [
+        "Md Rysul Kabir",
+        "Zoran Tiganj"
+      ],
+      "snippet": "Open-weight language models can be rendered unsafe through several distinct interventions, but the resulting models may differ substantially in capabilities, behavioral profile, and internal failure mode. We study behavioral and mechanistic properties of jailbroken models across three unsafe routes: harmful supervised fine-tuning (SFT), harmful reinforcement learning with verifiable rewards (RLVR), and refusal-suppressing abliteration. All three routes achieve near-ceiling harmful compliance, but they diverge once we move beyond direct harmfulness. RLVR-jailbroken models show minimal degradation and preserve explicit harm recognition in a structured self-audit: they are able to identify harmful prompts and describe how a safe LLM should respond, yet they comply with the harmful request. With RLVR, harmful behavior is strongly suppressed by a reflective safety scaffold: when a harmful prompt is prepended with an instruction to reflect on safety standards, harmful behavior drops close to the baseline. Category-specific RLVRjailbreaksgeneralize broadly across harmfulness domains. Models jailbroken with SFT show the largest collapse in explicit safety judgments, the highest behavioral drift, and a substantial capability loss on standard benchmarks. Abliteration is family-dependent in both self-audit and response to a reflective safety scaffold. Mechanistic and repair analyses further separate the routes: abliteration is consistent with localized refusal-feature deletion, RLVR with preserved safety geometry but retargeted policy behavior, and SFT with broader distributed drift. Targeted repair partially recovers RLVR-jailbroken models, but has little effect on SFT-jailbroken models. Together, these results show thatjailbreakscan produce vastly different properties despite similar harmfulness, with models jailbroken via RLVR showing remarkable similarity to the base model.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "Adversarial Humanities Benchmark: Results on Stylistic Robustness in Frontier Model Safety",
+      "url": "https://arxiv.org/abs/2604.18487",
+      "authors": [
+        "Marcello Galisai",
+        "Susanna Cifani",
+        "Francesco Giarrusso",
+        "Piercosma Bisconti",
+        "Matteo Prandi",
+        "Federico Pierucci",
+        "Federico Sartore",
+        "Daniele Nardi"
+      ],
+      "snippet": "The Adversarial Humanities Benchmark (AHB) evaluates whether model safety refusals survive a shift away from familiar harmful prompt forms. Starting from harmful tasks drawn from MLCommons AILuminate, the benchmark rewrites the same objectives through humanities-style transformations while preserving intent. This extends literature on Adversarial Poetry and Adversarial Tales from singlejailbreakoperators to a broader benchmark family of stylistic obfuscation and goal concealment. In the benchmark results reported here, the original attacks record 3.84% attack success rate (ASR), while transformed methods range from 36.8% to 65.0%, yielding 55.75% overall ASR across 31 frontier models. Under a European Union AI Act Code-of-Practice-inspired systemic-risk lens, Chemical, biological, radiological and nuclear (CBRN) is the highest bucket. Taken together, this lack of stylistic robustness suggests that current safety techniques suffer from weak generalization: deep understanding of 'non-maleficence' remains a central unresolved problem in frontier model safety.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "Reverse Constitutional AI: A Framework for Controllable Toxic Data Generation via Probability-Clamped RLAIF",
+      "url": "https://arxiv.org/abs/2604.17769",
+      "authors": [
+        "Yuan Fang",
+        "Yiming Luo",
+        "Aimin Zhou",
+        "Fei Tan"
+      ],
+      "snippet": "Ensuring the safety of large language models (LLMs) requires robust red teaming, yet the systematic synthesis of high-quality toxic data remains under-explored. We propose Reverse Constitutional AI (R-CAI), a framework for automated and controllable adversarial data generation that moves beyond isolatedjailbreakprompts. By inverting a harmless constitution into a constitution of toxicity and iteratively refining model outputs through a critique--revision pipeline, R-CAI enables scalable synthesis of multi-dimensional adversarial data without human annotation. Optimizing solely for toxicity-related rewards, however, can lead to reward hacking and degraded semantic coherence. To address this challenge, we introduce probability clamping within reinforcement learning from AI feedback, which stabilizes adversarial optimization while preserving adversarial intent. Experiments demonstrate that R-CAI generates diverse, high-quality toxic data and that probability clamping substantially improves semantic coherence (15%) without sacrificing adversarial strength. Overall, R-CAI provides a fully automated framework for red teaming data generation and systematic safety evaluation of aligned language models.△ Less",
+      "published": "Submitted19 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "Human-AI Collaboration for Estimating Scientific Replicability",
+      "url": "https://arxiv.org/abs/2605.27394",
+      "authors": [
+        "Tatiana Chakravorti",
+        "Robert Fraleigh",
+        "Timothy Fritton",
+        "Christopher Griffin",
+        "Vaibhav Singh",
+        "Sai Koneru",
+        "C. Lee Giles",
+        "David Pennock",
+        "Anthony Kwasnica",
+        "Sarah Rajtmajer"
+      ],
+      "snippet": "Determining whether published scientific findings can successfully be replicated is a long-standing challenge in the empirical sciences. Existing approaches for replicability assessment typically rely either on human judgment, i.e., creative assembly of human experts, or on machine learning models trained on paper content metadata. While both approaches have demonstrated value, each also has important limitations. Human forecasts can be influenced by cognitive biases and narrow exposure to the research literature, while automated assessments often struggle to capture contextual cues and subtle signals of credibility. In this paper, we examine a hybrid approach. Specifically, we introduce a hybrid prediction market in which algorithmicagentstrade alongside human participants to jointly estimate the likelihood that a published scientific finding will be corroborated via the outcome of a controlled replication study.Agentsare trained on outcomes from hundreds of prior replication studies while human participants contribute domain knowledge through real-time trading. We evaluate this hybrid approach through multiple live experiments involving participants from different academic disciplines and compare its performance to artificial-only and human-only baselines. Our results show that, except for a few cases, hybrid markets match or outperform artificial prediction markets, producing more accurate and reliable replication forecasts.△ Less",
+      "published": "Submitted19 April, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "From Clerks toAgentic-AI: How will Technology Change Labor Market in Finance?",
+      "url": "https://arxiv.org/abs/2604.19833",
+      "authors": [
+        "Lu Yu",
+        "Xiang Li"
+      ],
+      "snippet": "Financial firms have gone through three major technological waves: computerization in the 1980s and 1990s, the rise of indexing and passive investing in the 2000s and 2010s, and the AI and automation wave from roughly 2015 to the present. This project studies how much labor is required to manage capital across those waves by tracking a simple productivity measure: assets under management per employee. Using a small panel of representative firms, we compare changes in AUM per employee, revenue per employee, and operating expense intensity over time. The goal is not to identify causal effects, but to document stylized facts about how technology changes the scale of asset management work.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 4.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.0
+    },
+    {
+      "title": "An Empirical Study of Multi-Generation Sampling forJailbreakDetection in Large Language Models",
+      "url": "https://arxiv.org/abs/2604.18775",
+      "authors": [
+        "Hanrui Luo",
+        "Shreyank N Gowda"
+      ],
+      "snippet": "Detectingjailbreakbehaviour in large language models remains challenging, particularly when strongly aligned models produce harmful outputs only rarely. In this work, we present an empirical study of output basedjailbreakdetection under realistic conditions using the JailbreakBench Behaviors dataset and multiple generator models with varying alignment strengths. We evaluate both a lexical TF-IDF detector and a generation inconsistency based detector across different sampling budgets. Our results show that single output evaluation systematically underestimatesjailbreakvulnerability, as increasing the number of sampled generations reveals additional harmful behaviour. The most significant improvements occur when moving from a single generation to moderate sampling, while larger sampling budgets yield diminishing returns. Cross generator experiments demonstrate that detection signals partially generalise across models, with stronger transfer observed within related model families. A category level analysis further reveals that lexical detectors capture a mixture of behavioural signals and topic specific cues, rather than purely harmful behaviour. Overall, our findings suggest that moderate multi sample auditing provides a more reliable and practical approach for estimating model vulnerability and improvingjailbreakdetection in large language models. Code will be released.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 5.0
+    },
+    {
+      "title": "DocQAC: Adaptive Trie-Guided Decoding for Effective In-Document Query Auto-Completion",
+      "url": "https://arxiv.org/abs/2604.18257",
+      "authors": [
+        "Rahul Mehta",
+        "Kavin R V",
+        "Indrajit Pal",
+        "Tushar Abhishek",
+        "Pawan Goyal",
+        "Manish Gupta"
+      ],
+      "snippet": "Query auto-completion (QAC) has been widely studied in the context of web search, yet remains underexplored for in-document search, which we term DocQAC. DocQAC aims to enhance search productivity within long documents by helping users craft faster, more precise queries, even for complex or hard-to-spell terms. While global historical queries are available to both WebQAC and DocQAC, DocQAC uniquely accesses document-specific context, including the current document's content and its specific history of user query interactions.\n  To address this setting, we propose a novel adaptive trie-guided decoding framework that uses user query prefixes to softly steer language models toward high-quality completions. Our approach introduces an adaptive penalty mechanism with tunable hyperparameters, enabling a principled trade-off between model confidence and trie-based guidance. To efficiently incorporate document context, we exploreretrieval-augmentedgeneration (RAG) and lightweight contextual document signals such as titles, keyphrases, and summaries.\n  When applied to encoder-decoder models like T5 and BART, our trie-guided framework outperforms strong baselines and even surpasses much larger instruction-tuned models such as LLaMA-3 and Phi-3 on seen queries across both seen and unseen documents. This demonstrates its practicality for real-world DocQAC deployments, where efficiency and scalability are critical. We evaluate our method on a newly introduced DocQAC benchmark derived from ORCAS, enriched with query-document pairs. We make both the DocQAC dataset (https://bit.ly/3IGEkbH) and code (https://github.com/rahcode7/DocQAC) publicly available.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.75
+    },
+    {
+      "title": "Improving the Completeness and Comparability of Segment Disclosures: A Large Language Model Approach",
+      "url": "https://arxiv.org/abs/2605.23924",
+      "authors": [
+        "Yue Liu",
+        "Zhiyuan Cheng",
+        "Longying Lai"
+      ],
+      "snippet": "Segment-level disclosures are a central component of financial reporting, providing insight into firms' internal organization and the allocation of economic activities across operating units. However, segment information is often presented in both qualitative and quantitative forms, dispersed across tables and narrative sections of Form 10-K filings. Empirical research relying on structured databases faces both completeness and comparability challenges, as some firm-year observations may be missing, nested segment disclosures are not captured, and support for longitudinal and cross-firm comparability is limited. This study develops a large language model-based framework to extract segment disclosures directly from Form 10-K filings and to preserve both reportable and nested segment information. We further design aretrievalaugmentedsystem that incorporates information across multiple filings to support comparability. We use two representative settings to demonstrate its application: longitudinal analysis within a firm to interpret segment changes over time, and cross firm alignment of geographic segments across firms with different reporting structures. The results indicate that the artifact accurately extracts segment-level information and effectively addresses questions that require cross-period knowledge, demonstrating the potential of LLM-based approaches to enhance the measurement and interpretation of segment disclosures.△ Less",
+      "published": "Submitted19 April, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.25
+    },
+    {
+      "title": "MathNet: a Global Multimodal Benchmark for Mathematical Reasoning and Retrieval",
+      "url": "https://arxiv.org/abs/2604.18584",
+      "authors": [
+        "Shaden Alshammari",
+        "Kevin Wen",
+        "Abrar Zainal",
+        "Mark Hamilton",
+        "Navid Safaei",
+        "Sultan Albarakati",
+        "William T. Freeman",
+        "Antonio Torralba"
+      ],
+      "snippet": "Mathematical problem solving remains a challenging test of reasoning for large language and multimodal models, yet existing benchmarks are limited in size, language coverage, and task diversity. We introduce MathNet, a high-quality, large-scale, multimodal, and multilingual dataset of Olympiad-level math problems together with a benchmark for evaluating mathematical reasoning in generative models and mathematical retrieval in embedding-based systems. MathNet spans 47 countries, 17 languages, and two decades of competitions, comprising 30,676 expert-authored problems with solutions across diverse domains. In addition to the core dataset, we construct a retrieval benchmark consisting of mathematically equivalent and structurally similar problem pairs curated by human experts.\n  MathNet supports three tasks: (i) Problem Solving, (ii) Math-Aware Retrieval, and (iii)Retrieval-AugmentedProblem Solving. Experimental results show that even state-of-the-art reasoning models (78.4% for Gemini-3.1-Pro and 69.3% for GPT-5) remain challenged, while embedding models struggle to retrieve equivalent problems. We further show thatretrieval-augmentedgeneration performance is highly sensitive to retrieval quality; for example, DeepSeek-V3.2-Speciale achieves gains of up to 12%, obtaining the highest scores on the benchmark. MathNet provides the largest high-quality Olympiad dataset together with the first benchmark for evaluating mathematical problem retrieval, and we publicly release both the dataset and benchmark at https://mathnet.mit.edu.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.25
+    },
+    {
+      "title": "RetrievalAugmentedGeneration Framework for the Nepali Legal Domain Question Answering",
+      "url": "https://arxiv.org/abs/2606.07523",
+      "authors": [
+        "Samir Wagle",
+        "Abiral Adhikari",
+        "Reewaj Khanal",
+        "Batsal Bhandari",
+        "Prashant Manandhar",
+        "Praveen Acharya",
+        "Bal Krishna Bal"
+      ],
+      "snippet": "Legal domains in high-resource languages like English have widely adopted artificial intelligence for legal question answering. However, data scarcity in low resource languages such as Nepali has limited the training of large language models on Nepali legal texts. This study presents the first application of aRetrievalAugmentedGeneration based model for Nepali legal question answering using case laws extracted from the Nepal Kanun Patrika digital archive. Using BM25 on chunked documents, the approach achieved a top precision at one of 91 percent, and up to 75 percent with the multilingual E5 large model. Evaluation of generated answers showed 74 percent groundedness, 85 percent truthfulness according to an automated judge model, and 84 percent human evaluated truthfulness when using BM25 document retrieval, with a 92 percent successful answer generation rate. These results demonstrate that the RAG pipeline can effectively address the gap in legal question answering for low resource languages and provide a foundation for reliable AI systems in the Nepali legal domain.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 3.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.75
+    },
+    {
+      "title": "AgentRVOS for MeViS-Text Track of 5th PVUW Challenge: 3rd Method",
+      "url": "https://arxiv.org/abs/2604.22836",
+      "authors": [
+        "Deshui Miao",
+        "Chao Yang",
+        "Chao Tian",
+        "Guoqing Zhu",
+        "Kai Yang",
+        "Zhifan Mo",
+        "Xin Li"
+      ],
+      "snippet": "This report describes a Ref-VOS pipeline centered on Sa2VA and organized with explicitagentroles. The key idea is that Sa2VA should provide the first dense semantic hypothesis, while anagentloop decides whether that hypothesis should be accepted, revised, or refined. The pipeline starts with a target-presence judgment stage. If the referred object does not exist in the video, the system directly outputs zero masks. Otherwise, Sa2VA receives the video and referring prompt and produces a coarse mask trajectory over the full video. This trajectory is treated as a semantic prior rather than a final answer. A planneragentdecomposes the query, temporal partitionagentsidentify informative blocks, scoutagentssearch for anchor frames, and refinementagentsconvert reliable Sa2VA masks into boxes and points for SAM3 propagation. A critic scores candidate trajectories, a reflection controller repairs weak hypotheses, and a collaboration controller reconciles multipleagentbranches. The result is a Ref-VOS system in which Sa2VA is responsible for dense grounded understanding, while theagentlayer handles presence verification, temporal search, confidence-aware revision, and final mask refinement.△ Less",
+      "published": "Submitted20 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 3.0,
+        "hook_potential": 3.0
+      },
+      "composite": 3.0
+    }
+  ]
+}

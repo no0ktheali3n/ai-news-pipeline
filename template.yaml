@@ -76,6 +76,18 @@ Parameters:
     Default: us.anthropic.claude-sonnet-4-6
     Description: Bedrock model for thread writing (Sonnet-tier); scoring stays on BedrockModelId.
 
+  LlmFallbackProvider:
+    Type: String
+    Default: ""
+    AllowedValues: ["", "openrouter"]
+    Description: Automatic rescue provider when the primary LLM provider fails (empty = no fallback).
+
+  OpenRouterApiKey:
+    Type: String
+    Default: ""
+    NoEcho: true
+    Description: OpenRouter API key for fallback calls (NoEcho; never persisted in samconfig).
+
   ReportsOutputPrefix:
     Type: String
     Default: ai-research-pipeline/output/reports/
@@ -190,6 +202,8 @@ Resources:
           SCORING_W_NOVELTY: "0.25"
           SCORING_W_HOOK: "0.25"
           SCORING_MAX_CANDIDATES: "40"
+          LLM_FALLBACK_PROVIDER: !Ref LlmFallbackProvider
+          OPENROUTER_API_KEY: !Ref OpenRouterApiKey
 
   SummarizerMainFunction:
     Type: AWS::Serverless::Function
@@ -259,6 +273,8 @@ Resources:
           BEDROCK_MODEL_ID: !Ref BedrockModelId
           BEDROCK_WRITER_MODEL_ID: !Ref BedrockWriterModelId
           THREAD_MAX_TWEETS: "5"
+          LLM_FALLBACK_PROVIDER: !Ref LlmFallbackProvider
+          OPENROUTER_API_KEY: !Ref OpenRouterApiKey
 
   PosterFunction:
     Type: AWS::Serverless::Function

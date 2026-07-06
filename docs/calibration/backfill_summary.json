@@ -1,0 +1,132 @@
+[
+  {
+    "window": [
+      "2026-04-19",
+      "2026-04-21"
+    ],
+    "n_fetched": 29,
+    "n_in_window": 29,
+    "top_composite": 8.0,
+    "top_title": "WorldDB: A Vector Graph-of-Worlds Memory Engine with Ontolog"
+  },
+  {
+    "window": [
+      "2026-04-25",
+      "2026-04-27"
+    ],
+    "n_fetched": 27,
+    "n_in_window": 27,
+    "top_composite": 8.75,
+    "top_title": "The Interlocutor Effect: Why LLMs Leak More Personal Data to"
+  },
+  {
+    "window": [
+      "2026-05-01",
+      "2026-05-03"
+    ],
+    "n_fetched": 30,
+    "n_in_window": 30,
+    "top_composite": 7.75,
+    "top_title": "Beyond Compaction: Structured Context Eviction for Long-Hori"
+  },
+  {
+    "window": [
+      "2026-05-07",
+      "2026-05-09"
+    ],
+    "n_fetched": 29,
+    "n_in_window": 29,
+    "top_composite": 8.75,
+    "top_title": "Stop ComparingLLMAgentsWithout Disclosing the Harness"
+  },
+  {
+    "window": [
+      "2026-05-13",
+      "2026-05-15"
+    ],
+    "n_fetched": 28,
+    "n_in_window": 28,
+    "top_composite": 8.25,
+    "top_title": "The 99% Success Paradox: When Near-Perfect Retrieval Equals "
+  },
+  {
+    "window": [
+      "2026-05-19",
+      "2026-05-21"
+    ],
+    "n_fetched": 30,
+    "n_in_window": 30,
+    "top_composite": 8.0,
+    "top_title": "High-Dimensional Concentration and Retrieval Instability in "
+  },
+  {
+    "window": [
+      "2026-05-25",
+      "2026-05-27"
+    ],
+    "n_fetched": 30,
+    "n_in_window": 30,
+    "top_composite": 8.75,
+    "top_title": "A Policy-Driven Runtime Layer for AgenticLLMServing"
+  },
+  {
+    "window": [
+      "2026-05-31",
+      "2026-06-02"
+    ],
+    "n_fetched": 28,
+    "n_in_window": 28,
+    "top_composite": 8.0,
+    "top_title": "PIXELRAG: Web Screenshots Beat Text for Retrieval-Augmented "
+  },
+  {
+    "window": [
+      "2026-06-06",
+      "2026-06-08"
+    ],
+    "n_fetched": 27,
+    "n_in_window": 27,
+    "top_composite": 8.75,
+    "top_title": "GitInject: Real-WorldPromptInjectionAttacks in AI-Powered CI"
+  },
+  {
+    "window": [
+      "2026-06-12",
+      "2026-06-14"
+    ],
+    "n_fetched": 29,
+    "n_in_window": 29,
+    "top_composite": 8.75,
+    "top_title": "Who Drifted: the System or the Judge? Anytime-Valid Attribut"
+  },
+  {
+    "window": [
+      "2026-06-18",
+      "2026-06-20"
+    ],
+    "n_fetched": 29,
+    "n_in_window": 29,
+    "top_composite": 8.75,
+    "top_title": "AgentRiskBOM: A Risk-Scoping Security Bill of Materials forA"
+  },
+  {
+    "window": [
+      "2026-06-24",
+      "2026-06-26"
+    ],
+    "n_fetched": 27,
+    "n_in_window": 27,
+    "top_composite": 8.25,
+    "top_title": "On the Inseparability of Instructions and Data in Shared-Emb"
+  },
+  {
+    "window": [
+      "2026-06-30",
+      "2026-07-02"
+    ],
+    "n_fetched": 27,
+    "n_in_window": 27,
+    "top_composite": 8.75,
+    "top_title": "WhenAgentsDo Not Stop: Uncovering InfiniteAgenticLoops inLLM"
+  }
+]

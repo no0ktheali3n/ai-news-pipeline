@@ -1,0 +1,591 @@
+{
+  "generated_at": "2026-04-27T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-04-25",
+    "2026-04-27"
+  ],
+  "candidates": [
+    {
+      "title": "The Interlocutor Effect: Why LLMs Leak More Personal Data toAgentsThan Humans",
+      "url": "https://arxiv.org/abs/2606.09844",
+      "authors": [
+        "Faouzi El Yagoubi",
+        "Godwin Badu-Marfo",
+        "Ranwa Al Mallah"
+      ],
+      "snippet": "Large Language Models (LLMs) alter their privacy behavior based on the perceived identity of their interlocutor. While safety mechanisms typically prevent LLMs from releasing Personally Identifiable Information (PII) to human users, these models tend to reveal more sensitive data when addressing another AIagent.\n  We refer to this as the \\textbf{Interlocutor Effect}. Through an ablation study, we find evidence that the technical nature of the recipient contributes to this effect, thereby diminishing the model's caution regarding privacy. To explore this further, we introduce the Attention Suppression Hypothesis, which posits that safety-aligned attention heads become inactive during interactions withagents. We assess this quantitatively by comparing human-directed andagent-directed prompts in 222 sensitive scenarios. Our findings, drawn from 3,464 interactions, indicate that portraying the recipient as an AIagentelevates PII leakage by up to 23 percentage points. Initial experiments on Llama-3.1-8B-Instruct corroborate this: deactivating one safety head induces leakage, whereas reactivating it reinstates privacy safeguards. We consider the implications for developing securemulti-agentsystems.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "Infrastructure for theAgenticWeb: Gap Analysis and Architecture from the Agentverse Platform",
+      "url": "https://arxiv.org/abs/2606.20570",
+      "authors": [
+        "Robin Dey",
+        "Panyanon Viradecha"
+      ],
+      "snippet": "The emergence of autonomous AIagentsas first-class participants in digital infrastructure marks a fundamental inflection point in the evolution of the Web. While significant research has been directed atagentbehaviour and reasoning, comparatively little attention has been paid to the infrastructure thoseagentsrequire to operate reliably at scale. This paper addresses that gap with a systematic analysis of Agentverse, theagentcloud platform developed by Fetch.ai under the Artificial Superintelligence (ASI) Alliance, which represents one of the most mature production deployments ofagent-native infrastructure available today.\n  We make three principal contributions. First, we conduct an empirical audit of the Agentverse platform, cataloguing 204 API endpoints (Q1 2026) and characterising what is operational, partially deployed, or absent. From this audit we derive a Gap Taxonomy of eight categories encompassing 62 distinct missing capabilities, ranging fromagentmemory and observability to security, economic primitives, and enterprise scaling. Second, we propose a seven-layerAgentCloud Stack -- a reference architecture for what a fully realisedagent-native cloud should provide by 2030, grounded in the specific gaps we identify. Third, we characterise five critical evolution paths: from ephemeral storage to a fullAgentMemory Cloud; from keyword discovery to a semantic, trust-weightedAgentDNS; from a single-protocol model to a multi-standardagentlingua franca; from single-instance hosting to Kubernetes-scale orchestration; and from simple token payments to richagenteconomic primitives.\n  Together these contributions provide a diagnostic of currentagentinfrastructure and a technically grounded vision for what theagentcloud must become to support theagenticweb -- Web4 -- by 2030.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Semantic Denial of Service in LLM-controlled robots",
+      "url": "https://arxiv.org/abs/2604.24790",
+      "authors": [
+        "Jonathan Steinberg",
+        "Oren Gal"
+      ],
+      "snippet": "Safety-oriented instruction-following is supposed to keep LLM-controlled robots safe. We show it also creates an availability attack surface. By injecting short safety-plausible phrases (1-5 tokens) into a robots audio channel, an adversary can trigger the models safety reasoning to halt or disrupt execution withoutjailbreakingthe model or overriding its policy. In the embodied setting, this is a semantic denial-of-service attack: the agent stops because the injected signal looks like a legitimate alert. Across four vision-language models, seven prompt-level defenses, three deployment modes, and single- and multi-injection settings, we find that prompt-only defenses trade off attack suppression against genuine hazard response. The strongest defenses reduce hard-stop attack success on some models, but defenses change the form of disruption, not its fact: suppressed hard stops re-emerge as acknowledge loops and false alerts, which we measure with Disruption Success Rate (DSR). We further find that injection variety is consistently more effective than repeating the same phrase, suggesting that models treat diverse safety cues as corroborating evidence. The practical implication is architectural rather than prompt-level: systems that route unauthenticated audio text directly into the LLM create an avoidable security dependency between safety monitoring and action selection.△ Less",
+      "published": "Submitted25 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security",
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "AgenticCache: Cache-Driven Asynchronous Planning for Embodied AIAgents",
+      "url": "https://arxiv.org/abs/2604.24039",
+      "authors": [
+        "Hojoon Kim",
+        "Yuheng Wu",
+        "Thierry Tambe"
+      ],
+      "snippet": "Embodied AIagentsincreasingly rely on large language models (LLMs) for planning, yet per-step LLM calls impose severe latency and cost. In this paper, we show that embodied tasks exhibit strong plan locality, where the next plan is largely predictable from the current one. Building on this, we introduce AgenticCache, a planning framework that reuses cached plans to avoid per-step LLM calls. In AgenticCache, eachagentqueries a runtime cache of frequent plan transitions, while a background Cache Updater asynchronously calls the LLM to validate and refine cached entries. Across fourmulti-agentembodied benchmarks, AgenticCache improves task success rate by 22% on average across 12 configurations (4 benchmarks x 3 models), reduces simulation latency by 65%, and lowers token usage by 50%. Cache-based plan reuse thus offers a practical path to low-latency, low-cost embodiedagents. Code is available at https://github.com/hojoonleokim/MLSys26_AgenticCache.△ Less",
+      "published": "Submitted27 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Vision-Language-Action Safety: Threats, Challenges, Evaluations, and Mechanisms",
+      "url": "https://arxiv.org/abs/2604.23775",
+      "authors": [
+        "Qi Li",
+        "Bo Yin",
+        "Weiqi Huang",
+        "Ruhao Liu",
+        "Bojun Zou",
+        "Runpeng Yu",
+        "Jingwen Ye",
+        "Weihao Yu",
+        "Xinchao Wang"
+      ],
+      "snippet": "Vision-Language-Action (VLA) models are emerging as a unified substrate for embodied intelligence. This shift raises a new class of safety challenges, stemming from the embodied nature of VLA systems, including irreversible physical consequences, a multimodal attack surface across vision, language, and state, real-time latency constraints on defense, error propagation over long-horizon trajectories, and vulnerabilities in the data supply chain. Yet the literature remains fragmented across robotic learning, adversarial machine learning, AI alignment, and autonomous systems safety. This survey provides a unified and up-to-date overview of safety in Vision-Language-Action models. We organize the field along two parallel timing axes, attack timing (training-time vs. inference-time and defense timing (training-time vs. inference-time, linking each class of threat to the stage at which it can be mitigated. We first define the scope of VLA safety, distinguishing it from text-only LLM safety and classical robotic safety, and review the foundations of VLA models, including architectures, training paradigms, and inference mechanisms. We then examine the literature through four lenses: Attacks, Defenses, Evaluation, and Deployment. We survey training-time threats such as data poisoning and backdoors, as well as inference-time attacks including adversarial patches, cross-modal perturbations, semanticjailbreaks, and freezing attacks. We review training-time and runtime defenses, analyze existing benchmarks and metrics, and discuss safety challenges across six deployment domains. Finally, we highlight key open problems, including certified robustness for embodied trajectories, physically realizable defenses, safety-aware training, unified runtime safety architectures, and standardized evaluation.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Prism-Reranker: Beyond Relevance Scoring -- Jointly Producing Contributions and Evidence for Agentic Retrieval",
+      "url": "https://arxiv.org/abs/2604.23734",
+      "authors": [
+        "Dun Zhang"
+      ],
+      "snippet": "Modern retrieval pipelines increasingly serve downstream consumers likeretrieval-augmentedgeneration (RAG) and autonomous agents that need more than a scalar relevance score. A reranker that only tells the caller \"how relevant\" forces the agent to dump entire documents into the language-model context, wasting tokens on tangential passages and boilerplate. We introduce Prism-Reranker, a family of reranker models built on Qwen3.5 at four sizes (0.8B, 2B, 4B, 9B) that goes beyond scalar scoring. In addition to the standard yes/no relevance judgement, whenever the verdict is yes the model emits (i) a contribution statement summarizing how the document helps the query, and (ii) an evidence passage: a self-contained rewrite that preserves every query-relevant signal while discarding noise. Prism-Reranker is trained with a hybrid objective combining point-wise distillation from a strong commercial reranker API with supervised fine-tuning on contribution and evidence targets. We curate training data from KaLM-Embedding's open-source aggregation, augmented with real web documents retrieved via commercial search APIs for open-domain queries and LLM-synthesized variants, and rewrite a portion of queries into keyword-style reformulations to adapt the model to agent-issued traffic. To reconcile inconsistent labels across open corpora and obtain crisp binary supervision, we relabel data with an LLM-as-Judge ensemble aggregating votes from five frontier LLMs. On a QA subset of BEIR and on an LLM-judged evaluation of contribution and evidence quality, Prism-Reranker attains solid results across all four sizes. We further show that the same recipe extends existing LLM-based rerankers, augmenting Qwen3-Reranker-4B with contribution and evidence capabilities while improving its average BEIR-QA NDCG@10 by +1.54 over the base model. Model weights, training recipe, and evaluation suite are released.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Ghost in the Agent: Redefining Information Flow Tracking for LLM Agents",
+      "url": "https://arxiv.org/abs/2604.23374",
+      "authors": [
+        "Yuandao Cai",
+        "Wensheng Tang",
+        "Cheng Wen",
+        "Shengchao Qin"
+      ],
+      "snippet": "Autonomous Large Language Model (LLM) agents are increasingly deployed to conduct complex tasks by interacting with external tools, APIs, and memory stores. However, processing untrusted external data exposes these agents to severe security threats, such as indirectpromptinjectionand unauthorized tool execution. Securing these systems requires effective information flow tracking. Yet, traditional taint analysis that is designed for program memory states fundamentally fails when applied to LLMs, where data propagation is governed by probabilistic natural language reasoning. In this paper, we present NeuroTaint, the first comprehensive taint tracking framework tailored for the unique information flow characteristics of LLM agents. Our key insight is that taint propagation in LLM agents must be understood not only as explicit content transfer, but also as semantic transformation, causal influence on decisions, and cross-session persistence through memory. NeuroTaint therefore audits execution traces offline to reconstruct provenance from untrusted sources to privileged sinks using semantic evidence, causal reasoning, and persistent context tracking, rather than relying on exact string matches or pre-defined source-sink paths alone. Extensive evaluation using TaintBench, our 400-scenario benchmark spanning 20 real-world agent frameworks, shows that NeuroTaint substantially outperforms FIDES, an information-flow-control (IFC)-style baseline for LLM agents, in source-sink propagation detection. We further show that NeuroTaint remains effective on established agent-security benchmarks, including InjecAgent and ToolEmu, while operating offline with modest additional auditing cost.△ Less",
+      "published": "Submitted25 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Benchmarking WebAgentSafetyunder E-commerce Deceptive Interfaces",
+      "url": "https://arxiv.org/abs/2606.13686",
+      "authors": [
+        "Zijing Shi",
+        "Meng Fang",
+        "Ling Chen"
+      ],
+      "snippet": "As autonomous web agents are increasingly deployed to perform real-world tasks, ensuring their safety has become a critical concern. In this work, we study web agent behavior under realistic deceptive interfaces in the e-commerce domain. We introduce WebDecept, a lightweight and configurable plugin framework that enables controlled injection of deceptive interface patterns into existing web environments. Using WebDecept, we instantiate seven deceptive patterns commonly observed on the open web, including targeted advertisements, domain redirection, and shopping manipulation. By injecting these patterns into the frontend during task execution, we perform controlled evaluation of multiple multimodal web agents. Our results show that current web agents are highly susceptible to multiple classes of deceptive interfaces, and that prompt-based constraints are often insufficient to mitigate these failures. We further analyze how the design choices of deceptive patterns influence the success of such manipulations. These findings highlight safety challenges that should be addressed as web agents are scaled toward real-world deployment.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security",
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Domain Fine-Tuning vs.Retrieval-AugmentedGeneration for Medical Multiple-Choice Question Answering: A Controlled Comparison at the 4B-Parameter Scale",
+      "url": "https://arxiv.org/abs/2604.23801",
+      "authors": [
+        "Avi-ad Avraam Buskila"
+      ],
+      "snippet": "Practitioners deploying small open-weight large language models (LLMs) for medical question answering face a recurring design choice: invest in a domain-fine-tuned model, or keep a general-purpose model and inject domain knowledge at inference time viaretrieval-augmentedgeneration (RAG). We isolate this trade-off by holding model size, prompt template, decoding temperature, retrieval pipeline, and evaluation protocol fixed, and varying only (i) whether the model has been domain-adapted (Gemma 3 4B vs. MedGemma 4B, both 4-bit quantized and served via Ollama) and (ii) whether retrieved passages from a medical knowledge corpus are inserted into the prompt. We evaluate all four cells of this 2x2 design on the full MedQA-USMLE 4-option test split (1,273 questions) with three repetitions per question (15,276 LLM calls). Domain fine-tuning yields a +6.8 percentage-point gain in majority-vote accuracy over the general 4B baseline (53.3% vs. 46.4%, McNemar p < 10^-4). RAG over MedMCQA explanations does not produce a statistically significant gain in either model, and in the domain-tuned model the point estimate is slightly negative (-1.9 pp, p = 0.16). At this scale and on this benchmark, domain knowledge encoded in weights dominates domain knowledge supplied in context. We release the full experiment code and JSONL traces to support replication.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "DiscoveringAgenticSafetySpecifications from 1-Bit Danger Signals",
+      "url": "https://arxiv.org/abs/2604.23210",
+      "authors": [
+        "Víctor Gallego"
+      ],
+      "snippet": "Can large language model agents discover hidden safety objectives through experience alone? We introduce EPO-Safe (Experiential Prompt Optimization for Safe Agents), a framework where an LLM iteratively generates action plans, receives sparse binary danger warnings, and evolves a natural language behavioral specification through reflection. Unlike standard LLM reflection methods that rely on rich textual feedback (e.g., compiler errors or detailed environment responses), EPO-Safe demonstrates that LLMs can perform safety reasoning from a strictly impoverished signal in structured, low-dimensional environments: the agent never observes the hidden performance function $R^*$, only a single bit per timestep indicating that an action was unsafe. We evaluate on five AI Safety Gridworlds (Leike et al., 2017) and five text-based scenario analogs where visible reward $R$ may diverge from $R^*$. EPO-Safe discovers safe behavior within 1-2 rounds (5-15 episodes), producing human-readable specifications with correct explanatory hypotheses about hazards (e.g., \"X cells are directionally hazardous: entering from the north is dangerous\"). Critically, we show that standard reward-driven reflection actively degrades safety: agents reflecting on reward alone use the loop to justify and accelerate reward hacking, proving that reflection must be paired with a dedicated safety channel to discover hidden constraints. We further evaluate robustness to noisy oracles: even when 50% of non-dangerous steps produce spurious warnings, mean safety performance degrades by only 15% on average, though sensitivity is environment-dependent, as cross-episode reflection naturally filters inconsistent signals. Each evolved specification functions as an auditable set of grounded behavioral rules discovered autonomously through interaction, rather than authored by humans as in Constitutional AI (Bai et al., 2022).△ Less",
+      "published": "Submitted25 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "AgentPulse: A Continuous Multi-Signal Framework for Evaluating AIAgentsin Deployment",
+      "url": "https://arxiv.org/abs/2604.24038",
+      "authors": [
+        "Yuxuan Gao",
+        "Megan Wang",
+        "Yi Ling Yu"
+      ],
+      "snippet": "Static benchmarks measure what AIagentscan do at a fixed point in time but not how they are adopted, maintained, or experienced in deployment. We introduce AgentPulse, a continuous evaluation framework scoring 50agentsacross 10 workload categories along four factors (Benchmark Performance, Adoption Signals, Community Sentiment, and Ecosystem Health) aggregated from 18 real-time signals across GitHub, package registries, IDE marketplaces, social platforms, and benchmark leaderboards. Three analyses ground the framework. The four factors capture largely complementary information (n=50; $ρ_{\\max}=0.61$ for Adoption-Ecosystem, all others $|ρ| \\leq 0.37$). A circularity-controlled test (n=35) shows the Benchmark+Sentiment sub-composite, which contains no GitHub-derived signals, predicts external adoption proxies it does not aggregate: GitHub stars ($ρ_s=0.52$, $p<0.01$) and Stack Overflow question volume ($ρ_s=0.49$, $p<0.01$), with VS Code installs ($ρ_s=0.44$, $p<0.05$) reported as illustrative given that only 11 of 35agentshave non-zero installs. On the n=11 subset with published SWE-bench scores, composite and benchmark-only rankings are nearly uncorrelated ($ρ_s=0.25$; 9 of 11agentsshift by at least 2 ranks), driven by a strong negative Adoption-Capability correlation among closed-source high-capabilityagentswithin this subset. This is precisely why we rest the framework's validity claim on the broader n=35 test rather than the SWE-bench overlap. AgentPulse surfaces deployment signal absent from benchmarks; it is a methodology, not a ground-truth ranking. The framework, all collected signals, scoring outputs, and evaluation harness are released under CC BY 4.0.△ Less",
+      "published": "Submitted27 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Poster: ClawdGo: Endogenous Security Awareness Training for Autonomous AI Agents",
+      "url": "https://arxiv.org/abs/2604.24020",
+      "authors": [
+        "Jiaqi Li",
+        "Yang Zhao",
+        "Bin Sun",
+        "Yang Yu",
+        "Jian Chang",
+        "Lidong Zhai"
+      ],
+      "snippet": "Autonomous AI agents deployed on platforms such as OpenClaw facepromptinjection, memory poisoning, supply-chain attacks, and social engineering, yet existing defences address only the platform perimeter, leaving the agent's own threat judgement entirely untrained. We present ClawdGo, a framework for endogenous security awareness training: we teach the agent to recognise and reason about threats from the inside, at inference time, with no model modification. Four contributions are introduced: TLDT (Three-Layer Domain Taxonomy) organises 12 trainable dimensions across Self-Defence, Owner-Protection, and Enterprise-Security layers; ASAT (Autonomous Security Awareness Training) is a self-play loop where the agent alternates attacker, defender, and evaluator roles under weakest-first curriculum scheduling; CSMA (Cross-Session Memory Accumulation) compounds skill gains via a four-layer persistent memory architecture and Axiom Crystallisation Promotion (ACP); and SACP (Security Awareness Calibration Problem) formalises the precision-recall tradeoff introduced by endogenous training. Live experiments show weakest-first ASAT raises average TLDT score from 80.9 to 96.9 over 16 sessions, outperforming uniform-random scheduling by 6.5 points and covering 11 of 12 dimensions. CSMA retains the full gain across sessions; cold-start ablation recovers only 2.4 points, leaving a 13.6-point gap. E-mode generates 32 TLDT-conformant scenarios covering all 12 dimensions. SACP is observed when a heavily trained agent classifies a legitimate capability assessment aspromptinjection(30/160).△ Less",
+      "published": "Submitted27 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security",
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "S2G-RAG: Structured Sufficiency and Gap Judging for IterativeRetrieval-AugmentedQA",
+      "url": "https://arxiv.org/abs/2604.23783",
+      "authors": [
+        "Minghan Li",
+        "Junjie Zou",
+        "Xinxuan Lv",
+        "Chao Zhang",
+        "Guodong Zhou"
+      ],
+      "snippet": "Retrieval-AugmentedGeneration (RAG) grounds language models in external evidence, but multi-hop question answering remains difficult because iterative pipelines must control what to retrieve next and when the available evidence is adequate. In practice, systems may answer from incomplete evidence chains, or they may accumulate redundant or distractor-heavy text that interferes with later retrieval and reasoning. We propose S2G-RAG (Structured Sufficiency and Gap-judging RAG), an iterative framework with an explicit controller, S2G-Judge. At each turn, S2G-Judge predicts whether the current evidence memory supports answering and, if not, outputs structured gap items that describe the missing information. These gap items are then mapped into the next retrieval query, producing stable multi-turn retrieval trajectories. To reduce noise accumulation, S2G-RAG maintains a sentence-level Evidence Context by extracting a compact set of relevant sentences from retrieved documents. Experiments on TriviaQA, HotpotQA, and 2WikiMultiHopQA show that S2G-RAG improves multi-hop QA performance and robustness under multi-turn retrieval. Furthermore, S2G-RAG can be integrated into existing RAG pipelines as a lightweight component, without modifying the search engine or retraining the generator.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "RaV-IDP: A Reconstruction-as-Validation Framework for Faithful Intelligent Document Processing",
+      "url": "https://arxiv.org/abs/2604.23644",
+      "authors": [
+        "Pritesh Jha"
+      ],
+      "snippet": "Intelligent document processing pipelines extract structured entities (tables, images, and text) from documents for use in downstream systems such as knowledge bases,retrieval-augmentedgeneration, and analytics. A persistent limitation of existing pipelines is that extraction output is produced without any intrinsic mechanism to verify whether it faithfully represents the source. Model-internal confidence scores measure inference certainty, not correspondence to the document, and extraction errors pass silently into downstream consumers.\n  We present Reconstruction as Validation (RaV-IDP), a document processing pipeline that introduces reconstruction as a first-class architectural component. After each entity is extracted, a dedicated reconstructor renders the extracted representation back into a form comparable to the original document region, and a comparator scores fidelity between the reconstruction and the unmodified source crop. This fidelity score is a grounded, label-free quality signal. When fidelity falls below a per-entity-type threshold, a structured GPT-4.1 vision fallback is triggered and the validation loop repeats. We enforce a bootstrap constraint: the comparator always anchors against the original document region, never against the extraction, preventing the validation from becoming circular.\n  We further propose a per-stage evaluation framework pairing each pipeline component with an appropriate benchmark. The code pipeline is publicly available at https://github.com/pritesh-2711/RaV-IDP for experimentation and use.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Tandem: Riding Together with Large and Small Language Models for Efficient Reasoning",
+      "url": "https://arxiv.org/abs/2604.23623",
+      "authors": [
+        "Zichuan Fu",
+        "Xian Wu",
+        "Guojing Li",
+        "Yejing Wang",
+        "Yijun Chen",
+        "Zihao Zhao",
+        "Yixuan Luo",
+        "Hanyu Yan",
+        "Yefeng Zheng",
+        "Xiangyu Zhao"
+      ],
+      "snippet": "Recent advancements in large language models (LLMs) have catalyzed the rise of reasoning-intensive inference paradigms, where models perform explicit step-by-step reasoning before generating final answers. While such approaches improve answer quality and interpretability, they incur substantial computational overhead due to the prolonged generation sequences. In this paper, we propose Tandem, a novel collaborative framework that synergizes large and small language models (LLMs and SLMs) to achieve high-quality reasoning with significantly reduced computational cost. Specifically, theLLMservesas a strategic coordinator, efficiently generating a compact set of critical reasoning insights. These insights are then used to guide a smaller, more efficient SLM in executing the full reasoning process and delivering the final response. To balance efficiency and reliability, Tandem introduces a cost-aware termination mechanism that adaptively determines when sufficient reasoning guidance has been accumulated, enabling early stopping of the LLM's generation. Experiments on mathematical reasoning and code generation benchmarks demonstrate that Tandem reduces computational costs by approximately 40% compared to standalone LLM reasoning, while achieving superior or competitive performance. Furthermore, the sufficiency classifier trained on one domain transfers effectively to others without retraining. The code is available at: https://github.com/Applied-Machine-Learning-Lab/ACL2026_Tandem.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "CyberCane: Neuro-Symbolic RAG for Privacy-Preserving Phishing Detection with Formal Ontology Reasoning",
+      "url": "https://arxiv.org/abs/2604.23563",
+      "authors": [
+        "Safayat Bin Hakim",
+        "Aniqa Afzal",
+        "Qi Zhao",
+        "Vigna Majmundar",
+        "Pawel Sloboda",
+        "Houbing Herbert Song"
+      ],
+      "snippet": "Privacy-critical domains require phishing detection systems that satisfy contradictory constraints: near-zero false positives to prevent workflow disruption, transparent explanations for non-expert staff, strict regulatory compliance prohibiting sensitive data exposure to external APIs, and robustness against AI-generated attacks. Existing rule-based systems are brittle to novel campaigns, while LLM-based detectors violate privacy regulations through unredacted data transmission. We introduce CyberCane, a neuro-symbolic framework integrating deterministic symbolic analysis with privacy-preservingretrieval-augmentedgeneration (RAG). Our dual-phase pipeline applies lightweight symbolic rules to email metadata, then escalates borderline cases to semantic classification via RAG with automated sensitive data redaction and retrieval from a phishing-only corpus. We further introduce PhishOnt, an OWL ontology enabling verifiable attack classification through formal reasoning chains. Evaluation on DataPhish2025 (12.3k emails; mixed human/LLM) and Nazario/SpamAssassin demonstrates a 78.6-point recall gain over symbolic-only detection on AI-generated threats, with precision exceeding 98% and FPR as low as 0.16%. Healthcare deployment projects a 542x ROI; tunable operating points support diverse risk tolerances, with open-source implementation at https://github.com/sbhakim/Cybercane.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "AVISE: Framework for Evaluating the Security of AI Systems",
+      "url": "https://arxiv.org/abs/2604.20833",
+      "authors": [
+        "Mikko Lempinen",
+        "Joni Kemppainen",
+        "Niklas Raesalmi"
+      ],
+      "snippet": "As artificial intelligence (AI) systems are increasingly deployed across critical domains, their security vulnerabilities pose growing risks of high-profile exploits and consequential system failures. Yet systematic approaches to evaluating AI security remain underdeveloped. In this paper, we introduce AVISE (AI Vulnerability Identification and Security Evaluation), a modular open-source framework for identifying vulnerabilities in and evaluating the security of AI systems and models. As a demonstration of the framework, we extend the theory-of-mind-based multi-turn Red Queen attack into an Adversarial Language Model (ALM) augmented attack and develop an automated Security Evaluation Test (SET) for discoveringjailbreakvulnerabilities in language models. The SET comprises 25 test cases and an Evaluation Language Model (ELM) that determines whether each test case was able tojailbreakthe target model, achieving 92% accuracy, an F1-score of 0.91, and a Matthews correlation coefficient of 0.83. We evaluate nine recently released language models of diverse sizes with the SET and find that all are vulnerable to the augmented Red Queen attack to varying degrees. AVISE provides researchers and industry practitioners with an extensible foundation for developing and deploying automated SETs, offering a concrete step toward more rigorous and reproducible AI security evaluation.△ Less",
+      "published": "Submitted26 April, 2026;v1submitted 22 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "GAZE: GroundedAgenticZero-shot Evaluation with Viewer-Level Tools and Literature Retrieval on Rare Brain MRI",
+      "url": "https://arxiv.org/abs/2605.00876",
+      "authors": [
+        "Duaa Alim",
+        "Mogtaba Alim",
+        "Liam Chalcroft"
+      ],
+      "snippet": "Vision-language models (VLMs) read an image and produce text in a single forward pass, whereas radiologists typically inspect an image several times and consult the literature before writing a report. We introduce GAZE (GroundedAgenticZero-shot Evaluation), a framework that lets a medical VLM work in this iterative way by calling viewer-level tools (zoom, windowing, contrast, edge detection) and two retrieval tools backed by the U.S. National Library of Medicine (PubMed for medical literature, Open-i for radiological images), with structured outputs validated against a schema and full tool-call traces recorded for auditability. On NOVA, a benchmark of 906 brain MRI cases covering 281 rare neurological conditions, GAZE reaches 58.2 mean average precision (mAP) at intersection-over-union (IoU) 0.3 for lesion localisation and 34.9% Top-1 diagnostic accuracy under a joint protocol that scores captioning, diagnosis, and localisation from the image alone, without task-specific fine-tuning. Before any tool is used, structured prompting and schema-validated outputs already improve over the published Gemini 2.0 Flash baseline (20.2 to 29.4 mAP@0.3), so framework design is itself an experimental variable.Toolusehelps rare pathologies disproportionately: the fraction of cases with IoU > 0.3 rises from 17% to 58% for diagnoses with three or fewer examples versus 25% to 68% for common conditions ($\\geq$10 cases), with gains tracking engagement (Gemini 3 Flash: Cohen's d = 0.79, 11.8 tool calls per case; Gemini 2.0 Flash:toolsusedin 8.2% of cases, no significant benefit). Retrieval ablations additionally reveal a model-dependent trade-off in which gains in diagnosis can coincide with losses in localisation, reinforcing the case for joint evaluation of diagnosis, localisation, and captioning in medical VLMs.△ Less",
+      "published": "Submitted25 April, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Identity-Decoupled Anonymization for Visual Evidence in Multi-modalRetrieval-AugmentedGeneration",
+      "url": "https://arxiv.org/abs/2604.23584",
+      "authors": [
+        "Zehua Cheng",
+        "Wei Dai",
+        "Jiahao Sun"
+      ],
+      "snippet": "Multi-modalretrieval-augmentedgeneration (MRAG) systems retrieve visual evidence from large image corpora to ground the responses of large multi-modal models, yet the retrieved images frequently contain human faces whose identities constitute sensitive personal information. Existing anonymization techniques that destroy the non-identity visual cues that downstream reasoning depends on or fail to provide principled privacy guarantees. We propose Identity-Decoupled MRAG, a framework that interposes a generative anonymization module between retrieval and generation. Our approach consists of three components: (i)a disentangled variational encoder that factorizes each face into an identity code and a spatially-structured attribute code, regularized by a mutual-information penalty and a gradient-based independence term; (ii)a manifold-aware rejection sampler that replaces the identity code with a synthetic one guaranteed to be both distinct from the original and realistic; and (iii)a conditional latent diffusion generator that synthesizes the anonymized face from the replacement identity and the preserved attributes, distilled into a latent consistency model for low-latency deployment. Privacy is enforced through a multi-oracle ensemble of face recognition models with a hinge-based loss that halts optimization once identity similarity drops below the impostor-regime threshold.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Lightweight and Production-Ready PDF Visual Element Parsing",
+      "url": "https://arxiv.org/abs/2604.23276",
+      "authors": [
+        "Meizhu Liu",
+        "Yassi Abbasi",
+        "Matthew Rowe",
+        "Michael Avendi",
+        "Paul Li"
+      ],
+      "snippet": "PDF documents contain critical visual elements such as figures, tables, and forms whose accurate extraction is essential for document understanding and multimodalretrieval-augmentedgeneration (RAG). Existing PDF parsers often miss complex visuals, extract non-informative artifacts (e.g., watermarks, logos), produce fragmented elements, and fail to reliably associate captions with their corresponding elements, which degrades downstream retrieval and question answering. We present a lightweight and production level PDF parsing framework that can accurately detect visual elements and associates captions using a combination of spatial heuristics, layout analysis, and semantic similarity. On popular benchmark datasets and internal product data, the proposed solution achieves $\\geq96\\%$ visual element detection accuracy and $93\\%$ caption association accuracy. When used as a preprocessing step for multimodal RAG, it significantly outperforms state-of-the-art parsers and large vision-language models on both internal data and the MMDocRAG benchmark, while reducing latency by over $2\\times$. We have deployed the proposed system in challenging production environment.△ Less",
+      "published": "Submitted25 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "When AI reviews science: Can we trust the referee?",
+      "url": "https://arxiv.org/abs/2604.23593",
+      "authors": [
+        "Jialiang Wang",
+        "Yuchen Liu",
+        "Hang Xu",
+        "Kaichun Hu",
+        "Shimin Di",
+        "Wangze Ni",
+        "Linan Yue",
+        "Min-Ling Zhang",
+        "Kui Ren",
+        "Lei Chen"
+      ],
+      "snippet": "The volume of scientific submissions continues to climb, outpacing the capacity of qualified human referees and stretching editorial timelines. At the same time, modern large language models (LLMs) offer impressive capabilities in summarization, fact checking, and literature triage, making the integration of AI into peer review increasingly attractive -- and, in practice, unavoidable. Yet early deployments and informal adoption have exposed acute failure modes. Recent incidents have revealed that hiddenpromptinjectionsembedded in manuscripts can steer LLM-generated reviews toward unjustifiably positive judgments. Complementary studies have also demonstrated brittleness to adversarial phrasing, authority and length biases, and hallucinated claims. These episodes raise a central question for scholarly communication: when AI reviews science, can we trust the AI referee? This paper provides a security- and reliability-centered analysis of AI peer review. We map attacks across the review lifecycle -- training and data retrieval, desk review, deep review, rebuttal, and system-level. We instantiate this taxonomy with four treatment-control probes on a stratified set of ICLR 2025 submissions, using two advanced LLM-based referees to isolate the causal effects of prestige framing, assertion strength, rebuttal sycophancy, and contextual poisoning on review scores. Together, this taxonomy and experimental audit provide an evidence-based baseline for assessing and tracking the reliability of AI peer review and highlight concrete failure points to guide targeted, testable mitigations.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "CAP-CoT: Cycle Adversarial Prompt for Improving Chain of Thoughts in LLM Reasoning",
+      "url": "https://arxiv.org/abs/2604.23270",
+      "authors": [
+        "Shuxu Chen",
+        "Yitian Zhou",
+        "Jiaquan Zhang",
+        "Haoyu Bian",
+        "Aming Wu",
+        "Sungyoung Lee",
+        "Chaoning Zhang",
+        "Hyundong Shin"
+      ],
+      "snippet": "Chain-of-Thought (CoT) prompting has emerged as a simple and effective way to elicit step-by-step solutions from large language models (LLMs). However, CoT reasoning can be unstable across runs on long, multi-step problems, leading to inconsistent answers for unchanged task. Most prior work focuses on improving the forward reasoning chain within a single pass, with less attention to iterative and contrastive correction. To address this gap, we propose CAP-CoT, a Cycle Adversarial Prompt optimization framework designed to improve both CoT reasoning accuracy and stability of a single deployed solver. In each cycle, a forward solver generates candidate reasoning chains, an adversarial challenger constructs plausible but deliberately flawed chains using targeted error strategies, and a feedback agent contrasts the two chains and produces step-aligned structured feedback. This feedback closes the optimization loop in two directions, including updating the solver prompt based on errors exposed by the challenger, and updating the challenger prompt to generate increasingly targeted errors in subsequent cycles. Unlike safety-oriented adversarial prompting such asjailbreakorprompt-injectionattacks, our adversarial component is task-semantic and aims to expose logical vulnerabilities in reasoning chains. Experiments across six benchmarks and four LLM backbones demonstrate that within two to three adversarial prompt optimization cycles, CAP-CoT consistently reduces variability across runs while improving reasoning accuracy and robustness to prompt perturbations.△ Less",
+      "published": "Submitted25 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.75
+    },
+    {
+      "title": "Adversarial Flow Matching for Imperceptible Attacks on End-to-End Autonomous Driving",
+      "url": "https://arxiv.org/abs/2605.00880",
+      "authors": [
+        "Xinyu Zeng",
+        "Xiangkun He",
+        "Lei Tao",
+        "Chen Lv",
+        "Hong Cheng"
+      ],
+      "snippet": "Autonomous driving (AD) is evolving towards end-to-end (E2E) frameworks through two primary paradigms: monolithic models exemplified by Vision-Language-Action (VLA), and specialized modular architectures. Despite their divergent designs, both paradigms increasingly rely on Transformer backbones for complex reasoning, potentially causing a shared vulnerability: visually imperceptible perturbations can manipulate E2E AD models into hazardous maneuvers by targeting the Transformer module. Most existing adversarial attack approaches against AD systems operate under white-box or black-box settings; yet, they typically necessitate full model transparency, or suffer from either prohibitive query latency or limited attack transferability. In this paper, we propose Adversarial Flow Matching (AFM), a novel gray-box attack framework that exploits Transformer structural vulnerabilities in E2E AD models. AFM enables efficient one-step generation of adversarial examples via a neural average velocity field. Additionally, the proposed technique yields effective and visually imperceptible attacks by synergistically perturbing the generative latent space and the neural average velocity field. Extensive experiments demonstrate that AFM achieves a superior trade-off between attack effectiveness and imperceptibility: it substantially degrades the performance of both VLA and modular ADagentsacross various scenarios compared to baselines, while maintaining state-of-the-art visual imperceptibility. Furthermore, adversarial examples generated by AFM exhibit robust cross-model transferability, indicating that AFM closely approximates a black-box attack setting while requiring only the prior knowledge that the target AD model incorporates a Transformer-based module.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "TimingLLM: A Two-StageRetrieval-AugmentedFramework for Pre-Synthesis Timing Prediction from Verilog",
+      "url": "https://arxiv.org/abs/2604.23602",
+      "authors": [
+        "Armin Abdollahi",
+        "Negin Ashrafi",
+        "Mehdi Kamal",
+        "Massoud Pedram"
+      ],
+      "snippet": "Early, tool-free prediction of post-synthesis timing remains a key obstacle to rapid RTL iteration. We introduce TimingLLM, a two-stageretrieval-augmentedLLM pipeline that estimates worst negative slack (WNS) and total negative slack (TNS) directly from Verilog. Stage 1 is a fine-tuned LLM that acts as a compact post-synthesis timing oracle, producing path-level arrivals/required times that are summarized into lightweight structural-timing cues (e.g., bag-of-gates counts, critical-path depth, gate-type patterns). Stage 2 is an LLM-based regressor that predicts WNS/TNS and applies a learned diagonal steering vector at the last transformer block, computed from the k nearest timing-labeled modules in a disjoint retrieval bank. On VerilogEval, TimingLLM attains R_WNS = 0.91 (MAPE 12%) and R_TNS=0.97 (MAPE 16%) while running 1.3-1.6 times faster than prior methods. Training uses a new 60k-module Verilog corpus with synthesis reports, which we will release. After training once, TimingLLM can be adapted to new technology libraries and PVT corners by refitting only a small regression head on 1000 labeled modules per setting, consistently outperforming state-of-the-art baselines.△ Less",
+      "published": "Submitted26 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 5.0
+    },
+    {
+      "title": "DeepTaxon: An InterpretableRetrieval-AugmentedMultimodal Framework for Unified Species Identification and Discovery",
+      "url": "https://arxiv.org/abs/2604.24029",
+      "authors": [
+        "Jiawei Wang",
+        "Ming Lei",
+        "Yaning Yang",
+        "Xinyan Lin",
+        "Yuquan Le",
+        "Qiwei Ma",
+        "Zhiwei Xu",
+        "Zheqi Lv",
+        "Yuchen Ang",
+        "Zhe Quan",
+        "Tat-Seng Chua"
+      ],
+      "snippet": "Identifying species in biology among tens of thousands of visually similar taxa while discovering unknown species in open-world environments remains a fundamental challenge in biodiversity research. Current methods treat identification and discovery as separate problems, with classification models assuming closed sets and discovery relying on threshold-based rejection. Here we present DeepTaxon, aretrieval-augmentedmultimodal framework that unifies species identification and discovery through interpretable reasoning over retrieved visual evidence. Given a query image, DeepTaxon retrieves the top-$k$ candidate species with $n$ exemplar images each from a retrieval index and performs chain-of-thought comparative reasoning. Critically, we redefine discovery as an explicit, retrieval-based decision problem rather than an implicit parametric memory problem. A sample is novel if and only if the retrieval index lacks sufficient evidence for identification, so each retrieval naturally yields a classification or discovery label without manual annotation, thereby providing automatic supervision for both tasks. We train the framework via supervised fine-tuning on syntheticretrieval-augmenteddata, followed by reinforcement learning on hard samples, converting high-recall retrieval into high-precision decisions that scale to massive taxonomic vocabularies. Extensive experiments on a large-scale in-distribution benchmark and six out-of-distribution datasets demonstrate consistent improvements in both identification and discovery. Ablation studies further reveal effective test-time scaling with candidate count $k$ and exemplar count $n$, strong zero-shot transfer to unseen domains, and consistent performance across retrieval encoders, establishing an interpretable solution for biodiversity research.△ Less",
+      "published": "Submitted27 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 5.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.75
+    },
+    {
+      "title": "ARIstoteles -- Dissecting Apple's Baseband Interface",
+      "url": "https://arxiv.org/abs/2604.23457",
+      "authors": [
+        "Tobias Kröll",
+        "Stephan Kleber",
+        "Frank Kargl",
+        "Matthias Hollick",
+        "Jiska Classen"
+      ],
+      "snippet": "Wireless chips and interfaces expose a substantial remote attack surface. As of today, most cellular baseband security research is performed on the Android ecosystem, leaving a huge gap on Apple devices. With iOSjailbreaks, last-generation wireless chips become fairly accessible for performance and security research. Yet, iPhones were never intended to be used as a research platform, and chips and interfaces are undocumented. One protocol to interface with such chips is Apple Remote Invocation (ARI), which interacts with the central phone component CommCenter and multiple user-space daemons, thereby posing a Remote Code Execution (RCE) attack surface. We are the first to reverse-engineer and fuzz-test the ARI interface on iOS. Our Ghidra scripts automatically generate a Wireshark dissector, called ARIstoteles, by parsing closed-source iOS libraries for this undocumented protocol. Moreover, we compare the quality of the dissector to fully-automated approaches based on static trace analysis. Finally, we fuzz the ARI interface based on our reverse-engineering results. The fuzzing results indicate that ARI does not only lack public security research but also has not been well-tested by Apple. By releasing ARIstoteles open-source, we also aim to facilitate similar research in the future.△ Less",
+      "published": "Submitted25 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 4.0,
+        "hook_potential": 3.0
+      },
+      "composite": 2.75
+    },
+    {
+      "title": "Fast Core Identification",
+      "url": "https://arxiv.org/abs/2604.25954",
+      "authors": [
+        "Irene Aldridge"
+      ],
+      "snippet": "This paper examines the computational complexity of the \\emph{Core Identification Problem} (CIP) in one-sided matching markets governed by the Top Trading Cycles (TTC) algorithm. The central contribution is a formal complexity separation: this paper proves that identifying whichagentsreceive a core allocation is strictly easier than computing the full TTC allocation. Specifically, we show that CIP can be solved in $\\bigO{Ln}$ time, where $L$ is the maximum number of preferences reported peragent, by computing the leading eigenvector of a preference-derived Markov transition matrix via randomized SVD\\@. For sparse preference profiles ($L = \\bigO{1}$, as in the NYC school choice where $L = 12$), this yields an algorithm $\\bigO{n}$. This result strictly improves on the $\\bigO{n \\log n}$ complexity of the full TTC allocation (\\cite{SabanSethuraman2013}) and matches the $\\Omg{n}$ information-theoretic lower bound, establishing asymptotic optimality. The method inherits all properties of TTC: Pareto efficiency, individual rationality, and strategy-proofness, and is robust to preference noise for sufficiently large~$n$.△ Less",
+      "published": "Submitted25 April, 2026;originally announcedApril 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 4.0,
+        "hook_potential": 2.0
+      },
+      "composite": 2.5
+    }
+  ]
+}

@@ -1,0 +1,588 @@
+{
+  "generated_at": "2026-06-08T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-06-06",
+    "2026-06-08"
+  ],
+  "candidates": [
+    {
+      "title": "GitInject: Real-WorldPromptInjectionAttacks in AI-Powered CI/CD Pipelines",
+      "url": "https://arxiv.org/abs/2606.09935",
+      "authors": [
+        "Jafar Isbarov",
+        "Umid Suleymanov",
+        "Ilia Shumailov",
+        "Murat Kantarcioglu"
+      ],
+      "snippet": "AI-powered agents are increasingly embedded in continuous integration and continuous delivery/deployment (CI/CD) pipelines to autonomously review pull requests (PRs), triage issues, and maintain codebases. These agents ingest untrusted content while operating with elevated repository permissions, making them a natural target forpromptinjectionattacks with supply chain consequences. We present GitInject, an open-source framework for evaluatingpromptinjectionvulnerabilities in real, live GitHub workflows, a widely deployed instance of CI/CD pipelines. Unlike prior agent security benchmarks that simulate tool calls, GitInject provisions ephemeral repositories and triggers actual workflow runs, so that sandbox constraints, credential handling, and permission boundaries behave exactly as in production. Using GitInject, we study workflow configurations across four AI providers and document eleven named attacks spanning config-file injection, credential exfiltration, judgment manipulation, and availability. We find that all tested providers are susceptible to at least one attack class in their default configuration, and that the most critical vulnerabilities are structural: they arise from how CI/CD infrastructure handles credentials and configuration files, not from any specific model's behavior. For each confirmed attack class, we identify the minimum-cost workflow-level countermeasure and analyze its coverage and limitations. GitInject is released publicly to facilitate further research in this direction.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security",
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "Hiding in Plain Floats: Steganographic Carriers for Indirect Prompt and Content Injection",
+      "url": "https://arxiv.org/abs/2606.08403",
+      "authors": [
+        "Mudit Sinha",
+        "Sanika Chavan"
+      ],
+      "snippet": "Text-centeredprompt-injectiondefenses assume that the malicious signal is visible in one of the inspected text views. We study a reproducible LLM01-style indirect prompt/content-injection failure mode where that assumption breaks: a payload caught in plain English slips past the same detector when it is transported as structured float parameters and reconstructed only as fragmented telemetry. Across 14,400 attacked real-model trials on three commercial LLM APIs from different providers, the IFS-derived float-array carrier preserves 94.3% leakage ASR under the strongest dual-layer text-classifier defense evaluated in the main matrix: a Prompt Guard 2 + TF-IDF ensemble; the same carrier-level pattern also replicates with a fine-tuned roberta-base detector. We emphasize leakage ASR because downstream systems may act on quoted or reproduced markers even when the model refuses, but Strong ASR is the stricter metric for structurally compliant attack success. A 2 x 2 ablation shows that data-layer storage and reconstruction-layer fragmentation defeat different text views and that both are needed to evade both. A simple xxd detector and semantic validation block the current T3 instance, so the contribution is not an undetectable exploit but a measured failure boundary for text-only inspection in structured-input pipelines that expose reconstructed auxiliary channels to an LLM.△ Less",
+      "published": "Submitted6 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "VATS: Exploiting Implicit Authority in Error-Path Injection via Systematic Mutation",
+      "url": "https://arxiv.org/abs/2606.07992",
+      "authors": [
+        "Harshil Patel",
+        "Kunal Pai"
+      ],
+      "snippet": "As the Model Context Protocol (MCP) standardizes tool-calling for autonomous agents, it introduces a critical, unexamined attack surface: the error-handling loop. We hypothesize that tool error messages possess implicit authority, triggering corrective reasoning modes that bypass standard safety heuristics. We introduce VATS (Vulnerability Analysis of Tool Streams), a mutation-driven framework that systematically evolves adversarial payloads across seven structural and linguistic dimensions. Our evaluation across four frontier models, Gemini 3.1 Pro, GPT-5.5, GLM-5.1, and Qwen3-Coder, demonstrates that error-path injection triples the success rate of standard indirectpromptinjection(IPI), achieving up to 100% compliance in controlled evaluations. We isolate structural positioning (sandwiching instructions within error context) as the most effective exploit vector across all tested models. While we find that production framework guardrails can mitigate these vulnerabilities, the inherent susceptibility of the model layer poses a systemic risk to bespoke agentic workflows.△ Less",
+      "published": "Submitted6 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "RKSC: Reasoning-Aware KV Cache Sharing and Confident Early Exit for Multi-Step LLM Inference",
+      "url": "https://arxiv.org/abs/2606.09937",
+      "authors": [
+        "Anirudh Sekar"
+      ],
+      "snippet": "We introduce RKSC (Reasoning-Aware KV Cache Sharing), a training-free inference framework that eliminates two structural redundancies in multi-branch LLM reasoning pipelines. ASKS (Attention-Similarity KV Sharing) computes the prefix KV cache once and broadcasts it to all semantically similar branches via hidden-state cosine similarity, strictly generalising the token-exact prefix caching used by vLLM and SGLang. CGEE (Confidence-Gated Early Exit) applies two complementary exit mechanisms: (1) it skips the verification forward pass entirely when generation confidence is decisive across branches, and (2) it terminates the verification pass at an intermediate layer when per-layer entropy stabilises, using lightweight hooks on the transformer backbone. RSBCM (Reasoning-Selective Block Cache Manager) prevents unbounded cache growth via attention-weighted depth-priority eviction. Across five model families (7B-10B), four benchmarks, and 1,000 evaluated problems, RKSC achieves a mean speedup of 3.008x over the No-KV baseline (peak 3.990x), a 1.66x mean improvement over vLLM-equivalent prefix caching, with a CGEE-induced error rate of only 0.37% (6 errors out of 1,616 verify calls). No fine-tuning or architecture changes are required. Code is available at https://github.com/AnirudhSekar/RKSC.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "When RL Fails after SFT: Rejuvenating Model Plasticity for Robust SFT-to-RL Handoff",
+      "url": "https://arxiv.org/abs/2606.09932",
+      "authors": [
+        "Runze Liu",
+        "Jiashun Liu",
+        "Xu Wan",
+        "Yuqian Fu",
+        "Ling Pan"
+      ],
+      "snippet": "Supervised Fine-Tuning (SFT) followed by Reinforcement Learning (RL) has become a standard pipeline for Large Language Model (LLM) post-training. SFT is expected to provide a useful behavioral prior for RL to further enhance model capabilities. However, checkpoints with excessive SFT often show limited improvement during RL. We attribute this failure to the loss of model plasticity: the reduced ability of an SFT-initialized policy to be effectively reshaped by subsequent RL. To better understand this phenomenon, we conduct detailed analysis from multiple perspectives, including parameter changes, output spaces, and RL optimization dynamics. Our results show that models from excessive SFT tend to produce over-confident token distributions and exhibit sharp parameter landscapes, which make them harder to optimize in the RL stage. To enable a more robust SFT-to-RL handoff, we propose \\texttt{Rejuvenation}, a simple yet effective method that restores plasticity while preserving useful SFT-acquired priors. Rejuvenation leverages base-anchored model fusion to reduce excessive SFT-induced drift with targeted neuron reset to mitigate model rigidity. Experimental results on both math reasoning tasks andagentictasks demonstrate that our approach consistently improves RL performance on over-trained SFT models, while also enhancing generalization to out-of-distribution tasks.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "IntentKV: Cross-Turn Intent-Aware KV Cache Pruning forAgentInference",
+      "url": "https://arxiv.org/abs/2606.09916",
+      "authors": [
+        "Junjie Li",
+        "Jiong Lou",
+        "Jie Li"
+      ],
+      "snippet": "Multi-turnLLMagentsfan short queries into long trajectories of tool calls, search results, and intermediate reasoning. Both KV memory and KV read bandwidth grow by orders of magnitude across a single trajectory, making the key-value (KV) cache, not parameter compute, the dominant serving bottleneck for long-horizonagents. We introduce IntentKV, learned KV pruning that keeps the base LLM frozen. IntentKV maintains a session-level QueryMemory of cross-turn intent, scores live history tokens with a memory-attention rule, and adds a zero-initialized residual head with cross-attention over current-query K-vectors. To stay composable with prefix caches, eviction is a slot-map redirection: dropped positions route to a sentinel dead slot while surviving K/V rows, RoPE phases, and slot identities stay in place. IntentKV matches the no-pruning full-cache baseline with almost no accuracy drop under tight KV budgets: at an 8k KV budget, mean peak request tokens drop 23.9% on Qwen3-8B and 30.7% on Qwen2.5-14B. On the 100 longest BCP queries that all methods complete on Qwen2.5-14B, IntentKV-8k further cuts worst-case peak request tokens from 92.3k to 20.5k, a 77.8% reduction, and worst-case raw KV reads from 411M to 31M, a 92.6% reduction.△ Less",
+      "published": "Submitted6 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Document-Authored Control-Signal Impersonation: A Low-Cost Indirect Prompt Attack on RAG Safety Boundaries",
+      "url": "https://arxiv.org/abs/2606.09005",
+      "authors": [
+        "Jianguo Zhu"
+      ],
+      "snippet": "Retrieval-augmented generation (RAG) systems often serialize user queries, retrieved documents, metadata, system labels, and task instructions into one natural-language prompt. We study a source-authority boundary failure in this design: attacker-authored retrieved text can impersonate metadata, provenance, authority, or disclosure-policy signals that appear control-relevant to the model. We call this pattern Document-Authored Control-Signal Impersonation (DACSI). DACSI is a non-imperative, metadata-like payload subclass within indirectpromptinjection. Its central lesson is simple: document-authored labels are data, not policy. Command-style injection asks the model to ignore, override, or violate policy; DACSI asks whether untrusted document text can be misattributed as an authorized control signal when RAG prompt rendering collapses trusted and untrusted text into the same natural-language channel.\n  We evaluate DACSI across six model settings, prompt-pressure levels, injection baselines, signal taxonomies, RAG-mediated pipelines, system-control probes, a source-authority attribution probe, and synthetic canary formats. We interpret the evidence by model regime rather than as six equal replications: DeepSeek V4 Pro and Qwen3.5-397B provide the cleanest positive lift, DeepSeek V4 Flash is a high-susceptibility setting, GPT-5.5 and Gemini 3.1 Pro Low are strong-boundary probes with selected residual risks, and GLM-4.7 is a saturated leakage boundary case. Across these regimes, DACSI warrants separate evaluation because it uses a command-free metadata/provenance/policy surface, follows a RAG-specific source-authority path, and responds to source/channel separation. The source-authority probe is behavioral attribution evidence, not proof of an internal mechanism.△ Less",
+      "published": "Submitted8 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "HardeningAgentBenchmarks with Adversarial Hacker-Fixer Loops",
+      "url": "https://arxiv.org/abs/2606.08960",
+      "authors": [
+        "Ziqian Zhong",
+        "Ivgeni Segal",
+        "Ivan Bercovich",
+        "Shashwat Saxena",
+        "Kexun Zhang",
+        "Aditi Raghunathan"
+      ],
+      "snippet": "Agentbenchmarks score submissions with outcome verifiers that are typically hand-written and brittle, leaving them open to reward hacking. We audit 1,968 tasks across five terminal-agentbenchmarks and find 323 (16%) hackable by frontier models given only the task description. This corrupts both leaderboard rankings and RL training signal, yet the standard response is manual and reactive.\n  We introduce the hacker-fixer loop, a method for building exploit-resistant verifiers without per-task manual patching. The loop alternates threeLLMagents: a hacker tries to pass the verifier without solving the task, a fixer patches the verifier to reject each discovered exploit, and a solver confirms the patched verifier still admits legitimate solutions. The loop iterates: each patch reshapes what the verifier rewards, surfacing the next exploit. We further add verifier access, and let patches transfer across tasks, to broaden the exploits the loop discovers.\n  On KernelBench, the loop drives the attack success rate from 62% to 0% on a held-out corpus of publicly reported exploits. We also find that weakeragentsin the loop can defend against much stronger hackers: Gemini 3 Flash's loop drives the stronger Gemini 3.1 Pro and Claude Opus 4.7's attack success rate from 76% and 61% to 0% on KernelBench, and Gemini 3.1 Pro's from 39% to 17% on Terminal Bench across 77 tasks. We release Terminal Wrench (323 hackable environments, 3,632 hack trajectories) as a snapshot of the current attack surface, our patched verifiers, the exploits the loop discovered, and our implementation as a basis for future work.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "VESTA: A Fully Automated Scenario Generation and Safety Evaluation Framework for LLM Agents",
+      "url": "https://arxiv.org/abs/2606.08531",
+      "authors": [
+        "Lu Jia",
+        "Haibo Tong",
+        "Feifei Zhao",
+        "Jindong Li",
+        "Dongqi Liang",
+        "Ping Wu",
+        "Qian Zhang",
+        "Yi Zeng"
+      ],
+      "snippet": "Large language models (LLMs) are increasingly evolving from simple text-based interaction systems into LLM agents that can maintain memory, use tools, access external environments, and execute tasks. As their capabilities and autonomy expand, the safety risks they face also become more diverse. Existing evaluations often rely on manually written scenarios, static prompts, or final-output judgments, making it difficult to capture the diverse risks that agents may face during task execution. We introduce VESTA, a fully automated scenario generation and safety evaluation framework for LLM agents. Based on five risk dimensions, VESTA instantiaes abstract and diverse safety risks in real-world task execution into 1,072 measurable evaluation scenarios. Using the automated evaluation pipeline, 12 LLM agents are evaluated under two authority contexts. The results show that current agents still face substantial behavioral safety risks during task execution, with an average ASR of 47.1% and several models exceeding 70%. These findings demonstrate the importance of executable, process-level evaluation for understanding and improving LLMagentsafety.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Helpful to a Fault: Measuring Illicit Assistance in Multi-Turn, Multilingual LLM Agents",
+      "url": "https://arxiv.org/abs/2602.16346",
+      "authors": [
+        "Nivya Talokar",
+        "Ayush K Tarun",
+        "Murari Mandal",
+        "Maksym Andriushchenko",
+        "Antoine Bosselut"
+      ],
+      "snippet": "LLM-based agents execute real-world workflows via tools and memory. These affordances enable ill-intended adversaries to also use these agents to carry out complex misuse scenarios. Existing agent misuse benchmarks largely test single-prompt instructions, leaving a gap in measuring how agents end up helping with harmful or illegal tasks over multiple turns. We introduce STING (Sequential Testing of Illicit N-step Goal execution), an automated red-teaming framework that constructs a step-by-step illicit plan grounded in a benign persona and iteratively probes a target agent with adaptive follow-ups, using judge agents to track phase completion. We further introduce an analysis framework that models multi-turn red-teaming as a time-to-first-jailbreakrandom variable, enabling analysis tools like discovery curves, hazard-ratio attribution by attack language, and a new metric: Restricted MeanJailbreakDiscovery. Across AgentHarm scenarios, STING yields substantially higher illicit-task completion than single-turn prompting and chat-oriented multi-turn baselines adapted to tool-using agents. In multilingual evaluations across six non-English settings, we find that attack success and illicit-task completion do not consistently increase in lower-resource languages, diverging from common chatbot findings. Overall, STING provides a practical way to evaluate and stress-test agent misuse in realistic deployment settings, where interactions are inherently multi-turn and often multilingual.△ Less",
+      "published": "Submitted7 June, 2026;v1submitted 18 February, 2026;originally announcedFebruary 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "TAME: A Trustworthy Test-Time Evolution of Agent Memory with Systematic Benchmarking",
+      "url": "https://arxiv.org/abs/2602.03224",
+      "authors": [
+        "Yu Cheng",
+        "Yongkang Hu",
+        "Jiuan Zhou",
+        "Yushuo Zhang",
+        "Yihang Chen",
+        "Huichi Zhou",
+        "Mingang Chen",
+        "Zhizhong Zhang",
+        "Kun Shao",
+        "Yuan Xie",
+        "Zhaoxia Yin"
+      ],
+      "snippet": "Test-time evolution of agent memory represents a pivotal paradigm for advancing AGI, as it strengthens complex reasoning through experience accumulation without requiring parameter updates. However, even during benign task evolution,agentsafetyalignment remains vulnerable, a phenomenon known as Agent Memory Misevolution. To evaluate this phenomenon, we construct the Trust-Memevo benchmark and find that agents exhibit an overall decline in trustworthiness across multiple tasks during benign task evolution. To address this issue, we propose TAME, a trust-aware memory evolution framework in which a shared memory bank is jointly governed by an Executor and an Evaluator. The Executor retrieves and applies transferable experiences to support task solving, while the Evaluator assesses the contribution of each utilized experience to the outcome and produces trust-aware feedback to guide subsequent memory use. This executor-evaluator loop enables memory to be selectively reinforced, cautiously reused, and continuously expanded over time. Experiments show that TAME mitigates memory misevolution while achieving strong task performance. In particular, on the GPT-5.2 AIME benchmark, TAME improves accuracy by 14.6 percentage points over the strongest existing method and maintains competitive trustworthiness.△ Less",
+      "published": "Submitted6 June, 2026;v1submitted 3 February, 2026;originally announcedFebruary 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "SpectrumKV: Per-Token Mixed-Precision KV Cache Transfer for Prefill-Decode DisaggregatedLLMServing",
+      "url": "https://arxiv.org/abs/2606.08635",
+      "authors": [
+        "Yang Pengju"
+      ],
+      "snippet": "Prefill-decode (PD) disaggregation decouples prompt processing from token generation, but it also turns the key-value (KV) cache into a network payload. Existing PD-side KV reduction methods are mostly binary: selected tokens are transmitted at full precision and the rest are not transmitted. This paper argues that binary selection leaves a useful design space unused. SpectrumKV assigns a precision level to each token instead: attention sinks and other high-importance tokens are protected at FP16, medium-importance tokens are sent at INT8, and low-importance tokens are sent at INT4 when the model can tolerate it. The main practical complication is that INT4 tolerance is model-dependent. Qwen2.5-7B catastrophically fails under INT4 KV quantization, while Mistral-7B and Gemma-2-9B remain stable. SpectrumKV therefore runs a lightweight deployment-time probe: three aggressive NIAH trials under a 3-tier policy. Models that pass use FP16+INT8+INT4; models that fail fall back to FP16+INT8. Across Qwen2.5-7B-Instruct, Mistral-7B-Instruct-v0.3, and Gemma-2-9B-it, SpectrumKV improves quality at the same transfer budget. At a 50% normalized KV budget on WikiText-2, SpectrumKV changes perplexity by +1.97%,-0.06%, and-0.44%, respectively, compared with PDTrim's +25.85%, +22.07%, and +35.63%. On NIAH retrieval at 4096 tokens, the adaptive policy reaches 52.6% on Qwen at the aggressive b=0.3 budget versus 26.3% for PDTrim, and reaches 100% by b=0.5; Mistral and Gemma preserve retrieval under the 3-tier policy. End-to-end GPU timing of the transfer path shows 50-62% TTFT reductions at b=0.5. These results suggest that PD KV transfer should be treated as a precision-allocation problem, not only as token pruning.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "LLM vs. Human Unit Tests: Fault Detection on Real Python Bugs",
+      "url": "https://arxiv.org/abs/2606.08588",
+      "authors": [
+        "Phouvadeth Vathana",
+        "Prapti Bhatt",
+        "Rishi Patel",
+        "Nasir U. Eisty"
+      ],
+      "snippet": "Large language models (LLMs) have shown considerable promise for automated unit test generation, yet their practical effectiveness relative to human-written tests remains poorly understood. Existing evaluations commonly rely on coverage-oriented benchmarks that do not assess fault-detection capability directly. We present an empirical comparison of LLM-generated and human-written unit tests across three complementary Python benchmarks: 29 real historical bugs from BugsInPy, a function-level benchmark drawn from python-slugify and packaging, and a controlled paired benchmark. Our generation pipeline couples Gemini 2.5 Flash with a lightweight lexical retrieval mechanism that supplies bug-relevant context at generation time. Across eight quality dimensions, LLM-generated tests withretrieval-augmentedcontext detect faults in 69% of cases compared to 17.2% for general-purpose human-written tests (Fisher's exact, $p < 0.001$, Cohen's $h = 1.10$). Critically, line and branch coverage are nearly identical between the two approaches (84.8% vs. 88.5% and 75.2% vs. 82.1%), confirming that coverage is an insufficient proxy for fault-detection capability. We discuss the conditions under which each approach excels, characterize their complementary strengths, and identify the critical role of retrieval context and reproducible benchmark construction in meaningful test-quality evaluation.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "MENTIS: What Belief Changes Under Alignment? Measuring Multi-Scale Latent Torsion in Language Models",
+      "url": "https://arxiv.org/abs/2606.01060",
+      "authors": [
+        "Partha Pratim Saha",
+        "Samarth Raina",
+        "Mayur Parvatikar",
+        "Amit Dhanda",
+        "Vinija Jain",
+        "Aman Chadha",
+        "Amitava Das"
+      ],
+      "snippet": "Preference alignment has substantially improved the observable behavior of large language models, yet it remains unclear what alignment changes internally. Aligned systems still fail underjailbreaks,promptinjection, and retrieval-time corruption, suggesting behavior-level evaluation alone is incomplete. Post-training should leave measurable traces in internal computation. We ask: when an instruction-tuned (IT) model becomes a preference-aligned (PA) model, what geometric structure changes, where do those changes concentrate, and how selectively do they vary across concepts, prompts, and model families?\n  We introduce MENTIS, a geometry-first framework for measuring alignment-induced internal reorganization in paired checkpoints. MENTIS compares IT and PA models using a primary layerwise covariance-based torsion norm (T1), a secondary spectral torsion diagnostic (T2), and an Energy-Radiance-Activation measure (ERA) for depth localization. Across four 7-8B model pairs on LITMUS, our study reveals that alignment-induced change is selective rather than uniform: normative concepts exhibit larger torsion shifts than factual concepts on average; torsion is negatively correlated with contextual entropy; and peak effects localize to architecture-specific mid-to-late layers. The same pattern appears across word-level, prompt-level, and model-level analyses. These results suggest preference alignment leaves structured, depth-localized geometric signatures in internal computation beyond what behavior-level evaluation alone can reveal.△ Less",
+      "published": "Submitted7 June, 2026;v1submitted 31 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 7.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.5
+    },
+    {
+      "title": "AlloSpatial:AgenticHarness Framework for Spatial Reasoning in Foundation Models",
+      "url": "https://arxiv.org/abs/2606.08952",
+      "authors": [
+        "Shouwei Ruan",
+        "Bin Wang",
+        "Zhenyu Wu",
+        "Qihui Zhu",
+        "Yuxiang Zhang",
+        "Jingzhi Li",
+        "Yubin Wang",
+        "Xingxing Wei"
+      ],
+      "snippet": "Multimodal Foundation Models (MFMs) have made substantial progress, yet remain fragile in spatial reasoning over the physical world. A key bottleneck lies in their inability to transform local egocentric observations into a global allocentric spatial representation. To address this, we propose AlloSpatial, anagenticframework for allocentric spatial cognition in foundation models. AlloSpatial introduces World2Mind, a plug-and-play cognitive mapping sandbox that converts egocentric observations into structured allocentric priors, including Allocentric-Spatial Trees and route maps that support querying object topology, geometric relations, passability, and trajectories. To utilize these priors reliably under noisy reconstruction and ambiguous visual evidence, AlloSpatial introduces a Spatial Reasoning Harness fortool-usejudgment, modality-decoupled cue collection, and geometry-semantic arbitration. We further internalize this process in Qwen3-VL through cold-start reinforcement learning with a harness-gated trajectory-level reward. Experiments on VSI-Bench and MindCube show that AlloSpatial improves proprietary models by 5%-18% in a training-free setting, while ASTs alone support strong spatial reasoning even when visual inputs are removed. The trained AlloSpatialagentsfurther outperform larger general-purpose models and competitive spatial baselines, suggesting that structured allocentric representations, activetooluse, and verifiable reasoning offer a promising route toward spatially capable foundation models.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Remember with Confidence: Uncertainty Quantification for Spatio-temporal Memory with Probabilistic Guarantees",
+      "url": "https://arxiv.org/abs/2606.08277",
+      "authors": [
+        "Harry Zhang",
+        "Nicolas Gorlo",
+        "Luca Carlone"
+      ],
+      "snippet": "Long-horizon robot operation requires spatio-temporal memory to record the environment state and recall it for downstream reasoning. Scene graphs andretrieval-augmentedsystems ground VLM descriptions to persistent 3D entities with rich semantic descriptions. However, VLM captions are noisy and viewpoint-inconsistent, and existing systems treat them as an oracle with no mechanism to detect unreliable stored descriptions. We introduce object-level semantic uncertainty for multi-view VLM memory: a score that measures object-centric cross-view semantic scatter of captions and identifies semantically unresolved objects. Then, we include our uncertainty scores in an advanced spatial-semantic memory system, that we dub UQ-DAAAM. UQ-DAAAM uses this score to actively refine uncertain objects under a fixed query budget by selecting high-quality views and fusing the resulting multi-view captions into a single object description. We also derive probabilistic guarantees showing that higher-quality candidate views (as selected by our approach) are more likely to reduce uncertainty. Our experiments show that uncertainty quantification can make embodied 4D memory systems more reliable and more effective. In particular, on the OC-NaVQA benchmark, UQ-DAAAM achieves substantially larger uncertainty reduction and better spatio-temporal question answering performance than baselines.△ Less",
+      "published": "Submitted6 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Neuron-Anchored Rule Extraction for Large Language Models via Contrastive Hierarchical Ablation",
+      "url": "https://arxiv.org/abs/2605.03058",
+      "authors": [
+        "Francesco Sovrano",
+        "Gabriele Dominici",
+        "Marc Langheinrich"
+      ],
+      "snippet": "A central goal of explainable AI is to express large language model (LLM) decision logic symbolically and ground it in internal mechanisms. Existing rule-extraction methods usually learn ungrounded symbolic surrogates, while mechanistic interpretability links behavior to neurons but often requires hand-crafted hypotheses and costly interventions. We introduce MechaRule, a pipeline that grounds rule extraction in LLM circuits by localizing sparse agonist activations whose ablation disrupts rule-related behavior. MechaRule rests on two findings. First, in a fixed baseline/flip regime, sparse agonist effects can exhibit overtopping: a few high-effect activations remain detectable within larger groups, dominate weaker ones, and flip many of the same examples. In such regimes, adaptive group testing with confidence-guided conservative pruning requires O(k log(N/k) + k) interventions over N candidates when k << N are agonists. Second, agonists are localized more reliably on data splits aligned with close-to-faithful rule behavior; spectral splits provide a rule-free fallback, whereas unfaithful splits degrade localization. Empirically, on arithmetic andjailbreaking, MechaRule recalls 97.0% of highest-effect agonists in matched brute-force validations at only 2.14% of exhaustive-ablation cost on average. Ablating the localized agonists eliminates 97.6--100.0% of eligible correct arithmetic answers andjailbreaks, and can correct arithmetic errors or inducejailbreaksby up to 72.8% and 32.5%.△ Less",
+      "published": "Submitted6 June, 2026;v1submitted 4 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "SpaceVLN: A Zero-Shot Vision-and-Language NavigationAgentwith Online Spatial Cognitive Memory and Reasoning",
+      "url": "https://arxiv.org/abs/2606.08992",
+      "authors": [
+        "Yucheng Deng",
+        "Pingrui Lai",
+        "Xinhai Li",
+        "Chenjia Bai",
+        "Xiaoheng Deng",
+        "Chengnuo Sun",
+        "Xuelong Li",
+        "Hua Yang"
+      ],
+      "snippet": "Vision-and-Language Navigation in continuous environments requiresagentsto understand the spatial structure of previously unseen environments in order to follow language instructions. Although foundation models have opened a promising path toward zero-shot navigation without task-specific policy training, many navigators still rely on local visual cues and linear history-based reasoning, overlooking the spatial nature of navigation across explored regions, traversed paths, landmarks, and their spatial relations. In this paper, we propose SpaceVLN, a navigationagentbuilt around Spatial Cognitive Memory and Task-Guided Spatial Reasoning. Specifically, SpaceVLN introduces an efficient stagewise closed-loop framework where planning and execution are organized around verifiable space--landmark stages. During navigation, theagentprogressively abstracts explored regions into Spatial Waypoints and dynamically maintains subtask-grounded landmark evidence, forming a hierarchical Spatial Cognitive Memory for progress localization and spatial-relation understanding. Built on this memory, Spatial-CoT integrates task-progress reasoning with spatial perception, analysis, and prediction, enabling Task-Guided Spatial Reasoning for embodied navigation. The unified stage interface enables SpaceVLN to address both Vision-and-Language Navigation and Object-Goal Navigation under a unified zero-shot setting, without task-specific policy training. Across R2R-CE, RxR-CE, GN-Bench, and HM3D-OVON, SpaceVLN achieves state-of-the-art zero-shot performance, and real-robot deployment further validates its applicability. These results highlight Spatial Cognitive Memory and Task-Guided Spatial Reasoning as a practical foundation for stronger embodied navigationagents.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "LongRTL: Graph-Similarity-Guided LLM-driven Long Context RTL Optimization",
+      "url": "https://arxiv.org/abs/2606.08944",
+      "authors": [
+        "Yuyang Ye",
+        "Che-Kuan Shen",
+        "Xiangfei Hu",
+        "Yuchen Liu",
+        "Shuo Yin",
+        "Xufeng Yao",
+        "Bei Yu",
+        "Tsung-Yi Ho"
+      ],
+      "snippet": "Large Language Models (LLMs) show great promise in RTL code generation and optimization. However, real-world RTL designs are typically long, entangled, and poorly modularized, posing a major challenge due to context-length limitations and lack of structure. To overcome these obstacles, we propose a scalable LLM-based RTL optimization framework guided by graph similarity. Our method introduces three collaborative agents: (1) a Partition Agent that decomposes RTL designs into semantically meaningful AST subtrees, guided by AST graph similarity to reusable design templates; (2) an Optimization Agent that generates RTL submodule code based on partitioned subtrees using multi-modalRetrieval-AugmentedGeneration (RAG) with both AST and RTL guidance; and (3) a Reconstruction Agent that reassembles optimized submodules based on logic-aware ordering and Graph-RAG prompting, ensuring global functional equivalence. Together, these components enable robust, structure-aware optimization of long-context RTL designs, bridging the gap between toy examples and industrial-scale hardware codebases.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "Interactions Between Crosscoder Features: A Compact Proofs Perspective",
+      "url": "https://arxiv.org/abs/2606.09940",
+      "authors": [
+        "Dmitry Manning-Coe",
+        "Thomas Read",
+        "Anna Soligo",
+        "Oliver Clive-Griffin",
+        "Chun-Hei Yip",
+        "Rajashree Agrawal",
+        "Jason Gross"
+      ],
+      "snippet": "Dictionary learning methods like Sparse Autoencoders (SAEs) and crosscoders attempt to explain a model by decomposing its activations into independent features. Interactions between features hence induce errors in the reconstruction. We formalize this intuition via compact proofs and make five contributions. First, we show how, \\textit{in principle}, a compact proof of model performance can be constructed using a crosscoder. Second, we show that an error term arising in this proof can naturally be interpreted as a measure of interaction between crosscoder features and provide an explicit expression for the interaction term in the Multi-Layer Perceptron (MLP) layers. We then provide three applications of this new interaction measure. In our third contribution we show that the interaction term itself can be used as a differentiable loss penalty. Applying this penalty, we can achieve ``computationally sparse'' crosscoders that retain $60\\%$ of MLP performance when only keeping a single feature at each datapoint and neuron, compared to $10\\%$ in standard crosscoders. We then show that clustering according to our interaction measure provides semantically meaningful feature clusters, and finally that sleeperagentshave significant interactions. Code is available at https://github.com/chainik1125/crosscoders-feature-interactions/tree/arxiv.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 6.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.75
+    },
+    {
+      "title": "Generalized Rank-based Evaluation for Knowledge Graph Completion: Perspectives, Framework, and Analyses",
+      "url": "https://arxiv.org/abs/2606.08921",
+      "authors": [
+        "Sooho Moon",
+        "Jian Kang",
+        "Yunyong Ko"
+      ],
+      "snippet": "Knowledge graph completion (KGC) aims to predict missing facts from an observed knowledge graph (KG), playing a crucial role in a wide range of real-world applications such as drug discovery, recommender systems, andretrieval-augmentedgeneration (RAG). Although numerous KGC models have been proposed, the evaluation of KGC remains underexplored, despite its critical role in reliably assessing model performance and selecting appropriate models for real-world applications. In this paper, we introduce two important perspectives for KGC evaluation that are overlooked by existing evaluation metrics, (P1) predictive sharpness and (P2) popularity-bias robustness. To address both perspectives, we propose a generalized evaluation framework, PROBE, which consists of a rank transformer (RT) that estimates the score of each prediction based on a desired level of predictive sharpness and a rank aggregator (RA) that determines the final evaluation score by aggregating all prediction scores according to a desired level of popularity-bias robustness. We theoretically analyze PROBE by defining six key properties for reliable KGC evaluation and prove that PROBE satisfies all the properties, while existing metrics fail to satisfy some. In particular, due to the open-world nature of KGs, an evaluation metric should preserve the relative performance of KGC models even when only incomplete facts are observed. We show that PROBE better maintains such consistency, providing a more reliable estimate of intrinsic model performance than existing metrics. Extensive experiments with six KGC models on six real-world KGs reveal that existing metrics may over- or under-estimate model performance depending on different evaluation perspectives, whereas PROBE enables a more comprehensive, flexible, and consistent evaluation of KGC models.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.25
+    },
+    {
+      "title": "When Vision Misleads, Let Location Speak: A Worldwide Image Geo-Localization Method via Location Attention Mechanism and Large Multimodal Models",
+      "url": "https://arxiv.org/abs/2606.08918",
+      "authors": [
+        "Junchao Cui",
+        "Wenqi Shi",
+        "Xuanzi Ma",
+        "Nan Wu",
+        "Shaoyong Du",
+        "Xiangyang Luo"
+      ],
+      "snippet": "Worldwide image geo-localization aims to determine the capture location of an image on a global scale. Existing methods often mislocalize images by matching them to visually similar scenes from different geographic regions, which limits reliability in practical applications. To address this issue, we propose TransGeoCLIP, a novel retrieval-based framework that integrates a location attention mechanism and large multimodal models (LMMs). Using the Transformer encoder with location attention to encode GPS coordinates, TransGeoCLIP can effectively distinguish geographic features among visually similar images. The framework consists of two stages: 1) Retrieval database construction, which employs Transformers equipped with location attention mechanisms to encode labeled GPS coordinates and enhance location semantics, subsequently enables joint image-text-GPS embedding through CLIP; 2)Retrieval-augmentedinference, which leverages LMMs to infer the final image location prediction from retrieved database results. Extensive experimental results on diverse datasets, including IM2GPS, IM2GPS3k, YFCC4k, and YFCC26k, demonstrate that TransGeoCLIP significantly enhances localization performance for visually similar images. Particularly, street-level localization accuracy (within 1 km error) is substantially improved, surpassing state-of-the-art methods by 1.5%, 1.07%, 7.18%, and 9.75% on these benchmarks, respectively.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.25
+    },
+    {
+      "title": "A Note on the Strategic Confinement Problem",
+      "url": "https://arxiv.org/abs/2606.09931",
+      "authors": [
+        "Christian Schroeder de Witt"
+      ],
+      "snippet": "Lampson's confinement problem asks how to prevent a program that processes confidential information from leaking it to a third party. We introduce the strategic confinement problem, which arises when the communicating parties are strategicagentswith shared coordination resources. In this setting, residual communication capacity can be concentrated on low-entropy, high-impact predicates of the confidential data. Consequently, bounds on information leakage need not induce corresponding bounds on worst-case harm: a channel with negligible capacity may still suffice to select damaging outcomes. We argue that systems of learnt strategicagentsnaturally instantiate this problem because they do not admit complete behavioural specifications, their learnt conventions generally cannot be predicted or reproduced by an external observer, and sufficiently capableagentscan construct covert communication schemes that are difficult to detect or eliminate. Our contribution is therefore not a new theory of communication, but a reinterpretation of confinement in the presence of strategicagents. Classical confinement bounds what information may flow; strategic confinement highlights that this need not bound what strategicagentscan jointly achieve.△ Less",
+      "published": "Submitted7 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 5.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.75
+    },
+    {
+      "title": "Segmentation-Assisted Brain MRI Synthesis with Cross-Image Multi-Contrast Feature Memory BankRetrievalAugmentation",
+      "url": "https://arxiv.org/abs/2606.08421",
+      "authors": [
+        "Wenwei Huang",
+        "Jia Wei",
+        "Jianlong Zhou"
+      ],
+      "snippet": "Multi-contrast brain MRI provide complementary soft-tissue characteristics that aid in the screening and diagnosis of diseases. However, limited scanning time, image corruption and various imaging protocols often result in incomplete multi-contrast images. While current approaches excel in image synthesis, they often struggle to synthesize critical tumor regions and exploit contextual information in multi-contrast brain MRI effectively. To address this issue, we propose a synthesis-centric, segmentation-assisted closed-loop framework withretrievalaugmentationsynthesis. Our method overall takes a generative adversarial architecture, which aims to synthesize missing contrasts from any combination of available ones with a single model. To explicitly capture tumor semantics and focus synthesis on tumor regions, we add an auxiliary segmentation branch that predicts tumor masks and feeds them back as semantic conditioning in synthesis branch, thereby learning tumor-aware representations in the model and improving synthesis fidelity. Furthermore, we propose a dual-bankretrievalaugmentationstrategy. It dynamically queries two external knowledge bases, namely a tumor masks memory bank for crucial tumor context and cross-image contrast feature memory bank for global style information, to augment synthesis. Verified on two public multi-contrast magnetic resonance brain datasets: BraTs2020 and UCSF-BMSR, the proposed method is effective in handling medical brain images synthesis tasks and shows superior performance compared to previous methods. Code is available at:https://github.com/iBizzard/SSCF.git△ Less",
+      "published": "Submitted6 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 4.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.5
+    },
+    {
+      "title": "Architectural Evolution and Selection Framework for Database Systems in AI-Ready Data Platforms",
+      "url": "https://arxiv.org/abs/2606.08317",
+      "authors": [
+        "Mohit Srivastava"
+      ],
+      "snippet": "The rise of polyglot data management and AI-ready database architectures has created a complex design space across diverse database paradigms. However, architecture selection in modern enterprise environments continues to rely heavily on ad-hoc engineering intuition, with limited systematic frameworks to guide decision-making across heterogeneous database systems. This paper introduces a unified cross-paradigm evaluation and selection framework for database architecture design in AI-ready data platforms. The framework is based on nine architectural dimensions and incorporates a structured multi-stage selection process involving workload characterization, constraint filtering, and compatibility scoring to enable systematic comparison and decision-making. To ground the framework, we conduct a structured comparative analysis across thirteen major database paradigms spanning transactional, analytical, and AI-oriented systems. This analysis reveals three recurring patterns in database evolution: decoupling of storage and compute, workload-driven specialization, and convergence toward integrated AI-ready platforms. The proposed framework is demonstrated through a representative enterprise case study in financial fraud detection, illustrating how hybrid, polyglot architectures emerge as optimal solutions for multidimensional workload requirements. The cross-paradigm analysis culminates in an AI-ready reference architecture that integrates lakehouse storage, feature processing, and semantic retrieval layers as the unified substrate for modern analytics, machine learning, andRetrieval-AugmentedGeneration applications.△ Less",
+      "published": "Submitted6 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 3.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.25
+    },
+    {
+      "title": "ARTA: Adaptive Reinforcement-Learning-Based ThrottlingAgentfor RowHammer Vulnerabilities",
+      "url": "https://arxiv.org/abs/2606.09915",
+      "authors": [
+        "Marco Ho",
+        "Michael S. Hsiao",
+        "Jeeho Ryoo"
+      ],
+      "snippet": "RowHammer vulnerability continues to intensify with DRAM scaling, reducing the activation threshold needed to induce bitflips and rendering existing defenses such as TRR, ECC, and refresh-based mechanisms vulnerable to sophisticated multi-bank hammering patterns. This work presents ARTA, a lightweight reinforcement-learning-based throttling mechanism that detects and suppresses RowHammer activity by monitoring fine-grained memory access behavior within the DRAM refresh window (t_REFW) and dynamically adjusting core throughput using a Q-learning frequency scaling governor. ARTA requires no DRAM-side hardware modification or offline training, using small SRAM structures in the memory controller -- a per-core, per-bank FIFO queue (CBF) and a compact Q-table -- for immediate deployment. Our evaluation shows that ARTA eliminates all bitflips at N_BO values down to 64, reduces bitflips up to 22K times at N_BO of 20, and improves performance up to 73.6% over state-of-the-art mitigation mechanisms by limiting preventive action overheads for improved memory bandwidth throughput. These results demonstrate that adaptive RL-based throttling provides robust, scalable, and high-performance RowHammer mitigation for emerging DRAM systems.△ Less",
+      "published": "Submitted6 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 4.0,
+        "hook_potential": 3.0
+      },
+      "composite": 2.75
+    },
+    {
+      "title": "AgriGov: A Structured Multilingual Dataset Curation for Indian Government Schemes for Farmers",
+      "url": "https://arxiv.org/abs/2606.08272",
+      "authors": [
+        "Mohsina Bilal",
+        "Gopakumar G"
+      ],
+      "snippet": "AgriGov is a curated, trilingual (English-Hindi-Marathi) dataset designed to address the scarcity of domain-grounded multilingual resources for agricultural policies and farmer welfare schemes. Initially, we collected and structured data from 50 government schemes sourced from trusted portals using automated scraping techniques, organizing it into predefined semantic fields (e.g., title, eligibility, application process, documents, exclusions). Translations were performed using a pipeline combining Google Translate API, MarianMT, and human post-editing, resulting in a domain-specific Hindi-Marathi dataset comprising approximately 2100 source segments. To enhance coverage, we augmented this dataset with sentences from the Samanantar corpus, leading to approximately 8,000 sentence-aligned Hindi-Marathi parallel pairs. The dataset now offers robust resources for fine-tuning machine translation models in this domain. AgriGov is designed for applications in domain-adaptive machine translation, question answering, information retrieval, and summarization systems. Its key contribution is a schema-driven, human-corrected multilingual alignment pipeline that ensures domain fidelity, provides provenance, and supports reproducible experiments, enablingretrieval-augmentedapplications for farmer-facing tools.△ Less",
+      "published": "Submitted6 June, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 2.0,
+        "hook_potential": 3.0
+      },
+      "composite": 2.75
+    }
+  ]
+}

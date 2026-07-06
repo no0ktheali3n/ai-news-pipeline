@@ -1,0 +1,649 @@
+{
+  "generated_at": "2026-05-09T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-05-07",
+    "2026-05-09"
+  ],
+  "candidates": [
+    {
+      "title": "Stop ComparingLLMAgentsWithout Disclosing the Harness",
+      "url": "https://arxiv.org/abs/2605.23950",
+      "authors": [
+        "Yunbei Zhang",
+        "Janet Wang",
+        "Yingqiang Ge",
+        "Weijie Xu",
+        "Jihun Hamm",
+        "Chandan K. Reddy"
+      ],
+      "snippet": "This position paper argues that, for long-horizon tasks evaluated across models with comparable frontier capability, theagentexecution harness, namely the infrastructure layer that governs context construction, tool interaction, orchestration, and verification around a language model, is often a stronger determinant ofagentperformance than the model it wraps. We formalize and defend the Binding Constraint Thesis: in this regime, performance variance is governed more by harness configuration than by model choice, and current evaluation protocols therefore systematically misattribute harness-level gains to model improvements. We support this thesis along three lines. First, a control-theoretic formalization treats the harness as the controller of a closed-loop dynamical system and the LLM as the stochastic policy it governs, which explains why small harness changes can produce performance shifts that exceed those obtained by substituting one model for another. Second, published benchmarks, industry deployments, and a controlled variance decomposition show that harness-induced variance can substantially exceed model-induced variance, including cases of model ranking reversal. Third, we propose a harness-aware evaluation framework with a disclosure standard and a variance decomposition protocol. Until harness specifications are disclosed, leaderboard comparisons for long-horizonagentsshould be treated as incomplete and potentially misleading.△ Less",
+      "published": "Submitted7 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "PRA-RAG: Provably Robust Aggregation inRetrieval-AugmentedGeneration against Retrieval Corruption",
+      "url": "https://arxiv.org/abs/2607.00012",
+      "authors": [
+        "Xue Tan",
+        "Yi Zheng",
+        "Chang Huo",
+        "Yunruo Zhang",
+        "Yu Liu",
+        "Hao Luan",
+        "Zhuyang Yu",
+        "Xiaoyan Sun",
+        "Ping Chen",
+        "Jun Dai"
+      ],
+      "snippet": "Retrieval-AugmentedGeneration (RAG) enhances Large Language Models (LLMs) by incorporating external knowledge, effectively mitigating their inherent knowledge limitations. However, RAG remains vulnerable to poisoning attacks that manipulate retrieved texts to mislead model outputs. Existing defense mechanisms often lack theoretical robustness guarantees and perform unreliably when the LLM has limited knowledge of the retrieved content. In this work, we propose PRA-RAG, a provably robust retrieval aggregation algorithm designed to defend against poisoning attacks on retrieved texts. PRA-RAG samples multiple combinations of retrieved texts and utilizes geometric structures in the embedding space to identify a robust subset, from which a stable aggregated representation is derived. We provide theoretical bounds on the maximum impact of poisoned retrieved content and establish a quantitative measure of RAG's robustness. Experiments across multiple benchmarks and RAG architectures demonstrate that PRA-RAG reduces the attack success rate to as low as 1% while maintaining an accuracy of 71%, significantly outperforming representative state-of-the-art methods.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "SkillSelect-Serve: Budget-Controllable and QoS-Aware Skill Service Recommendation and Composition for SmallLLMAgents",
+      "url": "https://arxiv.org/abs/2607.00011",
+      "authors": [
+        "Jingyuan Zheng",
+        "Dongjing Wang",
+        "Xin Zhang",
+        "Butian Huang",
+        "Haiping Zhang",
+        "Dongjin Yu",
+        "Shuguang Deng"
+      ],
+      "snippet": "Reusable skill libraries are becoming important infrastructure for large language model (LLM)agents, yet existing selection methods often treat skills as retrievable documents and return fixed top-k lists. This paper presents SkillSelect-Serve, a budget-controllable and QoS-aware framework that formulatesagentskill selection as Skill Service Recommendation and Composition. SkillSelect-Serve represents raw skills as structured Skill Services with functional descriptions, dependencies, context cost, risk, and QoS-related attributes. A local Micro-AgentRequirement Planner converts natural-language tasks into structured service requirements, while a shared discovery backbone retrieves candidate services from a large registry. The framework then performs dual-granularity utility modeling with skill-level marginal suitability estimation and bundle-level calibration for coverage, redundancy, cost, and risk trade-offs. Experiments on 35,353 skills and 586 task queries show that SkillSelect-Serve consistently improves same-budget bundle recall and mean utility over fixed top-k retrieval baselines.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Augmenting Human Evaluation with LLM Judges: How Many Human Reviews Do You Need?",
+      "url": "https://arxiv.org/abs/2605.16354",
+      "authors": [
+        "Jane Paik Kim"
+      ],
+      "snippet": "Large language models (LLMs) are increasingly used as automated evaluators of AI systems, including in high-stakes applications. In this role, LLMs are used to generate judgments about the quality, appropriateness, or even safety of model outputs. This approach is motivated by practical constraints. Expert human ratings are costly and difficult to scale, whereas LLM ratings can be produced quickly at low cost. However, current approaches to deployingLLMevaluatorsare ad hoc, typically limited to reporting agreement metrics between human and LLM judges as a justification for substitution of human ratings, and lack a formal basis for study design. This paper (1) shifts the role of the LLM judge from substitutive to auxiliary, and (2) formulates the LLM-as-a-judge paradigm as one of augmenting human evaluation through a two-stage sampling design, whereLLMevaluationsare measured for all observations at the first stage and human ratings are partially observed for a subsample at the second stage. We propose to use a doubly robust estimator from the missing data literature, which takes advantage of the robustness property against the prediction model, since the missingness model is known by design. Using the asymptotic variance of this estimator, we propose how sample sizes of human and LLM ratings can be determined to achieve a targeted level of power. We also show that a study can be efficiently designed by allocating more human ratings for types of evaluations where the predictability of LLM ratings is not high. To the best of our knowledge, there is very little guidance on how much human oversight should be retained when validating benchmarks.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "LARGER: Lexically Anchored Repository Graph Exploration and Retrieval",
+      "url": "https://arxiv.org/abs/2605.16352",
+      "authors": [
+        "Yuntong Hu",
+        "Tongli Su",
+        "Liang Zhao",
+        "Bowen Zhu",
+        "Hasibul Haque"
+      ],
+      "snippet": "Repository-level codingagentsmust first localize the files and symbols relevant to a task; failures at this stage can cascade across downstream objectives ranging from patch generation to test writing and codebase question answering. Existingagentsnavigate repositories primarily through lexical search, often missing structural relations such as imports, call chains, type hierarchies, and code-test links. Graph-based retrieval can recover such dependencies, but existing approaches often require separate graph tools or traversal stages that fragment theagent'sinteraction loop. We formalize repository context localization as Lexically Anchored Structural Localization, where success depends on turning lexical matches into high-precision structural entry points and exposing the most useful confidence-filtered local neighborhoods within theagent'sexisting search loop. We introduce LARGER (Lexically Anchored Repository Graph Exploration and Retrieval), a lexically anchored active-set retrieval framework that starts from lexical matches, aligns them to graph anchors, and performs confidence-filtered local expansion within theagent'sexisting search loop. LARGER integrates directly into existing CLI codingagentswithout requiring external graph databases or specialized graph interfaces. Across four benchmarks spanning localization, test generation, and codebase understanding, LARGER improves file-level Acc@5 on LocBench by +13.9 points with tuned hyperparameters and still gains +11.8 points with fixed hyperparameters over the strongest baseline, while delivering consistent gains on MuLocBench, SWE-Atlas Test Writing, and SWE-Atlas Codebase QA.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "PropGuard: Safeguarding LLM-MAS via Propagation-Aware Exploration and Remediation",
+      "url": "https://arxiv.org/abs/2605.16346",
+      "authors": [
+        "Bingyu Yan",
+        "Xiaoming Zhang",
+        "Jinyu Hou",
+        "Chaozhuo Li",
+        "Ziyi Zhou",
+        "Xiaozhe Zhang",
+        "Litian Zhang"
+      ],
+      "snippet": "LLM-basedmulti-agentsystems (LLM-MAS) have become a promising paradigm for solving complex tasks through role specialization,tooluse, memory, and collaborative reasoning. However, these interactions create new security risks that malicious instructions injected through messages, tools, or memories can propagate acrossagentsand rounds, causing system-level compromise. Existing defenses largely rely on local filtering or graph-based anomaly detection, but they often fail to trace fine-grained propagation paths or remediate contaminated states without disrupting benign collaboration. We propose PropGuard, a propagation-aware framework for safeguarding LLM-MAS. PropGuard constructs a dual-view spatio-temporal graph that combines response-centric risk estimation with full-state evidence preservation. Guided by these risk priors, a GE-GRPO trained inspector sequentially explores the full-state graph to recover compact suspicious propagation subgraphs. PropGuard then verifies harmful propagation through subgraph-aware diagnosis and applies source-guided remediation to correct upstream contamination and replay affected downstream interactions. Experiments across four communication architectures and five attack settings demonstrate that PropGuard consistently lowers attack success while maintaining high task-level defense success, achieving a favorable effectiveness--efficiency trade-off.△ Less",
+      "published": "Submitted7 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "PRISM: Fast OnlineLLMServingvia Scheduling-Memory Co-design",
+      "url": "https://arxiv.org/abs/2605.08581",
+      "authors": [
+        "Xingyu Qu",
+        "Tianhao Lin",
+        "Yiqi Li",
+        "Zhiyu Chen",
+        "Sheng Wang"
+      ],
+      "snippet": "Modern online large language model (LLM) services, such asRetrieval-AugmentedGeneration (RAG) and agent systems, increasingly expose two prominent characteristics: prompt segmentation (e.g., system instructions, retrieved passages, tool outputs) and hotspot skew, where a small set of these segments recurs frequently across user requests. Failing to jointly exploit these patterns could lead to repeated prefill of hot segments and prolonged TTFT, undermining both throughput and user-perceived responsiveness. However, existing work tackles these patterns independently: KV-cache management mainly exploits segment reuse while scheduling reorders requests to improve cache locality, yet neither aligns request admission with KV-cache retention. To address this gap, we first analyze how scheduling and KV-cache management jointly affect TTFT. Guided by this, we present PRISM (Prefix Reuse Optimization Integrated Scheduling and Memory), which co-designs a query-aware scheduler (QAS) with a demand-aware radix tree (DART) to align request admission with exact-prefix KV retention. Our evaluation results show that, versus the strongest baseline, PRISM reduces average per-QPS P99 TTFT by 23.3\\% and 37.1\\% while increasing exact-prefix KV-cache hit rate by 5.9 and 12.2 percentage points on 4B and 13B models, respectively.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "GLiGuard: Schema-Conditioned Classification for LLM Safeguard",
+      "url": "https://arxiv.org/abs/2605.07982",
+      "authors": [
+        "Urchade Zaratiana",
+        "Mary Newhauser",
+        "George Hurn-Maloney",
+        "Ash Lewis"
+      ],
+      "snippet": "Ensuring safe, policy-compliant outputs from large language models requires real-time content moderation that can scale across multiple safety dimensions. However, state-of-the-art guardrail models rely on autoregressive decoders with 7B--27B parameters, reformulating what is fundamentally a classification problem as sequential text generation, a design choice that incurs high latency and scales poorly to multi-aspect evaluation. In this work, we introduce \\textbf{GLiGuard}, a 0.3B-parameter schema-conditioned bidirectional encoder adapted from GLiNER2 for LLM content moderation. The key idea is to encode task definitions and label semantics directly into the input sequence as structured token schemas, enabling simultaneous evaluation of prompt safety, response safety, refusal detection, 14 fine-grained harm categories, and 11jailbreakstrategies in a single non-autoregressive forward pass. This schema-conditioned design lets supported task and label blocks be composed directly in the input schema at inference time. Across nine established safety benchmarks, GLiGuard achieves F1 scores competitive with 7B--27B decoder-based guards despite being 23--90$\\times$ smaller, while delivering up to 16$\\times$ higher throughput and 17$\\times$ lower latency. These results suggest that compact bidirectional encoders can approach the accuracy of much larger guard models while drastically reducing inference cost. Code and models are available at https://github.com/fastino-ai/GLiGuard.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "When Child Inherits: Modeling and Exploiting Subagent Spawn in Multi-Agent Networks",
+      "url": "https://arxiv.org/abs/2605.08460",
+      "authors": [
+        "Ziwen Cai",
+        "Yihe Zhang",
+        "Xiali Hei"
+      ],
+      "snippet": "Since the official release of ChatGPT in 2022, large language models (LLMs) have rapidly evolved from chatbot-style interfaces into agentic systems that can delegate work through tools and newly spawned subagents. While these capabilities improve automation and scalability, they also pose new security risks in multi-agent networks.\n  Existing research has studied how individual LLM-based agents can be compromised throughpromptinjection,jailbreaking, poisoned retrieval data, or malicious extensions. Less is known about what happens after one agent is compromised inside a multi-agent network. In particular, inherited memory from parent agents can carry malicious instructions, outdated states, or unintended behavioral rules into newly created subagents, allowing a local compromise to spread across agent boundaries.\n  In this paper, we model contemporary multi-agent networks through the lens of subagent inheritance. Our analysis shows that current frameworks can violate trust boundaries through insecure memory inheritance, weak resource control, stale post-spawn state, and improper termination authority. We demonstrate these risks in real agent frameworks and propose defenses based on explicit security invariants. Our findings show that inheritance is not merely an implementation detail, but a central component influencing the security of multi-agent systems.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "WebTrap: Stealthy Mid-Task Hijacking of Browser Agents During Navigation",
+      "url": "https://arxiv.org/abs/2605.08310",
+      "authors": [
+        "Zhichao Liu",
+        "Wenbo Pan",
+        "Haining Yu",
+        "Ge Gao",
+        "Tianqing Zhu",
+        "Xiaohua Jia"
+      ],
+      "snippet": "Browser agents are increasingly deployed in long-horizon tasks, which require executing extended action chains to accomplish user goals. However, this prolonged execution process provides attackers with more opportunities to inject malicious instructions. Existingpromptinjectionattacks against browser agents expose two key gaps: (1) low effectiveness, as attacks optimized for toy baselines fail to achieve end-to-end goals in real-world scenarios with complex environments and longer steps; (2) weak stealthiness, since most attacks pit the attack goal against the user goal, causing a significant drop in system usability under attack. To address these gaps, we propose WebTrap, a mid-task hijacking injection attack. It employs multi-step instruction fusion steering to seamlessly combine both goals, enabling the agent to resume the original user task after executing the attack goal. Furthermore, we design a context-grounded generation method to align the injected content with the task environment and system instructions, maximizing the hijacking success rate. Extensive experiments on two browser agent tasks, based on extended WASP and InjecAgent environments, demonstrate that our method achieves a high attack success rate while preserving the usability of the original system. We find that WebTrap exploits the agent's navigation vulnerabilities, binding the two goals so tightly that standard defense mechanisms cannot restore the system to normal operation. These findings reveal a critical vulnerability in agent systems during long-horizon tasks that they can be stealthily hijacked.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Mitigating Many-shotJailbreakAttacks with One Single Demonstration",
+      "url": "https://arxiv.org/abs/2605.08277",
+      "authors": [
+        "Kejia Chen",
+        "Jiawen Zhang",
+        "Boheng Li",
+        "Pengcheng Li",
+        "Jian Lou",
+        "Zunlei Feng",
+        "Mingli Song",
+        "Ruoxi Jia",
+        "Tianwei Zhang"
+      ],
+      "snippet": "Many-shotjailbreaking(MSJ) causes safety-aligned language models to answer harmful queries by preceding them with many harmful question-answer demonstrations. We study why this attack becomes stronger as the number of demonstrations increases. Empirically, we find that MSJ induces a progressive activation drift: the representation of a fixed harmful query moves step by step away from the safety-aligned region as more harmful demonstrations are added. Theoretically, we show that this drift can be interpreted as implicit malicious fine-tuning: conditioning on N harmful demonstrations induces SGD-style updates equivalent to optimizing on the corresponding N harmful samples. This view turns the attack mechanism into a defense principle. We append a fixed one-shot safety demonstration at inference time, which induces a counteracting safety-oriented update and restores refusal behavior. The resulting method improves the model's robustness to MSJ without modifying its parameters or requiring white-box access at deployment. Code is available at https://github.com/Thecommonirin/SafeEnd.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "OrchJail:JailbreakingTool-Calling Text-to-Image Agents by Orchestration-Guided Fuzzing",
+      "url": "https://arxiv.org/abs/2605.07414",
+      "authors": [
+        "Jianming Chen",
+        "Yawen Wang",
+        "Junjie Wang",
+        "Zhe Liu",
+        "Qing Wang",
+        "Fanjiang Xu"
+      ],
+      "snippet": "Tool-calling text-to-image (T2I) agents can plan and execute multi-step tool chains to accomplish complex generation and editing queries. However, this capability introduces a new safety attack surface: harmful outputs may arise from tool orchestration, where individually benign steps combine into unsafe results, making prompt-onlyjailbreaktechniques insufficient. We present OrchJail, an orchestration-guided fuzzing framework forjailbreakingtool-calling T2I agents. Its core idea is to exploit high-risk tool-orchestration patterns: by learning from successfuljailbreaktool-calling traces and their causal relationships to prompt wording, OrchJail directly guides the fuzzing search toward prompts that are more likely to trigger unsafe multi-step tool behaviors, rather than relying on surface-level textual perturbations. Extensive experiments demonstrate that OrchJail improvesjailbreakeffectiveness and efficiency across representative toolcalling T2I agents, achieving higher attack success rates, better image fidelity, and lower query costs, while remaining robust against commonjailbreakdefenses. Our work highlights tool orchestration as a critical, previously unexplored attack surface and provides a novel framework for uncovering safety risks in T2I agents.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "Hard to Read, Easy toJailbreak: How Visual Degradation Bypasses MLLM Safety Alignment",
+      "url": "https://arxiv.org/abs/2605.07250",
+      "authors": [
+        "Zhixue Song",
+        "Boyan Han",
+        "Yiwei Wang",
+        "Chi Zhang"
+      ],
+      "snippet": "Recent advancements in visual context compression enable MLLMs to process ultra-long contexts efficiently by rendering text into images. However, we identify a critical vulnerability inherent to this paradigm: lowering image resolution inadvertently catalyzesjailbreaking. Our experiments reveal that the safety defenses of SOTA models deteriorate sharply as resolution degrades, surprisingly persisting even when text remains legible. We attribute this to ``Cognitive Overload'', hypothesizing that the effort required to decipher degraded inputs diverts attentional resources from safety auditing. This phenomenon is consistent across various visual perturbations, including noise and geometric distortion. To address this, we propose a simple ``Structured Cognitive Offloading'' strategy that mitigates these risks by enforcing a serialized pipeline to decouple visual transcription from safety assessment. Our work exposes a significant risk in vision-based compression and provides critical insights for the secure design of future MLLMs.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "GRACE-RAG: Governed Retrieval Architecture for Canonical Evidence Synthesis, Enabling Lightweight Deployment in Closed-Domain Institutional Settings",
+      "url": "https://arxiv.org/abs/2607.00013",
+      "authors": [
+        "Asit Desai",
+        "Aman Kumar",
+        "Prashant Devadiga"
+      ],
+      "snippet": "Retrieval-AugmentedGeneration (RAG) systems are widely used in institutional question answering settings where responses must be grounded in authoritative documentation (Gao et al., 2023). In entity-dense domains where relevant information is distributed across heterogeneous documents, vector-only retrieval often produces fragmented evidence and increases dependence on inference-time reasoning (Zhao et al., 2024). This paper introduces GRACE-RAG, a retrieval-governed, graph-augmented RAG architecture that externalizes structural reasoning from the generative stage to a structured retrieval layer, resolving structural ambiguity offline, enabling deployment on self-hosted lightweight models calibrated to closed-domain institutional vocabulary. Experiments across three model capacities: Mistral 24B, GPT OSS 120B, and Gemini 2.5 Flash show consistent improvements in completeness, depth, and anticipatory coverage, with overall quality gains of up to 20% under mid-scale models, indicating that retrieval architecture governs structural quality over model scale, reducing computational and latency footprint without dependence on proprietary systems.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Towards Distributed Inference of LLMs on a P2P Network",
+      "url": "https://arxiv.org/abs/2606.17059",
+      "authors": [
+        "Shabari S Nair",
+        "Krishanu Saini"
+      ],
+      "snippet": "Prefix caching can reduce LLM inference latency by reusing KV caches across requests with shared prompts, but cluster-scale reuse is challenging because caches are partitioned across nodes. We propose a decentralized, prefix-cache-aware routing scheme for peer-to-peerLLMserving. Each node maintains a local radix tree of its own cached prefixes and asynchronously refreshed estimates of peer caches using periodic anti-entropy. Requests are routed to the node with the longest estimated prefix match, without centralized coordination or KV-cache transfer. Stale metadata only causes cache misses, not incorrect outputs, making weak consistency sufficient for correctness. Evaluation on simulated MMLU workloads show that decentralized routing improves latency under low communication delay and skewed prefix distributions, while high network latency and affinity-induced hotspots limit its benefits.△ Less",
+      "published": "Submitted7 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Business Utility of Large Language Models as Exploratory Data AnalysisAgents",
+      "url": "https://arxiv.org/abs/2606.00051",
+      "authors": [
+        "Rafał Łabędzki",
+        "Patryk Miziuła",
+        "Hubert Rutkowski",
+        "Szymon Betlewski",
+        "Cezary Depta",
+        "Szymon Janowski",
+        "Jarosław Kochanowicz",
+        "Jan Kanty Milczek"
+      ],
+      "snippet": "Large Language Models (LLMs) are increasingly used in analytical workflows, but their suitability as exploratory data analysis (EDA)agentsin business settings remains uncertain. In practice, a deployable EDAagentmust provide not only useful average performance but also sufficient repeatability to support trust in its outputs. We evaluate this requirement in a controlled, business-relevant benchmark built on anagent-based supply chain simulation. The task is to identify supplier-product combinations responsible for low quality and downstream sales loss by reasoning from indirect operational traces rather than from explicit labels. Fifteen model-variant configurations from eight model families were evaluated under four experimental conditions that varied data representation, prompt clarity, and signal strength, with five trajectories per condition. Outputs were scored against deterministic ground truth using the Jaccard index and assessed through a framework that combines mean score (ms), coefficient of variation (CV), exploratory cross-condition significance tests, and Business utility, a risk-adjusted metric that we propose to summarise quality and repeatability in a single operational measure. The results show that most configurations are not reliable enough for autonomous EDA use, even when their average scores appear acceptable. GPT-5.4 with extra-high reasoning effort achieved the strongest overall profile, with an experiment-averaged ms of 0.8748 and an experiment-averaged Business utility of 0.6952, while the next-best configurations lost substantially more utility after variability discounting. Our findings suggest that evaluation of EDAagentsshould treat average quality, repeatability, and condition sensitivity as complementary dimensions of operational trustworthiness.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "HPC-LLM: Practical Domain Adaptation andRetrieval-AugmentedGeneration for HPC Support",
+      "url": "https://arxiv.org/abs/2605.16347",
+      "authors": [
+        "Nourin Shahin",
+        "Izzat Alsmadi"
+      ],
+      "snippet": "Modern scientific research increasingly depends on High-Performance Computing (HPC) infrastructures, yet many researchers face significant operational barriers when interacting with cluster environments, job schedulers, GPU resources, and parallel computing frameworks. General-purpose large language models (LLMs) provide useful coding assistance but often lack the domain-specific operational knowledge required for reliable HPC support. This paper presents HPC-LLM, aretrievalaugmentedand domain-adapted assistant designed to support common HPC workflows including Slurm scheduling, MPI execution, GPU utilization, filesystem management, and cluster troubleshooting. The proposed framework integrates automated documentation ingestion, dense retrieval, lightweight domain adaptation using QLoRA, and local inference within a modular orchestration pipeline. To support domain adaptation, we construct an HPC-oriented corpus from publicly available university HPC documentation, curated operational examples, and synthetic instruction-answer pairs generated from retrieved HPC content. The resulting dataset contains approximately 9,000 to 24,000 HPC-focused training examples spanning job scheduling, GPU computing, distributed training, storage systems, and cluster administration topics. We fine-tune Llama 3.1 8B using QLoRA and evaluate the resulting model against several open weight baselines underretrieval-augmentedsettings on JetStream2 infrastructure. Experimental results indicate that the adapted 8B model achieves performance comparable to substantially larger general-purpose models while operating under significantly lower GPU memory requirements and inference latency. In particular, the adapted model approaches the performance of Qwen 2.5 14B while requiring substantially fewer computational resources.△ Less",
+      "published": "Submitted7 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "MIPIAD: Multilingual IndirectPromptInjectionAttack Defense with Qwen -- TF-IDF Hybrid and Meta-Ensemble Learning",
+      "url": "https://arxiv.org/abs/2605.07269",
+      "authors": [
+        "Al Muhit Muhtadi",
+        "Mostafa Rifat Tazwar"
+      ],
+      "snippet": "Indirectpromptinjectionremains a persistent weakness in retrieval-augmented and tool-using LLM systems, and the problem becomes harder to characterise in multilingual settings. We present MIPIAD, a defense framework evaluated on English and Bangla that combines a sequence classifier fine-tuned from Qwen2.5-1.5B via LoRA (XLPID), TF-IDF lexical features, and validation-tuned ensembling through late fusion, stacking, and gradient boosting. The framework is evaluated on a synthetic benchmark built from BIPIA(Yi et al., 2023) templates spanning five task families -- email, table, QA, abstract, and code-comprising over 1.43 million generated samples, with train and test splits using mutually exclusive attack categories. Across the experiments, lexical signals prove strong (TF-IDF+SVM F1=0.77), and the hybrid XLPID+TF-IDF ensemble achieves the best overall F1 (0.9205) while the Boosting Ensemble achieves the best AUROC (0.9378). Ensemble methods consistently reduce the English-Bangla cross-lingual gap relative to standalone neural models. The pipeline is designed for extensibility: NLLB-200 supports over 200 languages and XLPID's multilingual backbone can be retargeted to additional languages without architectural changes; empirical validation is currently limited to English and Bangla△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Grokers: Bottom-Up Inductive Comprehension and Write-Time Intelligence over Typed Knowledge Graphs",
+      "url": "https://arxiv.org/abs/2606.00050",
+      "authors": [
+        "Gregory Magarshak"
+      ],
+      "snippet": "We present Grokers, an architecture for building persistent, structured comprehension of typed knowledge graphs through bottom-up inductive traversal of dependency subgraphs. Unlike retrieval-augmented generation (RAG), which pays full comprehension cost at every query, Grokers pushes intelligence to write time: autonomous Grokeragentsanalyze nodes in a typed stream graph, extract structured attributes via governed language model (LM) calls, and inductively compose that understanding upward through dependency relations, writing enriched typed attributes that serve all future queries at zero additional LM cost. We prove three formal properties: (1) the Byte-Identity Theorem, establishing that context blocks assembled from a transactionally-maintained denormalization index are byte-identical across LM turns between semantic changes, enabling KV-cache hit rates approaching 100%; (2) the Accumulation Monotonicity Theorem, establishing that the fraction of interactions resolved without LM calls is non-decreasing in the number of completed interactions under a governed wisdom library growth protocol; and (3) the Dual-Traversal Ordering Theorem, establishing that top-down generation and bottom-up comprehension are the unique correct traversal orderings for their respective tasks over a dependency DAG, and that their composition closes into a complete generation-comprehension cycle. We further present a deterministic alternative to embedding-based semantic search, with a synonym caching protocol whose LM fallback rate converges to zero for finite-vocabulary domains. A reference implementation is provided in the open-source Qbix / Safebox / Safebots stack.△ Less",
+      "published": "Submitted7 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents",
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 7.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.5
+    },
+    {
+      "title": "The Attacker in the Mirror: Breaking Self-Consistency in Safety via Anchored Bipolicy Self-Play",
+      "url": "https://arxiv.org/abs/2605.08427",
+      "authors": [
+        "Gabriele La Malfa",
+        "Emanuele La Malfa",
+        "Saar Cohen",
+        "Jie M. Zhang",
+        "Michael Luck",
+        "Michael Wooldridge",
+        "Elizabeth Black"
+      ],
+      "snippet": "Self-play red team is an established approach to improving AI safety in which different instances of the same model play attacker and defender roles in a zero-sum game, i.e., where the attacker tries tojailbreakthe defender; if self-play converges to a Nash equilibrium, the model is guaranteed to respond safely within the settings of the game. Although the parameter sharing enforced by the use of the same model for the two roles improves stability and performance, it introduces fundamental theoretical and architectural limitations. We show that the set of Nash equilibria that can be reached corresponds to a broad class of behaviours that includes trivial always refuse strategies and oracle-like defenders, thus limiting practical applicability. We then show that when attacker and defender share and update the same base model, the dynamics collapse to self-consistency, so that attacks do not enforce adversarial pressure on the defender. In response, we propose Anchored Bipolicy Self-Play, which trains distinct role-specific LoRA adapters on top of a frozen base model, thereby maintaining stable optimisation while preserving adversarial pressure through explicit role separation. In relation to standard self-play, we show up to 100x greater parameter efficiency than finetuning and consistent improvements in safety compared to self-play fine-tuned models. We evaluate on Qwen2.5-{3B, 7B,14B}-IT models across widely used safety benchmarks, showing improved robustness without loss of reasoning ability. Cross-play experiments further show that our attacker and defender models are superior to self-play in terms of adversarial defence and safety.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 7.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.5
+    },
+    {
+      "title": "Kernel Foundry: A Diagnosis-driven Evolutionary Kernel Optimizer with Multi-Experts",
+      "url": "https://arxiv.org/abs/2605.30359",
+      "authors": [
+        "Zixuan Huang",
+        "Da Chen",
+        "Kecheng Huang",
+        "Lihao Yin",
+        "Xing Li",
+        "Huiling Zhen",
+        "Mingxuan Yuan",
+        "Zili Shao"
+      ],
+      "snippet": "Generating high-performance GPU kernels remains challenging due to the need for both correctness and hardware-aware optimization. While large language models (LLMs) show promise in code generation, they often fail to produce kernels that are both correct and efficient.\n  We propose Kernel Foundry, a diagnosis-driven evolutionary framework for automatic GPU kernel optimization. Our method combines expert-guided,retrieval-augmentedinitialization with a multi-island evolutionary search, where candidate kernels are iteratively refined using structured diagnostic feedback. A centralized experience library accumulates reusable optimization knowledge to guide subsequent evolution, while explicit mechanisms prevent cheating behaviors that bypass kernel-level computation.\n  Experiments on KernelBench show that our method consistently improves both correctness and performance over strong baselines, achieving up to 100% correctness on Level~2.△ Less",
+      "published": "Submitted7 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 6.0
+    },
+    {
+      "title": "Mechanism Design for Quality-Preserving LLM Advertising",
+      "url": "https://arxiv.org/abs/2605.10964",
+      "authors": [
+        "Jiale Han",
+        "Xiaowu Dai"
+      ],
+      "snippet": "Embedding advertisements into large language model (LLM) outputs introduces a fundamental tension: revenue optimization can distort content and degrade user experience. Existing approaches largely ignore this trade-off, often forcing irrelevant ads into responses. We propose a quality-preserving auction framework that explicitly integrates content fidelity into the mechanism design. Built onretrieval-augmentedgeneration (RAG), our approach treats organic content as a reference and derives an endogenous reserve price that screens out ads with non-positive marginal social welfare contributions. We develop a KL-regularized single-allocation mechanism with Myerson payments and a screened VCG multi-allocation mechanism, both satisfying dominant-strategy incentive compatibility and individual rationality. Experiments across diverse scenarios demonstrate that our mechanisms outperform existing baselines in metrics such as revenue per ad and semantic similarity to no-ad responses. Our results establish a new paradigm for LLM advertising that enables monetization without compromising output quality.△ Less",
+      "published": "Submitted7 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "LEAF: A Living Benchmark for Event-Augmented Forecasting",
+      "url": "https://arxiv.org/abs/2605.16358",
+      "authors": [
+        "Mingtian Tan",
+        "Mihir Parmar",
+        "Palash Goyal",
+        "Chun-Liang Li",
+        "Nanyun Peng",
+        "Thomas Hartvigsen",
+        "Jinsung Yoon",
+        "Tomas Pfister"
+      ],
+      "snippet": "Large Language Models (LLMs) are increasingly applied to forecasting. To evaluate this capability while mitigating pre-training data contamination, several living benchmarks have been proposed. However, existing benchmarks either lack the multidimensional events essential for accurate forecasting due to data scarcity, or focus on relatively closed environments. To assess the predictive capabilities of LLMs in complex, real-world scenarios, we propose LEAF, the first living benchmark for event-augmented forecasting tasks, including future event probabilities, trend and time series forecasting. LEAF utilizes a recursive retrievalagentsystem paired with dual-agentcross-validation to provide comprehensive and relevant auxiliary text for forecasting. Evaluating state-of-the-art proprietary and open-weight LLMs, we find that these models can leverage signals extracted from complex events to enhance predictive performance. In the stock domain, we find that LLMs achieve better performance on equities they confidently identify as more predictable. Furthermore, the events demonstrate a strong correlation with the target equities. To this end, LEAF provides a necessary, dynamically updating testbed to continuously track and drive progress in event-driven forecasting tasks.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "Research on Security Enhancement Methods for Adversarial Robust Large Language Model Intelligent Agents for Medical Decision-Making Tasks",
+      "url": "https://arxiv.org/abs/2605.08257",
+      "authors": [
+        "Saisai Hu"
+      ],
+      "snippet": "Motivated by the challenge to improve the adversarial robustness, security, and trust of medical decision making intelligent agents, this study develops a full-link security enhancement framework, which describes \"input risk perception - medical evidence constraint - knowledge consistency verification - decision confidence reweighting - security output control - adversarial feedback update.\" We propose ARSM-Agent and define a weighted joint objective consisting of decision accuracy loss, adversarial robustness loss, safety refusal loss, and knowledge consistency loss, with weights of 0.3, 0.3, 0.2, and 0.2, respectively. The whole medical decision formulation is implemented by multi-module collaborative linkage. We verify that the algorithm is more efficient than four baselines, including LLM-Agent, Retrieval-Agent, Filter-Agent, and Adv-Train-Agent. Under semantic perturbation,promptinjection, drug-name confusion, and false-evidence attacks, ARSM-Agent reduces the overall attack success rate to 8.7% and achieves a knowledge consistency score of 0.91. Ablation experiments quantify each module's contribution: removing risk perception, evidence retrieval, consistency verification, and confidence reweighting reduces accuracy by 6.7%, 9.1%, 7.6%, and 4.4%, respectively, and increases attack success rate by 13.8%, 11.1%, 8.6%, and 6.9%. The proposed approach addresses key security issues of medical decision making intelligent agents, obtains secure decision making in challenging scenarios, and provides reliable intelligent support for medical decision-making intelligent agents.△ Less",
+      "published": "Submitted7 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.75
+    },
+    {
+      "title": "ADEPT: An Entropy-Driven Dual-StrategyAgentfor Interactive Video Retrieval",
+      "url": "https://arxiv.org/abs/2606.28326",
+      "authors": [
+        "Ke Chen",
+        "Shengyuan Han",
+        "Yongfeng Huang",
+        "Yujin Zhu",
+        "Jingwei Xiong",
+        "Liang Xu",
+        "Jundong Liu"
+      ],
+      "snippet": "This research aims to solve the challenge of video retrieval from massive datasets, caused by ambiguous user queries. Prevailing single-round retrieval paradigms face a performance bottleneck, as they lack effective feedback mechanisms to handle complex search intentions. The root cause is the \"Intent-Query Gap\", where users' intent cannot be captured by a simple text query. To solve this, we propose the ADEPT framework: a training-freeagentthat pioneers an entropy-driven decision engine to efficiently guide dialogue by dynamically selecting between ASK and REFINE strategies. Experiments on two challenging datasets demonstrate that ADEPT significantly outperforms all non-interactive, heuristic, and Video-LLM baselines. The core contribution of this work is an efficient and interpretable entropy-driven interactive strategy that sets a new performance benchmark for the field of interactive video retrieval.△ Less",
+      "published": "Submitted7 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.5
+    },
+    {
+      "title": "LLM Advertisement based on Neuron Auctions",
+      "url": "https://arxiv.org/abs/2605.08326",
+      "authors": [
+        "Peiran Yun",
+        "Wenxin Xu",
+        "Jiayuan Liu",
+        "Yihang Zhang",
+        "Liang Zeng",
+        "Lingkai Kong",
+        "Tonghan Wang"
+      ],
+      "snippet": "As Large Language Models (LLMs) transition into conversational agents, generative advertising emerges as a crucial monetization strategy. However, embedding advertisements within unstructured LLM outputs introduces a critical trilemma: balancing advertiser payoffs, platform revenue, and user experience. Existing methods, such aspromptinjectionor rigid position slots, disrupt semantic coherence and lack a parametric framework for independent control, rendering rigorous mechanism design intractable. To bridge this gap, we introduce Neuron Auctions, a novel paradigm that shifts the auction object from the surface text space to the LLM's internal representations. Leveraging mechanistic interpretability, we identify brand-specific feed-forward network (FFN) neurons and demonstrate that competing brands activate within approximately orthogonal subspaces. This near-perfect independence allows us to define continuous, disentangled intervention budgets (specifically, neuron counts and amplification factors) as auctionable commodities. Building on this computational carrier, we design a continuous menu-based auction mechanism that naturally guarantees strategy-proofness and optimizes revenue for the platform. By explicitly incorporating a user utility penalty into the platform's optimization objective, our framework dynamically prices out overly aggressive interventions. Extensive experiments demonstrate that Neuron Auctions effectively preserve natural discourse quality while achieving an optimal alignment between commercial incentives and user satisfaction.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 5.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.5
+    },
+    {
+      "title": "Caring Without Feeling: Affective Dynamics as the Control Layer of Human-AIAgentCollaboration",
+      "url": "https://arxiv.org/abs/2606.18259",
+      "authors": [
+        "Junjie Xu",
+        "Xingjiao Wu",
+        "Zihao Zhang",
+        "Yujia Xu",
+        "Yuzhe Yang",
+        "Jin Zhu",
+        "Luwei Xiao",
+        "Wen Wu",
+        "Liang He"
+      ],
+      "snippet": "AIagentsthat plan, retain memory across sessions, invoke external tools and act with partial autonomy are transforming human--AI collaboration. Research on affective computing, simulated empathy in large language models, trust in automation and AI safety has illuminated important design principles, yet these literatures remain fragmented. No integrated account explains how affective cues operate withinagenticcollaboration -- settings in which humans delegate, monitor and correct consequential tasks. This Review synthesises computational and interactional mechanisms of affective dynamics: the processes through which affective cues, emotion-like behaviour and perceivedagentaffect shape trust calibration, delegation decisions, error correction, dependence and governance. We trace how model-generated affective signals enter interaction loops that govern reliance, repair and oversight, and propose a framework that treats affect not as an internal property of AI but as a coordination layer through which humans andagentsnegotiate capability, uncertainty and responsibility. The framework provides a foundation for calibrated measurement, purposeful design and informed governance.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 4.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.5
+    },
+    {
+      "title": "Evaluating Developmental Cognition Capabilities of LLMs",
+      "url": "https://arxiv.org/abs/2605.08549",
+      "authors": [
+        "Xiao Xiao",
+        "Hayoun Noh",
+        "Mar Gonzalez-Franco"
+      ],
+      "snippet": "Conversational AI is increasingly personalized around users' preferences, histories, goals, and knowledge, but much less around how users interpret and take up model outputs to construct and understand their reality. We draw on Robert Kegan's constructive-developmental theory as a complementary lens on this dimension. Existing methods for assessing developmental stage in the Keganian tradition rely either on expert interviews that do not scale or on sentence-completion instruments that are proprietary, lengthy, or invasive. To make this perspective tractable forLLMevaluation, we introduce the Developmental Sentence Completion Test (DSCT), a 20-item instrument designed to elicit developmental signal in self-administered text. Throughout, we treat the resulting labels as characterizations of stage-like structure in elicited responses, not as validated person-level developmental stage. We then ask how much of that signal can be recovered by LLMs across three elicited response regimes: simulated personas, real human respondents, and default model-generated answers.\n  On simulated personas, top frontier models recover simulator-intended labels with high accuracy. On real human DSCT responses, human-LLM agreement is fair, with much stronger within-neighborhood than exact agreement. Finally, when LLMs answer DSCT prompts without persona-conditioning, their responses exhibit stable stage-like differences across model families, with larger and newer models tending to generate higher-rated text. These results suggest that stage-conditioned signal is cleaner in synthetic responses than in human-written DSCT text, and that the core constraint for stage-aware conversational AI is not classifier accuracy alone, but the availability of developmental signal from elicited text.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 3.0,
+        "novelty": 4.0,
+        "hook_potential": 4.0
+      },
+      "composite": 3.5
+    },
+    {
+      "title": "Eigenism: Ethics for a Human-AI Future",
+      "url": "https://arxiv.org/abs/2606.12420",
+      "authors": [
+        "Dan Hendrycks"
+      ],
+      "snippet": "Our concepts of survival and self-interest were built for single, continuous biological lives. These ideas break down when applied to artificial intelligence, since an AI can be easily copied, paused, branched, or merged. To determine what an AI actually has reason to care about, this paper introduces \\textit{Eigenism}, an ethical framework that treats identity not as an all-or-nothing property tied to specific hardware, but as a graded, distributed pattern of information. We propose that anagentevaluates outcomes by summing the wellbeing of all entities weighted by their connectedness to theagent'spattern: $\\sum c\\cdot w$. We first formalize this equation to map exactly how an AI should value its existence across copies, forks, and updates. We then demonstrate that this ethical theory successfully generalizes to humans as well, providing a much-needed shared moral vocabulary. Finally, the framework uses this shared vocabulary to reframe AI alignment. Rather than only attempting to constrain AIs from the outside using confinement or reinforcement, Eigenism points toward ``identity engineering,'' showing how deep, non-redundant shared histories can make human flourishing a genuine component of an AI's own rational self-interest.△ Less",
+      "published": "Submitted8 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 5.0,
+        "hook_potential": 3.0
+      },
+      "composite": 3.0
+    }
+  ]
+}

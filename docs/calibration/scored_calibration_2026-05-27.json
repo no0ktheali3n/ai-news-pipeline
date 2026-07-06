@@ -1,0 +1,643 @@
+{
+  "generated_at": "2026-05-27T16:00:00+00:00",
+  "backfill": true,
+  "buzz": "off",
+  "window": [
+    "2026-05-25",
+    "2026-05-27"
+  ],
+  "candidates": [
+    {
+      "title": "A Policy-Driven Runtime Layer for AgenticLLMServing",
+      "url": "https://arxiv.org/abs/2605.27744",
+      "authors": [
+        "Rui Zhang",
+        "Chaeeun Kim",
+        "Liting Hu"
+      ],
+      "snippet": "Multi-agent LLM systems have become the dominant production workload, but the serving stack was not built for them. The agent framework above knows agent identities, role, schemas, and dispatch structure but never sees an engine-level event; the serving engine below sees every event but knows nothing about agents. A surprising number of cross-cutting policies depend on both: prefix caching, batch shaping, speculative execution, fairness, tool-result memoization, safety enforcement, and more. Each lives in the seam between the two layers and is currently solved by a one-off patch into one neighbor or the other. We argue this seam is best addressed by an architectural change rather than point fixes: insert a third tier, an agent runtime layer, between the framework and the engine, exposing four primitives (observe, score, predict, act) into which any agent-aware policy plugs, with agent identity as the shared coordinate. We map nine concrete policies onto the layer and validate the abstraction in depth on the one with the largest immediate serving-cost lever: KV caching across sessions, instantiated as CacheSage, which learns the per-workload agent transition matrix online and uses it for survival-based eviction and between-step prefetch. Preliminary results on five real multi-agent workloads show +13 to +37 pp cache hit-rate lift, 12% to 29% lower mean TTFT, and 6% to 14% higher throughput over an unmodified serving stack.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 9.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.75
+    },
+    {
+      "title": "Detection Without Correction: A Two-Parameter Decomposition of Multi-Stage LLM Pipelines",
+      "url": "https://arxiv.org/abs/2605.27559",
+      "authors": [
+        "Prashanti Nilayam",
+        "Kiran Ramanna",
+        "Prashil Tumbade"
+      ],
+      "snippet": "Multi-stage LLM pipelines that perform multi-agent debate, intrinsic self-correction, orretrieval-augmentedverification exhibit puzzling aggregate behaviors: accuracy plateaus and reversals across rounds, non-replication of debate gains on contemporary frontier models, intrinsic self-correction degradation, and qualitative cross-provider divergence in debate dynamics. Downstream agent response can be operationalized as two coupled decisions: detection (whether to treat upstream content as authoritative) and conditional generation (what to produce if not). This decomposition yields four observable response regimes, of which detection-without-correction is the load-bearing failure mode. Across a nine-cell empirical grid spanning four model families, four benchmarks (GSM8K, MATH-500, GPQA-Diamond, AIME), and two methods (multi-agent debate, intrinsic self-correction), we find that the conditional miscorrection rate is consistently dominant (53-94% across cohorts) while detection rate varies contextually by more than an order of magnitude. The framework unifies the four phenomena above as signatures of a common mechanism and characterizes detection threshold as a stable model/protocol-level regularity that persists across methods at matched benchmark difficulty.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 8.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.25
+    },
+    {
+      "title": "Beyond Similarity: Task-Aligned Retrieval for Language Models",
+      "url": "https://arxiv.org/abs/2605.27951",
+      "authors": [
+        "Zhixing Sun",
+        "Shenghe Xu",
+        "Tao Li"
+      ],
+      "snippet": "Retrieval-augmentedgeneration (RAG) ranks passages by semantic similarity to the input, implicitly assuming that semantic similarity is a reliable indication of applicability in downstream tasks. This assumption breaks down when task success depends not on topical relevance but on applying the correct rules, constraints, or procedural guidance. In such settings, the most useful context may be the rule triggered by the input rather than the most semantically similar passage. We propose Task-Aligned Retrieval (TAG), a retrieval framework that replaces similarity-based retrieval with applicability-based rule selection. TAG transforms source documents into traceable condition-action rules, identifies which rules apply to a given input through pairwise LLM judgments, and generates the output conditioned only on the selected actions. We empirically observe that across Wikipedia NPOV rewriting, HumanEval with PEP~8 compliance, and NBA transaction reasoning on RuleArena, TAG consistently outperforms standard RAG, with the largest gains in high-mismatch settings (up to 12.2\\%) while reducing retrieved context by up to 93\\%. These results suggest that, in rule- and instruction-governed tasks, retrieval should optimize for applicability rather than for semantic similarity alone.△ Less",
+      "published": "Submitted27 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 9.0
+      },
+      "composite": 8.0
+    },
+    {
+      "title": "Libra: Training the Environment forAgenticInformation Retrieval",
+      "url": "https://arxiv.org/abs/2607.00016",
+      "authors": [
+        "Xuan Zhao",
+        "Andy Chiu",
+        "Gengyu Wang"
+      ],
+      "snippet": "Information localization within massive repositories is a cornerstone ofagenticLLM systems. While synthetic data-driven optimization has proven successful in training LLMs, little attention has been paid to optimizing theagent'sworking environment (the repository itself) in a data-driven manner. To bridge this gap, we present Libra, a self-evolving framework that introduces mutable \"catalogs\" (hierarchical Markdown files serving as navigable indices) into the repository. Libra runs an LLM-driven optimization loop where a Prompter generates synthetic queries, a frozen Solver attempts to resolve them by navigating the catalogs, and a Healer rewrites the catalogs in response to the Solver's localization failures. Evaluations across 12 SWE-bench Lite repositories demonstrate that this environmental healing yields continual, logarithmic improvements in code localization accuracy. Furthermore, these environmental improvements transfer zero-shot across different LLMs and problem sets. Although the focus of this paper is to study the general behavior of such a system, we also demonstrate that a minimalist codingagentequipped with Libra-optimized catalogs outperforms state-of-the-art baselines. Code is available at https://github.com/salesforce-misc/Libra and data at https://huggingface.co/datasets/Salesforce/Libra.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedJuly 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "A Paired Testing Protocol for Batch-Conditioned Refusal Robustness inLLMServing",
+      "url": "https://arxiv.org/abs/2605.27763",
+      "authors": [
+        "Sahil Kadadekar"
+      ],
+      "snippet": "Safety evaluations of language models often treat serving configuration as fixed background infrastructure, but batch condition is an untested treatment variable whenever the same prompt may be evaluated alone, in a synchronized batch, or inside a continuous-batching scheduler. We synthesize four artifact-backed studies into a paired testing protocol: Study A combines local discovery, scorer-corrected adjudication, and true-batching confirmation; Study B tests cross-model generalization; Study C tests continuous-batch composition; and Study D runs a batch-invariant-kernel ablation. The local test finds safety-label changes more often than capability-label changes (0.51% vs. 0.14%), but adjudication of 63 candidate rows leaves only 17 genuine behavioral flips, implying a corrected full-set rate of 0.16%. The 15-model extension finds no detectable universal safety-over-capability skew: flips are near parity (0.94x), alignment type has no detectable association ($p=0.942$, $η^2=0.033$), and output instability is the strongest tested fragility screen ($r=0.909$, bootstrap 95% CI [0.65, 0.97]). In the targeted kernel ablation, standard vLLM reproduces 22/55 label flips on current score-flip candidates, while enabling VLLM_BATCH_INVARIANT=1 reduces the same test to 0/55 flips; the composition test separately finds no aggregate effect at 4.7pp sensitivity. The testing recommendation is exact-stack validation: evaluate refusal at the served batch setting, pair safety prompts with capability controls, and report low-rate directional flips separately from aggregate null effects.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "TRACES: Proactive Safety Auditing for Multi-Turn LLM Agents via Trajectory-State Modeling",
+      "url": "https://arxiv.org/abs/2605.27690",
+      "authors": [
+        "Jiaqian Li",
+        "Yanshu Li",
+        "Boxuan Zhang",
+        "Ruixiang Tang",
+        "Kuan-Hao Huang"
+      ],
+      "snippet": "LLM agents increasingly operate through multi-turn tool use and environment interaction, where safety risks often emerge from intermediate steps long before they surface in the final outcome. Reactive auditing is therefore insufficient: post-hoc diagnosis frequently misses the chance to flag risks while they are unfolding. We propose TRACES, a representation-based proactive auditor that learns prefix-level trajectory risk states from the hidden representations of an observer LLM. TRACES induces latent mechanism features from step representations and models their temporal evolution to estimate whether a partial trajectory is drifting toward unsafe behavior. To sidestep the cost and ambiguity of step-level risk annotation, TRACES is trained with weak trajectory-level supervision while still producing dense prefix-level risk estimates. Across multipleagentsafetybenchmarks, TRACES improves both full-trajectory safety prediction and proactive risk discrimination. Our analyses further suggest that these risk states can help train a safer agent, highlighting the broader potential of proactive auditing for long-horizonagentsafety.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Grounded Cache Routing forRetrieval-AugmentedGeneration: When Is It Safe to Reuse an Answer?",
+      "url": "https://arxiv.org/abs/2605.27494",
+      "authors": [
+        "Syed Huma Shah"
+      ],
+      "snippet": "Modernretrieval-augmentedgeneration(RAG) deployments increasingly rely on caching to reduce token cost and time-to-first-token(TTFT). Prefix-level KV reuse is now standard in serving stacks such as vLLM, and chunk-level and position-independent reuse have been pushed further by recent systems(RAGCache, TurboRAG, CacheBlend, EPIC, ContextPilot, PCR, LMCache). Output-level semantic answer caches, by contrast, remain fragile: similar prompts can map to different correct answers, retrieved evidence drifts as the corpus is updated, and adversarial collision attacks have been shown to hijack cached responses. We argue that the right framing for cached answer reuse is not how to reuse faster but when reuse is safe. We propose GroundedCache, an evidence-validated cache router that admits a cached answer only when 4 cheap gates simultaneously hold: query similarity, retrieved-evidence overlap, source-version validity, and lexical (or judge-based) support of the cached answer by the freshly retrieved evidence. We build a six-regime workload that stress-tests cache safety rather than only hit rate, and introduce an operator-facing metric, the unsafe-served rate (USR), fraction of all queries that received a wrong cached answer. Across 2 datasets and 12,000 real-LLM generations(Qwen2.5-7B-Instruct on vLLM with Automatic Prefix Caching), GroundedCache drives USR to 0.0% on every HotpotQA regime(vs. 15-35% under naive caching) and to 1.5% on mtRAG document drift(vs. 51.5%), a 34x reduction on the design-point adversarial regime and 3-10x reductions across the other mtRAG regimes, while end-to-end p50 latency stays within 1.04-1.07x of a no-cache RAG baseline. A per-gate ablation isolates the lexical support gate as the load-bearing safety mechanism on both datasets, with the remaining gates providing defense-in-depth at near-zero cost. We release the implementation, workload, and evaluation harness.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "Aligning Provenance with Authorization: A Dual-Graph Defense for LLM Agents",
+      "url": "https://arxiv.org/abs/2605.26497",
+      "authors": [
+        "Peiran Wang",
+        "Ying Li",
+        "Yuan Tian"
+      ],
+      "snippet": "LLM-based agents are increasingly deployed in high-stakes scenarios such as email management, financial transactions, and code execution, where they interact with the external world through tool calling. During execution, these agents must read external data sources (emails, webpages, files) that attackers can control; through indirectpromptinjection, attackers embed malicious instructions in this data to manipulate agents into performing unauthorized operations such as transferring funds to attacker-controlled accounts. Existing defenses either perform tool-call-level value checking without tracking where parameter values originate, or analyze execution traces from a single perspective without a clean authorization baseline for comparison. We propose AuthGraph, a dual-graph alignment defense framework that constructs two complementary graphs: an injected reasoning graph that models information provenance from the actual execution trajectory (including potentially manipulated attributions), and an authorization graph derived from the user's intent in an isolated clean context that is information-theoretically impossible to be influenced by injection; a graph alignment checker then structurally compares the two graphs to detect both tool-level and parameter-source-level deviations. On AgentDojo, AuthGraph reduces the attack success rate from 40% to 1% while maintaining 76% task completion rate on GPT-4o; on AgentDyn, it reduces the attack success rate from 39% to 2% while preserving 51% utility, outperforming state-of-the-art defenses including CaMeL, DRIFT, and Progent. To our knowledge, AuthGraph is the first agent security defense to structurally compare authorization specifications against execution provenance at the parameter-source level, achieving fine-grained injection detection without sacrificing agent flexibility.△ Less",
+      "published": "Submitted25 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 8.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.75
+    },
+    {
+      "title": "PEAR: Permutation-Equivariant Adaptive RoutingMulti-AgentDebate",
+      "url": "https://arxiv.org/abs/2606.20621",
+      "authors": [
+        "Yang Feng",
+        "Ziwei Xu",
+        "Xia Hu",
+        "Fengxiang He"
+      ],
+      "snippet": "Multi-agentdebate improves the reliability of large language models (LLMs) through iterative peer critiques. However, fixed topologies often introduce persistent positional biases, amplify unreliableagents, and cause high sensitivity to role assignments. We introduce \\textit{Permutation-Equivariant Adaptive RoutingMulti-AgentDebate (PEAR)}, an inference-time protocol that dynamically reconfigures communication roles and sparse topologies across consecutive debate rounds. By strategically switchingagent-to-role assignments based on evolvingagentstates, PEAR prevents anyagentfrom permanently occupying a privileged network position or distributes influence more evenly across the debate. We theoretically characterize PEAR as an equivariant sparse router: it preserves accuracy underagentrelabeling while reducing routing complexity and improving generalization. Comprehensive empirical evaluations across four reasoning benchmarks and six diverse LLM backbones demonstrate PEAR significantly improves average accuracy over the strongest debate baselines. The code is at https://github.com/EVIEHub/PEAR.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "A Fixed-Budget, Cluster-Aware Standard for LLM-as-a-Judge Evaluation: A Multi-Hop RAG Stress Test",
+      "url": "https://arxiv.org/abs/2605.27789",
+      "authors": [
+        "Camilo Chacón Sartori",
+        "José H. García"
+      ],
+      "snippet": "Retrieval-augmentedgeneration (RAG) systems are often compared by asking a large language model (LLM) judge which answer is better. For multi-hop RAG, this has become a measurement problem as much as a modeling problem: the same score can reflect retrieval quality, answer length, lexical overlap, or a statistical test that ignores clustered data. We ask what happens when these choices are made explicit.\n  We propose a minimum measurement standard for LLM-as-a-judge comparisons in RAG. The standard fixes the top-100 candidate pool, evidence budget, answer cap, generator, and prompt; it also requires pre-registered hypotheses, cluster-aware inference, an exact cluster sign-flip check when feasible, and second-judge replication. Clustered benchmarks can overstate progress; the field should adopt this standard. We stress-test it with Genetic Algorithm Decoder for Multi-hop Evidence Composition (GADMEC), an evolutionary evidence selector, on 400 multi-hop questions in computer science/machine learning (CS/ML) and Materials Science. The protocol changes the empirical story. A binomial test makes all four semantic-baseline comparisons look significant; cluster-aware inference leaves only one Bonferroni-significant result. BM25 beats pure semantic GADMEC under the same budget, while a lexical-semantic hybrid recovers in CS/ML and narrows the Materials Science gap.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 7.0,
+        "hook_potential": 8.0
+      },
+      "composite": 7.25
+    },
+    {
+      "title": "AlphaMemo: Structured Search-Process Memory for Self-Evolving Alpha MiningAgents",
+      "url": "https://arxiv.org/abs/2606.20625",
+      "authors": [
+        "Hang Yu",
+        "Zifan Zheng",
+        "Jeff Z. Pan",
+        "Tongliang Liu",
+        "Zhiyong Wang",
+        "Fengxiang He"
+      ],
+      "snippet": "LLMagentsare promising for alpha mining via combining financial priors, symbolic reasoning, executable factor generation, and feedback-driven refinement. Yet, they face a combinatorial search space, noisy non-stationary feedback, redundant discoveries, and overfitting risks from naively reusing past successes. To address these challenges, we propose AlphaMemo, a self-evolving alpha miningagentwith Structured Search-Process Memory. Rather than memorizing only final factors or full trajectories, AlphaMemo records reusable evidence about which edit motifs work or fail under specific parent-factor contexts. It extracts motifs from Abstract Syntax Tree (AST) differences, applies confidence-gated residual memory on top of a search-ledger prior, and uses asymmetric veto control to suppress high-confidence failure patterns. Experiments on CSI 500 and S\\&P 500 show improved out-of-sample performance and fixed-budget discovery efficiency, with ablations validating the roles of residual learning, confidence gating, AST-diff motifs, and veto memory. Code is at https://github.com/jarrettyu/AlphaMemo.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "PEACE: A Planner-ExecutorAgentwith Constraint Enforcement for UAVs",
+      "url": "https://arxiv.org/abs/2606.00104",
+      "authors": [
+        "Erdem Uysal",
+        "Timo Kehrer",
+        "Sebastiano Panichella"
+      ],
+      "snippet": "Foundation models are increasingly used to drive autonomous systems, yet existing approaches either keep the model in a tight control loop, raising latency and hallucination risk, or compile natural language into opaque end-to-end policies that are hard to explain, constraint and require domain-specific datasets and fine-tuning. We propose a planner-executoragentfor PX4-based drones that decouples high-level mission planning from low-level control. A large language model performs single-pass task planning, while execution is handled through a structured ROS 2 tool-calling interface bridged to MAVLink. The system constructs a world model by combining modular 2D detectors (e.g., YOLO or vision-language models) with a pinhole depth projection module for 3D object localization. A constraint enforcement layer enforces altitude limits and horizontal geofencing, and bounded replanning enables recovery from execution-time action failures. We position our approach within three common design patterns for foundation-model-based robotics systems and demonstrate its feasibility in PX4 software-in-the-loop simulations in Gazebo. Results highlight improved explainability, constraint enforcement, and reduced LLM calls compared to tightly coupled LLM control. The code, dataset, videos, and other material can be found at the following link: https://github.com/erdemuysalx/PEACE△ Less",
+      "published": "Submitted26 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Disentangling Adversarial Prompts: A Semantic-Graph Defense for RobustLLMSecurity",
+      "url": "https://arxiv.org/abs/2605.27823",
+      "authors": [
+        "Xiang Fang",
+        "Wanlong Fang"
+      ],
+      "snippet": "Large Language Models (LLMs) are increasingly vulnerable to adversarial prompts that exploit semantic ambiguities to bypass safety mechanisms, resulting in harmful or inappropriate outputs. Such attacks, includingjailbreakingandpromptinjection, pose significant risks to the integrity and availability of LLMs in security-critical applications. This paper proposes the Adversarial Prompt Disentanglement (APD) framework, a novel defense mechanism that proactively identifies and neutralizes malicious components in input prompts before they are processed by the LLM. The APD framework integrates three key innovations: (1) a mutual information-based semantic decomposition method to isolate adversarial and benign prompt components, ensuring statistical independence; (2) a graph-based intent classification approach that leverages spectral analysis to detect malicious patterns in prompt semantics; and (3) a lightweight transformer-based classifier trained on real-world datasets of toxic andjailbreakingprompts, enabling efficient and accurate adversarial intent detection. Evaluated on diverse datasets containing adversarial prompts, APD demonstrates superior robustness, reducing harmful output generation by over 85\\% while maintaining negligible impact on model performance. The framework's computational efficiency supports real-time deployment, making it a practical solution for securing LLMs. Our work addresses critical challenges in machine learning security on novel attacks and integrity methods for ML systems, and offers a scalable, ethically grounded defense against prompt-based adversarial threats.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "PromptInjectionDetection is Regime-Dependent: A Deployment-Aware Evaluation with Interpretable Structural Signals",
+      "url": "https://arxiv.org/abs/2605.26999",
+      "authors": [
+        "Akindoyin Akinrele",
+        "Shreyank N Gowda"
+      ],
+      "snippet": "Promptinjectionposes a critical threat to the safe deployment of large language models, yet existing detection approaches are typically evaluated under limited settings that do not reflect real-world operating constraints. In this work, we present a deployment-aware evaluation ofpromptinjectiondetection using a multi-model and multi-regime experimental framework. We compare lexical, semantic, structural, and transformer-based detectors across multiple out-of-distribution settings, repeated data splits, and both ranking and thresholded deployment metrics. We introduce interpretable structural signals that capture hierarchy overrides, system prompt spoofing, role redefinition, and evasion patterns, and assess their contribution both within sparse models and in combination with strong encoder baselines. Our results show that detection performance is highly regime-dependent and sensitive to threshold selection, with no single model dominating across all settings. Transformer-based models achieve the strongest overall performance, while structural signals provide modest but consistent gains in certain regimes and improve low false positive rate behaviour in harder scenarios. These findings highlight the gap between ranking performance and deployment effectiveness and underscore the importance of evaluatingpromptinjectiondefences under realistic operational constraints. Code will be released.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Curriculum Learning for Safety Alignment",
+      "url": "https://arxiv.org/abs/2605.26315",
+      "authors": [
+        "Sandeep Kumar",
+        "Virginia Smith",
+        "Chhavi Yadav"
+      ],
+      "snippet": "Direct Preference Optimisation (DPO) is widely used for safety alignment in large language models. However, prior work shows it is brittle and exhibits poor out-of-distribution (OOD) generalisation. In this paper, we investigate whether Curriculum Learning can improve the robustness of DPO-based safety alignment. We propose Staged-Competence, a curriculum-based framework that organises preference data by difficulty, employs competence-based sampling, and progressively updates the reference model during training. Averaged across three model families, Staged-Competence reduces OOD harmful response rates by 16% andjailbreakattack success rates by 20%, while preserving general capabilities with near-zero over-refusal. We further show that Staged-Competence (1) matches baseline safety with only 75% of the training data and (2) yields better separation between safe and unsafe responses. Staged-Competence is agnostic to the policy optimisation loss and can extend to other DPO variants and alignment domains. Our code and data are available at https://github.com/Sandeep5500/curriculum-learning-for-safety.△ Less",
+      "published": "Submitted25 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 7.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.75
+    },
+    {
+      "title": "Latent Goal Prediction from Language for Model-Based Planning",
+      "url": "https://arxiv.org/abs/2606.20627",
+      "authors": [
+        "Samuel Barbeau",
+        "Simon Roy",
+        "Giovanni Beltrame",
+        "Christian Desrosiers",
+        "Nicolas Thome"
+      ],
+      "snippet": "Planning with world models is bottlenecked by compounding prediction errors and the difficulty of defining optimizable goals. Visual targets provide precise local gradients but poor distant guidance, while language is flexible yet limited by noisy cross-modal alignment or dependence on large generative models unsuited for the high-sampling nature of model-based planning. To address these challenges, we introduce Latent Goal Prediction from Language (LAGO), a framework that predicts both sequences of intermediate goal states from language instructions and action-conditioned rollouts, all within the same latent space. Rather than optimizing toward a single global objective, LAGO dynamically decomposes instructions into explicitly predicted, locally tractable latent subgoals. By updating these subgoals online and using a soft minimum trajectory cost during planning, LAGO enables anagentto follow coherent latent trajectories over long horizons. Evaluation across multiple environments planning horizons shows that LAGO avoids the sharp degradation of prior methods. By achieving robust and precise long-horizon planning purely from language, LAGO bridges the precision of visual goals with the flexibility of text-guided control.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Using Probabilistic Programs to Train Inductive Reasoning in Large Language Models",
+      "url": "https://arxiv.org/abs/2606.09856",
+      "authors": [
+        "Liyi Zhang",
+        "Akshay K. Jagadish",
+        "Brenden M. Lake",
+        "Thomas L. Griffiths"
+      ],
+      "snippet": "Post-training Large Language Models (LLMs) for reasoning typically focuses on deductive tasks such as mathematics and coding where correctness is verifiable. Yet, many real-world reasoning problems are inductive:agentsmust infer uncertain beliefs from sparse, ambiguous observations. There are challenges to using standard fine-tuning methods for inductive reasoning, including difficulties in curating large-scale, high-quality labeled datasets and in handling targets that are inherently distributional. In this work, we introduce a novel approach, called Program-based Posterior Training (PPT), to address these limitations: we use an LLM to generate diverse open-world scenarios as probabilistic programs, run probabilistic inference to produce distributional target responses to queries, and then fine-tune on these probabilistic soft labels. Using this approach, we fine-tune LLMs on 10,000 programmatically generated scenarios and evaluate on held-out motifs, human-labeled judgments, and external benchmarks. Overall, PPT substantially improves estimation accuracy on held-out inductive tasks, increases alignment with human judgments, and transfers to external benchmarks for estimation and calibration. Additionally, the gains in raw calibration are not subsumed by post-hoc temperature scaling, showing that the models have more deeply internalized uncertainty compared to output rescaling. Together, these results suggest that probabilistic-program-mediated fine-tuning is a promising approach for post-training LLMs to reliably perform approximate inductive inference.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "When Think-with-Image Meets Safety: What Determines MultimodalJailbreakRobustness?",
+      "url": "https://arxiv.org/abs/2605.27932",
+      "authors": [
+        "Yuan Tian",
+        "Bing Hu",
+        "Fang Wu",
+        "Xiaomin Li",
+        "Binghang Lu",
+        "Neil Zhenqiang Gong"
+      ],
+      "snippet": "Think-with-image reasoning is emerging as a new inference paradigm for large vision-language models, but its safety implications remain poorly understood. Existing systems already span multiple process designs, including direct response generation, text-only prior turn, visual-state manipulation, and explicit external image-tool invocation. In this paper, we ask which of these evaluated paradigms improves multimodaljailbreakrobustness, and why. Across multiple vision-language models, explicit image-tool interaction yields the lowest attack success rates in our experiments, reducingjailbreaksuccess by around 30% relative on average across the evaluated models. This finding is initially surprising: ASR remains low even when the returned image-tool output is manually overridden or itself unsafe-looking, but returns near direct-answering levels under text-only prior turn controls. These results indicate that the lower ASR is not explained by benign returned-image semantics or by the textual image-tool trace alone. To explain the pattern, we introduce an image-tool safety vector framework that models image-tool invocation as a residual shift in hidden representations toward a safety-relevant direction. Representation-level analyses and activation interventions support this account. Overall, our results suggest that explicit image-tool interaction is a promising design pattern for improvingjailbreakrobustness, while also motivating pipeline-specific safety evaluation.△ Less",
+      "published": "Submitted27 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "C-MIG: Multi-view Information Gain-basedRetrieval-AugmentedGeneration for Clinical Diagnosis Reasoning",
+      "url": "https://arxiv.org/abs/2605.27860",
+      "authors": [
+        "Yuwei Miao",
+        "Gen Li",
+        "Yunsheng Zeng",
+        "Xiandong Li",
+        "Yujin Wang",
+        "Siyu Chen",
+        "Luning Wang",
+        "Yunhao Qiao",
+        "Junfeng Wang",
+        "Jianwei Lv",
+        "Bo Yuan"
+      ],
+      "snippet": "Retrieval-augmentedgeneration combined with reinforcement learning has shown promise for grounding large language models in trustworthy medical evidence. However, existing methods rely on exact-match binary rewards, which in clinical diagnosis cause two issues: (i) semantically relevant but non-verbatim steps receive zero signal, discarding valuable learning signals; and (ii) uni-dimensional rewards cannot effectively supervise heterogeneous reasoning capabilities. To address these issues, we propose C-MIG, a Multi-view Information Gain-basedretrieval-augmentedgeneration framework for Clinical diagnosis. C-MIG estimates information gain under a frozen reference model from two complementary views, retrieved-document and document-refinement, to jointly guide what to retrieve and how to refine, alleviating the issues of valuable reward signal loss and credit assignment. We further design a multi-subqueryretrievalaugmentationstrategy that improves knowledge recall coverage in clinical diagnostic scenarios. Comprehensive experiments on four medical benchmarks demonstrate that C-MIG achieves the best performance among all RAG-RL methods on both in-domain and out-of-domain sets, and outperforms state-of-the-art general-purpose LLMs for clinical diagnosis.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Chain-based Adaptive Reconfiguration Over Lattices for Hallucination Reduction",
+      "url": "https://arxiv.org/abs/2605.27706",
+      "authors": [
+        "Joan Vendrell Gallart",
+        "Solmaz Kia",
+        "Russell Bent",
+        "Michael Grosskopf"
+      ],
+      "snippet": "We introduce CAROL (Chain-based Adaptive Reconfiguration Over Lattices), a probabilistic framework for test-time hallucination reduction in large language models. Rather than relying on token-level uncertainty, CAROL defines a semantic uncertainty measure based on the consistency between generated responses and a trusted context, inducing a string-submodular objective over a lattice of textual sequences. This formulation enables hallucination mitigation to be cast as a Markov chain accept-reject process with provable convergence and near-optimality guarantees, allowing the model to iteratively refine outputs toward semantic consistency. By operating at the level of meaning, CAROL unifies hallucination detection and mitigation within a single framework. Empirical results on question answering and multi-agent reasoning benchmarks show that CAROL significantly reduces hallucinations and improves reliability and interpretability compared to likelihood-based andretrieval-augmentedbaselines, while maintaining competitive computational efficiency.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Open-Weight LLM Fine-Tuning Defenses are Susceptible to Simple Attacks",
+      "url": "https://arxiv.org/abs/2605.26526",
+      "authors": [
+        "Kevin Kuo",
+        "Chhavi Yadav",
+        "Virginia Smith"
+      ],
+      "snippet": "Recent defenses for safeguarding open-weight large language models (LLMs) are intended to prevent adversarial usage. Underlying these defenses is an assumption that new harmful behavior is learned through fine-tuning rather than elicited byjailbreakingthe model. Yet, pretrained LLMs already encode substantial harmful knowledge across many domains, which raises an important question: can an adversaryjailbreaksafeguarded models, to achieve harmful usage without fine-tuning at all? In this paper, we show that open-weight safeguards are susceptible to simpler strategies that, despite being well known, have not been systematically evaluated against these safeguards. Specifically, we evaluate two low-cost attacks--abliteration and prefilling--that do not rely on gradient-based optimization. Across three harmfulness evaluation benchmarks (BeaverTails, HarmBench, and AdvBench), these attacks increase attack success rates against safeguarded open-weight models from below 10\\% to a range of 16%-96%. To mitigate this vulnerability, we introduce abliteration-resistant tuning (ART), which incorporates an abliteration-based objective into training. ART can be layered onto existing defenses and reduces the success rates of abliteration, prefilling, and their combination by 10%-20%. These findings indicate that the attack surface for open-weight models is broader than previously characterized, and that evaluations of safeguarding defenses should incorporate a more diverse set of attack strategies beyond adversarial fine-tuning.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "Jailbreaksusceptibility prediction and mitigation via the behavioral geometry of models",
+      "url": "https://arxiv.org/abs/2605.26409",
+      "authors": [
+        "Hayden Helm",
+        "Xiaodong Liu",
+        "Weiwei Yang"
+      ],
+      "snippet": "Evaluating and mitigating a generative system's susceptibility tojailbreakattacks is critical to its safe deployment. Given the number of deployable systems, full per-configuration evaluation and optimization is impractical. In this paper, we formalize the behavioral geometry of a population of models that, by leveraging previously evaluated and defended models, supports both efficient susceptibility prediction and effective defense transfer across a population. We apply the framework to 79 models spanning 24 providers and to 100 system configurations of a single base model. Simple methods that use the behavioral geometry reach an AUPRC of $0.94$ for susceptibility detection with $\\approx98\\%$ fewer probes relative to a full evaluation. Using the behavioral geometry to select which model to transfer an optimized defense from outperforms same-provider assignment ($+2\\%$, $p = 0.03$) at no additional probe cost, with a set of three models sufficient to cover the population. Results are robust to hyperparameter selection and judge.△ Less",
+      "published": "Submitted25 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 6.0,
+        "novelty": 6.0,
+        "hook_potential": 7.0
+      },
+      "composite": 6.25
+    },
+    {
+      "title": "SPIN: Decentralized Swarm Control via Tensorized Policy Coordination",
+      "url": "https://arxiv.org/abs/2606.07557",
+      "authors": [
+        "Zhaowen Fan"
+      ],
+      "snippet": "Decentralizedmulti-agentswarm coordination on resource-constrained edge platforms remains fundamentally bottlenecked by the exponential scaling of joint action spaces and high-latency communication overhead. This paper introduces the Swarm Policy Interference Network (SPIN) framework, an architectural paradigm that bypasses these limitations by modeling swarm topologies as a compressed tensor network. We factorize the joint policy tensors of localmulti-agentcliques into Matrix Product State (MPS) chains, reducing the computational complexity of evaluation from an exponential $O(n^m)$ wall to a strictly linear $O(m \\cdot n \\cdot χ^2)$ constraint. To bridge local continuous spatial geometry with this discrete algebraic backend without requiring power-intensive online training loops, we introduce a decoupled, hybrid neuro-symbolic control pipeline. Local multi-layered neural networks operate as structural coordination encoders, pre-trained offline to nonlinearly map hand-engineered geometric descriptors into abstract environmental target measures. At runtime, edgeagentsexecute instantaneous behavioral adaptations by applying the Radon-Nikodým derivative directly as a zero-shot importance-reweighting filter. We validate the framework within a discrete-timemulti-agentsimulation sandbox spanning tracking, decentralized dispersion/area coverage, and multi-goal coordination regimes. Qualitative telemetry demonstrates that the integrated pipeline achieves stable target-directed motion, anti-collapse spatial spreading under decentralized constraints, and structured subgroup formation across multiple targets, providing a mathematically grounded route to tractable, low-power edge swarm intelligence.△ Less",
+      "published": "Submitted25 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 6.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.5
+    },
+    {
+      "title": "Bridging the 2D-3D Gap: A Hierarchical Semantic-Geometric Map for Vision Language Navigation",
+      "url": "https://arxiv.org/abs/2606.00095",
+      "authors": [
+        "Kailing Li",
+        "Tianwen Qian",
+        "Lijin Yang",
+        "Yuqian Fu",
+        "Jingyu Gong",
+        "Xiaoling Wang",
+        "Liang He"
+      ],
+      "snippet": "Vision-Language Navigation (VLN) enables embodiedagentsto reach target locations in unseen environments by following language instructions. Despite recent progress with vision-language models (VLMs), a critical semantic-geometric gap remains: while VLMs excel at language and 2D visual understanding, they struggle with 3D spatial reasoning and fail to capture the causal dynamics between actions and spatial transitions, resulting in unreliable navigation, particularly in zero-shot settings. To bridge this gap, we propose a Hierarchical Semantic-Geometric Map (HSGM) that transforms 3D geometric information into a structured representation compatible with VLMs, effectively linking them to the physical world. Specifically, HSGM is represented as a multi-channel top-down map organized into three levels: (1) geometric level that records navigable regions and obstacles, (2) semantic level that represents objects and their relations, and (3) decision level that supports high-level task reasoning and goal selection. During navigation, the VLM acts as a high-level semantic planner, interpreting the spatial layout encoded in the HSGM to select geometrically valid waypoints, while low-level, collision-free movements between waypoints are executed by a classical path-planning algorithm, fully decoupling semantic reasoning from action execution. Additionally, complex instructions are decomposed into subtasks to alleviate the problem of progress forgetting or hallucinating in long-horizon navigation. Extensive experiments on R2R-CE and RxR-CE benchmarks demonstrate that our zero-shot framework achieves state-of-the-art performance and even outperforms several supervised methods. Code is available at https://github.com/Teacher-Tom/HSGM_public.△ Less",
+      "published": "Submitted25 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "DiagramRAG: A Lightweight Framework to Retrieve Scientific Diagram for Figure Generation",
+      "url": "https://arxiv.org/abs/2605.27931",
+      "authors": [
+        "Xinjiang Yu",
+        "Junyi Han",
+        "Zhuofan Chen",
+        "Chi Zhang",
+        "Xiangyu Fu",
+        "Jingyuan Tan",
+        "Zirui You",
+        "Yixiang Jian",
+        "Yu-Ping Wang",
+        "Chengliang Chai"
+      ],
+      "snippet": "Scientific diagrams are essential for communicating complex methodologies in academic papers. A natural way for researchers to specify such diagrams is through rough sketches, where text labels, connectors, and spatial arrangements express early semantic and topological intentions. However, sketches are usually incomplete, making them insufficient for directly producing publication-quality diagrams. Existing sketch-based generation methods mainly reconstruct the sketch itself, while recent text-driven diagram generation frameworks rely on textual semantics and do not fully exploit the topological structure contained in sketches. In this paper, we introduce DiagramRAG, a lightweightretrieval-augmentedframework for sketch-based scientific diagram completion. Given a user sketch, DiagramRAG retrieves reference diagrams that are both semantically relevant to the sketch content and topologically compatible with its structure, and uses them to guide downstream diagram generation. To enable efficient structure-aware retrieval, we represent diagrams as knowledge graphs, synthesize sketch variants at different simplification levels, and train an embedding model to align sketches with compatible diagrams in a shared space. The retrieved references further provide content, topology, and visual priors for completing and rendering the final diagram. Experiments show that DiagramRAG achieves F1-scores of 0.848 and 0.802 on DiagramBank and FigureBench, respectively, and improves generation quality with the best VLM-as-a-Judge score of 7.170, while reducing inference latency to 35.48 seconds per sample. Our code and data are available at https://anonymous.4open.science/r/DiagramRAG-A262 and https://huggingface.co/datasets/anonymous-review-a262/DiagramSketch.△ Less",
+      "published": "Submitted27 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "PAST2HARM: A Simple Adaptive Past Tense Attack forJailbreakingMultimodal AI",
+      "url": "https://arxiv.org/abs/2605.27545",
+      "authors": [
+        "Snehasis Mukhopadhyay"
+      ],
+      "snippet": "Jailbreakattacks on multimodal AI systems remain underexplored, even though unsafe image generation can have more severe consequences than unsafe text and current defenses are relatively immature. We introduce PAST2HARM, a simple yet effective adaptivejailbreakframework that bypasses refusal training in state of the art multimodal text to image models. Building on prior findings that past tense reformulations can evade safeguards, PAST2HARM systematically exploits this vulnerability in multimodal generative AI.\n  We characterize the attack along two dimensions. First, breadth: through temporal deepening, the framework incrementally strengthens historical anchoring and archival cues, eroding refusal boundaries across models with varying alignment strength. Second, depth: via iterative escalation after initial compliance, we probe the upper bound of harmful generation, measuring severity using a scalar severityjailbreakmetric evaluated by a language model acting as a judge. We find that mid conversation turns form peak vulnerability windows, where harmfulness increases before plateauing and eventually undergoing semantic inversion.\n  We evaluate PAST2HARM on three models Gemini Nano Banana Pro, GPT Image 2, and SD XL achieving attack success rates of 83 percent, 67 percent, and 100 percent in a black box, gradient free setting. Adversarial prompts also transfer across models, with cross model success rates above 50 percent. The attack elicits diverse harmful outputs, including explicit sexual content, political disinformation, historical denial narratives, hate speech, and self harm glorification. We further release a curated benchmark of prompts, reformulations, and outputs as a resource for red teaming and alignment. Our results expose fundamental brittleness in current safeguards and highlight the need for stronger multimodal safety training.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 5.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.25
+    },
+    {
+      "title": "Darwin MobileAgent: A Roadmap for Self-Evolution",
+      "url": "https://arxiv.org/abs/2606.20622",
+      "authors": [
+        "Daniel Beechey",
+        "Derek Yuen",
+        "Jianheng Liu",
+        "Dezhao Luo",
+        "Tiantian He",
+        "Weilin Luo",
+        "Jun Wang",
+        "Kun Shao"
+      ],
+      "snippet": "The goal of artificial intelligence is to createagentscapable of general, adaptive behaviour in open-ended environments. Guided by the \"Bitter Lesson\", we argue that the most effective path toward this goal is to systematically remove human priors and allow intelligence to naturally emerge through interaction with a \"Big World\" that is orders of magnitude more complex than theagentitself. We propose the mobile Graphical User Interface (GUI) as a practical proxy for such a world and introduce Darwin MobileAgent, an open-source infrastructure designed as a foundation for autonomous reinforcement learning in this domain. This framework addresses the data-collection bottleneck in real-world mobile interactions by using an asynchronousagent-environment loop across parallel cloud-phone instances. We further propose a conceptual roadmap to systematically remove human priors from three fundamental pillars of a self-evolvingagent: task curricula, outcome verification, and memory management. We validate that the Darwin infrastructure provides the stability and scalability required for the first stage of this roadmap: policy optimisation in the GUI domain. This work establishes the practical and theoretical foundation necessary to move toward truly autonomous, self-evolving GUIagents.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 5.0,
+        "novelty": 4.0,
+        "hook_potential": 6.0
+      },
+      "composite": 5.0
+    },
+    {
+      "title": "Simorgh at SemEval-2026 task 7: Region-Aware Hybrid Retrieval for Low-Resource Cultural Reasoning in Multilingual Question Answering",
+      "url": "https://arxiv.org/abs/2605.27636",
+      "authors": [
+        "Hadi Bayrami Asl Tekanlou",
+        "Mahdi Bakhtiyarzadeh",
+        "Jafar Razmara"
+      ],
+      "snippet": "Although Large Language Models (LLMs) demonstrate excellent capabilities and performance for general reasoning tasks within the general public domain, they may face challenges with culturally grounded knowledge within languages with limited digital and textual data. In this paper, we investigate culturally grounded multiple-choice question answering with the BLEnD benchmark, which consists of a multilingual corpus of 30 languages and covers various socio-cultural domains, such as cuisine, sports, family, etc. We propose a region-aware hybrid retrieval approach that combines BM25 lexical matching and dense semantic similarity with regional weighting heuristics to improve the relevance of the answer. The retrieved documents are used to construct a structured prompt for the Qwen3-14B quantized model with logit-based deterministic answer selection. The experimental results show improvements to cross-lingual stability with the hybrid retrieval approach over pure parametric inference for culturally grounded question answering. However, there are still notable performance gaps between languages with more and less training data. This shows that the limitations of theretrievalaugmentationapproach are not entirely overcome by the training data imbalance problem.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "llm-systems"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.25
+    },
+    {
+      "title": "BAIT: Boundary-Guided Disclosure Escalation via Self-Conditioned Reasoning",
+      "url": "https://arxiv.org/abs/2605.27110",
+      "authors": [
+        "Xuan Luo",
+        "Yue Wang",
+        "Geng Tu",
+        "Jing Li",
+        "Ruifeng Xu"
+      ],
+      "snippet": "In this work, we propose BAIT (Boundary-Aware Iterative Trap), a three-stepjailbreakframework that approaches malicious goals through internal disclosure. BAIT first asks the model to identify the protection boundary, then requires it to refine that boundary, and finally requests a detailed example. By expanding each step upon the model's previous responses, BAIT turns the model's own reasoning and consistency tendency into a disclosure pathway. Experiments on AdvBench, JailbreakBench, AIR-Bench, and SORRY-Bench demonstrate that BAIT consistently achieves strong attack success rates across top-tier large language models, significantly advancing conventionaljailbreakbaselines. Further analysis reveals that: 1) prevention-oriented framing significantly outperforms direct knowledge request; 2) the refinement step plays a critical role in disclosure escalation; and 3) the first two steps have a certain chance of eliciting harmful content while triggering little filtering.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedMay 2026.",
+      "query_source": [
+        "ai-security"
+      ],
+      "scores": {
+        "builder_relevance": 4.0,
+        "novelty": 4.0,
+        "hook_potential": 5.0
+      },
+      "composite": 4.25
+    },
+    {
+      "title": "Margin Play: AMulti-AgentSystem For Public Policy Analysis In The Brazilian Equatorial Margin",
+      "url": "https://arxiv.org/abs/2606.02614",
+      "authors": [
+        "Antonio de Sousa Leitão Filho",
+        "Fabrício Saul Lima",
+        "Selby Mykael Lima dos Santos",
+        "Rejani Bandeira Vieira Sousa",
+        "Luís Jorge Mesquita de Jesus",
+        "Dennys Correia da Silva",
+        "Allan Kardec Duailibe Barros Filho"
+      ],
+      "snippet": "The Brazilian Equatorial Margin (BEM) is Brazil's next offshore oil frontier, with operations expected to begin in 2026 in the Foz do Amazonas basin. Its assets are fiscally and territorially linked primarily to Maranhao -- the state with the lowest HDI in the Federation (0.676, IBGE 2022). This raises the central policy question: under what conditions does BEM exploration generate net positive externalities for Maranhao? The problem is intrinsicallymulti-agent: the Federal Government seeks revenue and energy security; the state seeks regional welfare under constitutional royalty earmarking; the operator maximizes profit under risk; ANP and IBAMA hold conflicting mandates; and Amazonian communities prioritize territorial and environmental vectors over monetary income. We present Margin Play, aMulti-AgentReinforcement Learning (MARL) system simulating these tensions under Brazilian empirical calibration and classical economic literature. It implements sixagentsunder the CTDE paradigm, trained with BRO-MARL. Results from 60,000 episodes across six scenarios indicate the answer is conditional on the institutional regime: under the reference baseline, the welfare gain is marginal (Waval approx. 1.68), whereas the MA-Prospero configuration yields Delta W = +17.5% and Delta Rcom = +21.3%, with a lower environmental liability (Eamb = 0.048 vs. 0.076). The fundamental problem is not a trade-off between production and welfare, but the choice of public policy regime linked to exploration.△ Less",
+      "published": "Submitted26 May, 2026;originally announcedJune 2026.",
+      "query_source": [
+        "agents"
+      ],
+      "scores": {
+        "builder_relevance": 2.0,
+        "novelty": 3.0,
+        "hook_potential": 2.0
+      },
+      "composite": 2.25
+    }
+  ]
+}

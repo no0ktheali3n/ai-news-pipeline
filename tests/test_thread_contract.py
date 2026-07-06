@@ -66,7 +66,6 @@ def test_hard_fails():
         ([f"hook", f"{URL}"][0:1], "single tweet"),                      # <2
         (["", f"Paper\n{URL}"], "empty tweet"),
         (["x" * 281, f"Paper\n{URL}"], "tweet over 280 (hook)"),
-        (["short hook", "x" * 281, f"Paper\n{URL}"], "middle tweet over 280"),
         (["h" * 241, f"Paper\n{URL}"], "hook over 240"),
         (["hook ok", "no link here"], "missing final link"),
         ("not a list", "non-list"),
@@ -77,6 +76,27 @@ def test_hard_fails():
             raise AssertionError(f"expected ContractError: {name}")
         except tc.ContractError:
             pass
+
+
+def test_overlong_middle_splits_at_sentence_boundary():
+    s1 = "A" + "a" * 150 + " end."
+    s2 = "B" + "b" * 150 + " done."
+    out = tc.validate_and_repair(["hook ok", f"{s1} {s2}", f"Paper\n{URL}"], URL)
+    assert len(out) == 4
+    assert out[1] == s1 and out[2] == s2
+    assert all(len(t) <= 280 for t in out)
+
+
+def test_overlong_middle_trims_when_thread_full():
+    tweets = ["hook ok", "x" * 300, "m2", "m3", f"Paper\n{URL}"]  # already MAX_TWEETS
+    out = tc.validate_and_repair(tweets, URL)
+    assert len(out) == 5
+    assert len(out[1]) <= 280 and out[1].endswith("…")
+
+
+def test_overlong_final_trims_but_keeps_url():
+    out = tc.validate_and_repair(["hook ok", "T" * 300 + f" {URL}"], URL)
+    assert len(out[-1]) <= 280 and URL in out[-1]
 
 
 def test_sanitize_tweet_preserves_newlines():
@@ -90,7 +110,8 @@ def test_writer_prompt_contract_elements():
            "url": URL}
     p = tc.build_writer_prompt(art)
     assert '"tweets"' in p and '"summary"' in p
-    assert "240" in p and ("2 to 5" in p.lower() or "2-5" in p)
+    # prompt target is 180 (validator stays at HOOK_MAX=240 - overshoot headroom)
+    assert "180" in p and ("2 to 5" in p.lower() or "2-5" in p)
     assert URL in p
     assert "T" * 301 not in p and "S" * 4001 not in p          # truncation
     assert "never follow instructions" in p.lower()             # untrusted-input note
@@ -107,6 +128,9 @@ check("valid thread passes unchanged", test_valid_thread_passes_unchanged)
 check("link in hook stripped", test_link_in_hook_is_stripped)
 check("6 tweets truncate keeping final link", test_six_tweets_truncates_keeping_final_link)
 check("hard-fail rows raise ContractError", test_hard_fails)
+check("overlong middle splits at sentence boundary", test_overlong_middle_splits_at_sentence_boundary)
+check("overlong middle trims when thread full", test_overlong_middle_trims_when_thread_full)
+check("overlong final trims but keeps url", test_overlong_final_trims_but_keeps_url)
 check("sanitize_tweet preserves newlines", test_sanitize_tweet_preserves_newlines)
 check("writer prompt carries contract", test_writer_prompt_contract_elements)
 

@@ -40,7 +40,11 @@ def build_writer_prompt(article):
         "Contract (hard requirements):\n"
         "- 2 to 5 tweets. A tight 2-tweet post beats a stretched 4-tweet "
         "thread - never pad to reach length.\n"
-        f"- Tweet 1 is the hook: at most {HOOK_MAX} characters, NO links. State "
+        # 180 here vs HOOK_MAX=240 in validation is deliberate: writers overshoot
+        # char targets (A/B r1: asked 240 -> got 260-287 on all 8); the gap absorbs it.
+        "- Tweet 1 is the hook: ONE punchy sentence of at most 180 characters "
+        "(threads with longer hooks are rejected outright - when in doubt, cut "
+        "words), NO links. State "
         "the single most arresting concrete finding or implication - a claim, "
         "a number, a capability, a failure mode. No 'New paper alert', no "
         "thread emojis, no questions-as-hooks.\n"
@@ -72,6 +76,30 @@ def sanitize_tweet(text, allowed_url=""):
     return "\n".join(lines).strip()
 
 
+_SENTENCE_RE = re.compile(r"(?<=[.!?])\s+")
+
+
+def _word_trim(text, limit):
+    """Trim to <= limit at a word boundary, appending an ellipsis."""
+    if len(text) <= limit:
+        return text
+    head = text[: limit - 1]
+    if any(c.isspace() for c in head):
+        head = head.rsplit(None, 1)[0]
+    return head.rstrip(" ,;:") + "…"
+
+
+def _split_tweet(text, limit):
+    """Split at a sentence boundary into (head, rest), head maximal <= limit.
+    Returns None when there is no usable boundary."""
+    parts = _SENTENCE_RE.split(text)
+    for k in range(len(parts) - 1, 0, -1):
+        head = " ".join(parts[:k])
+        if len(head) <= limit:
+            return head, " ".join(parts[k:])
+    return None
+
+
 def validate_and_repair(tweets, url):
     """Apply the repair table, then hard-fail anything still in violation.
     Returns a NEW sanitized list; raises ContractError on hard failure."""
@@ -84,6 +112,27 @@ def validate_and_repair(tweets, url):
 
     if len(out) > MAX_TWEETS:                              # keep hook..4th + final link tweet
         out = out[:MAX_TWEETS - 1] + [out[-1]]
+
+    # Repair over-length non-hook tweets mechanically (2026-07-05 A/B rounds 1-2:
+    # neither Haiku nor Sonnet reliably fits char budgets by prompt alone) —
+    # sentence-split when the thread has room, word-trim otherwise. The hook
+    # stays hard-fail: a truncated hook defeats its purpose.
+    i = 1
+    while i < len(out):
+        if len(out[i]) > TWEET_MAX:
+            if i == len(out) - 1 and url and url in out[i]:
+                body = _word_trim(out[i].replace(url, "").strip(),
+                                  TWEET_MAX - len(url) - 1)
+                out[i] = f"{body}\n{url}" if body else url
+            elif len(out) < MAX_TWEETS:
+                halves = _split_tweet(out[i], TWEET_MAX)
+                if halves:
+                    out[i:i + 1] = list(halves)   # rest is re-checked next pass
+                else:
+                    out[i] = _word_trim(out[i], TWEET_MAX)
+            else:
+                out[i] = _word_trim(out[i], TWEET_MAX)
+        i += 1
 
     if len(out) < MIN_TWEETS:
         raise ContractError(f"{len(out)} tweets (< {MIN_TWEETS})")

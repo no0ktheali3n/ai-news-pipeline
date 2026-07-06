@@ -768,5 +768,187 @@ check("mid-thread double failure → partial + closing reply", test_mid_thread_d
 check("first-tweet double failure → None", test_first_tweet_double_failure_returns_none)
 check("ledger stores status field", test_ledger_stores_status)
 
+print("\n[12] follower_count + tweet_count capture")
+
+import sys as _sys
+_tweepy = _sys.modules["tweepy"]
+_FAKE_TWEEPY_STATE = _tweepy.FAKE_TWEEPY_STATE
+
+
+def _reset_tweepy_state():
+    _FAKE_TWEEPY_STATE["get_me_error"] = False
+    _FAKE_TWEEPY_STATE["followers"] = 42
+
+
+def test_successful_post_carries_tweet_count_and_follower_count():
+    """3-tweet post → metadata tweet_count == 3 and follower_count == 42."""
+    _reset_tweepy_state()
+    orig_sleep = ptt.time.sleep
+    script = ["id1", "id2", "id3"]
+    fake, calls = _scripted_post_tweet(script)
+    ptt.post_tweet = fake
+    ptt.time.sleep = lambda *_: None
+    try:
+        art = {
+            "title": "T", "url": "https://arxiv.org/abs/2607.00099",
+            "summary": "s", "hashtags": [],
+            "tweets": [
+                "First tweet hook sentence for the thread.",
+                "Second tweet with more detail about the paper.",
+                "Third and final tweet. https://arxiv.org/abs/2607.00099",
+            ],
+            "scores": None, "composite": None, "query_source": None,
+            "buzz": None, "buzz_raw": None,
+        }
+        md = ptt.post_thread(art, dry_run=False)
+        assert md is not None, "post_thread must return metadata"
+        assert md["tweet_count"] == 3, f"expected tweet_count=3, got {md.get('tweet_count')}"
+        assert md["follower_count"] == 42, f"expected follower_count=42, got {md.get('follower_count')}"
+    finally:
+        ptt.time.sleep = orig_sleep
+
+
+def test_get_me_failure_does_not_block_post():
+    """get_me failure → post still succeeds, follower_count is None."""
+    _reset_tweepy_state()
+    _FAKE_TWEEPY_STATE["get_me_error"] = True
+    orig_sleep = ptt.time.sleep
+    script = ["id1", "id2", "id3"]
+    fake, calls = _scripted_post_tweet(script)
+    ptt.post_tweet = fake
+    ptt.time.sleep = lambda *_: None
+    try:
+        art = {
+            "title": "T", "url": "https://arxiv.org/abs/2607.00099",
+            "summary": "s", "hashtags": [],
+            "tweets": [
+                "First tweet hook sentence for the thread.",
+                "Second tweet with more detail about the paper.",
+                "Third and final tweet. https://arxiv.org/abs/2607.00099",
+            ],
+            "scores": None, "composite": None, "query_source": None,
+            "buzz": None, "buzz_raw": None,
+        }
+        md = ptt.post_thread(art, dry_run=False)
+        assert md is not None, "post must succeed even when get_me errors"
+        assert md["follower_count"] is None, (
+            f"expected follower_count=None on error, got {md.get('follower_count')}")
+        assert md["tweet_count"] == 3, f"tweet_count must still be set: {md.get('tweet_count')}"
+    finally:
+        ptt.time.sleep = orig_sleep
+        _reset_tweepy_state()
+
+
+def test_ledger_entry_carries_tweet_count_and_follower_count():
+    """Extend provenance test: ledger entry stores tweet_count and follower_count."""
+    _reset_tweepy_state()
+    import poster_lambda as poster
+    import utils.post_to_twitter as _ptt2
+    FAKE_S3.store.clear()
+    art = {"title": "Scored", "url": "https://arxiv.org/abs/2607.00009",
+           "summary": "s", "hashtags": [],
+           "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
+           "composite": 7.25, "query_source": ["agents"],
+           "buzz": 7.5, "buzz_raw": {"hn_points": 120}}
+    key = "out/summarizer/final_summarized_RUN.json"
+    FAKE_S3.store[key] = json.dumps([art]).encode()
+
+    orig = _ptt2.post_thread
+    _ptt2.post_thread = lambda a, **kw: {
+        "article_title": a["title"], "url": a["url"],
+        "variant": "summary", "tweet_ids": ["1", "2", "3"],
+        "thread_url": "https://t/1",
+        "scores": a.get("scores"),
+        "composite": a.get("composite"),
+        "query_source": a.get("query_source"),
+        "buzz": a.get("buzz"),
+        "buzz_raw": a.get("buzz_raw"),
+        "status": "posted",
+        "tweet_count": 3,
+        "follower_count": 42,
+    }
+    try:
+        resp = poster.handler({"summary_key": key, "dry_run": False, "post_limit": 1}, None)
+    finally:
+        _ptt2.post_thread = orig
+    assert resp["statusCode"] == 200, resp
+    entry = json.loads(FAKE_S3.store[poster.POSTED_LEDGER_KEY])["https://arxiv.org/abs/2607.00009"]
+    assert entry.get("tweet_count") == 3, f"tweet_count missing/wrong in ledger: {entry}"
+    assert entry.get("follower_count") == 42, f"follower_count missing/wrong in ledger: {entry}"
+
+
+check("successful 3-tweet post → tweet_count=3, follower_count=42", test_successful_post_carries_tweet_count_and_follower_count)
+check("get_me failure → post succeeds, follower_count=None", test_get_me_failure_does_not_block_post)
+check("ledger entry carries tweet_count + follower_count", test_ledger_entry_carries_tweet_count_and_follower_count)
+
+print("\n[13] get_me timeout: hung network call does not block post")
+
+import threading as _threading  # noqa: E402
+import utils.tweepy_client as _tc  # noqa: E402
+
+
+def test_get_me_hang_returns_none_and_post_succeeds():
+    """get_me that sleeps forever is cut off by the 10s timeout (patched to 0.05s).
+
+    The test completes in <2s and asserts follower_count is None while the post succeeds.
+    Implementation: monkeypatch the timeout value module-side so the ThreadPoolExecutor
+    future.result(timeout=...) fires quickly.
+    """
+    _reset_tweepy_state()
+
+    # Patch the fake tweepy client to hang indefinitely inside get_me.
+    barrier = _threading.Event()
+
+    class _HangingClient:
+        def get_me(self, user_fields=None):
+            barrier.wait(timeout=5)  # blocks until test finishes or 5s safety timeout
+            raise Exception("should never reach here in normal test flow")
+
+    orig_get_twitter_client = _tc.get_twitter_client
+    _tc.get_twitter_client = lambda: _HangingClient()
+
+    # Patch the PRODUCTION timeout constant down so the real get_follower_count
+    # (not a test copy) trips its ThreadPoolExecutor timeout fast.
+    import utils.tweepy_client as _tc2
+    orig_timeout_v = _tc2.GET_ME_TIMEOUT_S
+    _tc2.GET_ME_TIMEOUT_S = 0.05
+
+    orig_sleep = ptt.time.sleep
+    script = ["id1", "id2", "id3"]
+    fake, calls = _scripted_post_tweet(script)
+    ptt.post_tweet = fake
+    ptt.time.sleep = lambda *_: None
+    try:
+        art = {
+            "title": "T", "url": "https://arxiv.org/abs/2607.00099",
+            "summary": "s", "hashtags": [],
+            "tweets": [
+                "First tweet hook sentence for the thread.",
+                "Second tweet with more detail about the paper.",
+                "Third and final tweet. https://arxiv.org/abs/2607.00099",
+            ],
+            "scores": None, "composite": None, "query_source": None,
+            "buzz": None, "buzz_raw": None,
+        }
+        import time as _time
+        t0 = _time.monotonic()
+        md = ptt.post_thread(art, dry_run=False)
+        elapsed = _time.monotonic() - t0
+        barrier.set()  # unblock the hanging thread so the thread pool can clean up
+        assert elapsed < 2.0, f"post_thread took too long ({elapsed:.2f}s) — timeout not working"
+        assert md is not None, "post must succeed even when get_me hangs"
+        assert md["follower_count"] is None, (
+            f"follower_count must be None on hang, got {md.get('follower_count')}")
+        assert md["tweet_count"] == 3, f"tweet_count must still be 3, got {md.get('tweet_count')}"
+    finally:
+        barrier.set()
+        ptt.time.sleep = orig_sleep
+        _tc.get_twitter_client = orig_get_twitter_client
+        _tc2.GET_ME_TIMEOUT_S = orig_timeout_v
+        _reset_tweepy_state()
+
+
+check("get_me hang → follower_count=None, post succeeds, completes <2s", test_get_me_hang_returns_none_and_post_succeeds)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

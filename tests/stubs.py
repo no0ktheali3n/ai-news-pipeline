@@ -28,6 +28,7 @@ class FakeS3:
 
     def __init__(self):
         self.store = {}       # key -> bytes
+        self.meta = {}        # key -> kwargs dict
         self.listing = []     # objects returned by list pagination
 
     def get_object(self, Bucket, Key):
@@ -37,6 +38,8 @@ class FakeS3:
 
     def put_object(self, Bucket, Key, Body, **kwargs):
         self.store[Key] = Body
+        self.meta = getattr(self, 'meta', {})
+        self.meta[Key] = kwargs
 
     def download_file(self, Bucket, Key, Filename):
         if Key not in self.store:
@@ -51,6 +54,10 @@ class FakeS3:
                 return [{"Contents": listing}]
 
         return P()
+
+    def generate_presigned_url(self, op, Params=None, ExpiresIn=3600):
+        key = (Params or {}).get("Key", "")
+        return f"https://fake-presigned/{key}"
 
 
 FAKE_S3 = FakeS3()
@@ -240,7 +247,29 @@ def install_stubs():
 
     tweepy = types.ModuleType("tweepy")
     tweepy.__path__ = []  # mark as package so `tweepy.errors` imports resolve
-    tweepy.Client = lambda *a, **k: types.SimpleNamespace()
+
+    # Module-level toggle: tests set FAKE_TWEEPY_STATE values to simulate failure
+    # or vary the follower count.  Shape mirrors real tweepy:
+    #   resp = client.get_me(user_fields=["public_metrics"])
+    #   resp.data.public_metrics["followers_count"]
+    FAKE_TWEEPY_STATE = {"get_me_error": False, "followers": 42}
+
+    class _FakeTweepyData:
+        def __init__(self, followers):
+            self.public_metrics = {"followers_count": followers}
+
+    class _FakeTweepyGetMeResp:
+        def __init__(self, followers):
+            self.data = _FakeTweepyData(followers)
+
+    class _FakeTweepyClient:
+        def get_me(self, user_fields=None):
+            if FAKE_TWEEPY_STATE["get_me_error"]:
+                raise Exception("Simulated get_me failure")
+            return _FakeTweepyGetMeResp(FAKE_TWEEPY_STATE["followers"])
+
+    tweepy.Client = lambda *a, **k: _FakeTweepyClient()
+    tweepy.FAKE_TWEEPY_STATE = FAKE_TWEEPY_STATE  # expose for tests
     tweepy_errors = types.ModuleType("tweepy.errors")
     tweepy_errors.TooManyRequests = type("TooManyRequests", (Exception,), {})
     tweepy_errors.TweepyException = type("TweepyException", (Exception,), {})

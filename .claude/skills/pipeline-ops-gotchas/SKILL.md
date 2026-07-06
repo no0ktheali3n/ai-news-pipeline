@@ -40,3 +40,7 @@ Facts learned the expensive way in this repo/account (894495940143, us-east-1). 
 - **The posted ledger (`memory/posted_library.json`) is the dedup source of truth**; sidecars live under `output/scored/` (30d lifecycle) and are scanned by nothing.
 - **One new variable per autonomous run**: don't deploy a second change before the previous one has survived a scheduled run. The durable build ledger is `.superpowers/sdd/progress.md` — read it before resuming anything; append one line per completed step.
 - Long waits (quota resets, propagation): detached background watcher loops that probe cheaply and notify — never silent foreground sleeps.
+
+## Git (addendum)
+- **Edits made AFTER `git add` are not in the commit** — the stage is a snapshot. If you edit following a bulk `git add -A`, re-add before committing, and run `git status` AFTER committing (a lingering ' M' means the commit is missing your latest change).
+- **CI red while local is green → diff committed vs working tree FIRST** (`git status`, `git diff HEAD -- <file>`) before blaming the runner environment. Local suites read the working tree; CI reads the commit.

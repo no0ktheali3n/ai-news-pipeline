@@ -1,10 +1,14 @@
 import json
 import boto3
 import os
+import logging
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
 from tweepy.errors import TooManyRequests
 from datetime import datetime
 from tweepy import Client
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -36,6 +40,35 @@ def get_twitter_client():
         access_token=os.getenv("TWITTER_ACCESS_TOKEN"),
         access_token_secret=os.getenv("TWITTER_ACCESS_SECRET")
     )
+
+# Hard bound on the follower lookup: a hung Twitter call must never stall
+# post_thread past the ledger write (posted-but-unledgered = repost risk).
+# Module-level so tests can patch it down.
+GET_ME_TIMEOUT_S = float(os.getenv("GET_ME_TIMEOUT_S", "10"))
+
+
+def get_follower_count() -> "int | None":
+    """Return the account's current follower count, or None on any error.
+
+    Strictly non-blocking: every failure path is caught and logged at WARNING
+    so a Twitter API hiccup can never fail or delay a post.
+    Uses GET /2/users/me (free tier; ≤25 calls/day budget).
+    """
+    # NOTE: no `with` block — the context manager's __exit__ does
+    # shutdown(wait=True), which would block on a hung thread and defeat the
+    # timeout entirely. shutdown(wait=False) abandons the worker instead.
+    ex = ThreadPoolExecutor(max_workers=1)
+    try:
+        _ensure_twitter_creds()
+        client = get_twitter_client()
+        resp = ex.submit(client.get_me, user_fields=["public_metrics"]).result(timeout=GET_ME_TIMEOUT_S)
+        return resp.data.public_metrics["followers_count"]
+    except (FuturesTimeout, Exception) as e:
+        logger.warning("get_follower_count failed (non-blocking): %s", e)
+        return None
+    finally:
+        ex.shutdown(wait=False, cancel_futures=True)
+
 
 def post_tweet(text, reply_to_id=None):
     client = get_twitter_client()

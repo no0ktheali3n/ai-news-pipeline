@@ -76,6 +76,11 @@ Parameters:
     Default: us.anthropic.claude-sonnet-4-6
     Description: Bedrock model for thread writing (Sonnet-tier); scoring stays on BedrockModelId.
 
+  ReportsOutputPrefix:
+    Type: String
+    Default: ai-research-pipeline/output/reports/
+    Description: Prefix for weekly reporter output (HTML report + presigned URL)
+
 Globals:
   Function:
     Timeout: 600
@@ -304,6 +309,61 @@ Resources:
       Protocol: email
       Endpoint: !Ref AlertEmail
 
+  ReportTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: ai-research-pipeline-reports
+      DisplayName: AI Research Weekly Report
+
+  ReportEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref ReportTopic
+      Protocol: email
+      Endpoint: !Ref AlertEmail
+
+  ReporterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ai-research-reporter
+      Handler: reporter_lambda.handler
+      CodeUri: lambda/reporter/
+      Layers:
+        - !Ref CommonUtilsLayer
+      Description: Generates and publishes weekly AI research report
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource:
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${MemoryOutputPrefix}*
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${ScoredOutputPrefix}*
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${ReportsOutputPrefix}*
+            - Effect: Allow
+              Action:
+                - s3:ListBucket
+              Resource:
+                - !Sub arn:aws:s3:::${S3OutputBucket}
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource:
+                - !Sub arn:aws:s3:::${S3OutputBucket}/${ReportsOutputPrefix}*
+            - Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: !Ref ReportTopic
+      Environment:
+        Variables:
+          S3_OUTPUT_BUCKET: !Ref S3OutputBucket
+          MEMORY_OUTPUT_PREFIX: !Ref MemoryOutputPrefix
+          POSTED_LEDGER_FILE: !Ref PostedLedgerFile
+          SCORED_OUTPUT_PREFIX: !Ref ScoredOutputPrefix
+          REPORTS_OUTPUT_PREFIX: !Ref ReportsOutputPrefix
+          REPORT_TOPIC_ARN: !Ref ReportTopic
+
   # Backstop for hard crashes/timeouts (graceful aborts publish to SNS directly)
   PipelineErrorsAlarm:
     Type: AWS::CloudWatch::Alarm
@@ -386,6 +446,20 @@ Resources:
         RetryPolicy:
           MaximumRetryAttempts: 0
 
+  ReporterSchedule:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Name: reporter-weekly-run
+      ScheduleExpression: cron(0 17 ? * SUN *) # Once weekly on Sundays, 17:00 UTC
+      FlexibleTimeWindow:
+        Mode: "OFF"
+      Target:
+        Arn: !GetAtt ReporterFunction.Arn
+        RoleArn: !GetAtt SchedulerInvokeRole.Arn
+        Input: "{}"
+        RetryPolicy:
+          MaximumRetryAttempts: 0
+
   SchedulerInvokeRole:
     Type: AWS::IAM::Role
     Properties:
@@ -404,7 +478,9 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: lambda:InvokeFunction
-                Resource: !GetAtt PipelineFunction.Arn      
+                Resource:
+                  - !GetAtt PipelineFunction.Arn
+                  - !GetAtt ReporterFunction.Arn
 
 Outputs:
   SummarizerMainOutput:

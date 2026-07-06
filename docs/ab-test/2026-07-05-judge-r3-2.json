@@ -1,0 +1,58 @@
+{"pairs": [
+  {
+    "pair": 1,
+    "v1": {"hook_strength": 9, "practitioner_value": 9, "clarity": 8, "coherence": 9, "follow_likelihood": 9, "share_likelihood": 8},
+    "v2": {"hook_strength": 5, "practitioner_value": 6, "clarity": 7, "coherence": 6, "follow_likelihood": 4, "share_likelihood": 4},
+    "preference": 1,
+    "rationale": "V1 opens with a concrete result (54.5%->90.9%) and delivers an actionable 'lock down access, give reviewer context' takeaway; V2 buries the number in generic hype and emoji."
+  },
+  {
+    "pair": 2,
+    "v1": {"hook_strength": 6, "practitioner_value": 6, "clarity": 6, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 5},
+    "v2": {"hook_strength": 9, "practitioner_value": 9, "clarity": 8, "coherence": 9, "follow_likelihood": 9, "share_likelihood": 8},
+    "preference": 2,
+    "rationale": "V2 names the mechanism (split payload across PRs), the specific defense (stateful link-tracker, 93%->47%), and the models it holds across; V1 is emoji-driven and vaguer."
+  },
+  {
+    "pair": 3,
+    "v1": {"hook_strength": 9, "practitioner_value": 9, "clarity": 8, "coherence": 9, "follow_likelihood": 9, "share_likelihood": 8},
+    "v2": {"hook_strength": 6, "practitioner_value": 6, "clarity": 7, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 5},
+    "preference": 1,
+    "rationale": "V1 states the threat model crisply and ends with a concrete checklist (validate at schema/tool-output/conversation-state level); V2 restates the same ideas with more words and less precision."
+  },
+  {
+    "pair": 4,
+    "v1": {"hook_strength": 5, "practitioner_value": 6, "clarity": 6, "coherence": 6, "follow_likelihood": 4, "share_likelihood": 4},
+    "v2": {"hook_strength": 9, "practitioner_value": 9, "clarity": 8, "coherence": 9, "follow_likelihood": 8, "share_likelihood": 8},
+    "preference": 2,
+    "rationale": "V2 leads with the sharp tradeoff numbers (99.3% security / 71% fidelity) and a deployment-specific decision rule; V1 is long, emoji-heavy, and slower to reach the point."
+  },
+  {
+    "pair": 5,
+    "v1": {"hook_strength": 9, "practitioner_value": 9, "clarity": 8, "coherence": 9, "follow_likelihood": 9, "share_likelihood": 8},
+    "v2": {"hook_strength": 6, "practitioner_value": 6, "clarity": 7, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 5},
+    "preference": 1,
+    "rationale": "V1's '100% regardless of model' hook plus hard numbers and 'the LLM is not your security boundary' is quotable and dense; V2 restates it as an analogy-laden wake-up call."
+  },
+  {
+    "pair": 6,
+    "v1": {"hook_strength": 6, "practitioner_value": 6, "clarity": 6, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 5},
+    "v2": {"hook_strength": 9, "practitioner_value": 9, "clarity": 9, "coherence": 9, "follow_likelihood": 9, "share_likelihood": 8},
+    "preference": 2,
+    "rationale": "V2 front-loads the punchline (28%->89%, cost +42-68% for nothing, container-deploy defect) and ends 'spend on reasoning, not tooling'; V1 pads it with emoji and a student-calculator analogy."
+  },
+  {
+    "pair": 7,
+    "v1": {"hook_strength": 9, "practitioner_value": 9, "clarity": 7, "coherence": 9, "follow_likelihood": 9, "share_likelihood": 8},
+    "v2": {"hook_strength": 6, "practitioner_value": 6, "clarity": 7, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 5},
+    "preference": 1,
+    "rationale": "V1 is mechanistically precise (residual-stream directions, subspace-confined intervention, transfer across 5 families) and surfaces the recoverable-failure-mode insight; V2 softens it into general-audience prose."
+  },
+  {
+    "pair": 8,
+    "v1": {"hook_strength": 6, "practitioner_value": 7, "clarity": 7, "coherence": 6, "follow_likelihood": 5, "share_likelihood": 5},
+    "v2": {"hook_strength": 9, "practitioner_value": 9, "clarity": 8, "coherence": 9, "follow_likelihood": 9, "share_likelihood": 8},
+    "preference": 2,
+    "rationale": "V2 gives the operational invariant (recall-before-send), ablation robustness (AUC 0.990 with recall features stripped), and triage-by-channel value; V1 covers the same facts but with emoji framing and less rigor."
+  }
+]}

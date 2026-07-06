@@ -1,0 +1,172 @@
+{
+  "pairs": [
+    {
+      "pair": 1,
+      "v1": {
+        "hook_strength": 8,
+        "practitioner_value": 9,
+        "clarity": 9,
+        "coherence": 9,
+        "follow_likelihood": 8,
+        "share_likelihood": 8
+      },
+      "v2": {
+        "hook_strength": 5,
+        "practitioner_value": 6,
+        "clarity": 6,
+        "coherence": 6,
+        "follow_likelihood": 4,
+        "share_likelihood": 4
+      },
+      "preference": 1,
+      "rationale": "V1 leads with the 54.5%->90.9% result and a ~200-LoC tool; V2 buries the same facts under marketing hype, emoji, a title artifact and a typo."
+    },
+    {
+      "pair": 2,
+      "v1": {
+        "hook_strength": 6,
+        "practitioner_value": 7,
+        "clarity": 6,
+        "coherence": 6,
+        "follow_likelihood": 5,
+        "share_likelihood": 5
+      },
+      "v2": {
+        "hook_strength": 8,
+        "practitioner_value": 9,
+        "clarity": 9,
+        "coherence": 9,
+        "follow_likelihood": 8,
+        "share_likelihood": 8
+      },
+      "preference": 2,
+      "rationale": "V2 opens with a clean attack-surface hook, names Claude Sonnet 93% evasion and the monitor-dependence insight; V1 dilutes it with emoji, a title artifact and softer framing."
+    },
+    {
+      "pair": 3,
+      "v1": {
+        "hook_strength": 8,
+        "practitioner_value": 9,
+        "clarity": 9,
+        "coherence": 9,
+        "follow_likelihood": 8,
+        "share_likelihood": 7
+      },
+      "v2": {
+        "hook_strength": 5,
+        "practitioner_value": 6,
+        "clarity": 6,
+        "coherence": 6,
+        "follow_likelihood": 4,
+        "share_likelihood": 4
+      },
+      "preference": 1,
+      "rationale": "V1 crisply nails the structural vulnerability and the context-aware-validation takeaway; V2 restates it as breathless analogy with a title artifact and hype closers."
+    },
+    {
+      "pair": 4,
+      "v1": {
+        "hook_strength": 5,
+        "practitioner_value": 7,
+        "clarity": 6,
+        "coherence": 6,
+        "follow_likelihood": 5,
+        "share_likelihood": 5
+      },
+      "v2": {
+        "hook_strength": 8,
+        "practitioner_value": 9,
+        "clarity": 9,
+        "coherence": 9,
+        "follow_likelihood": 8,
+        "share_likelihood": 8
+      },
+      "preference": 2,
+      "rationale": "V2 states the invisible-cost problem sharply with dense numbers (1,168 examples, 96.5%/47.8% vs 99.3%/71-74%) and a deployment-specific insight; V1 is bloated, emoji-laden, with a title artifact."
+    },
+    {
+      "pair": 5,
+      "v1": {
+        "hook_strength": 9,
+        "practitioner_value": 9,
+        "clarity": 8,
+        "coherence": 9,
+        "follow_likelihood": 9,
+        "share_likelihood": 8
+      },
+      "v2": {
+        "hook_strength": 6,
+        "practitioner_value": 6,
+        "clarity": 7,
+        "coherence": 7,
+        "follow_likelihood": 5,
+        "share_likelihood": 5
+      },
+      "preference": 1,
+      "rationale": "V1 opens with the 100%-plugin-success stat and carries a dense, credible OS-kernel model with hard numbers; V2 softens it into analogy with a title artifact and less detail."
+    },
+    {
+      "pair": 6,
+      "v1": {
+        "hook_strength": 6,
+        "practitioner_value": 7,
+        "clarity": 7,
+        "coherence": 7,
+        "follow_likelihood": 5,
+        "share_likelihood": 6
+      },
+      "v2": {
+        "hook_strength": 8,
+        "practitioner_value": 9,
+        "clarity": 9,
+        "coherence": 9,
+        "follow_likelihood": 8,
+        "share_likelihood": 8
+      },
+      "preference": 2,
+      "rationale": "V2 front-loads the setup and the 28%->89% result with the sharp 'match the intervention to the failure mode' takeaway; V1 wraps the same numbers in 'plot twist' hype and a title artifact."
+    },
+    {
+      "pair": 7,
+      "v1": {
+        "hook_strength": 8,
+        "practitioner_value": 9,
+        "clarity": 8,
+        "coherence": 9,
+        "follow_likelihood": 8,
+        "share_likelihood": 7
+      },
+      "v2": {
+        "hook_strength": 5,
+        "practitioner_value": 6,
+        "clarity": 7,
+        "coherence": 6,
+        "follow_likelihood": 4,
+        "share_likelihood": 4
+      },
+      "preference": 1,
+      "rationale": "V1 delivers real mechanistic depth (residual-stream directions, orthogonality, cross-family transfer, beats six methods); V2 restates it vaguely with analogy, hype and a title artifact."
+    },
+    {
+      "pair": 8,
+      "v1": {
+        "hook_strength": 6,
+        "practitioner_value": 7,
+        "clarity": 7,
+        "coherence": 7,
+        "follow_likelihood": 5,
+        "share_likelihood": 6
+      },
+      "v2": {
+        "hook_strength": 8,
+        "practitioner_value": 9,
+        "clarity": 9,
+        "coherence": 9,
+        "follow_likelihood": 8,
+        "share_likelihood": 8
+      },
+      "preference": 2,
+      "rationale": "V2 leads with the concrete tool-call signature and a single-rule 95.6% catch, then the robustness detail (AUC holds at 0.990 after dropping features); V1 has the numbers but is emoji-heavy with a title artifact and 'really cool' filler."
+    }
+  ]
+}

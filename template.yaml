@@ -76,6 +76,19 @@ Parameters:
     Default: us.anthropic.claude-sonnet-4-6
     Description: Bedrock model for thread writing (Sonnet-tier); scoring stays on BedrockModelId.
 
+  ScoringWRelevance:
+    Type: String
+    Default: "0.5"
+    Description: Composite weight for builder_relevance (weights should sum to 1.0).
+  ScoringWNovelty:
+    Type: String
+    Default: "0.25"
+    Description: Composite weight for novelty.
+  ScoringWHook:
+    Type: String
+    Default: "0.25"
+    Description: Composite weight for hook_potential (raise to favor engaging papers).
+
   LlmFallbackProvider:
     Type: String
     Default: ""
@@ -198,9 +211,9 @@ Resources:
           SCORING_W_BUZZ: "0.125"
           BUZZ_HTTP_TIMEOUT_S: "3"
           BUZZ_WALL_BUDGET_S: "20"
-          SCORING_W_RELEVANCE: "0.5"
-          SCORING_W_NOVELTY: "0.25"
-          SCORING_W_HOOK: "0.25"
+          SCORING_W_RELEVANCE: !Ref ScoringWRelevance
+          SCORING_W_NOVELTY: !Ref ScoringWNovelty
+          SCORING_W_HOOK: !Ref ScoringWHook
           SCORING_MAX_CANDIDATES: "40"
           LLM_FALLBACK_PROVIDER: !Ref LlmFallbackProvider
           OPENROUTER_API_KEY: !Ref OpenRouterApiKey

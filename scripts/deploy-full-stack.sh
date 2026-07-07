@@ -30,6 +30,9 @@ sam deploy --no-execute-changeset --parameter-overrides \
   "MemoryOutputFile=article_memory.json" \
   "BedrockWriterModelId=us.anthropic.claude-sonnet-4-6" \
   "LlmFallbackProvider=openrouter" \
+  "ScoringWRelevance=0.40" \
+  "ScoringWNovelty=0.25" \
+  "ScoringWHook=0.35" \
   "OpenRouterApiKey=$KEY"
 
 echo

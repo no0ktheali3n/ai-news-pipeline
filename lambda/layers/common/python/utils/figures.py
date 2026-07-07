@@ -157,13 +157,16 @@ def _image_ok(url):
     """GET the candidate image; return (width, height) if it passes every
     guard, else None. Read is capped; formats png/jpg/webp only."""
     try:
-        r = requests.get(url, timeout=FETCH_TIMEOUT_S, headers=UA, stream=True)
+        r = requests.get(url, timeout=FETCH_TIMEOUT_S, headers=UA)
         if r.status_code != 200:
             return None
         ctype = r.headers.get("Content-Type", "")
         if not any(t in ctype for t in ("image/png", "image/jpeg", "image/webp")):
             return None
-        body = r.raw.read(IMG_READ_CAP) if hasattr(r, "raw") and r.raw else r.content[:IMG_READ_CAP]
+        # r.content is always transfer-decoded (gzip-safe); r.raw.read() returns
+        # still-compressed bytes and would silently fail the dim parse. Using
+        # .content also means tests exercise the real prod path (final review I-1).
+        body = r.content[:IMG_READ_CAP]
         dims = png_dims(body) or jpeg_dims(body)
         if not dims:
             return None

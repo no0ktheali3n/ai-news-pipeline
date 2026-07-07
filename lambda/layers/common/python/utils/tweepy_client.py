@@ -4,6 +4,7 @@ import boto3
 import os
 import logging
 import requests
+from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
 from tweepy.errors import TooManyRequests
 from datetime import datetime
@@ -74,9 +75,19 @@ def upload_media(image_bytes, filename, alt_text):
 
 
 def _download_figure(url):
-    """None unless 200 + image/* + 10KB..4.9MB."""
+    """None unless https arxiv.org + 200 + image/* + 10KB..4.9MB.
+
+    The figure URL was validated when figures.py built it, but it travels
+    through an S3 artifact between stages — the poster re-validates as an
+    independent enforcement point and refuses redirects (an allowlisted
+    host must not bounce the fetch elsewhere)."""
     try:
-        r = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"})
+        parsed = urlparse(url)
+        host = (parsed.hostname or "").rstrip(".").lower()
+        if parsed.scheme != "https" or not (host == "arxiv.org" or host.endswith(".arxiv.org")):
+            return None
+        r = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"},
+                         allow_redirects=False)
         if r.status_code != 200 or not r.headers.get("Content-Type", "").startswith("image/"):
             return None
         if not (10_000 <= len(r.content) <= 4_900_000):

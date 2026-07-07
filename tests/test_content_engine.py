@@ -1281,5 +1281,17 @@ check("media: MEDIA_ENABLED=false → disabled skip", test_media_poster_flag_off
 check("media: upload fail → text-only post", test_media_upload_fail_posts_text_only)
 check("media: dry_run never uploads, returns metadata", test_media_dry_run_logs_but_never_uploads)
 
+
+def test_download_figure_revalidates_host_and_scheme():
+    # Poster-side re-validation: the figure URL travels via an S3 artifact,
+    # so the poster is an independent enforcement point (security review).
+    from utils import tweepy_client as _twc
+    assert _twc._download_figure("https://evil.example/x.png") is None
+    assert _twc._download_figure("https://evilarxiv.org/x.png") is None   # look-alike
+    assert _twc._download_figure("http://arxiv.org/x.png") is None        # https only
+
+
+check("media: poster re-validates figure host/scheme", test_download_figure_revalidates_host_and_scheme)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

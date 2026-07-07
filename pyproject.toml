@@ -1,6 +1,6 @@
 [project]
 name = "ai-news-pipeline"
-version = "0.13.0"
+version = "0.14.0"
 description = "arXiv → Bedrock (Claude) → Twitter/X research pipeline on AWS SAM"
 requires-python = ">=3.12"
 # Dev-environment dependencies (Lambda packaging still uses each function's

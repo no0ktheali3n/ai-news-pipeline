@@ -5,7 +5,6 @@ candidates, resolvable image URL, dimension window) happens HERE so the writer
 only ever sees attachable candidates. Every constant is provisional pending the
 20-paper calibration (plan Task 6).
 """
-import io
 import logging
 import re
 import struct
@@ -70,7 +69,10 @@ def _candidates(soup):
 
 def resolve_src(src, page_url, arxiv_id_v):
     if src.startswith("http"):
-        return src if urlparse(src).netloc.endswith("arxiv.org") else None
+        # exact host or true subdomain only — endswith("arxiv.org") would
+        # accept look-alikes such as evilarxiv.org (task-2 review, Important)
+        netloc = urlparse(src).netloc
+        return src if (netloc == "arxiv.org" or netloc.endswith(".arxiv.org")) else None
     m = _VPREFIX_RE.match(src)
     if m:
         return "https://arxiv.org/html/" + src
@@ -195,7 +197,7 @@ def fetch_figures(arxiv_abs_url):
         if not _is_cc(license_text):
             return {"figures": [], "license": license_text or "unknown", "reason": "license"}
         figs = []
-        for idx, fig in enumerate(_candidates(soup)):
+        for fig in _candidates(soup):
             src = fig.find("img").get("src", "")
             id_v = (_VPREFIX_RE.match(src).group(1) if _VPREFIX_RE.match(src) else None)
             url = resolve_src(src, r.url, id_v)

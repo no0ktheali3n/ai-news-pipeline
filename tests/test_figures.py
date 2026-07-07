@@ -248,7 +248,7 @@ def test_caption_cleaning_strips_mathml():
     caps = [figures.clean_caption(f) for f in figs]
     joined = " ".join(caps)
     assert "\\leq" not in joined
-    assert "p<0.001 p<0.001" not in joined.replace(" ", "")[:100000] or True  # no doubled math tokens
+    assert "p<0.001p<0.001" not in joined.replace(" ", "")  # no doubled math tokens
     assert all(len(c) <= 400 for c in caps)
 
 
@@ -261,6 +261,9 @@ def test_resolver_three_branches():
     assert figures.resolve_src("https://arxiv.org/html/2607.02116v1/b.png", page, None) == \
         "https://arxiv.org/html/2607.02116v1/b.png"                   # absolute arxiv
     assert figures.resolve_src("https://evil.example/c.png", page, None) is None  # foreign host
+    assert figures.resolve_src("https://evilarxiv.org/c.png", page, None) is None  # look-alike host
+    assert figures.resolve_src("https://static.arxiv.org/c.png", page, None) == \
+        "https://static.arxiv.org/c.png"                              # true subdomain ok
 
 
 def test_dims_parsers_on_real_bytes():

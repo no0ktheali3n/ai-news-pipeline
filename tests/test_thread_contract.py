@@ -132,6 +132,7 @@ def test_writer_prompt_with_figures_and_without():
     p = tc.build_writer_prompt(art, figures=figs)
     assert "Figure 1: overview" in p and '"figure"' in p
     assert "Default to `null`" in p or "Default to null" in p
+    assert "weak pick" in p                                            # null-bias guidance (spec)
 
 
 check("MAX_TWEETS >= MIN_TWEETS (clamp guard)", test_max_tweets_gte_min_tweets)

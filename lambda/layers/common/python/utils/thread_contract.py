@@ -42,7 +42,8 @@ def build_writer_prompt(article, figures=None):
             '\n- Optionally pick ONE figure that best illustrates the core insight. '
             'Add a top-level `"figure"` key to your JSON with the integer index '
             '(0-based) of the figure you chose. Default to `null` if no figure '
-            'meaningfully adds to the thread.\n'
+            'meaningfully adds to the thread - prefer null over a weak pick; '
+            'dense multi-panel grids are weak picks.\n'
             'Available figures:\n[\n' + fig_lines + '\n]'
         )
         json_shape = '{"tweets": ["...", "..."], "summary": "...", "figure": 0}'

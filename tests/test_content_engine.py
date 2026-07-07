@@ -629,6 +629,11 @@ def test_summarizer_figure_index_out_of_range_is_null():
     try:
         out = _run_summarize_one(_MEDIA_ARTICLE, writer_response_json=writer_json)
         assert out["figure"] is None, f"expected figure=None for out-of-range index, got: {out.get('figure')}"
+        # bool is an int subclass — "figure": true must not resolve index 1
+        writer_json_bool = json.loads(writer_json)
+        writer_json_bool["figure"] = True
+        out2 = _run_summarize_one(_MEDIA_ARTICLE, writer_response_json=json.dumps(writer_json_bool))
+        assert out2["figure"] is None, f"expected figure=None for boolean index, got: {out2.get('figure')}"
     finally:
         summarizer_module.figures_mod.fetch_figures = orig_mod_fetch
         os.environ.pop("MEDIA_ENABLED", None)

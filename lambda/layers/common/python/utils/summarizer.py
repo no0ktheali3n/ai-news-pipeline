@@ -174,7 +174,8 @@ def write_thread_with_claude(article, figures=None):
         tweets = None
     fig = None
     idx = data.get("figure")
-    if figures and isinstance(idx, int) and 0 <= idx < len(figures):
+    # bool is an int subclass: a JSON `"figure": true` must NOT resolve index 1
+    if figures and isinstance(idx, int) and not isinstance(idx, bool) and 0 <= idx < len(figures):
         fig = figures[idx]
     return {"tweets": tweets, "summary": summary, "figure": fig}
 

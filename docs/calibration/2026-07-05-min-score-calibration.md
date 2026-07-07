@@ -50,3 +50,11 @@
 - 3-day windows pool more candidates than a single daily run, biasing top ranks slightly HIGH — the derived threshold is therefore conservative (evening posts a bit less often live than backfill suggests). Safe direction for a quality gate.
 - Buzz OFF here; live evening runs may blend sparse buzz, nudging composites up for trending papers. Revisit after 2-3 weeks of live scored runs.
 - Scores from Haiku via OpenRouter; live noon runs use the same scorer model on Bedrock — provider should not change scores materially (same model, temp 0.2), but the first live weeks will confirm.
+
+## Addendum 2026-07-06 — re-derived under new scoring weights (0.40/0.25/0.35)
+
+Weights changed relevance 0.5→0.40, hook_potential 0.25→0.35 (owner engagement
+feedback; sum stays 1.0). Re-deriving from the same 13 windows' stored per-axis
+scores (pure arithmetic, no re-scoring): rank-2 median 8.15, range 7.75-8.75;
+min_score 8.25 → evening posts 46% of days (was 54%). **Recommendation
+unchanged: `min_score = 8.25`** — still inside the 40-60% target band.

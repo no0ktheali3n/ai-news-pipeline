@@ -7,7 +7,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).parent))
-from stubs import install_stubs, FAKE_S3, FAKE_BEDROCK, FAKE_SNS, FAKE_HTTP  # noqa: E402
+from stubs import install_stubs, FAKE_S3, FAKE_BEDROCK, FAKE_SNS, FAKE_HTTP, _HttpResp  # noqa: E402
 install_stubs()
 
 LAYER = REPO / "lambda" / "layers" / "common" / "python"
@@ -670,7 +670,7 @@ _VALID_URL = "https://arxiv.org/abs/2607.00099"
 def test_contract_tweets_posted_verbatim_no_hashtags():
     """Valid contract tweets are posted byte-for-byte (after sanitization); no # anywhere."""
     captured = []
-    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    _ptt.post_tweet = lambda text, reply_to_id=None, media_ids=None: (captured.append(text), "999")[1]
     art = {
         "title": "Hook title",
         "url": _VALID_URL,
@@ -691,7 +691,7 @@ def test_contract_tweets_posted_verbatim_no_hashtags():
 def test_missing_tweets_falls_back_to_summary_no_hashtags():
     """tweets=None triggers summary fallback; final tweet has url; no # anywhere."""
     captured = []
-    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    _ptt.post_tweet = lambda text, reply_to_id=None, media_ids=None: (captured.append(text), "999")[1]
     art = {
         "title": "Paper Title",
         "url": _VALID_URL,
@@ -707,7 +707,7 @@ def test_missing_tweets_falls_back_to_summary_no_hashtags():
 def test_invalid_transit_tweets_fall_back():
     """tweets list where final tweet lacks url → fallback to summary path."""
     captured = []
-    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    _ptt.post_tweet = lambda text, reply_to_id=None, media_ids=None: (captured.append(text), "999")[1]
     art = {
         "title": "Paper Title",
         "url": _VALID_URL,
@@ -727,7 +727,7 @@ def test_invalid_transit_tweets_fall_back():
 def test_hook_over_240_fails_transit_recheck():
     """Hook of 250 chars (valid ≤280 but >240) must fail the transit re-check → summary fallback."""
     captured = []
-    _ptt.post_tweet = lambda text, reply_to_id=None: (captured.append(text), "999")[1]
+    _ptt.post_tweet = lambda text, reply_to_id=None, media_ids=None: (captured.append(text), "999")[1]
     long_hook = "A" * 250   # 250 chars: passes TWEET_MAX(280) but fails HOOK_MAX(240)
     art = {
         "title": "Paper Title",
@@ -1102,6 +1102,184 @@ def test_scoring_falls_back_to_openrouter():
         FAKE_BEDROCK.mode = "denied"
 
 check("bedrock denied → openrouter fallback → scoring succeeds", test_scoring_falls_back_to_openrouter)
+
+print("\n[15] poster: media upload subsystem")
+
+import utils.post_to_twitter as _ptt_media  # noqa: E402 — fresh alias for media section
+
+FIG_URL = "https://arxiv.org/html/2607.00001/fig1.png"
+_PNG_HEADER = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02"
+# Pad to >10KB (required by _download_figure guard)
+_PNG_BYTES = _PNG_HEADER + b"\x00" * (10_500 - len(_PNG_HEADER))
+
+article_with_figure = {
+    "url": "https://arxiv.org/abs/2607.00001",
+    "title": "Media Test Paper",
+    "snippet": "A snippet about media.",
+    "authors": ["Author A"],
+    "scores": {"builder_relevance": 8, "novelty": 6, "hook_potential": 7},
+    "composite": 7.5,
+    "query_source": ["agents"],
+    "buzz": 8.0,
+    "buzz_raw": {"hf_upvotes": 30},
+    "summary": "Summary sentence one. Sentence two about the paper.",
+    "tweets": [
+        "A concrete hook under the limit.",
+        "Middle substance for builders.",
+        "Paper Title\nhttps://arxiv.org/abs/2607.00001",
+    ],
+    "figure": {
+        "index": 0,
+        "url": FIG_URL,
+        "caption": "Figure 1: test caption",
+        "width": 900,
+        "height": 500,
+    },
+    "media_license": "CC BY 4.0",
+}
+
+
+def _setup_figure_route():
+    """Register FIG_URL in FAKE_HTTP to return valid image/png bytes >10KB."""
+    FAKE_HTTP.routes[FIG_URL] = _HttpResp(
+        status=200,
+        content=_PNG_BYTES,
+        headers={"Content-Type": "image/png"},
+    )
+
+
+def _teardown_media():
+    """Clean up env and tweepy state after each media test."""
+    os.environ.pop("MEDIA_ENABLED", None)
+    import sys as _sys
+    _tweepy2 = _sys.modules["tweepy"]
+    _tweepy2.API.reset()
+    FAKE_HTTP.reset()
+
+
+def test_media_uploaded_once_and_attached_to_hook_only():
+    _tweepy2 = __import__("sys").modules["tweepy"]
+    _tweepy2.API.reset()
+    os.environ["MEDIA_ENABLED"] = "true"
+    _setup_figure_route()
+    calls = []
+    orig_pt = _ptt_media.post_tweet
+    _ptt_media.post_tweet = lambda text, reply_to_id=None, media_ids=None: (calls.append(media_ids), f"id{len(calls)}")[1]
+    try:
+        md = _ptt_media.post_thread(article_with_figure, dry_run=False)
+        assert len(_tweepy2.API.uploads) == 1, f"expected 1 upload, got {len(_tweepy2.API.uploads)}"
+        assert calls[0] == ["777000"], f"hook tweet must carry media_id, got {calls[0]}"
+        assert all(c is None for c in calls[1:]), f"only hook gets media, rest must be None: {calls[1:]}"
+        assert md["media"] == {
+            "attempted": True, "figure_url": FIG_URL, "license": "CC BY 4.0",
+            "uploaded": True, "attached": True, "skip_reason": None,
+        }, f"unexpected media dict: {md['media']}"
+    finally:
+        _ptt_media.post_tweet = orig_pt
+        _teardown_media()
+
+
+def test_media_upload_once_even_when_tweet1_retries():
+    """Upload happens once; both initial and retry call to tweet-1 carry the same media_id."""
+    _tweepy2 = __import__("sys").modules["tweepy"]
+    _tweepy2.API.reset()
+    os.environ["MEDIA_ENABLED"] = "true"
+    _setup_figure_route()
+    calls = []
+    orig_pt = _ptt_media.post_tweet
+    orig_sleep = _ptt_media.time.sleep
+    _ptt_media.time.sleep = lambda *_: None
+    # First call to tweet-1 returns None (simulates failure); retry returns id1
+    script = [None, "id1", "id2", "id3"]
+    def scripted(text, reply_to_id=None, media_ids=None):
+        calls.append(media_ids)
+        return script.pop(0) if script else None
+    _ptt_media.post_tweet = scripted
+    try:
+        md = _ptt_media.post_thread(article_with_figure, dry_run=False)
+        assert len(_tweepy2.API.uploads) == 1, f"expected 1 upload even after retry, got {len(_tweepy2.API.uploads)}"
+        assert calls[0] == ["777000"], f"initial call must have media_id: {calls[0]}"
+        assert calls[1] == ["777000"], f"retry call must carry same media_id: {calls[1]}"
+    finally:
+        _ptt_media.post_tweet = orig_pt
+        _ptt_media.time.sleep = orig_sleep
+        _teardown_media()
+
+
+def test_media_download_fail_posts_text_only():
+    """FAKE_HTTP returns 404 for figure URL → skip_reason=download_failed, no upload."""
+    _tweepy2 = __import__("sys").modules["tweepy"]
+    _tweepy2.API.reset()
+    os.environ["MEDIA_ENABLED"] = "true"
+    # Route returns 404 (not found)
+    FAKE_HTTP.routes[FIG_URL] = _HttpResp(status=404, content=b"", headers={})
+    orig_pt = _ptt_media.post_tweet
+    _ptt_media.post_tweet = lambda text, reply_to_id=None, media_ids=None: "tid"
+    try:
+        md = _ptt_media.post_thread(article_with_figure, dry_run=False)
+        assert md["media"]["attached"] is False, "should not attach on download failure"
+        assert md["media"]["skip_reason"] == "download_failed", f"wrong skip_reason: {md['media']['skip_reason']}"
+        assert len(_tweepy2.API.uploads) == 0, "no upload on download failure"
+    finally:
+        _ptt_media.post_tweet = orig_pt
+        _teardown_media()
+
+
+def test_media_poster_flag_off_skips():
+    """MEDIA_ENABLED=false → skip_reason=disabled, no download, no upload."""
+    _tweepy2 = __import__("sys").modules["tweepy"]
+    _tweepy2.API.reset()
+    os.environ["MEDIA_ENABLED"] = "false"
+    orig_pt = _ptt_media.post_tweet
+    _ptt_media.post_tweet = lambda text, reply_to_id=None, media_ids=None: "tid"
+    try:
+        md = _ptt_media.post_thread(article_with_figure, dry_run=False)
+        assert md["media"]["skip_reason"] == "disabled", f"wrong skip_reason: {md['media']['skip_reason']}"
+        assert len(_tweepy2.API.uploads) == 0, "no upload when flag off"
+    finally:
+        _ptt_media.post_tweet = orig_pt
+        _teardown_media()
+
+
+def test_media_upload_fail_posts_text_only():
+    """upload failure → skip_reason=upload_failed, media not attached, post still succeeds."""
+    _tweepy2 = __import__("sys").modules["tweepy"]
+    _tweepy2.API.reset()
+    _tweepy2.API.fail_upload = True
+    os.environ["MEDIA_ENABLED"] = "true"
+    _setup_figure_route()
+    orig_pt = _ptt_media.post_tweet
+    _ptt_media.post_tweet = lambda text, reply_to_id=None, media_ids=None: "tid"
+    try:
+        md = _ptt_media.post_thread(article_with_figure, dry_run=False)
+        assert md["media"]["uploaded"] is False, "uploaded must be False on upload failure"
+        assert md["media"]["skip_reason"] == "upload_failed", f"wrong skip_reason: {md['media']['skip_reason']}"
+    finally:
+        _ptt_media.post_tweet = orig_pt
+        _teardown_media()
+
+
+def test_media_dry_run_logs_but_never_uploads():
+    """dry_run=True → no upload, metadata carries skip_reason=dry_run, media block attempted."""
+    _tweepy2 = __import__("sys").modules["tweepy"]
+    _tweepy2.API.reset()
+    os.environ["MEDIA_ENABLED"] = "true"
+    _setup_figure_route()
+    try:
+        md = _ptt_media.post_thread(article_with_figure, dry_run=True)
+        assert len(_tweepy2.API.uploads) == 0, "dry_run must never upload"
+        assert md is not None, "dry_run must return metadata (not None)"
+        assert md["media"]["skip_reason"] == "dry_run", f"wrong skip_reason: {md.get('media', {}).get('skip_reason')}"
+    finally:
+        _teardown_media()
+
+
+check("media: uploaded once, attached to hook only", test_media_uploaded_once_and_attached_to_hook_only)
+check("media: uploaded once even when tweet-1 retries", test_media_upload_once_even_when_tweet1_retries)
+check("media: download fail → text-only post", test_media_download_fail_posts_text_only)
+check("media: MEDIA_ENABLED=false → disabled skip", test_media_poster_flag_off_skips)
+check("media: upload fail → text-only post", test_media_upload_fail_posts_text_only)
+check("media: dry_run never uploads, returns metadata", test_media_dry_run_logs_but_never_uploads)
 
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

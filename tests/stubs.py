@@ -172,7 +172,7 @@ class FakeHttp:
     Unrouted URLs get an empty 200 JSON (keeps webhook posts harmless)."""
 
     def __init__(self):
-        self.routes = {}   # url substring -> JSON payload | Exception
+        self.routes = {}   # url substring -> JSON payload | _HttpResp | Exception
         self.calls = []    # (method, url)
 
     def _resolve(self, method, url):
@@ -181,6 +181,8 @@ class FakeHttp:
             if frag in url:
                 if isinstance(payload, Exception):
                     raise payload
+                if isinstance(payload, _HttpResp):
+                    return payload
                 return _HttpResp(payload)
         return _HttpResp({})
 

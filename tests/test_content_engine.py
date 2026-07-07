@@ -537,6 +537,124 @@ check("writer produces validated tweets", test_writer_produces_validated_tweets)
 check("writer contract violation falls back to summary-only", test_writer_contract_violation_falls_back_to_summary_only)
 check("summarize_articles output carries tweets and provenance", test_summarize_articles_output_carries_tweets_and_provenance)
 
+print("\n[9b] summarizer: media/figures wiring")
+
+import utils.figures as _figures  # noqa: E402
+
+# Shared article for media tests — same shape as _WRITER_ARTICLE.
+_MEDIA_ARTICLE = {
+    "url": "https://arxiv.org/abs/2607.00001",
+    "title": "Paper Title",
+    "snippet": "An abstract snippet about agents.",
+    "authors": ["Author One", "Author Two"],
+    "scores": {"builder_relevance": 8, "novelty": 6, "hook_potential": 7},
+    "composite": 7.5,
+    "query_source": ["agents"],
+    "buzz": 8.05,
+    "buzz_raw": {"hf_upvotes": 40},
+}
+
+
+def _run_summarize_one(article, writer_response_json=None):
+    """Seed a temp input file, run summarize_articles(limit=1), return the single output article."""
+    orig_in = summarizer.INPUT_FILE
+    orig_out = summarizer.OUTPUT_FILE
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as fin:
+        json.dump([article], fin)
+        tmp_in = fin.name
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as fout:
+        tmp_out = fout.name
+    FAKE_BEDROCK.mode = "ok"
+    if writer_response_json is not None:
+        FAKE_BEDROCK.writer_response = writer_response_json
+    summarizer.INPUT_FILE = tmp_in
+    summarizer.OUTPUT_FILE = tmp_out
+    try:
+        summarizer.summarize_articles(limit=1)
+        with open(tmp_out, "r") as f:
+            output = json.load(f)
+        assert len(output) == 1, f"expected 1 output article, got {len(output)}"
+        return output[0]
+    finally:
+        FAKE_BEDROCK.mode = "denied"
+        FAKE_BEDROCK.writer_response = None
+        summarizer.INPUT_FILE = orig_in
+        summarizer.OUTPUT_FILE = orig_out
+
+
+def test_summarizer_spreads_figure_onto_article():
+    _fig = {"index": 0, "url": "https://arxiv.org/html/x/im.png",
+            "caption": "Figure 1: c", "width": 900, "height": 500}
+    orig_fetch = _figures.fetch_figures
+    import utils.summarizer as summarizer_module
+    orig_mod_fetch = summarizer_module.figures_mod.fetch_figures
+    summarizer_module.figures_mod.fetch_figures = lambda url: {
+        "figures": [_fig], "license": "CC BY 4.0", "reason": None
+    }
+    os.environ["MEDIA_ENABLED"] = "true"
+    # Writer must return "figure": 0 so the summarizer resolves it to _fig.
+    writer_json = json.dumps({
+        "tweets": ["A concrete hook under the limit.",
+                   "Middle substance for builders.",
+                   "Paper Title\nhttps://arxiv.org/abs/2607.00001"],
+        "summary": "A plain fallback summary.",
+        "figure": 0,
+    })
+    try:
+        out = _run_summarize_one(_MEDIA_ARTICLE, writer_response_json=writer_json)
+        assert out["figure"] == _fig, f"figure mismatch: {out.get('figure')}"
+        assert out["media_license"] == "CC BY 4.0", f"license mismatch: {out.get('media_license')}"
+    finally:
+        summarizer_module.figures_mod.fetch_figures = orig_mod_fetch
+        os.environ.pop("MEDIA_ENABLED", None)
+
+
+def test_summarizer_figure_index_out_of_range_is_null():
+    _fig = {"index": 0, "url": "https://arxiv.org/html/x/im.png",
+            "caption": "Figure 1: c", "width": 900, "height": 500}
+    import utils.summarizer as summarizer_module
+    orig_mod_fetch = summarizer_module.figures_mod.fetch_figures
+    summarizer_module.figures_mod.fetch_figures = lambda url: {
+        "figures": [_fig], "license": "CC BY 4.0", "reason": None
+    }
+    os.environ["MEDIA_ENABLED"] = "true"
+    # Writer returns "figure": 7 — out of range with only 1 candidate.
+    writer_json = json.dumps({
+        "tweets": ["A concrete hook under the limit.",
+                   "Middle substance for builders.",
+                   "Paper Title\nhttps://arxiv.org/abs/2607.00001"],
+        "summary": "A plain fallback summary.",
+        "figure": 7,
+    })
+    try:
+        out = _run_summarize_one(_MEDIA_ARTICLE, writer_response_json=writer_json)
+        assert out["figure"] is None, f"expected figure=None for out-of-range index, got: {out.get('figure')}"
+    finally:
+        summarizer_module.figures_mod.fetch_figures = orig_mod_fetch
+        os.environ.pop("MEDIA_ENABLED", None)
+
+
+def test_summarizer_media_disabled_no_fetch():
+    calls = []
+    import utils.summarizer as summarizer_module
+    orig_mod_fetch = summarizer_module.figures_mod.fetch_figures
+    summarizer_module.figures_mod.fetch_figures = lambda url: calls.append(url)
+    # MEDIA_ENABLED not set (default "false")
+    os.environ.pop("MEDIA_ENABLED", None)
+    try:
+        out = _run_summarize_one(_MEDIA_ARTICLE)
+        assert calls == [], f"fetch_figures must not be called when MEDIA_ENABLED != true: {calls}"
+        assert out.get("figure") is None, f"figure must be None when disabled: {out.get('figure')}"
+        assert out.get("media_reason") == "disabled", f"reason must be 'disabled', got: {out.get('media_reason')}"
+    finally:
+        summarizer_module.figures_mod.fetch_figures = orig_mod_fetch
+        os.environ.pop("MEDIA_ENABLED", None)
+
+
+check("summarizer spreads figure onto article", test_summarizer_spreads_figure_onto_article)
+check("summarizer figure index out-of-range → None", test_summarizer_figure_index_out_of_range_is_null)
+check("summarizer media disabled makes no fetch call", test_summarizer_media_disabled_no_fetch)
+
 print("\n[10] poster: thread contract")
 
 import utils.post_to_twitter as _ptt  # noqa: E402 — imported once, reused below

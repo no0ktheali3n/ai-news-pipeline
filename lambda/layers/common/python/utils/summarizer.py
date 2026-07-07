@@ -10,6 +10,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from utils.llm import complete
 from utils.thread_contract import ContractError, build_writer_prompt, validate_and_repair
+import utils.figures as figures_mod
 
 # Load environment variables
 load_dotenv()
@@ -155,12 +156,12 @@ def retry_until_timeout(func, max_seconds=900, base_delay=10):
     return {"summary": "[Summary unavailable after max retry time]", "hashtags": []}, 0
 
 
-def write_thread_with_claude(article):
-    """One writer-model call → {"tweets": [...]|None, "summary": str}.
+def write_thread_with_claude(article, figures=None):
+    """One writer-model call → {"tweets": [...]|None, "summary": str, "figure": dict|None}.
     Contract violations demote to summary-only (tweets=None) — the poster's
     legacy formatter handles those. Raises on transport/parse failure so the
     existing retry/abort semantics in summarize_articles apply."""
-    text = complete(build_writer_prompt(article), model=WRITER_MODEL_ID,
+    text = complete(build_writer_prompt(article, figures=figures), model=WRITER_MODEL_ID,
                     max_tokens=1500, temperature=0.4)
     data = parse_model_json(text)
     summary = str(data.get("summary") or "").strip()
@@ -171,7 +172,11 @@ def write_thread_with_claude(article):
     except ContractError as e:
         logger.warning(f"Thread contract violated ({e}); falling back to summary-only.")
         tweets = None
-    return {"tweets": tweets, "summary": summary}
+    fig = None
+    idx = data.get("figure")
+    if figures and isinstance(idx, int) and 0 <= idx < len(figures):
+        fig = figures[idx]
+    return {"tweets": tweets, "summary": summary, "figure": fig}
 
 
 # Main summarizer logic
@@ -202,12 +207,17 @@ def summarize_articles(limit=None, max_runtime=900):
         article = articles[idx]
         print(f"[🔍] Attempting article {idx + 1}/{len(articles)} (attempt {attempts + 1}/{MAX_ATTEMPTS_PER_ARTICLE})")
 
+        if os.getenv("MEDIA_ENABLED", "false") == "true":
+            fig_result = figures_mod.fetch_figures(article.get("url") or "")
+        else:
+            fig_result = {"figures": [], "license": None, "reason": "disabled"}
+
         def attempt_summary():
             # Writer path: no per-prompt token tracking (report 0). Transport
             # failures raise; retry_until_timeout catches them into the
             # existing "[Summary unavailable]" sentinel dict, so the sentinel
             # gate below keeps its exact meaning.
-            return write_thread_with_claude(article), 0
+            return write_thread_with_claude(article, figures=fig_result["figures"]), 0
 
         result_obj, tokens_used = retry_until_timeout(attempt_summary, max_seconds=max_runtime - int(time.time() - start_time))
 
@@ -219,6 +229,9 @@ def summarize_articles(limit=None, max_runtime=900):
                 **article,
                 "tweets": result_obj.get("tweets"),
                 "summary": summary,
+                "figure": result_obj.get("figure"),
+                "media_license": fig_result["license"],
+                "media_reason": fig_result["reason"] if not result_obj.get("figure") else None,
             })
             total_tokens += tokens_used
             idx += 1

@@ -123,7 +123,19 @@ def test_max_tweets_gte_min_tweets():
         f"MAX_TWEETS ({tc.MAX_TWEETS}) must be >= MIN_TWEETS ({tc.MIN_TWEETS})"
 
 
+def test_writer_prompt_with_figures_and_without():
+    art = {"title": "T", "authors": ["A"], "snippet": "S", "url": URL}
+    base = tc.build_writer_prompt(art)
+    assert base == tc.build_writer_prompt(art, figures=None)          # byte-identical
+    assert base == tc.build_writer_prompt(art, figures=[])            # byte-identical
+    figs = [{"index": 0, "url": "u", "caption": "Figure 1: overview", "width": 900, "height": 500}]
+    p = tc.build_writer_prompt(art, figures=figs)
+    assert "Figure 1: overview" in p and '"figure"' in p
+    assert "Default to `null`" in p or "Default to null" in p
+
+
 check("MAX_TWEETS >= MIN_TWEETS (clamp guard)", test_max_tweets_gte_min_tweets)
+check("writer prompt byte-identical without figures; figures section injected with figures", test_writer_prompt_with_figures_and_without)
 check("valid thread passes unchanged", test_valid_thread_passes_unchanged)
 check("link in hook stripped", test_link_in_hook_is_stripped)
 check("6 tweets truncate keeping final link", test_six_tweets_truncates_keeping_final_link)

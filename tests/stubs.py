@@ -149,9 +149,12 @@ FAKE_SNS = FakeSNS()
 
 
 class _HttpResp:
-    def __init__(self, payload=None, status=200):
+    def __init__(self, payload=None, status=200, content=b"", headers=None, text=None):
         self._payload = {} if payload is None else payload
         self.status_code = status
+        self.content = content
+        self.headers = headers or {}
+        self.text = text if text is not None else (content.decode("utf-8", "replace") if content else "")
 
     def raise_for_status(self):
         if self.status_code >= 400:
@@ -277,3 +280,32 @@ def install_stubs():
     tweepy.errors = tweepy_errors
     sys.modules["tweepy"] = tweepy
     sys.modules["tweepy.errors"] = tweepy_errors
+
+    # --- v1.1 media upload fakes (for media/figures feature) ---
+    class _FakeOAuth1UserHandler:
+        def __init__(self, *args, **kwargs):
+            self.args = args
+
+    class _FakeV1API:
+        uploads, metadata_calls = [], []
+        fail_upload = False
+
+        def __init__(self, auth=None):
+            self.auth = auth
+
+        @classmethod
+        def reset(cls):
+            cls.uploads, cls.metadata_calls, cls.fail_upload = [], [], False
+
+        def media_upload(self, filename=None, file=None):
+            if _FakeV1API.fail_upload:
+                raise RuntimeError("fake upload failure")
+            data = file.read() if file is not None else b""
+            _FakeV1API.uploads.append((filename, len(data)))
+            return types.SimpleNamespace(media_id="777000")
+
+        def create_media_metadata(self, media_id, alt_text=None):
+            _FakeV1API.metadata_calls.append((media_id, alt_text))
+
+    tweepy.API = _FakeV1API
+    tweepy.OAuth1UserHandler = _FakeOAuth1UserHandler

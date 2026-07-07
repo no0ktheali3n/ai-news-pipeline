@@ -1293,5 +1293,65 @@ def test_download_figure_revalidates_host_and_scheme():
 
 check("media: poster re-validates figure host/scheme", test_download_figure_revalidates_host_and_scheme)
 
+# ---------------------------------------------------------------------------
+# Task 5: ledger persists media key
+# ---------------------------------------------------------------------------
+print("\n[16] poster: media ledger persistence")
+
+
+def test_record_posted_persists_media():
+    """record_posted stores the media key from metadata into the ledger entry."""
+    import poster_lambda as poster
+    FAKE_S3.store.clear()
+    art = {
+        "title": "Media Paper",
+        "url": "https://arxiv.org/abs/2607.00009",
+        "summary": "s",
+        "hashtags": [],
+        "scores": {"builder_relevance": 8.0, "novelty": 6.0, "hook_potential": 7.0},
+        "composite": 7.25,
+        "query_source": ["agents"],
+        "buzz": 7.5,
+        "buzz_raw": {"hn_points": 120},
+    }
+    key = "out/summarizer/final_summarized_RUN.json"
+    FAKE_S3.store[key] = json.dumps([art]).encode()
+
+    media_payload = {
+        "attempted": True,
+        "figure_url": "https://arxiv.org/html/2607.00009/fig1.png",
+        "license": "CC-BY-4.0",
+        "uploaded": True,
+        "attached": True,
+        "skip_reason": None,
+    }
+
+    orig = ptt.post_thread
+    ptt.post_thread = lambda a, **kw: {
+        "article_title": a["title"],
+        "url": a["url"],
+        "variant": "summary",
+        "tweet_ids": ["1"],
+        "thread_url": "https://t/1",
+        "scores": a.get("scores"),
+        "composite": a.get("composite"),
+        "query_source": a.get("query_source"),
+        "buzz": a.get("buzz"),
+        "buzz_raw": a.get("buzz_raw"),
+        "status": "posted",
+        "media": media_payload,
+    }
+    try:
+        resp = poster.handler({"summary_key": key, "dry_run": False, "post_limit": 1}, None)
+    finally:
+        ptt.post_thread = orig
+    assert resp["statusCode"] == 200, resp
+    entry = json.loads(FAKE_S3.store[poster.POSTED_LEDGER_KEY])["https://arxiv.org/abs/2607.00009"]
+    assert "media" in entry, f"media key missing from ledger entry: {entry}"
+    assert entry["media"]["attached"] is True, f"expected attached=True, got {entry['media']}"
+
+
+check("record_posted persists media key into ledger", test_record_posted_persists_media)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

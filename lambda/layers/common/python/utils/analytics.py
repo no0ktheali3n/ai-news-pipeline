@@ -158,3 +158,27 @@ def run_stats(n_sidecars: int, entries: list) -> dict:
     """Return {"runs": n_sidecars, "posts": len(entries), "partials": count}."""
     partials = sum(1 for e in entries if e.get("status") == "partial")
     return {"runs": n_sidecars, "posts": len(entries), "partials": partials}
+
+
+# ---------------------------------------------------------------------------
+# media_stats
+# ---------------------------------------------------------------------------
+
+def media_stats(entries: list) -> dict:
+    """Return {"attempted": int, "attached": int, "skipped": {reason: int}}.
+
+    Tolerates old-format entries that have no "media" key.
+    Only entries with media.attempted=True are counted.
+    """
+    out: dict = {"attempted": 0, "attached": 0, "skipped": {}}
+    for e in entries:
+        m = e.get("media") or {}
+        if not m.get("attempted"):
+            continue
+        out["attempted"] += 1
+        if m.get("attached"):
+            out["attached"] += 1
+        elif m.get("skip_reason"):
+            reason = m["skip_reason"]
+            out["skipped"][reason] = out["skipped"].get(reason, 0) + 1
+    return out

@@ -120,6 +120,7 @@ def handler(event, context):
                 "status": metadata.get("status", "posted"),
                 "tweet_count": metadata.get("tweet_count"),
                 "follower_count": metadata.get("follower_count"),
+                "media": metadata.get("media"),
             }
             save_posted_ledger(ledger)
 

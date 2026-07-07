@@ -71,6 +71,12 @@ Parameters:
     AllowedValues: ["true", "false"]
     Description: Kill switch for Phase 1.5 buzz enrichment (no redeploy of code needed).
 
+  MediaEnabled:
+    Type: String
+    Default: "false"
+    AllowedValues: ["true", "false"]
+    Description: Feature flag for media/figures attachment (dark by default; no redeploy needed).
+
   BedrockWriterModelId:
     Type: String
     Default: us.anthropic.claude-sonnet-4-6
@@ -288,6 +294,7 @@ Resources:
           THREAD_MAX_TWEETS: "5"
           LLM_FALLBACK_PROVIDER: !Ref LlmFallbackProvider
           OPENROUTER_API_KEY: !Ref OpenRouterApiKey
+          MEDIA_ENABLED: !Ref MediaEnabled
 
   PosterFunction:
     Type: AWS::Serverless::Function
@@ -325,6 +332,7 @@ Resources:
           POSTED_LEDGER_FILE: !Ref PostedLedgerFile
           MAX_SUMMARY_AGE_HOURS: "6"
           MAKE_WEBHOOK_URL: !Ref MakeWebhookUrl
+          MEDIA_ENABLED: !Ref MediaEnabled
 
   AlertTopic:
     Type: AWS::SNS::Topic

@@ -273,6 +273,22 @@ def test_dims_parsers_on_real_bytes():
     assert (w2, h2) == (996, 673)                                     # audited value
 
 
+def test_image_ok_caps_wire_read_and_rejects_oversize():
+    big = figures.IMG_READ_CAP + 500_000
+    # (a) over-cap declared Content-Length is rejected before any body read
+    over = stubs._HttpResp(content=PNG_HEAD + b"0" * 1000,
+                           headers={"Content-Type": "image/png",
+                                    "Content-Length": str(big)}, status=200)
+    with _patch_requests_get([("x.png", over)]):
+        assert figures._image_ok("https://arxiv.org/html/p/x.png") is None
+    # (b) an over-cap body (no/short Content-Length) is stream-read to the cap;
+    # dims still parse from the leading header bytes (996x673)
+    huge = stubs._HttpResp(content=PNG_HEAD + b"0" * big,
+                           headers={"Content-Type": "image/png"}, status=200)
+    with _patch_requests_get([("x.png", huge)]):
+        assert figures._image_ok("https://arxiv.org/html/p/x.png") == (996, 673)
+
+
 def test_fetch_figures_end_to_end_cc_paper():
     with monkeypatched_http():
         out = figures.fetch_figures("https://arxiv.org/abs/2607.02116")
@@ -311,6 +327,7 @@ check("license: CC, non-CC, decoy isolation", test_license_classify_cc_and_noncc
 check("caption: MathML stripped, len<=400", test_caption_cleaning_strips_mathml)
 check("resolve_src: versioned / relative / absolute arxiv / foreign blocked", test_resolver_three_branches)
 check("dims: jpeg_dims + png_dims on real .head fixtures", test_dims_parsers_on_real_bytes)
+check("_image_ok: caps wire read + rejects oversize Content-Length", test_image_ok_caps_wire_read_and_rejects_oversize)
 check("fetch_figures: CC paper end-to-end", test_fetch_figures_end_to_end_cc_paper)
 check("fetch_figures: non-CC gated with reason=license", test_fetch_figures_noncc_gated)
 check("fetch_figures: 404 HTML → reason=no_html", test_fetch_figures_no_html)

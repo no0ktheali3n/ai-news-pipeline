@@ -166,6 +166,13 @@ class _HttpResp:
     def json(self):
         return self._payload
 
+    def iter_content(self, chunk_size=65536):
+        for i in range(0, len(self.content), chunk_size):
+            yield self.content[i:i + chunk_size]
+
+    def close(self):
+        pass
+
 
 class FakeHttp:
     """Routes fake GET/POST responses by URL substring; records every call.

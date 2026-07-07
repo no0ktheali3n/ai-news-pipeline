@@ -109,7 +109,10 @@ class FakeBedrock:
             if self.mode == "denied":
                 raise Exception("AccessDeniedException: no model access")
             return self._scoring_reply(kw["body"])
-        if "you write twitter/x threads" in content.lower():
+        # Route writer calls by a CONTRACT phrase, not the persona line: the
+        # persona wording changes with prompt-voice work (voice-v2 2026-07-06
+        # silently broke the old "you write twitter/x threads" sniff).
+        if "tweet 1 is the hook" in content.lower():
             if self.mode == "denied":
                 raise Exception(
                     "An error occurred (AccessDeniedException) when calling the "

@@ -52,9 +52,13 @@ def build_writer_prompt(article, figures=None):
         json_shape = '{"tweets": ["...", "..."], "summary": "..."}'
     return (
         "You are a sharp AI practitioner live-posting a paper find to other "
-        "builders - people who ship LLM systems and agents. You have opinions. "
+        "builders, people who ship LLM systems and agents. You have opinions. "
         "Zero hype, no emojis, no hashtags. Write like you'd talk in a good "
         "engineering Slack: direct, concrete, occasionally wry.\n\n"
+        "PUNCTUATION: no em-dashes or en-dashes, and do NOT use ' - ' (a spaced "
+        "hyphen) to tack on an aside or dramatic pause - that reads as AI. Use "
+        "plain periods and commas like a person texting a peer. Hyphens are fine "
+        "only inside compound words and numbers (multi-agent, 78.2%, pass@1).\n\n"
         "Write a thread about the paper below. Return ONLY a JSON object:\n"
         + json_shape + "\n\n"
         "Contract (hard requirements):\n"
@@ -146,6 +150,35 @@ def _split_tweet(text, limit):
     return None
 
 
+_EMDASH_RE = re.compile(r"\s*[—–]\s*")
+# a spaced hyphen joining two words (aside/pause) — NOT a numeric range like
+# "5 - 10" (both sides digits) and NOT a compound "multi-agent" (no spaces)
+_SPACED_HYPHEN_RE = re.compile(r"(?<=[^\d\s])\s+-\s+(?=[^\d\s])")
+
+
+def _humanize_dashes(text):
+    """Replace the AI 'dash aside' tell with plain sentence punctuation.
+    Em/en dashes and spaced hyphens used to tack on a clause become a period +
+    capitalized next word (short human sentences). Compound hyphens (multi-agent)
+    and numeric ranges (5-10) are left alone; a URL after the dash is never
+    capitalized."""
+    def _sub_and_cap(pattern, s):
+        out, last = [], 0
+        for m in pattern.finditer(s):
+            out.append(s[last:m.start()])
+            out.append(". ")
+            nxt = m.end()
+            if nxt < len(s) and s[nxt].isalpha() and s[nxt:nxt + 4].lower() != "http":
+                out.append(s[nxt].upper())
+                last = nxt + 1
+            else:
+                last = nxt
+        out.append(s[last:])
+        return "".join(out)
+
+    return _sub_and_cap(_SPACED_HYPHEN_RE, _sub_and_cap(_EMDASH_RE, text))
+
+
 def _untrail(text):
     """Kill a trailing-off ending. Models pack a middle tweet against the limit
     and end mid-clause with '...'/'…' (2026-07-07: prompt guidance alone left
@@ -190,6 +223,10 @@ def validate_and_repair(tweets, url):
     out = [sanitize_tweet(t, allowed_url=url) for t in tweets]
     if out:
         out[0] = sanitize_tweet(out[0], allowed_url="")   # hook: NO links at all
+
+    # Strip the AI 'dash aside' tell (em/en dash + spaced-hyphen pause) into
+    # plain human sentences, before length/untrail/repack operate on the text.
+    out = [_humanize_dashes(t) for t in out]
 
     if len(out) > MAX_TWEETS:                              # keep hook..4th + final link tweet
         out = out[:MAX_TWEETS - 1] + [out[-1]]

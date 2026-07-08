@@ -33,7 +33,7 @@ sam deploy --no-execute-changeset --parameter-overrides \
   "ScoringWRelevance=0.40" \
   "ScoringWNovelty=0.25" \
   "ScoringWHook=0.35" \
-  "MediaEnabled=false" \
+  "MediaEnabled=true" \
   "OpenRouterApiKey=$KEY"
 
 echo

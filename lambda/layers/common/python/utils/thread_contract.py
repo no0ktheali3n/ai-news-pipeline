@@ -55,10 +55,11 @@ def build_writer_prompt(article, figures=None):
         "builders, people who ship LLM systems and agents. You have opinions. "
         "Zero hype, no emojis, no hashtags. Write like you'd talk in a good "
         "engineering Slack: direct, concrete, occasionally wry.\n\n"
-        "PUNCTUATION: no em-dashes or en-dashes, and do NOT use ' - ' (a spaced "
-        "hyphen) to tack on an aside or dramatic pause - that reads as AI. Use "
-        "plain periods and commas like a person texting a peer. Hyphens are fine "
-        "only inside compound words and numbers (multi-agent, 78.2%, pass@1).\n\n"
+        "PUNCTUATION: never use em-dashes or en-dashes (the long dashes). A "
+        "plain hyphen is fine where it naturally fits (compound words, numbers, "
+        "or the occasional aside), but do NOT lean on ' - ' as a filler pause in "
+        "tweet after tweet - that overuse is what reads as AI. Mostly use plain "
+        "periods and commas, like a person texting a peer.\n\n"
         "Write a thread about the paper below. Return ONLY a JSON object:\n"
         + json_shape + "\n\n"
         "Contract (hard requirements):\n"
@@ -151,32 +152,26 @@ def _split_tweet(text, limit):
 
 
 _EMDASH_RE = re.compile(r"\s*[—–]\s*")
-# a spaced hyphen joining two words (aside/pause) — NOT a numeric range like
-# "5 - 10" (both sides digits) and NOT a compound "multi-agent" (no spaces)
-_SPACED_HYPHEN_RE = re.compile(r"(?<=[^\d\s])\s+-\s+(?=[^\d\s])")
 
 
 def _humanize_dashes(text):
-    """Replace the AI 'dash aside' tell with plain sentence punctuation.
-    Em/en dashes and spaced hyphens used to tack on a clause become a period +
-    capitalized next word (short human sentences). Compound hyphens (multi-agent)
-    and numeric ranges (5-10) are left alone; a URL after the dash is never
-    capitalized."""
-    def _sub_and_cap(pattern, s):
-        out, last = [], 0
-        for m in pattern.finditer(s):
-            out.append(s[last:m.start()])
-            out.append(". ")
-            nxt = m.end()
-            if nxt < len(s) and s[nxt].isalpha() and s[nxt:nxt + 4].lower() != "http":
-                out.append(s[nxt].upper())
-                last = nxt + 1
-            else:
-                last = nxt
-        out.append(s[last:])
-        return "".join(out)
-
-    return _sub_and_cap(_SPACED_HYPHEN_RE, _sub_and_cap(_EMDASH_RE, text))
+    """Remove the em-dash / en-dash AI tell. Each em/en dash becomes a period +
+    capitalized next word (short human sentences). A plain hyphen '-' is left
+    ALONE — it's fine where it naturally fits (compounds, ranges, an occasional
+    aside); only the fancy dashes read as obviously-AI. A URL after the dash is
+    never capitalized."""
+    out, last = [], 0
+    for m in _EMDASH_RE.finditer(text):
+        out.append(text[last:m.start()])
+        out.append(". ")
+        nxt = m.end()
+        if nxt < len(text) and text[nxt].isalpha() and text[nxt:nxt + 4].lower() != "http":
+            out.append(text[nxt].upper())
+            last = nxt + 1
+        else:
+            last = nxt
+    out.append(text[last:])
+    return "".join(out)
 
 
 def _untrail(text):

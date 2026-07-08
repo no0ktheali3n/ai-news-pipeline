@@ -151,30 +151,31 @@ def test_repair_untrails_nonfinal_tweets():
 
 
 def test_humanize_dashes_kills_the_ai_tell():
-    assert tc._humanize_dashes("not the model - and you probably know") \
-        == "not the model. And you probably know"
+    # em/en dashes become clean sentence breaks
     assert tc._humanize_dashes("the surface — HARC closes it") \
         == "the surface. HARC closes it"                      # em-dash
-    assert tc._humanize_dashes("agents talk — they converge") \
-        == "agents talk. They converge"
-    # left alone: compound hyphens, numeric ranges, percentages, benchmarks
+    assert tc._humanize_dashes("agents talk – they converge") \
+        == "agents talk. They converge"                       # en-dash
+    # a plain hyphen is LEFT ALONE where it naturally fits (user: regular dash ok)
+    assert tc._humanize_dashes("not the model - and you probably know") \
+        == "not the model - and you probably know"
     assert tc._humanize_dashes("multi-agent SWE-Bench pass@1 at 78.2%") \
         == "multi-agent SWE-Bench pass@1 at 78.2%"
     assert tc._humanize_dashes("aim 5 - 10 agents") == "aim 5 - 10 agents"
-    # URL after a dash is never capitalized
-    assert tc._humanize_dashes("Title Here - https://arxiv.org/abs/1") \
+    # em-dash before a URL: sentence break, URL never capitalized
+    assert tc._humanize_dashes("Title Here — https://arxiv.org/abs/1") \
         == "Title Here. https://arxiv.org/abs/1"
 
 
-def test_repair_humanizes_dashes_and_keeps_url():
+def test_repair_strips_emdashes_keeps_plain_hyphen_and_url():
     out = tc.validate_and_repair(
-        ["Your setup is fine - until it isn't.",
-         "The fix is obvious - give each agent different data.",
-         f"Paper Title - {URL}"], URL)
+        ["Your setup is fine — until it isn't.",
+         "The fix is obvious - give each agent different data.",  # plain hyphen stays
+         f"Paper Title — {URL}"], URL)
     joined = " ".join(out)
-    assert "—" not in joined and "–" not in joined and " - " not in joined
-    assert URL in out[-1]                                     # link survived
-    assert "Https" not in joined                              # URL not capitalized
+    assert "—" not in joined and "–" not in joined            # em/en stripped
+    assert " - " in joined                                     # plain hyphen preserved
+    assert URL in out[-1] and "Https" not in joined            # link intact, uncapitalized
 
 
 def test_repack_middles_merges_thin_adjacent():
@@ -216,8 +217,8 @@ check("overlong middle trims when thread full", test_overlong_middle_trims_when_
 check("overlong final trims but keeps url", test_overlong_final_trims_but_keeps_url)
 check("_untrail cuts to last complete sentence", test_untrail_cuts_to_last_sentence)
 check("repair untrails non-final tweets", test_repair_untrails_nonfinal_tweets)
-check("_humanize_dashes kills the AI dash tell", test_humanize_dashes_kills_the_ai_tell)
-check("repair humanizes dashes, keeps url uncapitalized", test_repair_humanizes_dashes_and_keeps_url)
+check("_humanize_dashes strips em/en, keeps plain hyphen", test_humanize_dashes_kills_the_ai_tell)
+check("repair strips emdashes, keeps plain hyphen + url", test_repair_strips_emdashes_keeps_plain_hyphen_and_url)
 check("_repack_middles merges thin adjacent tweets", test_repack_middles_merges_thin_adjacent)
 check("repair repacks thin middles, hook + link untouched", test_repair_repacks_thin_middles_keeping_hook_and_link)
 check("sanitize_tweet preserves newlines", test_sanitize_tweet_preserves_newlines)

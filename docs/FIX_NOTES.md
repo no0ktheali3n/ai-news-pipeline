@@ -78,3 +78,9 @@ All items from the original v0.6.x list (4-hour schedule, venv/snapshot repo blo
 - X API limits re-verified 2026-07-05: pay-per-usage; 2M/month cap applies to READS; writes rate-limited 100/15min/user, no monthly write cap (~132 writes/month worst case unconstrained).
 - Phase 3 evening-slot `min_score` calibrated: 8.25 (rank-2 distribution, 13 validated historical windows; `docs/calibration/`).
 - First live contract thread: Mon 2026-07-06 16:01 UTC, 4 tweets, posted via OpenRouter rescue (Bedrock still quota-throttled).
+
+## 2026-07-07 — v0.14.0: media/figures (ships dark)
+- Each daily thread can attach the paper's key figure to the hook tweet. New `utils/figures.py` fetches the arXiv HTML rendering and gates candidates by license (CC-only, via the `a#license-tr` anchor text — whole-page regex forbidden), single-`<img>` Figure caption, a 3-branch URL resolver, and a dimension gate (aspect 1.0–3.0, width ≥600). The writer picks one figure index (or null) inside its existing call; the poster uploads once via a new v1.1 tweepy subsystem (`get_v1_api`/`upload_media`) and attaches the media_id to tweet 1 only (same id on retry, never the closing reply).
+- Ships DARK: `MediaEnabled` template param defaults `"false"` (env `MEDIA_ENABLED` on Summarizer + Poster). Flip to `"true"` via `scripts/deploy-full-stack.sh` (full override list). Every failure branch (no HTML ~8%, non-CC ~35%, no candidate, writer null, download/guard/upload fail, flag off) posts today's text-only thread and records a structured reason.
+- Security: figure URL validated at construction AND re-validated at fetch (https + exact arxiv.org host, no redirects); image read is stream-capped to 2MB (gzip-safe) with an over-cap Content-Length pre-reject.
+- Observability: ledger + weekly report gain a `media` outcome object. Gate calibrated on 20 live papers (attach ~45% of posts, in the 40–70% band; constants kept). `docs/calibration/2026-07-07-figure-gate-calibration.md`.

@@ -23,7 +23,7 @@ jobs:
       # run each directly; any nonzero exit fails the job.
       - name: Unit suites
         run: |
-          for t in test_fixes test_content_engine test_buzz test_thread_contract test_ab_harness; do
+          for t in test_fixes test_content_engine test_buzz test_thread_contract test_ab_harness test_analytics test_figures; do
             echo "=== tests/$t.py ==="
             uv run python tests/$t.py
           done

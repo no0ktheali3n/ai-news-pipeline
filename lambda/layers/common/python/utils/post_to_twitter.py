@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from utils.twitter_threading import generate_tweet_thread
-from utils.tweepy_client import post_tweet, get_follower_count
+from utils.tweepy_client import post_tweet, get_follower_count, upload_media, _download_figure
 from utils.logger import get_logger
 
 load_dotenv()
@@ -129,9 +129,52 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
     for i, tweet in enumerate(thread):
         print(f"\n--- Tweet {i+1} ---\n{tweet}\nCharacters: {len(tweet)}")
 
+    # === Media upload block (runs before the posting loop) ===
+    media_id = None
+    media = {"attempted": False, "figure_url": None,
+             "license": article.get("media_license"),
+             "uploaded": False, "attached": False, "skip_reason": None}
+    fig = article.get("figure")
+    if not isinstance(fig, dict) or not fig.get("url"):
+        media["skip_reason"] = article.get("media_reason") or "no_figure"
+    elif os.getenv("MEDIA_ENABLED", "false") != "true":
+        media["skip_reason"] = "disabled"
+    elif dry_run:
+        media["attempted"], media["figure_url"] = True, fig["url"]
+        media["skip_reason"] = "dry_run"
+        print(f"[DRY RUN] Would upload figure: {fig['url']}")
+    else:
+        media["attempted"], media["figure_url"] = True, fig["url"]
+        img = _download_figure(fig["url"])
+        if img is None:
+            media["skip_reason"] = "download_failed"
+            logger.info("MEDIA skipped: download_failed")
+        else:
+            media_id = upload_media(img, fig["url"].rsplit("/", 1)[-1], fig.get("caption", ""))
+            if media_id is None:
+                media["skip_reason"] = "upload_failed"
+                logger.info("MEDIA skipped: upload_failed")
+            else:
+                media["uploaded"] = True
+
     if dry_run:
         print("\n[DRY RUN] Skipping post...")
-        return None
+        return {
+            "article_title": title,
+            "url": url,
+            "variant": variant,
+            "tweet_ids": [],
+            "thread_url": None,
+            "scores": article.get("scores"),
+            "composite": article.get("composite"),
+            "query_source": article.get("query_source"),
+            "buzz": article.get("buzz"),
+            "buzz_raw": article.get("buzz_raw"),
+            "status": "dry_run",
+            "tweet_count": 0,
+            "follower_count": None,
+            "media": media,
+        }
     if confirm_post:
         confirm = input("\nDo you want to post this thread to Twitter? (y/n): ").strip().lower()
         if confirm != 'y':
@@ -146,12 +189,15 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
     for i, tweet in enumerate(thread):
         print(f"\n🌀 Posting tweet {i+1} of {len(thread)}...")
         logger.info(f"Posting tweet {i+1} of {len(thread)}")
-        tweet_id = post_tweet(tweet, reply_to_id=reply_to)
+        kwargs = {"media_ids": [media_id]} if (i == 0 and media_id) else {}
+        tweet_id = post_tweet(tweet, reply_to_id=reply_to, **kwargs)
         if not tweet_id:
             logger.warning(f"Tweet {i+1} failed; retrying once.")
             time.sleep(3)
-            tweet_id = post_tweet(tweet, reply_to_id=reply_to)
+            tweet_id = post_tweet(tweet, reply_to_id=reply_to, **kwargs)
         if tweet_id:
+            if i == 0 and media_id:
+                media["attached"] = True
             tweet_ids.append(tweet_id)
             reply_to = tweet_id
             time.sleep(2)
@@ -179,6 +225,8 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
         logger.info(f"Thread posted! View the first tweet: https://twitter.com/user/status/{tweet_ids[0]}")
         first_tweet_url = f"https://twitter.com/user/status/{tweet_ids[0]}"
 
+    logger.info(f"MEDIA {'attached' if media['attached'] else 'skipped: ' + str(media['skip_reason'])}")
+
     # Capture follower count ONCE after the posting loop completes (both full
     # and partial paths).  Strictly non-blocking: get_follower_count() swallows
     # all errors and returns None so no API failure can affect posting.
@@ -198,6 +246,7 @@ def post_thread(article, variant="summary", dry_run=False, confirm_post=False):
         "status": status,
         "tweet_count": len(tweet_ids),
         "follower_count": follower_count,
+        "media": media,
     }
 
 # CLI Interface

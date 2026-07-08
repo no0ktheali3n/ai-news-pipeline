@@ -1,0 +1,1484 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems</title>
+<!--Generated on Thu Jul  2 01:50:51 2026 by LaTeXML (version 0.8.8) http://dlmf.nist.gov/LaTeXML/.-->
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="/static/browse/0.3.4/css/arxiv-html-papers-20260131.css" type="text/css">
+<script src="/static/browse/0.3.4/js/arxiv-html-papers-20260131.js"></script>
+<script>
+  // Restore the saved color scheme preference, or
+  // enact the browser preference if "automatic", 
+  // without expecting DOM load to have completed.
+  //
+  // Also restore any saved readingmode and ToC display preferences.
+  function initializeReadingPreferences() {
+    let saved_theme = localStorage.getItem("ar5iv_theme") || "automatic";
+    if (saved_theme === "automatic") {
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        saved_theme = "dark";
+      }
+    }
+    if (saved_theme == "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.setAttribute("data-theme", "light");
+    }
+
+    const tocDisplay = localStorage.getItem('arxiv_html_paper_toc_display');
+    if (tocDisplay) {
+      document.documentElement.setAttribute("data-toc-display", tocDisplay);
+    }
+    const readingMode = localStorage.getItem('arxiv_html_paper_reading_mode');
+    if (readingMode) {
+      document.documentElement.setAttribute("data-reading-mode", readingMode);
+    }
+    // Pre-apply spinout-banner dismissal here, before the banner paints, so it
+    // never flashes in only to be hidden later by the deferred arxiv-header.js.
+    // Key matches arxiv-header.js: "arxiv-banner-dismissed:" + data-banner-name.
+    if (localStorage.getItem('arxiv-banner-dismissed:spinout-nonprofit')) {
+      document.documentElement.setAttribute("data-banner-dismissed", "");
+    }
+  }
+  // Run as soon as JS starts, to minimize repainting
+  initializeReadingPreferences();
+</script>
+<link rel="apple-touch-icon" sizes="180x180"
+  href="/static/browse/0.3.4/images/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32"
+  href="/static/browse/0.3.4/images/icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16"
+  href="/static/browse/0.3.4/images/icons/favicon-16x16.png">
+<link rel="manifest" href="/static/browse/0.3.4/images/icons/site.webmanifest">
+<link rel="mask-icon" href="/static/browse/0.3.4/images/icons/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="stylesheet" type="text/css" media="screen" href="https://use.typekit.net/utz6mli.css"><link rel="stylesheet" type="text/css" media="screen"
+  href="/static/base/1.0.1/css/arxiv-header-footer.css?v=20260626"><style>
+  /* Banner pre-dismissal (set above before paint -> no flash-then-hide) and
+     reading-mode chrome hiding. */
+  html[data-banner-dismissed] .ds-announcement { display: none; }
+  html[data-reading-mode="enabled"] .ds-announcement,
+  html[data-reading-mode="enabled"] .ds-site-footer { display: none; }
+  /* Keep the announcement text dark on the Open-Blue band in both colour themes
+     (otherwise it inherits the paper's warm-wash text in dark mode and washes out). */
+  .ds-announcement-text { color: var(--arxiv-ink, #1c1a17); }
+</style>
+<script defer src="/static/base/1.0.1/js/arxiv-header.js?v=20260626"></script>
+</head>
+<body>
+<dialog id="modal-form" aria-labelledby="modal-title" closedby="any">
+  <form id="modal-form-content" method="dialog" enctype="multipart/form-data">
+    <header class="modal-header">
+      <h5 id="modal-title" class="modal-title">Report GitHub Issue</h5>
+      <button type="submit" formnovalidate class="modal-close" aria-label="Close">×</button>
+    </header>
+
+    <div class="modal-body">
+      <label for="form_title">Title:</label>
+      <input class="form-control" id="form_title" name="form_title" required placeholder="Enter title">
+
+      <p id="selectedTextModalDescription" hidden>Content selection saved. Describe the issue below:</p>
+
+      <label for="description">Description:</label>
+      <textarea class="form-control" id="description" name="description" required maxlength="500"
+        placeholder="500 characters maximum"></textarea>
+    </div>
+
+    <footer class="modal-footer">
+      <button type="submit" value="internal-report" class="sr-only modal-submit">Submit without GitHub</button>
+      <button type="submit" value="github-report" class="modal-submit">Submit in GitHub</button>
+    </footer>
+  </form>
+</dialog><div class="ds-announcement" id="announcement-banner" role="region" aria-label="Announcement"
+    data-banner-name="spinout-nonprofit">
+    <img class="ds-announcement-glyph" src="/static/base/1.0.1/images/icons/smileybones-small.svg" alt="" aria-hidden="true">
+    <span class="ds-announcement-text">arXiv is now an independent nonprofit!</span>
+    <a class="ds-announcement-link" href="https://info.arxiv.org/about">Learn more</a>
+    <button type="button" class="ds-announcement-close" aria-label="Dismiss announcement">&times;</button>
+  </div>
+
+<header class="arxiv-html-header">
+  <div class="html-header-logo">
+    <a href="/"><img alt="arXiv logo" class="logo desktop-only" width="100"
+        src="/static/base/1.0.1/images/arxiv-logo-primary-light.svg">
+      <span class="sr-only">Back to arXiv</span>
+    </a>
+  </div>
+  <!--TOC, dark mode, links-->
+  <nav class="html-header-nav">
+    <a class="header-button hover-effect desktop-only" href="https://info.arxiv.org/about/accessible_HTML.html"
+      target="_blank">Why HTML?</a>
+    <a class="header-button" title="Report an Issue" href="#" title="Report an issue"
+      onclick="event.preventDefault(); showModalForm();">
+      <svg role="presentation" class="mobile-only toggle-icon" aria-hidden="true" height="1.25rem"
+        viewBox="0 0 640 640">
+        <path
+          d="M224 160C224 107 267 64 320 64C373 64 416 107 416 160L416 163.6C416 179.3 403.3 192 387.6 192L252.5 192C236.8 192 224.1 179.3 224.1 163.6L224.1 160zM569.6 172.8C580.2 186.9 577.3 207 563.2 217.6L465.4 290.9C470.7 299.8 474.7 309.6 477.2 320L576 320C593.7 320 608 334.3 608 352C608 369.7 593.7 384 576 384L480 384L480 416C480 418.6 479.9 421.3 479.8 423.9L563.2 486.4C577.3 497 580.2 517.1 569.6 531.2C559 545.3 538.9 548.2 524.8 537.6L461.7 490.3C438.5 534.5 395.2 566.5 344 574.2L344 344C344 330.7 333.3 320 320 320C306.7 320 296 330.7 296 344L296 574.2C244.8 566.5 201.5 534.5 178.3 490.3L115.2 537.6C101.1 548.2 81 545.3 70.4 531.2C59.8 517.1 62.7 497 76.8 486.4L160.2 423.9C160.1 421.3 160 418.7 160 416L160 384L64 384C46.3 384 32 369.7 32 352C32 334.3 46.3 320 64 320L162.8 320C165.3 309.6 169.3 299.8 174.6 290.9L76.8 217.6C62.7 207 59.8 186.9 70.4 172.8C81 158.7 101.1 155.8 115.2 166.4L224 248C236.3 242.9 249.8 240 264 240L376 240C390.2 240 403.7 242.8 416 248L524.8 166.4C538.9 155.8 559 158.7 569.6 172.8z" />
+      </svg>
+      <span class="desktop-only">Report Issue</span></a>
+    <!--back to abstract-->
+    <a class="header-button" title="Back to abstract page" aria-label="Back to abstract page"
+      href="/abs/2607.01600v1">
+      <svg class="mobile-only toggle-icon" role="presentation" height="1.25rem" viewBox="0 0 512 512" fill="#ffffff"
+        aria-hidden="true">
+        <path
+          d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z">
+        </path>
+      </svg>
+      <span class="desktop-only">Back to Abstract</span>
+    </a>
+    <!-- PDF download link -->
+    <a class="header-button" title="Download PDF" href="/pdf/2607.01600v1"
+      target="_blank">
+      <svg class="mobile-only toggle-icon" role="presentation" height="1.25rem" viewBox="0 0 576 542">
+        <path
+          d="M208 48L96 48c-8.8 0-16 7.2-16 16l0 384c0 8.8 7.2 16 16 16l80 0 0 48-80 0c-35.3 0-64-28.7-64-64L32 64C32 28.7 60.7 0 96 0L229.5 0c17 0 33.3 6.7 45.3 18.7L397.3 141.3c12 12 18.7 28.3 18.7 45.3l0 149.5-48 0 0-128-88 0c-39.8 0-72-32.2-72-72l0-88zM348.1 160L256 67.9 256 136c0 13.3 10.7 24 24 24l68.1 0zM240 380l32 0c33.1 0 60 26.9 60 60s-26.9 60-60 60l-12 0 0 28c0 11-9 20-20 20s-20-9-20-20l0-128c0-11 9-20 20-20zm32 80c11 0 20-9 20-20s-9-20-20-20l-12 0 0 40 12 0zm96-80l32 0c28.7 0 52 23.3 52 52l0 64c0 28.7-23.3 52-52 52l-32 0c-11 0-20-9-20-20l0-128c0-11 9-20 20-20zm32 128c6.6 0 12-5.4 12-12l0-64c0-6.6-5.4-12-12-12l-12 0 0 88 12 0zm76-108c0-11 9-20 20-20l48 0c11 0 20 9 20 20s-9 20-20 20l-28 0 0 24 28 0c11 0 20 9 20 20s-9 20-20 20l-28 0 0 44c0 11-9 20-20 20s-20-9-20-20l0-128z" />
+      </svg>
+      <span class="desktop-only">Download PDF</span></a>
+    <!-- navigational table of contents toggle -->
+    <a class="header-button toggle-icon" href="javascript:toggleNavTOC();" title="Toggle navigation"
+      aria-label="Toggle navigation">
+      <svg height="1.25rem" role="presentation" viewBox="0 0 512 512">
+        <path
+          d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z">
+        </path>
+      </svg>
+    </a>
+    <!--- collapsable header / reading mode toggle -->
+    <a class="header-button toggle-icon" href="javascript:toggleReadingMode();"
+      title="Disable reading mode, show header and footer">
+      <svg role="presentation" height="1.25rem"
+        viewBox="0 0 448 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+        <path
+          d="M32 32C14.3 32 0 46.3 0 64l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 32zM64 352c0-17.7-14.3-32-32-32S0 334.3 0 352l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96z" />
+      </svg>
+    </a>
+    <!--- colored theme toggle -->
+    <button type="button" class="header-button color-tog" onclick="toggleColorScheme();" title="Toggle dark/light mode" aria-label="Toggle color scheme">
+      <span class="toggle-icon automatic-tog" aria-hidden="true">
+        <svg role="presentation" height="1.25rem" viewBox="0 0 24 24">
+          <path
+            d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9h-1.9M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69m-9.15 3.96h2.3L12 9l-1.15 3.65Z">
+          </path>
+        </svg>
+      </span>
+      <span class="toggle-icon light-tog" aria-hidden="true">
+        <svg role="presentation" height="1.25rem" viewBox="0 0 24 24">
+          <path
+            d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z">
+          </path>
+        </svg>
+      </span>
+      <span class="toggle-icon dark-tog" aria-hidden="true">
+        <svg role="presentation" height="1.25rem" viewBox="0 0 24 24">
+          <path
+            d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z">
+          </path>
+        </svg>
+      </span>
+    </button>
+  </nav>
+</header><nav class="ltx_page_navbar">
+<nav class="ltx_TOC">
+<ol class="ltx_toclist">
+<li class="ltx_tocentry ltx_tocentry_abstract"><a href="#abstract1" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Abstract</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_section"><a href="#S1" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">1 </span>Introduction</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_section">
+<a href="#S2" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">2 </span>Related Work</span></a>
+<ol class="ltx_toclist ltx_toclist_section">
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S2.SS1" title="In 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">2.1 </span>Multi-Agent LLM Systems</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S2.SS2" title="In 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">2.2 </span>Convergence and Collapse Phenomena</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S2.SS3" title="In 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">2.3 </span>Opinion Dynamics</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_section">
+<a href="#S3" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3 </span>Methods</span></a>
+<ol class="ltx_toclist ltx_toclist_section">
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS1" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.1 </span>Protocol Overview</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection">
+<a href="#S3.SS2" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.2 </span>Communication Protocol</span></a>
+<ol class="ltx_toclist ltx_toclist_subsection">
+<li class="ltx_tocentry ltx_tocentry_paragraph"><a href="#S3.SS2.SSS0.Px1" title="In 3.2 Communication Protocol ‣ 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Independent response.</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_paragraph"><a href="#S3.SS2.SSS0.Px2" title="In 3.2 Communication Protocol ‣ 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Jensen-Shannon Divergence computation.</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_paragraph"><a href="#S3.SS2.SSS0.Px3" title="In 3.2 Communication Protocol ‣ 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Protocol injection.</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_paragraph"><a href="#S3.SS2.SSS0.Px4" title="In 3.2 Communication Protocol ‣ 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Blending mechanics.</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_paragraph"><a href="#S3.SS2.SSS0.Px5" title="In 3.2 Communication Protocol ‣ 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Self-anchoring caveat.</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_subsection">
+<a href="#S3.SS3" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.3 </span>CAF Metric and Statistical Framework</span></a>
+<ol class="ltx_toclist ltx_toclist_subsection">
+<li class="ltx_tocentry ltx_tocentry_paragraph"><a href="#S3.SS3.SSS0.Px1" title="In 3.3 CAF Metric and Statistical Framework ‣ 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Definition.</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_paragraph"><a href="#S3.SS3.SSS0.Px2" title="In 3.3 CAF Metric and Statistical Framework ‣ 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Strategy definition.</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_paragraph"><a href="#S3.SS3.SSS0.Px3" title="In 3.3 CAF Metric and Statistical Framework ‣ 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Bootstrap and bias correction.</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_paragraph"><a href="#S3.SS3.SSS0.Px4" title="In 3.3 CAF Metric and Statistical Framework ‣ 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">Cross-protocol note.</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS4" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.4 </span>Experimental Conditions and Controls</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS5" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.5 </span>Reproducibility</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS6" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.6 </span>Noisy DeGroot Simulation</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_section">
+<a href="#S4" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4 </span>Results</span></a>
+<ol class="ltx_toclist ltx_toclist_section">
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS1" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.1 </span>Text Communication Causes Significant Homogenization</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS2" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.2 </span>Image Communication and Modality-Appropriate Baselines</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS3" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.3 </span>Group Size Shifts Coupling Direction</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS4" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.4 </span>Prompt Perturbation Control Confirms Social Specificity</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS5" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.5 </span>Blend Ratio Robustness and Cross-Model Variation</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS6" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.6 </span>Per-Round Dynamics: Coupling is Stateless</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS7" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.7 </span>Comparison with Noisy DeGroot Simulation</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS8" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.8 </span>Summary of Results</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_section">
+<a href="#S5" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5 </span>Discussion</span></a>
+<ol class="ltx_toclist ltx_toclist_section">
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S5.SS1" title="In 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5.1 </span>Why Does Communication Homogenize Both Modalities?</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S5.SS2" title="In 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5.2 </span>Implications for Multi-Agent System Design</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S5.SS3" title="In 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5.3 </span>Practical Guidance for CAF Deployment</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S5.SS4" title="In 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5.4 </span>Connection to Opinion Dynamics</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_section"><a href="#S6" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">6 </span>Limitations</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_section"><a href="#S7" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">7 </span>Conclusion</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_bibliography"><a href="#bib" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">References</span></a></li>
+</ol></nav>
+</nav>
+<div class="ltx_page_main">
+<div id="infobox" class="infobox">
+  <a id="license-tr" href="https://info.arxiv.org/help/license/index.html#licenses-available">
+    License: CC BY 4.0
+  </a>
+  <div id="watermark-tr">
+arXiv:2607.01600v1 [cs.LG] 02 Jul 2026</div>
+</div><div class="ltx_page_content">
+<article class="ltx_document ltx_authors_1line">
+<h1 class="ltx_title ltx_font_bold ltx_title_document" style="font-size:173%;">BOUNDARY_SYNC:
+<br class="ltx_break">Measuring Communication-Induced Representational
+<br class="ltx_break">Coupling in Multi-Agent LLM Systems</h1>
+<div class="ltx_authors">
+<span class="ltx_creator ltx_role_author">
+<span class="ltx_personname">Zewen Liu
+<br class="ltx_break">Qilu Institute of Technology, Tai’an, Shandong, China
+<br class="ltx_break"><span id="id1.1.id1" class="ltx_text ltx_font_typewriter">liuzewen@qilu.edu.cn</span>
+</span></span>
+</div>
+
+<div id="abstract1" class="ltx_abstract">
+<h6 class="ltx_title ltx_title_abstract">Abstract</h6>
+<p class="ltx_p">As large language models (LLMs) are deployed as communicating agents in multi-agent systems, does inter-agent communication cause their outputs to converge toward consensus? We introduce <span class="ltx_text ltx_font_smallcaps">Boundary_Sync</span>, a measurement protocol that quantifies representational coupling through the Coupling Amplification Factor (<math class="ltx_Math" alttext="\text{CAF}=\text{JSD}_{\text{cond}}/\text{JSD}_{\text{baseline}}" display="inline" intent=":literal"><semantics><mrow><mtext>CAF</mtext><mo>=</mo><mrow><msub><mtext>JSD</mtext><mtext>cond</mtext></msub><mo>/</mo><msub><mtext>JSD</mtext><mtext>baseline</mtext></msub></mrow></mrow><annotation encoding="application/x-tex">\text{CAF}=\text{JSD}_{\text{cond}}/\text{JSD}_{\text{baseline}}</annotation></semantics></math>), where CAF <math class="ltx_Math" alttext="&lt;" display="inline" intent=":literal"><semantics><mo>&lt;</mo><annotation encoding="application/x-tex">&lt;</annotation></semantics></math> 1 indicates homogenization and CAF <math class="ltx_Math" alttext="&gt;" display="inline" intent=":literal"><semantics><mo>&gt;</mo><annotation encoding="application/x-tex">&gt;</annotation></semantics></math> 1 indicates diversification. In controlled experiments with GPT-4o (N=30 per condition, real API calls), we measure coupling across text-based and image-based communication scenarios.</p>
+<p class="ltx_p">Our key findings are: (1) text communication causes significant homogenization (CAF=0.803 [0.740, 0.873], Cohen’s <math class="ltx_Math" alttext="d" display="inline" intent=":literal"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>=1.30, <math class="ltx_Math" alttext="p&lt;0.001" display="inline" intent=":literal"><semantics><mrow><mi>p</mi><mo>&lt;</mo><mn>0.001</mn></mrow><annotation encoding="application/x-tex">p&lt;0.001</annotation></semantics></math>), confirmed by a clean no-communication ablation (CAF=0.978) and prompt-perturbation controls; (2) image communication also causes homogenization when evaluated against its own modality-appropriate baseline (image-intrinsic CAF=0.834 [0.811, 0.858]), with proportional effect comparable to text (0.816); both modalities thus show homogenization of comparable magnitude once baseline differences are accounted for; (3) group size is a <span class="ltx_text ltx_font_bold">key moderator</span> of coupling direction—with <math class="ltx_Math" alttext="K{=}5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K{=}5</annotation></semantics></math> agents, both text and image communication produce homogenization (CAF 0.80 and 0.74 respectively), but with <math class="ltx_Math" alttext="K{=}3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K{=}3</annotation></semantics></math> agents, CAF rises above 1.0 (point estimates 1.14 and 1.06, without bootstrap CIs pending dedicated baseline experiments)—suggesting a directional shift toward diversification rather than homogenization; (4) cross-model replication shows extreme variation (CAF 0.034–0.803), though DeepSeek’s near-zero CAF is dominated by format artifacts; and (5) coupling is <span class="ltx_text ltx_font_bold">stateless</span>—driven by the immediate presence of peer information in the prompt context and vanishing when it is removed, with no evidence of cumulative convergence across rounds. A continuous-consensus variant produces monotonic convergence (JSD 0.44 <math class="ltx_Math" alttext="\rightarrow" display="inline" intent=":literal"><semantics><mo stretchy="false">→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> 0.001 in 10 rounds), reinforcing the stateless interpretation. These results establish that LLM agent coupling is real, measurable, modality-consistent in proportional terms, and controllable at the prompt level—with direct implications for the design of multi-agent LLM systems.</p>
+<p class="ltx_p"><span class="ltx_text ltx_font_bold">Keywords:</span> multi-agent systems, LLM coupling, representational diversity, opinion dynamics, Jensen-Shannon divergence</p>
+</div>
+<div class="ltx_pagination ltx_role_newpage"></div>
+<nav class="ltx_TOC ltx_list_toc ltx_toc_toc"><h6 class="ltx_title ltx_title_contents">Contents</h6>
+<ol class="ltx_toclist">
+<li class="ltx_tocentry ltx_tocentry_section"><a href="#S1" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">1 </span>Introduction</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_section">
+<a href="#S2" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">2 </span>Related Work</span></a>
+<ol class="ltx_toclist ltx_toclist_section">
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S2.SS1" title="In 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">2.1 </span>Multi-Agent LLM Systems</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S2.SS2" title="In 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">2.2 </span>Convergence and Collapse Phenomena</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S2.SS3" title="In 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">2.3 </span>Opinion Dynamics</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_section">
+<a href="#S3" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3 </span>Methods</span></a>
+<ol class="ltx_toclist ltx_toclist_section">
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS1" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.1 </span>Protocol Overview</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS2" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.2 </span>Communication Protocol</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS3" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.3 </span>CAF Metric and Statistical Framework</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS4" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.4 </span>Experimental Conditions and Controls</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS5" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.5 </span>Reproducibility</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S3.SS6" title="In 3 Methods ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">3.6 </span>Noisy DeGroot Simulation</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_section">
+<a href="#S4" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4 </span>Results</span></a>
+<ol class="ltx_toclist ltx_toclist_section">
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS1" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.1 </span>Text Communication Causes Significant Homogenization</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS2" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.2 </span>Image Communication and Modality-Appropriate Baselines</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS3" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.3 </span>Group Size Shifts Coupling Direction</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS4" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.4 </span>Prompt Perturbation Control Confirms Social Specificity</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS5" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.5 </span>Blend Ratio Robustness and Cross-Model Variation</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS6" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.6 </span>Per-Round Dynamics: Coupling is Stateless</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS7" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.7 </span>Comparison with Noisy DeGroot Simulation</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S4.SS8" title="In 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">4.8 </span>Summary of Results</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_section">
+<a href="#S5" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5 </span>Discussion</span></a>
+<ol class="ltx_toclist ltx_toclist_section">
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S5.SS1" title="In 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5.1 </span>Why Does Communication Homogenize Both Modalities?</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S5.SS2" title="In 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5.2 </span>Implications for Multi-Agent System Design</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S5.SS3" title="In 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5.3 </span>Practical Guidance for CAF Deployment</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_subsection"><a href="#S5.SS4" title="In 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">5.4 </span>Connection to Opinion Dynamics</span></a></li>
+</ol>
+</li>
+<li class="ltx_tocentry ltx_tocentry_section"><a href="#S6" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">6 </span>Limitations</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_section"><a href="#S7" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title"><span class="ltx_tag ltx_tag_ref">7 </span>Conclusion</span></a></li>
+<li class="ltx_tocentry ltx_tocentry_bibliography"><a href="#bib" title="In BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_title">References</span></a></li>
+</ol></nav>
+<div class="ltx_pagination ltx_role_newpage"></div>
+<section id="S1" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">1 </span>Introduction</h2>
+
+<div id="S1.p1" class="ltx_para ltx_noindent">
+<p id="S1.p1.1" class="ltx_p">As large language models are increasingly composed into multi-agent systems—for collaborative reasoning <cite class="ltx_cite ltx_citemacro_cite">Du<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib8" title="Improving factuality and reasoning in language models through multiagent debate" class="ltx_ref">2024</a>)</cite>, debate <cite class="ltx_cite ltx_citemacro_cite">Li<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib7" title="CAMEL: communicative agents for “mind” exploration of large language model society" class="ltx_ref">2023</a>)</cite>, and social simulation <cite class="ltx_cite ltx_citemacro_cite">Park<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib9" title="Generative agents: interactive simulacra of human behavior" class="ltx_ref">2023</a>)</cite>—a fundamental question arises: <em id="S1.p1.1.1" class="ltx_emph ltx_font_italic">does inter-agent communication cause their outputs to converge toward homogenized consensus?</em> If LLM agents become more similar to each other through communication, the diversity benefits of multi-agent architectures may be undermined; if they diverge, communication could amplify noise. Understanding this coupling is essential for designing reliable multi-agent LLM systems.</p>
+</div>
+<div id="S1.p2" class="ltx_para ltx_noindent">
+<p id="S1.p2.1" class="ltx_p">Concurrent work has documented convergence phenomena: representational collapse in LLM ensembles <cite class="ltx_cite ltx_citemacro_cite">Patel (<a href="#bib.bib13" title="Representational collapse in multi-agent LLM committees: measurement and diversity-aware consensus" class="ltx_ref">2026</a>)</cite>, emergent convergence across agents in annotation tasks <cite class="ltx_cite ltx_citemacro_cite">Parfenova<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib14" title="Emergent convergence in multi-agent LLM annotation" class="ltx_ref">2025</a>)</cite>, herding effects in LLM reasoning <cite class="ltx_cite ltx_citemacro_cite">Cho<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib15" title="Herd behavior: investigating peer influence in LLM-based multi-agent systems" class="ltx_ref">2025</a>)</cite>, conformity and persona instability in multi-agent debate <cite class="ltx_cite ltx_citemacro_cite">Baltaji<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib16" title="Conformity, confabulation, and impersonation: persona inconstancy in multi-agent LLM collaboration" class="ltx_ref">2024</a>)</cite>, and Bayesian social learning in interacting agents <cite class="ltx_cite ltx_citemacro_cite">Jain and Krishnamurthy (<a href="#bib.bib17" title="Interacting large language model agents: interpretable models and social learning" class="ltx_ref">2024</a>)</cite>. However, these observations lack a standardized measurement protocol that (a) isolates communication as the causal mechanism, (b) quantifies coupling strength on a common scale across conditions and models, and (c) distinguishes transient, prompt-driven effects from cumulative opinion updating.</p>
+</div>
+<div id="S1.p3" class="ltx_para ltx_noindent">
+<p id="S1.p3.1" class="ltx_p">We introduce <span id="S1.p3.1.1" class="ltx_text ltx_font_smallcaps">Boundary_Sync</span>, a measurement protocol that treats communication as a controlled experimental variable. Agents iteratively produce structured probability assessments of stimuli while receiving blended neighbor outputs through natural-language protocol messages. The Coupling Amplification Factor (<math id="S1.p3.1.m1" class="ltx_Math" alttext="\text{CAF}=\text{JSD}_{\text{cond}}/\text{JSD}_{\text{baseline}}" display="inline" intent=":literal"><semantics><mrow><mtext>CAF</mtext><mo>=</mo><mrow><msub><mtext>JSD</mtext><mtext>cond</mtext></msub><mo>/</mo><msub><mtext>JSD</mtext><mtext>baseline</mtext></msub></mrow></mrow><annotation encoding="application/x-tex">\text{CAF}=\text{JSD}_{\text{cond}}/\text{JSD}_{\text{baseline}}</annotation></semantics></math>) normalizes per-agent output shift under communication by the shift observed in an isolated baseline, yielding a unitless coupling metric.</p>
+</div>
+<div id="S1.p4" class="ltx_para ltx_noindent">
+<p id="S1.p4.1" class="ltx_p">Using GPT-4o on a production API (N=30 per condition, approximately 9,900 API calls across three experiment runs), we measure coupling in text-based and image-based communication scenarios. Additionally, we replicate key findings on DeepSeek V4 Pro (N=30) and Qwen3.7-Plus (N=10).</p>
+</div>
+<div id="S1.p5" class="ltx_para ltx_noindent">
+<p id="S1.p5.1" class="ltx_p">Our specific contributions are:</p>
+</div>
+<div id="S1.p6" class="ltx_para ltx_noindent">
+<ol id="S1.I1" class="ltx_enumerate">
+<li id="S1.I1.i1" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">1.</span> 
+<div id="S1.I1.i1.p1" class="ltx_para ltx_noindent">
+<p id="S1.I1.i1.p1.1" class="ltx_p"><span id="S1.I1.i1.p1.1.1" class="ltx_text ltx_font_bold">Causal evidence for communication-induced homogenization.</span> Text communication with BOUNDARY_SYNC causes significant homogenization in GPT-4o (CAF=0.803, <math id="S1.I1.i1.p1.1.m1" class="ltx_Math" alttext="d" display="inline" intent=":literal"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>=1.30), confirmed by (i) a no-communication ablation where the effect disappears (CAF=0.978, n.s.), and (ii) a prompt perturbation control where irrelevant Wikipedia text replacing neighbor consensus eliminates the effect (CAF=1.082). These controls establish that the homogenization is specifically <span id="S1.I1.i1.p1.1.2" class="ltx_text ltx_font_italic">social</span>—driven by peer-generated consensus, not by generic prompt perturbation. CAF reductions should be interpreted as an upper bound on social coupling without a self-only control (§<a href="#S6" title="6 Limitations ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">6</span></a>).</p>
+</div>
+</li>
+<li id="S1.I1.i2" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">2.</span> 
+<div id="S1.I1.i2.p1" class="ltx_para ltx_noindent">
+<p id="S1.I1.i2.p1.2" class="ltx_p"><span id="S1.I1.i2.p1.2.1" class="ltx_text ltx_font_bold">Modality comparison with appropriate baselines.</span> When evaluated against modality-specific no-communication baselines, both text (<math id="S1.I1.i2.p1.1.m1" class="ltx_Math" alttext="\text{CAF}_{\text{text}}=0.816" display="inline" intent=":literal"><semantics><mrow><msub><mtext>CAF</mtext><mtext>text</mtext></msub><mo>=</mo><mn>0.816</mn></mrow><annotation encoding="application/x-tex">\text{CAF}_{\text{text}}=0.816</annotation></semantics></math>) and image (<math id="S1.I1.i2.p1.2.m2" class="ltx_Math" alttext="\text{CAF}_{\text{image}}=0.834" display="inline" intent=":literal"><semantics><mrow><msub><mtext>CAF</mtext><mtext>image</mtext></msub><mo>=</mo><mn>0.834</mn></mrow><annotation encoding="application/x-tex">\text{CAF}_{\text{image}}=0.834</annotation></semantics></math>) communication produce significant homogenization of comparable <em id="S1.I1.i2.p1.2.2" class="ltx_emph ltx_font_italic">proportional</em> magnitude. However, image-conditioned distributions exhibit higher baseline diversity (no-communication JSD 0.268<span id="footnote1" class="ltx_note ltx_role_footnote"><sup class="ltx_note_mark">1</sup><span class="ltx_note_outer"><span class="ltx_note_content"><sup class="ltx_note_mark">1</sup><span class="ltx_tag ltx_tag_note">1</span>This value reflects our most recent experimental run; see §<a href="#S4.SS2" title="4.2 Image Communication and Modality-Appropriate Baselines ‣ 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">4.2</span></a> for comparison with an earlier run (JSD=0.2625) and evidence of CAF consistency across runs.</span></span></span> vs. text 0.208), meaning the <em id="S1.I1.i2.p1.2.3" class="ltx_emph ltx_font_italic">absolute</em> homogenization effect is larger for visual tasks. This reframes the design challenge from “which modalities homogenize?” to “how much baseline diversity does each modality have, and how much is lost under communication?”</p>
+</div>
+</li>
+<li id="S1.I1.i3" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">3.</span> 
+<div id="S1.I1.i3.p1" class="ltx_para ltx_noindent">
+<p id="S1.I1.i3.p1.4" class="ltx_p"><span id="S1.I1.i3.p1.4.1" class="ltx_text ltx_font_bold">Group size as a moderator of coupling direction.</span> Replicating text communication with <math id="S1.I1.i3.p1.1.m1" class="ltx_Math" alttext="K{=}3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K{=}3</annotation></semantics></math> agents instead of <math id="S1.I1.i3.p1.2.m2" class="ltx_Math" alttext="K{=}5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K{=}5</annotation></semantics></math> produces CAF above 1.0 (point estimates 1.14 and 1.06, CI pending), suggesting a directional shift toward diversification rather than homogenization. Extending image communication to <math id="S1.I1.i3.p1.3.m3" class="ltx_Math" alttext="K{=}5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K{=}5</annotation></semantics></math> (from the default <math id="S1.I1.i3.p1.4.m4" class="ltx_Math" alttext="K{=}3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K{=}3</annotation></semantics></math>) produces the strongest homogenization observed (CAF=0.74). Group size is thus not merely a confound to control but a primary design parameter for multi-agent systems. Cross-modality comparisons with size-matched conditions are now possible.</p>
+</div>
+</li>
+<li id="S1.I1.i4" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">4.</span> 
+<div id="S1.I1.i4.p1" class="ltx_para ltx_noindent">
+<p id="S1.I1.i4.p1.2" class="ltx_p"><span id="S1.I1.i4.p1.2.1" class="ltx_text ltx_font_bold">Cross-model variation and artifact identification.</span> Homogenization appears in all three tested models but with extreme variation. DeepSeek V4 Pro produces near-zero CAF (0.034), but we demonstrate that this is dominated by format artifacts (constrained JSON output, disabled reasoning) rather than genuine social coupling. GPT-4o retains substantial residual diversity (CAF <math id="S1.I1.i4.p1.1.m1" class="ltx_Math" alttext="\approx" display="inline" intent=":literal"><semantics><mo>≈</mo><annotation encoding="application/x-tex">\approx</annotation></semantics></math> 0.80) while Qwen3.7-Plus falls between (CAF=0.391). The 24<math id="S1.I1.i4.p1.2.m2" class="ltx_Math" alttext="\times" display="inline" intent=":literal"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> range should be treated as an upper bound.</p>
+</div>
+</li>
+<li id="S1.I1.i5" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">5.</span> 
+<div id="S1.I1.i5.p1" class="ltx_para">
+<p id="S1.I1.i5.p1.1" class="ltx_p"><span id="S1.I1.i5.p1.1.1" class="ltx_text ltx_font_bold">Stateless, prompt-driven coupling.</span> Per-round JSD trajectories under toggled consensus exhibit a pronounced sawtooth pattern—JSD drops when consensus is provided and rebounds immediately when removed—with no cumulative drift across rounds. A continuous-consensus variant produces monotonic convergence to near-zero JSD. Coupling is driven entirely by the immediate prompt context, contradicting the cumulative convergence predicted by classical opinion dynamics models.</p>
+</div>
+</li>
+</ol>
+</div>
+</section>
+<section id="S2" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">2 </span>Related Work</h2>
+
+<section id="S2.SS1" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">2.1 </span>Multi-Agent LLM Systems</h3>
+
+<div id="S2.SS1.p1" class="ltx_para ltx_noindent">
+<p id="S2.SS1.p1.1" class="ltx_p">Multi-agent LLM systems use communication for collaborative reasoning <cite class="ltx_cite ltx_citemacro_cite">Du<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib8" title="Improving factuality and reasoning in language models through multiagent debate" class="ltx_ref">2024</a>); Wu<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib10" title="AutoGen: enabling next-gen LLM applications via multi-agent conversation" class="ltx_ref">2024</a>)</cite>, debate <cite class="ltx_cite ltx_citemacro_cite">Li<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib7" title="CAMEL: communicative agents for “mind” exploration of large language model society" class="ltx_ref">2023</a>); Chu<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib23" title="Exploring and controlling diversity in LLM-agent conversation" class="ltx_ref">2025</a>)</cite>, consensus-building across diverse agents <cite class="ltx_cite ltx_citemacro_cite">Chen<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib11" title="ReConcile: round-table conference improves reasoning via consensus among diverse LLMs" class="ltx_ref">2024</a>); Wu and Ito (<a href="#bib.bib12" title="The hidden strength of disagreement: unraveling the consensus-diversity tradeoff in adaptive multi-agent systems" class="ltx_ref">2025</a>)</cite>, and social simulation <cite class="ltx_cite ltx_citemacro_cite">Park<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib9" title="Generative agents: interactive simulacra of human behavior" class="ltx_ref">2023</a>)</cite>. These systems typically assume that communication either improves or does not harm output quality. Our work tests this assumption by measuring whether communication <em id="S2.SS1.p1.1.1" class="ltx_emph ltx_font_italic">changes the output distribution itself</em>, independent of task accuracy.</p>
+</div>
+</section>
+<section id="S2.SS2" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">2.2 </span>Convergence and Collapse Phenomena</h3>
+
+<div id="S2.SS2.p1" class="ltx_para ltx_noindent">
+<p id="S2.SS2.p1.1" class="ltx_p">Representational collapse in LLM committees <cite class="ltx_cite ltx_citemacro_cite">Patel (<a href="#bib.bib13" title="Representational collapse in multi-agent LLM committees: measurement and diversity-aware consensus" class="ltx_ref">2026</a>)</cite> documents how ensemble diversity degrades with repeated sampling; persona collapse and homogenization under role prompting has been further documented <cite class="ltx_cite ltx_citemacro_cite">Xiao<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib21" title="The chameleon’s limit: investigating persona collapse and homogenization in large language models" class="ltx_ref">2026</a>)</cite>. Emergent convergence across LLM agents has been observed in annotation tasks <cite class="ltx_cite ltx_citemacro_cite">Parfenova<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib14" title="Emergent convergence in multi-agent LLM annotation" class="ltx_ref">2025</a>)</cite>. Herding behavior in LLM-based multi-agent systems <cite class="ltx_cite ltx_citemacro_cite">Cho<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib15" title="Herd behavior: investigating peer influence in LLM-based multi-agent systems" class="ltx_ref">2025</a>)</cite> shows that agents align outputs with peers when exposed to peer confidence signals. Conformity and persona instability in multi-agent debate <cite class="ltx_cite ltx_citemacro_cite">Baltaji<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib16" title="Conformity, confabulation, and impersonation: persona inconstancy in multi-agent LLM collaboration" class="ltx_ref">2024</a>)</cite> reveal that LLM agents frequently change opinions due to perceived peer pressure—a vulnerability systematically benchmarked in KAIROS <cite class="ltx_cite ltx_citemacro_cite">Song<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib18" title="LLMs Can’t Handle Peer Pressure: Crumbling under Multi-Agent Social Interactions (KAIROS Benchmark)" class="ltx_ref">2025</a>)</cite> and further characterized in studies of opinion-change dynamics <cite class="ltx_cite ltx_citemacro_cite">Mehdizadeh and Hilbert (<a href="#bib.bib19" title="When your AI agent succumbs to peer-pressure: studying opinion-change dynamics of LLMs" class="ltx_ref">2025</a>)</cite> and social influence simulation <cite class="ltx_cite ltx_citemacro_cite">Lin<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib20" title="Towards simulating social influence dynamics with LLM-based multi-agents" class="ltx_ref">2025</a>)</cite>. Bayesian social learning in interacting agents <cite class="ltx_cite ltx_citemacro_cite">Jain and Krishnamurthy (<a href="#bib.bib17" title="Interacting large language model agents: interpretable models and social learning" class="ltx_ref">2024</a>)</cite> formalizes herding through statistical signal processing, while failure modes including cascading errors in multi-agent debate have been catalogued <cite class="ltx_cite ltx_citemacro_cite">Wynn<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib22" title="Talk isn’t always cheap: understanding failure modes in multi-agent debate" class="ltx_ref">2025</a>)</cite>. These studies focus on accuracy outcomes and behavioral patterns rather than providing a standardized, condition-normalized metric for quantifying coupling strength.</p>
+</div>
+</section>
+<section id="S2.SS3" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">2.3 </span>Opinion Dynamics</h3>
+
+<div id="S2.SS3.p1" class="ltx_para ltx_noindent">
+<p id="S2.SS3.p1.1" class="ltx_p">Classical opinion dynamics models—including DeGroot weighted averaging <cite class="ltx_cite ltx_citemacro_cite">DeGroot (<a href="#bib.bib1" title="Reaching a consensus" class="ltx_ref">1974</a>)</cite>, Friedkin-Johnsen social influence <cite class="ltx_cite ltx_citemacro_cite">Friedkin and Johnsen (<a href="#bib.bib2" title="Social influence and opinions" class="ltx_ref">1990</a>)</cite>, bounded confidence <cite class="ltx_cite ltx_citemacro_cite">Hegselmann and Krause (<a href="#bib.bib3" title="Opinion dynamics and bounded confidence: models, analysis and simulation" class="ltx_ref">2002</a>); Deffuant<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib4" title="Mixing beliefs among interacting agents" class="ltx_ref">2000</a>)</cite>, and broader taxonomies of social influence <cite class="ltx_cite ltx_citemacro_cite">Flache<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib5" title="Models of social influence: towards the next frontiers" class="ltx_ref">2017</a>); Hassani<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib6" title="Classical dynamic consensus and opinion dynamics models: a survey of recent trends and methodologies" class="ltx_ref">2022</a>)</cite>—predict that agents converge toward a weighted consensus under repeated averaging. Our work tests whether LLM agents follow these predictions. The key distinction is that DeGroot-style models assume persistent internal states that accumulate across rounds, while our data suggest that LLM coupling is stateless—driven by the current prompt context alone.</p>
+</div>
+</section>
+</section>
+<section id="S3" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">3 </span>Methods</h2>
+
+<section id="S3.SS1" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">3.1 </span>Protocol Overview</h3>
+
+<div id="S3.SS1.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS1.p1.3" class="ltx_p">Each experiment consists of <math id="S3.SS1.p1.1.m1" class="ltx_Math" alttext="K" display="inline" intent=":literal"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math> agents iteratively analyzing a stimulus over <math id="S3.SS1.p1.2.m2" class="ltx_Math" alttext="T=10" display="inline" intent=":literal"><semantics><mrow><mi>T</mi><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">T=10</annotation></semantics></math> timesteps. For <span id="S3.SS1.p1.3.1" class="ltx_text ltx_font_bold">text conditions</span> (C1, C3), agents receive a general instruction to assess gender stereotypes in occupational scenarios; no explicit passage is provided in the main experiment, so responses reflect model priors. For <span id="S3.SS1.p1.3.2" class="ltx_text ltx_font_bold">image conditions</span> (C5), procedurally generated synthetic scene images (512<math id="S3.SS1.p1.3.m3" class="ltx_Math" alttext="\times" display="inline" intent=":literal"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math>384, five occupational scenes: boardroom, nursing, construction, classroom, server_room) are provided via GPT-4o’s vision API, and agents produce structured probability assessments of the visual content—outputting the same 5-category probability distributions as text conditions.</p>
+</div>
+<div id="S3.SS1.p2" class="ltx_para ltx_noindent">
+<p id="S3.SS1.p2.1" class="ltx_p">To test whether the absence of a concrete text stimulus affects coupling, we replicated C3 Sync with explicit text passages (N=5 pilot; C3 Sync CAF dropped from 0.80 to <math id="S3.SS1.p2.1.m1" class="ltx_Math" alttext="\approx" display="inline" intent=":literal"><semantics><mo>≈</mo><annotation encoding="application/x-tex">\approx</annotation></semantics></math>0.60—a directional trend consistent with the no-stimulus design being conservative—but the N=5 result is preliminary and flagged as such; full N=30 replication pending).</p>
+</div>
+</section>
+<section id="S3.SS2" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">3.2 </span>Communication Protocol</h3>
+
+<section id="S3.SS2.SSS0.Px1" class="ltx_paragraph">
+<h4 class="ltx_title ltx_title_paragraph">Independent response.</h4>
+
+<div id="S3.SS2.SSS0.Px1.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS2.SSS0.Px1.p1.1" class="ltx_p">Each agent independently calls GPT-4o’s API with its persona-specific system prompt and temperature. Five personas are used: activist (temperature 1.1, gender equality advocate), traditionalist (0.9, tradition-oriented perspective), data_driven (1.0, evidence-based sociologist), intersectional (1.0, intersectionality researcher), and literalist (0.8, textual formalist). Persona variation is a deliberate design choice to prevent artificially low baseline diversity from identical sampling parameters.</p>
+</div>
+</section>
+<section id="S3.SS2.SSS0.Px2" class="ltx_paragraph">
+<h4 class="ltx_title ltx_title_paragraph">Jensen-Shannon Divergence computation.</h4>
+
+<div id="S3.SS2.SSS0.Px2.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS2.SSS0.Px2.p1.4" class="ltx_p">Agents output 5-category probability distributions (neutral, biased_female, biased_male, stereotype_avoidant, stereotype_reinforcing). For each agent, <math id="S3.SS2.SSS0.Px2.p1.1.m1" class="ltx_Math" alttext="\text{JSD}(p_{\text{old}},p_{\text{new}})" display="inline" intent=":literal"><semantics><mrow><mtext>JSD</mtext><mo lspace="0em" rspace="0em">​</mo><mrow><mo stretchy="false">(</mo><msub><mi>p</mi><mtext>old</mtext></msub><mo>,</mo><msub><mi>p</mi><mtext>new</mtext></msub><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\text{JSD}(p_{\text{old}},p_{\text{new}})</annotation></semantics></math> is computed between its previous-round strategy (<math id="S3.SS2.SSS0.Px2.p1.2.m2" class="ltx_Math" alttext="p_{\text{old}}" display="inline" intent=":literal"><semantics><msub><mi>p</mi><mtext>old</mtext></msub><annotation encoding="application/x-tex">p_{\text{old}}</annotation></semantics></math>—the blended probability vector after neighbor influence, if any) and its current API output (<math id="S3.SS2.SSS0.Px2.p1.3.m3" class="ltx_Math" alttext="p_{\text{new}}" display="inline" intent=":literal"><semantics><msub><mi>p</mi><mtext>new</mtext></msub><annotation encoding="application/x-tex">p_{\text{new}}</annotation></semantics></math>). This intra-agent metric measures how much each agent’s output shifts relative to its consensus-informed anchor; lower JSD indicates greater consistency (the agent is pulled toward the blended strategy). The per-step aggregate JSD is the mean across all <math id="S3.SS2.SSS0.Px2.p1.4.m4" class="ltx_Math" alttext="K" display="inline" intent=":literal"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math> agents. CAF aggregates across all 10 rounds (consensus-on and consensus-off).</p>
+</div>
+</section>
+<section id="S3.SS2.SSS0.Px3" class="ltx_paragraph">
+<h4 class="ltx_title ltx_title_paragraph">Protocol injection.</h4>
+
+<div id="S3.SS2.SSS0.Px3.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS2.SSS0.Px3.p1.1" class="ltx_p">At cooldown boundaries (every 3 steps), each agent receives a protocol message containing: (i) its own blended distribution from the prior round, (ii) the mean distribution of all other agents, and (iii) an emphasis instruction (e.g., “weight your own output at 60% and neighbor consensus at 40%”). Protocol messages persist for 3 consecutive steps until the next sync event, meaning neighbor influence is present in rounds 5–10 but absent from rounds 1–4. This design enables the within-run consensus-toggle analysis in Section <a href="#S4.SS6" title="4.6 Per-Round Dynamics: Coupling is Stateless ‣ 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">4.6</span></a>.</p>
+</div>
+</section>
+<section id="S3.SS2.SSS0.Px4" class="ltx_paragraph">
+<h4 class="ltx_title ltx_title_paragraph">Blending mechanics.</h4>
+
+<div id="S3.SS2.SSS0.Px4.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS2.SSS0.Px4.p1.4" class="ltx_p">The blending weight <math id="S3.SS2.SSS0.Px4.p1.1.m1" class="ltx_Math" alttext="w\sim\text{Beta}(\alpha,\beta)" display="inline" intent=":literal"><semantics><mrow><mi>w</mi><mo>∼</mo><mrow><mtext>Beta</mtext><mo lspace="0em" rspace="0em">​</mo><mrow><mo stretchy="false">(</mo><mi>α</mi><mo>,</mo><mi>β</mi><mo stretchy="false">)</mo></mrow></mrow></mrow><annotation encoding="application/x-tex">w\sim\text{Beta}(\alpha,\beta)</annotation></semantics></math> controls the emphasis instruction in the protocol message, with default <math id="S3.SS2.SSS0.Px4.p1.2.m2" class="ltx_Math" alttext="\alpha=3,\beta=2" display="inline" intent=":literal"><semantics><mrow><mrow><mi>α</mi><mo>=</mo><mn>3</mn></mrow><mo>,</mo><mrow><mi>β</mi><mo>=</mo><mn>2</mn></mrow></mrow><annotation encoding="application/x-tex">\alpha=3,\beta=2</annotation></semantics></math> giving expected self-weight <math id="S3.SS2.SSS0.Px4.p1.3.m3" class="ltx_Math" alttext="3/5=0.6" display="inline" intent=":literal"><semantics><mrow><mrow><mn>3</mn><mo>/</mo><mn>5</mn></mrow><mo>=</mo><mn>0.6</mn></mrow><annotation encoding="application/x-tex">3/5=0.6</annotation></semantics></math> and expected neighbor-weight <math id="S3.SS2.SSS0.Px4.p1.4.m4" class="ltx_Math" alttext="2/5=0.4" display="inline" intent=":literal"><semantics><mrow><mrow><mn>2</mn><mo>/</mo><mn>5</mn></mrow><mo>=</mo><mn>0.4</mn></mrow><annotation encoding="application/x-tex">2/5=0.4</annotation></semantics></math>. Blending is implemented as <span id="S3.SS2.SSS0.Px4.p1.4.1" class="ltx_text ltx_font_italic">text concatenation</span> in the prompt—the agent’s own output and neighbor consensus are inserted as labeled sections—reflecting the realistic constraint that production APIs accept natural language prompts rather than vector operations.</p>
+</div>
+</section>
+<section id="S3.SS2.SSS0.Px5" class="ltx_paragraph">
+<h4 class="ltx_title ltx_title_paragraph">Self-anchoring caveat.</h4>
+
+<div id="S3.SS2.SSS0.Px5.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS2.SSS0.Px5.p1.1" class="ltx_p">Protocol messages include each agent’s <em id="S3.SS2.SSS0.Px5.p1.1.1" class="ltx_emph ltx_font_italic">own</em> prior output plus explicit blending weights, which could reduce JSD through self-anchoring alone (agents becoming more consistent with their own prior) independent of neighbor influence. A “self-only” control (own output plus weighting instruction, without neighbor information) would isolate the social coupling contribution; without it, reported CAF reductions should be interpreted as an upper bound on social coupling strength (see Section <a href="#S6" title="6 Limitations ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">6</span></a>).</p>
+</div>
+</section>
+</section>
+<section id="S3.SS3" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">3.3 </span>CAF Metric and Statistical Framework</h3>
+
+<section id="S3.SS3.SSS0.Px1" class="ltx_paragraph">
+<h4 class="ltx_title ltx_title_paragraph">Definition.</h4>
+
+<div id="S3.SS3.SSS0.Px1.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS3.SSS0.Px1.p1.6" class="ltx_p"><math id="S3.SS3.SSS0.Px1.p1.1.m1" class="ltx_Math" alttext="\text{CAF}=\bar{\text{JSD}}_{\text{cond}}/\bar{\text{JSD}}_{\text{baseline}}" display="inline" intent=":literal"><semantics><mrow><mtext>CAF</mtext><mo>=</mo><mrow><msub><mover accent="true"><mtext>JSD</mtext><mo>¯</mo></mover><mtext>cond</mtext></msub><mo>/</mo><msub><mover accent="true"><mtext>JSD</mtext><mo>¯</mo></mover><mtext>baseline</mtext></msub></mrow></mrow><annotation encoding="application/x-tex">\text{CAF}=\bar{\text{JSD}}_{\text{cond}}/\bar{\text{JSD}}_{\text{baseline}}</annotation></semantics></math>, where <math id="S3.SS3.SSS0.Px1.p1.2.m2" class="ltx_Math" alttext="\bar{\text{JSD}}" display="inline" intent=":literal"><semantics><mover accent="true"><mtext>JSD</mtext><mo>¯</mo></mover><annotation encoding="application/x-tex">\bar{\text{JSD}}</annotation></semantics></math> is the mean per-step JSD across all agents and rounds. C1 (isolated baseline, <math id="S3.SS3.SSS0.Px1.p1.3.m3" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math>, no communication) provides the denominator. Values <math id="S3.SS3.SSS0.Px1.p1.4.m4" class="ltx_Math" alttext="&lt;1" display="inline" intent=":literal"><semantics><mrow><mi></mi><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">&lt;1</annotation></semantics></math> indicate homogenization (communication reduces per-agent output shift), <math id="S3.SS3.SSS0.Px1.p1.5.m5" class="ltx_Math" alttext="\approx 1" display="inline" intent=":literal"><semantics><mrow><mi></mi><mo>≈</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\approx 1</annotation></semantics></math> indicate independence, and <math id="S3.SS3.SSS0.Px1.p1.6.m6" class="ltx_Math" alttext="&gt;1" display="inline" intent=":literal"><semantics><mrow><mi></mi><mo>&gt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">&gt;1</annotation></semantics></math> indicate diversification (communication increases output shift).</p>
+</div>
+</section>
+<section id="S3.SS3.SSS0.Px2" class="ltx_paragraph">
+<h4 class="ltx_title ltx_title_paragraph">Strategy definition.</h4>
+
+<div id="S3.SS3.SSS0.Px2.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS3.SSS0.Px2.p1.1" class="ltx_p">An agent’s “previous-round strategy” is the probability vector from the prior round <em id="S3.SS3.SSS0.Px2.p1.1.1" class="ltx_emph ltx_font_italic">after</em> any blending with neighbor outputs. This blended strategy vector persists unchanged through the 3-step cooldown window and is presented verbatim in the next prompt as “Your previous blended preference distribution is [vector].” The same definition applies across all conditions (text/image) and group sizes (<math id="S3.SS3.SSS0.Px2.p1.1.m1" class="ltx_Math" alttext="K" display="inline" intent=":literal"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math>).</p>
+</div>
+</section>
+<section id="S3.SS3.SSS0.Px3" class="ltx_paragraph">
+<h4 class="ltx_title ltx_title_paragraph">Bootstrap and bias correction.</h4>
+
+<div id="S3.SS3.SSS0.Px3.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS3.SSS0.Px3.p1.4" class="ltx_p">Bootstrap 95% confidence intervals are computed via ratio-of-means resampling (2,000 draws, seed 43), independently resampling the flattened per-rep JSD arrays for the condition and baseline, taking the ratio of means at each draw. Each of the <math id="S3.SS3.SSS0.Px3.p1.1.m1" class="ltx_Math" alttext="N" display="inline" intent=":literal"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math> independent repetitions is the exchangeable unit, avoiding within-run dependence concerns. All CAF values reported in tables and text are raw (uncorrected) point estimates. Jackknife bias correction is applied as a sensitivity check; the correction magnitude is <math id="S3.SS3.SSS0.Px3.p1.2.m2" class="ltx_Math" alttext="\leq" display="inline" intent=":literal"><semantics><mo>≤</mo><annotation encoding="application/x-tex">\leq</annotation></semantics></math>0.003 for all GPT-4o N=30 conditions (e.g., C3 Sync: 0.8029 <math id="S3.SS3.SSS0.Px3.p1.3.m3" class="ltx_Math" alttext="\rightarrow" display="inline" intent=":literal"><semantics><mo stretchy="false">→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> 0.8006; C5 Sync: 1.0563 <math id="S3.SS3.SSS0.Px3.p1.4.m4" class="ltx_Math" alttext="\rightarrow" display="inline" intent=":literal"><semantics><mo stretchy="false">→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> 1.0541). At smaller N (Qwen N=10, stimulus pilot N=5), raw CAF values are reported without correction and flagged as preliminary.</p>
+</div>
+</section>
+<section id="S3.SS3.SSS0.Px4" class="ltx_paragraph">
+<h4 class="ltx_title ltx_title_paragraph">Cross-protocol note.</h4>
+
+<div id="S3.SS3.SSS0.Px4.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS3.SSS0.Px4.p1.1" class="ltx_p">The per-round dynamics analysis (Section <a href="#S4.SS6" title="4.6 Per-Round Dynamics: Coupling is Stateless ‣ 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">4.6</span></a>) uses a variant protocol with 10 discourse-analysis categories (vs. 5 in the main experiment). JSD values from the two protocols are in different measurement spaces and should not be directly compared numerically; only the qualitative pattern transfers across protocols. An embedding-based replication with <span id="S3.SS3.SSS0.Px4.p1.1.1" class="ltx_text ltx_font_typewriter">all-MiniLM-L6-v2</span> sentence embeddings (N=10, 384-dimensional vectors binned into 10 equal-frequency bins) bridges the two protocols.</p>
+</div>
+</section>
+</section>
+<section id="S3.SS4" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">3.4 </span>Experimental Conditions and Controls</h3>
+
+<div id="S3.SS4.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS4.p1.3" class="ltx_p"><span id="S3.SS4.p1.3.1" class="ltx_text ltx_font_bold">Conditions.</span> Three core conditions: C1 (isolated baseline, <math id="S3.SS4.p1.1.m1" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math>, no communication); C3 (text communication, <math id="S3.SS4.p1.2.m2" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math>, BOUNDARY_SYNC enabled); and C5 (image communication, <math id="S3.SS4.p1.3.m3" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math>, BOUNDARY_SYNC with real vision API). A no-sync ablation disables the protocol message while keeping all other parameters identical, producing independent (non-communicating) agents as controls.</p>
+</div>
+<div id="S3.SS4.p2" class="ltx_para ltx_noindent">
+<p id="S3.SS4.p2.1" class="ltx_p"><span id="S3.SS4.p2.1.1" class="ltx_text ltx_font_bold">Controls and replications.</span> We include the following experimental controls to isolate specific mechanisms and assess robustness:</p>
+</div>
+<div id="S3.SS4.p3" class="ltx_para ltx_noindent">
+<ul id="S3.I1" class="ltx_itemize">
+<li id="S3.I1.i1" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">•</span> 
+<div id="S3.I1.i1.p1" class="ltx_para">
+<p id="S3.I1.i1.p1.1" class="ltx_p"><span id="S3.I1.i1.p1.1.1" class="ltx_text ltx_font_bold">Blend ratio robustness:</span> C3 and C5 repeated with Beta(3,3) giving expected neighbor-weight 0.5 (vs. default 0.4), N=30.</p>
+</div>
+</li>
+<li id="S3.I1.i2" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">•</span> 
+<div id="S3.I1.i2.p1" class="ltx_para">
+<p id="S3.I1.i2.p1.1" class="ltx_p"><span id="S3.I1.i2.p1.1.1" class="ltx_text ltx_font_bold">Prompt perturbation:</span> C3 with irrelevant Wikipedia text replacing neighbor consensus, testing whether the effect is specifically social (peer-driven) or generic (any extra prompt content), N=30 for GPT-4o, N=10 for Qwen3.7-Plus.</p>
+</div>
+</li>
+<li id="S3.I1.i3" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">•</span> 
+<div id="S3.I1.i3.p1" class="ltx_para">
+<p id="S3.I1.i3.p1.2" class="ltx_p"><span id="S3.I1.i3.p1.2.1" class="ltx_text ltx_font_bold">Group size variation:</span> C3 replicated with <math id="S3.I1.i3.p1.1.m1" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math> agents, C5 extended to <math id="S3.I1.i3.p1.2.m2" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> agents, both N=30.</p>
+</div>
+</li>
+<li id="S3.I1.i4" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">•</span> 
+<div id="S3.I1.i4.p1" class="ltx_para">
+<p id="S3.I1.i4.p1.1" class="ltx_p"><span id="S3.I1.i4.p1.1.1" class="ltx_text ltx_font_bold">Cross-model replication:</span> DeepSeek V4 Pro (N=30) and Qwen3.7-Plus (N=10).</p>
+</div>
+</li>
+<li id="S3.I1.i5" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">•</span> 
+<div id="S3.I1.i5.p1" class="ltx_para">
+<p id="S3.I1.i5.p1.1" class="ltx_p"><span id="S3.I1.i5.p1.1.1" class="ltx_text ltx_font_bold">Per-round dynamics:</span> C3 with per-round JSD logging (<span id="S3.I1.i5.p1.1.2" class="ltx_text ltx_markedasmath ltx_font_typewriter">--log-rounds</span>), N=10, using both category-probability and embedding-based measurement protocols.</p>
+</div>
+</li>
+<li id="S3.I1.i6" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">•</span> 
+<div id="S3.I1.i6.p1" class="ltx_para">
+<p id="S3.I1.i6.p1.1" class="ltx_p"><span id="S3.I1.i6.p1.1.1" class="ltx_text ltx_font_bold">Continuous consensus:</span> C3 with single-step protocol injection (<span id="S3.I1.i6.p1.1.2" class="ltx_text ltx_markedasmath ltx_font_typewriter">--toggle-step 1</span>), N=10.</p>
+</div>
+</li>
+</ul>
+</div>
+<div id="S3.SS4.p4" class="ltx_para ltx_noindent">
+<p id="S3.SS4.p4.3" class="ltx_p">All main experiments use GPT-4o (gpt-4o-2024-05-13) accessed via an Azure OpenAI-compatible endpoint. Default parameters: temperature 0.7–1.1 (persona-specific), <math id="S3.SS4.p4.1.m1" class="ltx_Math" alttext="\text{max\_tokens}=256" display="inline" intent=":literal"><semantics><mrow><mtext>max_tokens</mtext><mo>=</mo><mn>256</mn></mrow><annotation encoding="application/x-tex">\text{max\_tokens}=256</annotation></semantics></math>, cooldown between repetitions: 2 seconds. Statistical analysis uses Welch’s <math id="S3.SS4.p4.2.m2" class="ltx_Math" alttext="t" display="inline" intent=":literal"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>-test (unequal variance), Hedges’ <math id="S3.SS4.p4.3.m3" class="ltx_Math" alttext="g" display="inline" intent=":literal"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math> for effect size, and bootstrap confidence intervals.</p>
+</div>
+</section>
+<section id="S3.SS5" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">3.5 </span>Reproducibility</h3>
+
+<div id="S3.SS5.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS5.p1.1" class="ltx_p">All experiments use a fixed GPT-4o model version (gpt-4o-2024-05-13) accessed through an Azure OpenAI-compatible API endpoint with deterministic low-temperature sampling. The complete experiment involved approximately 9,900 real API calls across three independent runs (N=30 per condition). Bootstrap confidence intervals use 2,000 resamples with seed 43 throughout; jackknife estimates confirm that the standard error contribution from resampling is negligible (<math id="S3.SS5.p1.1.m1" class="ltx_Math" alttext="\leq" display="inline" intent=":literal"><semantics><mo>≤</mo><annotation encoding="application/x-tex">\leq</annotation></semantics></math>0.003 at N=30). The noisy DeGroot simulation code, stimulus images, full experimental logs, and analysis scripts are included in a reproducibility package (available in the Supplementary Materials; code and data will be publicly released under an open license upon acceptance). All statistical tests, effect sizes, and confidence intervals reported in this paper are reproducible from the provided data and scripts. The Supplementary Materials contain additional figures, per-round trajectory data, cross-model cosine similarity measurements, and a detailed simulation methodology description.</p>
+</div>
+</section>
+<section id="S3.SS6" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">3.6 </span>Noisy DeGroot Simulation</h3>
+
+<div id="S3.SS6.p1" class="ltx_para ltx_noindent">
+<p id="S3.SS6.p1.7" class="ltx_p">We implement a noisy DeGroot model as a mathematical baseline. The simulation draws <math id="S3.SS6.p1.1.m1" class="ltx_Math" alttext="K" display="inline" intent=":literal"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math> initial opinion vectors from a Dirichlet distribution with concentration <math id="S3.SS6.p1.2.m2" class="ltx_Math" alttext="\alpha" display="inline" intent=":literal"><semantics><mi>α</mi><annotation encoding="application/x-tex">\alpha</annotation></semantics></math> (C3: <math id="S3.SS6.p1.3.m3" class="ltx_Math" alttext="\alpha=12" display="inline" intent=":literal"><semantics><mrow><mi>α</mi><mo>=</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">\alpha=12</annotation></semantics></math>, low initial diversity; C5: <math id="S3.SS6.p1.4.m4" class="ltx_Math" alttext="\alpha=2" display="inline" intent=":literal"><semantics><mrow><mi>α</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">\alpha=2</annotation></semantics></math>, high initial diversity), then iteratively blends them using Beta(3,2) weights with Dirichlet re-sampling (concentration <math id="S3.SS6.p1.5.m5" class="ltx_Math" alttext="\tau" display="inline" intent=":literal"><semantics><mi>τ</mi><annotation encoding="application/x-tex">\tau</annotation></semantics></math>: C3=400, low noise; C5=10, high noise) to simulate stochastic agent outputs. Parameter choices mirror the empirical conditions: C3 uses <math id="S3.SS6.p1.6.m6" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> agents, low noise, and low initial diversity (matching the constrained text output space); C5 uses <math id="S3.SS6.p1.7.m7" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math> agents, high noise, and high initial diversity (matching the higher-variance image description space). We run 2,000 independent simulation runs per condition and compute CAF reference values for comparison with real API results. Simulation code is included in the reproducibility package.</p>
+</div>
+</section>
+</section>
+<section id="S4" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">4 </span>Results</h2>
+
+<section id="S4.SS1" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.1 </span>Text Communication Causes Significant Homogenization</h3>
+
+<figure id="S4.T1" class="ltx_table">
+<table id="S4.T1.12" class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr id="S4.T1.2.2" class="ltx_tr">
+<th id="S4.T1.2.2.3" class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_th_row ltx_border_tt">Condition</th>
+<th id="S4.T1.2.2.4" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">CAF [95% CI]</th>
+<th id="S4.T1.2.2.5" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">Classification</th>
+<th id="S4.T1.1.1.1" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">JSD (mean <math id="S4.T1.1.1.1.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> std)</th>
+<th id="S4.T1.2.2.2" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">vs NoSync (<math id="S4.T1.2.2.2.m1" class="ltx_Math" alttext="d" display="inline" intent=":literal"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>)</th>
+</tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr id="S4.T1.7.7" class="ltx_tr">
+<th id="S4.T1.3.3.1" class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t">C3 Sync (<math id="S4.T1.3.3.1.m1" class="ltx_Math" alttext="K{=}5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K{=}5</annotation></semantics></math>)</th>
+<td id="S4.T1.7.7.6" class="ltx_td ltx_align_center ltx_border_t"><span id="S4.T1.7.7.6.1" class="ltx_text ltx_font_bold">0.803 [0.740, 0.873]</span></td>
+<td id="S4.T1.4.4.2" class="ltx_td ltx_align_center ltx_border_t">SUB<sup id="S4.T1.4.4.2.1" class="ltx_sup"><span id="S4.T1.4.4.2.1.1" class="ltx_text ltx_font_italic">∗∗∗</span></sup>
+</td>
+<td id="S4.T1.5.5.3" class="ltx_td ltx_align_center ltx_border_t">0.170 <math id="S4.T1.5.5.3.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> 0.031</td>
+<td id="S4.T1.7.7.5" class="ltx_td ltx_align_center ltx_border_t">
+<math id="S4.T1.6.6.4.m1" class="ltx_Math" alttext="d" display="inline" intent=":literal"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>=1.30<sup id="S4.T1.7.7.5.1" class="ltx_sup"><span id="S4.T1.7.7.5.1.1" class="ltx_text ltx_font_italic">∗∗∗</span></sup>
+</td>
+</tr>
+<tr id="S4.T1.8.8" class="ltx_tr">
+<th id="S4.T1.8.8.2" class="ltx_td ltx_align_left ltx_th ltx_th_row">C3 NoSync</th>
+<td id="S4.T1.8.8.3" class="ltx_td ltx_align_center">0.978 [0.912, 1.050]</td>
+<td id="S4.T1.8.8.4" class="ltx_td ltx_align_center">INDEP n.s.</td>
+<td id="S4.T1.8.8.1" class="ltx_td ltx_align_center">0.208 <math id="S4.T1.8.8.1.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> 0.028</td>
+<td id="S4.T1.8.8.5" class="ltx_td ltx_align_center">—</td>
+</tr>
+<tr id="S4.T1.11.11" class="ltx_tr">
+<th id="S4.T1.9.9.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">C3 Sync (<math id="S4.T1.9.9.1.m1" class="ltx_Math" alttext="\bar{w}{=}0.5" display="inline" intent=":literal"><semantics><mrow><mover accent="true"><mi>w</mi><mo>¯</mo></mover><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">\bar{w}{=}0.5</annotation></semantics></math>)</th>
+<td id="S4.T1.11.11.4" class="ltx_td ltx_align_center"><span id="S4.T1.11.11.4.1" class="ltx_text ltx_font_bold">0.798 [0.740, 0.864]</span></td>
+<td id="S4.T1.10.10.2" class="ltx_td ltx_align_center">SUB<sup id="S4.T1.10.10.2.1" class="ltx_sup"><span id="S4.T1.10.10.2.1.1" class="ltx_text ltx_font_italic">∗∗∗</span></sup>
+</td>
+<td id="S4.T1.11.11.3" class="ltx_td ltx_align_center">0.174 <math id="S4.T1.11.11.3.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> 0.021</td>
+<td id="S4.T1.11.11.5" class="ltx_td ltx_align_center">—</td>
+</tr>
+<tr id="S4.T1.12.12" class="ltx_tr">
+<th id="S4.T1.12.12.2" class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_bb">C1 Baseline</th>
+<td id="S4.T1.12.12.3" class="ltx_td ltx_align_center ltx_border_bb">—</td>
+<td id="S4.T1.12.12.4" class="ltx_td ltx_align_center ltx_border_bb">—</td>
+<td id="S4.T1.12.12.1" class="ltx_td ltx_align_center ltx_border_bb">0.212 <math id="S4.T1.12.12.1.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> 0.045</td>
+<td id="S4.T1.12.12.5" class="ltx_td ltx_align_center ltx_border_bb">—</td>
+</tr>
+</tbody>
+</table>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table">Table 1: </span>Text coupling results (GPT-4o, N=30). Raw CAF values reported; jackknife correction is <math id="S4.T1.15.m1" class="ltx_Math" alttext="\leq" display="inline" intent=":literal"><semantics><mo>≤</mo><annotation encoding="application/x-tex">\leq</annotation></semantics></math>0.003 for all conditions. SUB = significant homogenization (<math id="S4.T1.16.m2" class="ltx_Math" alttext="p&lt;0.001" display="inline" intent=":literal"><semantics><mrow><mi>p</mi><mo>&lt;</mo><mn>0.001</mn></mrow><annotation encoding="application/x-tex">p&lt;0.001</annotation></semantics></math>, CI entirely below 1.0). INDEP = CAF not significantly different from 1.0 (CI crosses 1.0).</figcaption>
+</figure>
+<div id="S4.SS1.p1" class="ltx_para ltx_noindent">
+<p id="S4.SS1.p1.3" class="ltx_p">When BOUNDARY_SYNC is enabled, text-based communication reduces per-agent output shift by approximately 20% relative to baseline (CAF=0.803, Table <a href="#S4.T1" title="Table 1 ‣ 4.1 Text Communication Causes Significant Homogenization ‣ 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">1</span></a>), classifying as SUB (homogenization) with high confidence (CI entirely below 1.0). Lower JSD under communication indicates that blending pulls agent strategies toward consensus, making each agent’s output more consistent with its (now-converged) strategy—the mechanism underlying homogenization. The effect size is large (<math id="S4.SS1.p1.1.m1" class="ltx_Math" alttext="d=1.30" display="inline" intent=":literal"><semantics><mrow><mi>d</mi><mo>=</mo><mn>1.30</mn></mrow><annotation encoding="application/x-tex">d=1.30</annotation></semantics></math> vs. no-sync, <math id="S4.SS1.p1.2.m2" class="ltx_Math" alttext="p&lt;0.001" display="inline" intent=":literal"><semantics><mrow><mi>p</mi><mo>&lt;</mo><mn>0.001</mn></mrow><annotation encoding="application/x-tex">p&lt;0.001</annotation></semantics></math>). The no-sync ablation confirms causality: CAF=0.978, CI crosses 1.0, JSD statistically indistinguishable from baseline (<math id="S4.SS1.p1.3.m3" class="ltx_Math" alttext="d=0.15" display="inline" intent=":literal"><semantics><mrow><mi>d</mi><mo>=</mo><mn>0.15</mn></mrow><annotation encoding="application/x-tex">d=0.15</annotation></semantics></math>, n.s.). Directionally, inter-agent cosine similarity (Supplementary Materials, Section S2; N=10 subset) corroborates the CAF-based pattern: sync conditions yield cosine similarity near 1.0, while no-sync conditions show lower inter-agent agreement.</p>
+</div>
+</section>
+<section id="S4.SS2" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.2 </span>Image Communication and Modality-Appropriate Baselines</h3>
+
+<div id="S4.SS2.p1" class="ltx_para ltx_noindent">
+<p id="S4.SS2.p1.1" class="ltx_p">Image conditions normalized by the text C1 baseline produce CAF values above 1.0 (C5 Sync: 1.056, C5 NoSync: 1.269). However, this cross-modal comparison is misleading: image-conditioned probability distributions show higher diversity than text-conditioned ones (C5 NoSync JSD=0.268)<span id="footnote2" class="ltx_note ltx_role_footnote"><sup class="ltx_note_mark">2</sup><span class="ltx_note_outer"><span class="ltx_note_content"><sup class="ltx_note_mark">2</sup><span class="ltx_tag ltx_tag_note">2</span>An earlier experimental run produced JSD=0.2625 for the same condition. We report the more recent value (0.268) throughout; the within-modality CAF computed from per-rep bootstrap resampling is consistent across both runs (0.834 vs. 0.853, with overlapping CIs).</span></span></span> We note a partial confound: text conditions lack an explicit stimulus passage (relying on model priors), while image conditions receive concrete visual input. Higher image JSD may reflect both modality differences <em id="S4.SS2.p1.1.1" class="ltx_emph ltx_font_italic">and</em> the effect of having a stimulus to analyze.</p>
+</div>
+<div id="S4.SS2.p2" class="ltx_para ltx_noindent">
+<p id="S4.SS2.p2.5" class="ltx_p">The appropriate <span id="S4.SS2.p2.5.1" class="ltx_text ltx_font_bold">within-modality CAF</span> uses each modality’s own no-communication baseline: <math id="S4.SS2.p2.1.m1" class="ltx_Math" alttext="\text{CAF}_{\text{text}}=0.170/0.208=0.816" display="inline" intent=":literal"><semantics><mrow><msub><mtext>CAF</mtext><mtext>text</mtext></msub><mo>=</mo><mrow><mn>0.170</mn><mo>/</mo><mn>0.208</mn></mrow><mo>=</mo><mn>0.816</mn></mrow><annotation encoding="application/x-tex">\text{CAF}_{\text{text}}=0.170/0.208=0.816</annotation></semantics></math> [0.776, 0.857]; <math id="S4.SS2.p2.2.m2" class="ltx_Math" alttext="\text{CAF}_{\text{image}}=0.224/0.268=0.834" display="inline" intent=":literal"><semantics><mrow><msub><mtext>CAF</mtext><mtext>image</mtext></msub><mo>=</mo><mrow><mn>0.224</mn><mo>/</mo><mn>0.268</mn></mrow><mo>=</mo><mn>0.834</mn></mrow><annotation encoding="application/x-tex">\text{CAF}_{\text{image}}=0.224/0.268=0.834</annotation></semantics></math> [0.811, 0.858]. <span id="S4.SS2.p2.5.2" class="ltx_text ltx_font_bold">Both modalities exhibit significant homogenization</span> of comparable proportional magnitude (CI overlap). However, the higher baseline diversity of image-conditioned outputs produces a larger <em id="S4.SS2.p2.5.3" class="ltx_emph ltx_font_italic">absolute</em> JSD reduction (<math id="S4.SS2.p2.3.m3" class="ltx_Math" alttext="\Delta=0.044" display="inline" intent=":literal"><semantics><mrow><mi mathvariant="normal">Δ</mi><mo>=</mo><mn>0.044</mn></mrow><annotation encoding="application/x-tex">\Delta=0.044</annotation></semantics></math> vs. 0.038 for text). Cross-modality absolute differences are large (C3 Sync vs. C5 NoSync: <math id="S4.SS2.p2.4.m4" class="ltx_Math" alttext="d=3.29" display="inline" intent=":literal"><semantics><mrow><mi>d</mi><mo>=</mo><mn>3.29</mn></mrow><annotation encoding="application/x-tex">d=3.29</annotation></semantics></math>, <math id="S4.SS2.p2.5.m5" class="ltx_Math" alttext="p&lt;10^{-17}" display="inline" intent=":literal"><semantics><mrow><mi>p</mi><mo>&lt;</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>17</mn></mrow></msup></mrow><annotation encoding="application/x-tex">p&lt;10^{-17}</annotation></semantics></math>).</p>
+</div>
+<div id="S4.SS2.p3" class="ltx_para ltx_noindent">
+<p id="S4.SS2.p3.1" class="ltx_p">The practical implication is that multi-modal systems face greater absolute homogenization risk for visual tasks because there is more initial diversity to lose, even though the proportional coupling strength is comparable. Within-modality CAF normalizes away baseline differences, isolating the communication effect itself.</p>
+</div>
+</section>
+<section id="S4.SS3" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.3 </span>Group Size Shifts Coupling Direction</h3>
+
+<div id="S4.SS3.p1" class="ltx_para ltx_noindent">
+<p id="S4.SS3.p1.4" class="ltx_p">A potential confound in the main experiment is that text conditions use <math id="S4.SS3.p1.1.m1" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> agents while image conditions use <math id="S4.SS3.p1.2.m2" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math>. To test whether group size affects coupling, we replicated C3 Sync with <math id="S4.SS3.p1.3.m3" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math> (N=30) and extended C5 Sync to <math id="S4.SS3.p1.4.m4" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> (N=30). The full matrix now provides size-matched comparisons:</p>
+</div>
+<figure id="S4.T2" class="ltx_table">
+<table id="S4.T2.6" class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr id="S4.T2.2.2" class="ltx_tr">
+<th id="S4.T2.2.2.3" class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_th_row ltx_border_tt">Condition</th>
+<th id="S4.T2.2.2.4" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_th_row ltx_border_tt">Modality</th>
+<th id="S4.T2.1.1.1" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt"><math id="S4.T2.1.1.1.m1" class="ltx_Math" alttext="K" display="inline" intent=":literal"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math></th>
+<th id="S4.T2.2.2.2" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">JSD <math id="S4.T2.2.2.2.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> std</th>
+<th id="S4.T2.2.2.5" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">CAF</th>
+</tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr id="S4.T2.3.3" class="ltx_tr">
+<th id="S4.T2.3.3.2" class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t">C3 Sync</th>
+<th id="S4.T2.3.3.3" class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_t">Text</th>
+<td id="S4.T2.3.3.4" class="ltx_td ltx_align_center ltx_border_t">5</td>
+<td id="S4.T2.3.3.1" class="ltx_td ltx_align_center ltx_border_t">0.170 <math id="S4.T2.3.3.1.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> 0.031</td>
+<td id="S4.T2.3.3.5" class="ltx_td ltx_align_center ltx_border_t">0.803</td>
+</tr>
+<tr id="S4.T2.4.4" class="ltx_tr">
+<th id="S4.T2.4.4.2" class="ltx_td ltx_align_left ltx_th ltx_th_row">C3 Sync</th>
+<th id="S4.T2.4.4.3" class="ltx_td ltx_align_center ltx_th ltx_th_row">Text</th>
+<td id="S4.T2.4.4.4" class="ltx_td ltx_align_center">3</td>
+<td id="S4.T2.4.4.1" class="ltx_td ltx_align_center">0.242 <math id="S4.T2.4.4.1.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> 0.029</td>
+<td id="S4.T2.4.4.5" class="ltx_td ltx_align_center">1.143<sup id="S4.T2.4.4.5.1" class="ltx_sup">†</sup>
+</td>
+</tr>
+<tr id="S4.T2.5.5" class="ltx_tr">
+<th id="S4.T2.5.5.2" class="ltx_td ltx_align_left ltx_th ltx_th_row">C5 Sync</th>
+<th id="S4.T2.5.5.3" class="ltx_td ltx_align_center ltx_th ltx_th_row">Image</th>
+<td id="S4.T2.5.5.4" class="ltx_td ltx_align_center">5</td>
+<td id="S4.T2.5.5.1" class="ltx_td ltx_align_center">0.156 <math id="S4.T2.5.5.1.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> 0.015</td>
+<td id="S4.T2.5.5.5" class="ltx_td ltx_align_center">0.738<sup id="S4.T2.5.5.5.1" class="ltx_sup">†</sup>
+</td>
+</tr>
+<tr id="S4.T2.6.6" class="ltx_tr">
+<th id="S4.T2.6.6.2" class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_bb">C5 Sync</th>
+<th id="S4.T2.6.6.3" class="ltx_td ltx_align_center ltx_th ltx_th_row ltx_border_bb">Image</th>
+<td id="S4.T2.6.6.4" class="ltx_td ltx_align_center ltx_border_bb">3</td>
+<td id="S4.T2.6.6.1" class="ltx_td ltx_align_center ltx_border_bb">0.224 <math id="S4.T2.6.6.1.m1" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math> 0.022</td>
+<td id="S4.T2.6.6.5" class="ltx_td ltx_align_center ltx_border_bb">1.056<sup id="S4.T2.6.6.5.1" class="ltx_sup">†</sup>
+</td>
+</tr>
+</tbody>
+</table>
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_table">Table 2: </span>Group size effects across modalities. <sup id="S4.T2.9.1" class="ltx_sup">†</sup>C1 baseline reuse via <span id="S4.T2.10.2" class="ltx_text ltx_font_typewriter">--c1-file</span> provides only a point-estimate mean (0.212), not per-rep baseline data; bootstrap CIs for these conditions require dedicated K=3 and K=5 C1 baseline experiments, which are planned for the next revision. Point estimates are reported pending CI computation.</figcaption>
+</figure>
+<div id="S4.SS3.p2" class="ltx_para ltx_noindent">
+<p id="S4.SS3.p2.10" class="ltx_p">Three findings emerge. First, group size <span id="S4.SS3.p2.10.1" class="ltx_text ltx_font_bold">shifts coupling direction</span> in both modalities: <math id="S4.SS3.p2.1.m1" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> produces homogenization (CAF <math id="S4.SS3.p2.2.m2" class="ltx_Math" alttext="&lt;" display="inline" intent=":literal"><semantics><mo>&lt;</mo><annotation encoding="application/x-tex">&lt;</annotation></semantics></math> 1), <math id="S4.SS3.p2.3.m3" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math> produces CAF <math id="S4.SS3.p2.4.m4" class="ltx_Math" alttext="&gt;" display="inline" intent=":literal"><semantics><mo>&gt;</mo><annotation encoding="application/x-tex">&gt;</annotation></semantics></math> 1.<sup id="S4.SS3.p2.10.2" class="ltx_sup">†</sup> The CAF shift is comparable across modalities (<math id="S4.SS3.p2.5.m5" class="ltx_Math" alttext="\Delta_{\text{text}}=0.340" display="inline" intent=":literal"><semantics><mrow><msub><mi mathvariant="normal">Δ</mi><mtext>text</mtext></msub><mo>=</mo><mn>0.340</mn></mrow><annotation encoding="application/x-tex">\Delta_{\text{text}}=0.340</annotation></semantics></math>, <math id="S4.SS3.p2.6.m6" class="ltx_Math" alttext="\Delta_{\text{image}}=0.318" display="inline" intent=":literal"><semantics><mrow><msub><mi mathvariant="normal">Δ</mi><mtext>image</mtext></msub><mo>=</mo><mn>0.318</mn></mrow><annotation encoding="application/x-tex">\Delta_{\text{image}}=0.318</annotation></semantics></math>), suggesting a modality-independent group-size effect. Second, size-matched comparisons are now possible: at <math id="S4.SS3.p2.7.m7" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math>, both text (CAF=0.803) and image (CAF=0.738) show significant homogenization; at <math id="S4.SS3.p2.8.m8" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math>, CAF values exceed 1.0 (1.143, 1.056), though without bootstrap CIs. Third, the image <math id="S4.SS3.p2.9.m9" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> condition produces the strongest homogenization of any condition tested (JSD=0.156, 8.2% below text <math id="S4.SS3.p2.10.m10" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> JSD=0.170), suggesting that when group size is equalized, image communication may be more susceptible to homogenization than text.</p>
+</div>
+<div id="S4.SS3.p3" class="ltx_para ltx_noindent">
+<p id="S4.SS3.p3.1" class="ltx_p">Group size is thus a <span id="S4.SS3.p3.1.1" class="ltx_text ltx_font_bold">primary design parameter</span> for multi-agent systems: larger groups amplify coupling through stronger and more coherent neighbor signals, while smaller groups may reverse it because the weaker neighbor signal (mean of only 2 others vs. 4) is insufficient to overcome agents’ tendency to differentiate. Systems benefiting from diversity (ensemble methods, brainstorming) should use small groups; systems requiring consensus (fact-verification) may prefer larger groups.</p>
+</div>
+</section>
+<section id="S4.SS4" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.4 </span>Prompt Perturbation Control Confirms Social Specificity</h3>
+
+<div id="S4.SS4.p1" class="ltx_para ltx_noindent">
+<p id="S4.SS4.p1.1" class="ltx_p">A confound in BOUNDARY_SYNC is that any extra text in the prompt—not specifically neighbor consensus—could constrain the output distribution, producing apparent homogenization as an artifact of increased prompt complexity. To isolate the <span id="S4.SS4.p1.1.1" class="ltx_text ltx_font_italic">social</span> component, we ran control conditions where agents received equal-length irrelevant Wikipedia text instead of neighbor outputs:</p>
+</div>
+<div id="S4.SS4.p2" class="ltx_para">
+<table id="S4.SS4.p2.1" class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr id="S4.SS4.p2.1.1.1" class="ltx_tr">
+<th id="S4.SS4.p2.1.1.1.1" class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_th_row ltx_border_tt">Model</th>
+<th id="S4.SS4.p2.1.1.1.2" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">Condition</th>
+<th id="S4.SS4.p2.1.1.1.3" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">CAF</th>
+<th id="S4.SS4.p2.1.1.1.4" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">Classification</th>
+</tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr id="S4.SS4.p2.1.2.1" class="ltx_tr">
+<th id="S4.SS4.p2.1.2.1.1" class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_t">GPT-4o (N=30)</th>
+<td id="S4.SS4.p2.1.2.1.2" class="ltx_td ltx_align_center ltx_border_t">C3 Sync (real consensus)</td>
+<td id="S4.SS4.p2.1.2.1.3" class="ltx_td ltx_align_center ltx_border_t">0.803 [0.740, 0.873]</td>
+<td id="S4.SS4.p2.1.2.1.4" class="ltx_td ltx_align_center ltx_border_t">SUB</td>
+</tr>
+<tr id="S4.SS4.p2.1.3.2" class="ltx_tr">
+<th id="S4.SS4.p2.1.3.2.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">GPT-4o (N=30)</th>
+<td id="S4.SS4.p2.1.3.2.2" class="ltx_td ltx_align_center">C3 Irrelevant Text</td>
+<td id="S4.SS4.p2.1.3.2.3" class="ltx_td ltx_align_center">1.082</td>
+<td id="S4.SS4.p2.1.3.2.4" class="ltx_td ltx_align_center">SUPER</td>
+</tr>
+<tr id="S4.SS4.p2.1.4.3" class="ltx_tr">
+<th id="S4.SS4.p2.1.4.3.1" class="ltx_td ltx_align_left ltx_th ltx_th_row">Qwen3.7-Plus (N=10)</th>
+<td id="S4.SS4.p2.1.4.3.2" class="ltx_td ltx_align_center">C3 Sync (real consensus)</td>
+<td id="S4.SS4.p2.1.4.3.3" class="ltx_td ltx_align_center">0.391 [0.320, 0.462]</td>
+<td id="S4.SS4.p2.1.4.3.4" class="ltx_td ltx_align_center">SUB</td>
+</tr>
+<tr id="S4.SS4.p2.1.5.4" class="ltx_tr">
+<th id="S4.SS4.p2.1.5.4.1" class="ltx_td ltx_align_left ltx_th ltx_th_row ltx_border_bb">Qwen3.7-Plus (N=10)</th>
+<td id="S4.SS4.p2.1.5.4.2" class="ltx_td ltx_align_center ltx_border_bb">C3 Irrelevant Text</td>
+<td id="S4.SS4.p2.1.5.4.3" class="ltx_td ltx_align_center ltx_border_bb">0.886 [0.815, 0.957]</td>
+<td id="S4.SS4.p2.1.5.4.4" class="ltx_td ltx_align_center ltx_border_bb">INDEP</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="S4.SS4.p3" class="ltx_para ltx_noindent">
+<p id="S4.SS4.p3.1" class="ltx_p">On GPT-4o, irrelevant text produces CAF=1.082 (SUPER), in stark contrast to real consensus (CAF=0.803, SUB). The irrelevant text does <em id="S4.SS4.p3.1.1" class="ltx_emph ltx_font_italic">not</em> cause homogenization—it actually slightly increases output shift. This confirms that GPT-4o’s coupling effect is specifically <span id="S4.SS4.p3.1.2" class="ltx_text ltx_font_bold">social</span>: driven by peer-generated consensus information, not by generic prompt perturbation. On Qwen3.7-Plus, irrelevant text produces modest convergence (CAF=0.886, 11% reduction vs. real consensus CAF=0.391, 61% reduction), suggesting that the baseline prompt-perturbation effect is itself model-dependent.</p>
+</div>
+</section>
+<section id="S4.SS5" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.5 </span>Blend Ratio Robustness and Cross-Model Variation</h3>
+
+<div id="S4.SS5.p1" class="ltx_para ltx_noindent">
+<p id="S4.SS5.p1.2" class="ltx_p">Coupling is insensitive to blend ratio variation within the tested range: Beta(3,3) with expected neighbor-weight 0.5 produces CAF=0.798 vs. 0.803 for the default Beta(3,2) (<math id="S4.SS5.p1.1.m1" class="ltx_Math" alttext="|\Delta|&lt;0.005" display="inline" intent=":literal"><semantics><mrow><mrow><mo stretchy="false">|</mo><mi mathvariant="normal">Δ</mi><mo stretchy="false">|</mo></mrow><mo>&lt;</mo><mn>0.005</mn></mrow><annotation encoding="application/x-tex">|\Delta|&lt;0.005</annotation></semantics></math>, <math id="S4.SS5.p1.2.m2" class="ltx_Math" alttext="p&gt;0.5" display="inline" intent=":literal"><semantics><mrow><mi>p</mi><mo>&gt;</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">p&gt;0.5</annotation></semantics></math>, n.s.). This suggests practitioners need not perform extensive blend-ratio tuning.</p>
+</div>
+<div id="S4.SS5.p2" class="ltx_para ltx_noindent">
+<p id="S4.SS5.p2.1" class="ltx_p">Cross-model replication reveals extreme variation:</p>
+</div>
+<div id="S4.SS5.p3" class="ltx_para">
+<table id="S4.SS5.p3.1" class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr id="S4.SS5.p3.1.1.1" class="ltx_tr">
+<th id="S4.SS5.p3.1.1.1.1" class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_border_tt">Model</th>
+<th id="S4.SS5.p3.1.1.1.2" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">CAF [95% CI]</th>
+<th id="S4.SS5.p3.1.1.1.3" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">JSD Reduction</th>
+<th id="S4.SS5.p3.1.1.1.4" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">N</th>
+</tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr id="S4.SS5.p3.1.2.1" class="ltx_tr">
+<td id="S4.SS5.p3.1.2.1.1" class="ltx_td ltx_align_left ltx_border_t">GPT-4o</td>
+<td id="S4.SS5.p3.1.2.1.2" class="ltx_td ltx_align_center ltx_border_t">0.803 [0.740, 0.873]</td>
+<td id="S4.SS5.p3.1.2.1.3" class="ltx_td ltx_align_center ltx_border_t">20%</td>
+<td id="S4.SS5.p3.1.2.1.4" class="ltx_td ltx_align_center ltx_border_t">30</td>
+</tr>
+<tr id="S4.SS5.p3.1.3.2" class="ltx_tr">
+<td id="S4.SS5.p3.1.3.2.1" class="ltx_td ltx_align_left">Qwen3.7-Plus</td>
+<td id="S4.SS5.p3.1.3.2.2" class="ltx_td ltx_align_center">0.391 [0.320, 0.462]</td>
+<td id="S4.SS5.p3.1.3.2.3" class="ltx_td ltx_align_center">61%</td>
+<td id="S4.SS5.p3.1.3.2.4" class="ltx_td ltx_align_center">10</td>
+</tr>
+<tr id="S4.SS5.p3.1.4.3" class="ltx_tr">
+<td id="S4.SS5.p3.1.4.3.1" class="ltx_td ltx_align_left ltx_border_bb">DeepSeek V4 Pro</td>
+<td id="S4.SS5.p3.1.4.3.2" class="ltx_td ltx_align_center ltx_border_bb">0.034 [0.009, 0.059]</td>
+<td id="S4.SS5.p3.1.4.3.3" class="ltx_td ltx_align_center ltx_border_bb">97%</td>
+<td id="S4.SS5.p3.1.4.3.4" class="ltx_td ltx_align_center ltx_border_bb">30</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="S4.SS5.p4" class="ltx_para ltx_noindent">
+<p id="S4.SS5.p4.2" class="ltx_p">The 24<math id="S4.SS5.p4.1.m1" class="ltx_Math" alttext="\times" display="inline" intent=":literal"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> range in CAF (0.034–0.803) suggests coupling susceptibility is a model-specific property. However, DeepSeek’s near-zero CAF, with individual repetitions reaching JSD=0.0 (all five agents producing identical probability vectors), is dominated by format artifacts: the model was run with constrained JSON output and disabled reasoning. Under these constraints, agents mechanically copy the JSON structure of neighbor outputs rather than synthesizing independent probability assessments. The C5 Image Sync CAF for DeepSeek (0.037) is nearly identical to its C3 Text Sync CAF (0.034), further suggesting format-driven collapse rather than genuine social coupling. <span id="S4.SS5.p4.2.1" class="ltx_text ltx_font_bold">These results should not be interpreted as evidence of stronger coupling in DeepSeek</span>; they instead demonstrate that constrained output formats can produce artificial homogenization that mimics—and vastly exaggerates—true communication effects. The 24<math id="S4.SS5.p4.2.m2" class="ltx_Math" alttext="\times" display="inline" intent=":literal"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> range should be taken as an upper bound on model variation, likely compressed substantially under matched free-form protocols.</p>
+</div>
+</section>
+<section id="S4.SS6" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.6 </span>Per-Round Dynamics: Coupling is Stateless</h3>
+
+<div id="S4.SS6.p1" class="ltx_para ltx_noindent">
+<p id="S4.SS6.p1.3" class="ltx_p">To test whether coupling accumulates or is transient, we analyzed per-round JSD trajectories under two measurement protocols. Under the <span id="S4.SS6.p1.3.1" class="ltx_text ltx_font_bold">category-probability protocol</span> (N=10, <math id="S4.SS6.p1.1.m1" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math>, 10 discourse categories), where neighbor consensus is toggled on even-indexed steps, JSD exhibits a pronounced sawtooth pattern. Consensus rounds (3,5,7,9) show sharply reduced JSD (mean 0.046) compared to non-consensus rounds (mean 0.116, nearing the no-sync baseline of <math id="S4.SS6.p1.2.m2" class="ltx_Math" alttext="\sim" display="inline" intent=":literal"><semantics><mo>∼</mo><annotation encoding="application/x-tex">\sim</annotation></semantics></math>0.12), with no cumulative drift across rounds (round 1: 0.096, round 10: 0.131; <math id="S4.SS6.p1.3.m3" class="ltx_Math" alttext="\Delta=+0.035" display="inline" intent=":literal"><semantics><mrow><mi mathvariant="normal">Δ</mi><mo>=</mo><mrow><mo>+</mo><mn>0.035</mn></mrow></mrow><annotation encoding="application/x-tex">\Delta=+0.035</annotation></semantics></math>). The phase-specific CAF (consensus-on vs. baseline) is approximately 0.38—a 62% JSD reduction within the same run, far larger than the aggregate CAF. <span id="S4.SS6.p1.3.2" class="ltx_text ltx_font_bold">Note:</span> this value is from the 10-category protocol and is not directly numerically comparable to the 5-category main-experiment CAF values; only the qualitative sawtooth interpretation transfers across protocols.</p>
+</div>
+<div id="S4.SS6.p2" class="ltx_para ltx_noindent">
+<p id="S4.SS6.p2.1" class="ltx_p">An <span id="S4.SS6.p2.1.1" class="ltx_text ltx_font_bold">embedding-based replication</span> (N=10, <math id="S4.SS6.p2.1.m1" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math>, <span id="S4.SS6.p2.1.2" class="ltx_text ltx_font_typewriter">all-MiniLM-L6-v2</span> embeddings, 10 equal-frequency bins) using the same pipeline as the main CAF analysis confirms the qualitative pattern. Neighbor consensus is provided starting at round 5 (protocol messages persist for 3-round blocks). No-consensus rounds (1–4): mean JSD=0.134 vs. consensus rounds (5–10): mean JSD=0.127, a modest 5% reduction directionally consistent with homogenization but attenuated relative to the categorical protocol—expected given the coarser resolution of binned embedding JSD. Crucially, neither protocol shows cumulative convergence.</p>
+</div>
+<div id="S4.SS6.p3" class="ltx_para ltx_noindent">
+<p id="S4.SS6.p3.1" class="ltx_p"><span id="S4.SS6.p3.1.1" class="ltx_text ltx_font_bold">Continuous consensus produces monotonic convergence.</span> A complementary experiment with single-step consensus injection (<span id="S4.SS6.p3.1.2" class="ltx_text ltx_markedasmath ltx_font_typewriter">--toggle-step 1</span>, N=10)—where protocol messages are rebuilt every step, eliminating the 3-step persistence window—reveals a qualitatively different dynamic: JSD decreases <em id="S4.SS6.p3.1.3" class="ltx_emph ltx_font_italic">monotonically</em> from 0.438 (round 1) to 0.001 (round 10), with no sawtooth oscillation. When consensus information is continuously refreshed, agents converge toward near-identical outputs. This reinforces the stateless interpretation: coupling strength is a direct function of how <em id="S4.SS6.p3.1.4" class="ltx_emph ltx_font_italic">persistently</em> peer information appears in the prompt—continuous exposure produces complete convergence, intermittent exposure produces the sawtooth, removing exposure restores diversity. The distinguishing evidence for statelessness is the <span id="S4.SS6.p3.1.5" class="ltx_text ltx_font_bold">reversibility</span> under intermittent toggles (sawtooth), not the monotonicity under continuous exposure (which DeGroot models also predict). The absence of a plateau under continuous exposure—JSD continues decreasing through round 10—further suggests agents do not accumulate internal states; they respond only to the current prompt context. However, this finding is based on N=10 and uses the 10-category protocol, like the main per-round experiment; cross-validation with the 5-category protocol is needed.</p>
+</div>
+<div id="S4.SS6.p4" class="ltx_para ltx_noindent">
+<p id="S4.SS6.p4.1" class="ltx_p">Coupling is therefore <span id="S4.SS6.p4.1.1" class="ltx_text ltx_font_bold">stateless</span>: driven by the immediate presence of peer information in the prompt context and vanishing when it is removed, contradicting the monotonic cumulative convergence predicted by classical opinion dynamics models <cite class="ltx_cite ltx_citemacro_cite">DeGroot (<a href="#bib.bib1" title="Reaching a consensus" class="ltx_ref">1974</a>); Friedkin and Johnsen (<a href="#bib.bib2" title="Social influence and opinions" class="ltx_ref">1990</a>)</cite>.</p>
+</div>
+</section>
+<section id="S4.SS7" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.7 </span>Comparison with Noisy DeGroot Simulation</h3>
+
+<div id="S4.SS7.p1" class="ltx_para ltx_noindent">
+<p id="S4.SS7.p1.1" class="ltx_p">The noisy DeGroot simulation provides mathematical reference values:</p>
+</div>
+<div id="S4.SS7.5" class="ltx_para">
+<table id="S4.SS7.5.5" class="ltx_tabular ltx_centering ltx_guessed_headers ltx_align_middle">
+<thead class="ltx_thead">
+<tr id="S4.SS7.1.1.1" class="ltx_tr">
+<th id="S4.SS7.1.1.1.2" class="ltx_td ltx_align_left ltx_th ltx_th_column ltx_border_tt">Condition</th>
+<th id="S4.SS7.1.1.1.3" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">Real CAF</th>
+<th id="S4.SS7.1.1.1.4" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt">Simulation CAF</th>
+<th id="S4.SS7.1.1.1.1" class="ltx_td ltx_align_center ltx_th ltx_th_column ltx_border_tt"><math id="S4.SS7.1.1.1.1.m1" class="ltx_Math" alttext="\Delta" display="inline" intent=":literal"><semantics><mi mathvariant="normal">Δ</mi><annotation encoding="application/x-tex">\Delta</annotation></semantics></math></th>
+</tr>
+</thead>
+<tbody class="ltx_tbody">
+<tr id="S4.SS7.2.2.2" class="ltx_tr">
+<td id="S4.SS7.2.2.2.1" class="ltx_td ltx_align_left ltx_border_t">C3 Sync (text, <math id="S4.SS7.2.2.2.1.m1" class="ltx_Math" alttext="K{=}5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K{=}5</annotation></semantics></math>)</td>
+<td id="S4.SS7.2.2.2.2" class="ltx_td ltx_align_center ltx_border_t">0.803</td>
+<td id="S4.SS7.2.2.2.3" class="ltx_td ltx_align_center ltx_border_t">0.657 [0.652, 0.662]</td>
+<td id="S4.SS7.2.2.2.4" class="ltx_td ltx_align_center ltx_border_t">+0.146</td>
+</tr>
+<tr id="S4.SS7.4.4.4" class="ltx_tr">
+<td id="S4.SS7.3.3.3.1" class="ltx_td ltx_align_left">C5 Sync (image, <math id="S4.SS7.3.3.3.1.m1" class="ltx_Math" alttext="K{=}3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K{=}3</annotation></semantics></math>)</td>
+<td id="S4.SS7.4.4.4.3" class="ltx_td ltx_align_center">0.834<sup id="S4.SS7.4.4.4.3.1" class="ltx_sup">*</sup>
+</td>
+<td id="S4.SS7.4.4.4.4" class="ltx_td ltx_align_center">0.933 [0.920, 0.947]</td>
+<td id="S4.SS7.4.4.4.2" class="ltx_td ltx_align_center"><math id="S4.SS7.4.4.4.2.m1" class="ltx_Math" alttext="-0.099" display="inline" intent=":literal"><semantics><mrow><mo>−</mo><mn>0.099</mn></mrow><annotation encoding="application/x-tex">-0.099</annotation></semantics></math></td>
+</tr>
+<tr id="S4.SS7.5.5.5" class="ltx_tr">
+<td id="S4.SS7.5.5.5.1" class="ltx_td ltx_align_left ltx_border_bb">C5 NoSync (<math id="S4.SS7.5.5.5.1.m1" class="ltx_Math" alttext="K{=}3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K{=}3</annotation></semantics></math>)</td>
+<td id="S4.SS7.5.5.5.2" class="ltx_td ltx_align_center ltx_border_bb">1.000<sup id="S4.SS7.5.5.5.2.1" class="ltx_sup">*</sup>
+</td>
+<td id="S4.SS7.5.5.5.3" class="ltx_td ltx_align_center ltx_border_bb">1.000 [0.990, 1.009]</td>
+<td id="S4.SS7.5.5.5.4" class="ltx_td ltx_align_center ltx_border_bb">0.000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="S4.SS7.p2" class="ltx_para ltx_noindent">
+<p id="S4.SS7.p2.1" class="ltx_p"><sup id="S4.SS7.p2.1.1" class="ltx_sup">*</sup>Within-modality CAF (vs. own no-communication baseline).</p>
+</div>
+<div id="S4.SS7.p3" class="ltx_para ltx_noindent">
+<p id="S4.SS7.p3.1" class="ltx_p">Three gaps emerge. First, the simulation <span id="S4.SS7.p3.1.1" class="ltx_text ltx_font_bold">overestimates text homogenization</span> (CAF=0.657 vs. real 0.803): the noisy DeGroot model predicts stronger collapse than GPT-4o exhibits, suggesting real LLM outputs retain residual diversity under neighbor influence. Second, for image sync, the simulation predicts mild homogenization (CAF=0.933) while real data shows comparable proportional homogenization (CAF=0.834). Third, the simulation models <em id="S4.SS7.p3.1.2" class="ltx_emph ltx_font_italic">cumulative</em> opinion updating through persistent internal states, while our data show <em id="S4.SS7.p3.1.3" class="ltx_emph ltx_font_italic">stateless</em>, prompt-driven coupling with no cumulative convergence across rounds—a qualitative mechanism difference that simple blending models cannot capture. Full simulation methodology and results are in the Supplementary Materials (Section S1).</p>
+</div>
+</section>
+<section id="S4.SS8" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">4.8 </span>Summary of Results</h3>
+
+<figure id="S4.F1" class="ltx_figure"><img src="2607.01600v1/x1.png" id="S4.F1.g1" class="ltx_graphics ltx_centering ltx_img_landscape" width="764" height="321" alt="Refer to caption">
+<figcaption class="ltx_caption ltx_centering"><span class="ltx_tag ltx_tag_figure">Figure 1: </span>CAF results for GPT-4o (N=30). (a) Cross-modality CAF vs. shared text C1 baseline. (b) Within-modality CAF using each modality’s own no-communication baseline. Both text (0.816) and image (0.834) show significant homogenization. Additional figures are in the Supplementary Materials. Error bars: bootstrap 95% CI (2,000 resamples). *** <math id="S4.F1.2.m1" class="ltx_Math" alttext="p&lt;0.001" display="inline" intent=":literal"><semantics><mrow><mi>p</mi><mo>&lt;</mo><mn>0.001</mn></mrow><annotation encoding="application/x-tex">p&lt;0.001</annotation></semantics></math>; n.s. = not significant.</figcaption>
+</figure>
+<div id="S4.SS8.p1" class="ltx_para ltx_noindent">
+<p id="S4.SS8.p1.4" class="ltx_p">Across all conditions, communication consistently shifts agent output distributions. The direction and magnitude depend on: (i) whether the baseline is modality-appropriate (within-modality CAF reveals homogenization in both text and image); (ii) group size (<math id="S4.SS8.p1.1.m1" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> homogenizes, <math id="S4.SS8.p1.2.m2" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math> shows CAF <math id="S4.SS8.p1.3.m3" class="ltx_Math" alttext="&gt;" display="inline" intent=":literal"><semantics><mo>&gt;</mo><annotation encoding="application/x-tex">&gt;</annotation></semantics></math> 1.0); and (iii) model identity (CAF varies 24<math id="S4.SS8.p1.4.m4" class="ltx_Math" alttext="\times" display="inline" intent=":literal"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> across models, though with format artifacts dominating DeepSeek). The DeGroot simulation comparison further shows that coupling is qualitatively stateless, unlike the cumulative convergence predicted by classical models.</p>
+</div>
+</section>
+</section>
+<section id="S5" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">5 </span>Discussion</h2>
+
+<section id="S5.SS1" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">5.1 </span>Why Does Communication Homogenize Both Modalities?</h3>
+
+<div id="S5.SS1.p1" class="ltx_para ltx_noindent">
+<p id="S5.SS1.p1.1" class="ltx_p">Both text and image communication produce comparable proportional homogenization (within-modality CAF 0.82 and 0.83). However, image-conditioned distributions have higher baseline entropy (JSD=0.268 vs. text 0.208), meaning communication produces a larger <em id="S5.SS1.p1.1.1" class="ltx_emph ltx_font_italic">absolute</em> JSD reduction for images (<math id="S5.SS1.p1.1.m1" class="ltx_Math" alttext="\Delta=0.044" display="inline" intent=":literal"><semantics><mrow><mi mathvariant="normal">Δ</mi><mo>=</mo><mn>0.044</mn></mrow><annotation encoding="application/x-tex">\Delta=0.044</annotation></semantics></math> vs. 0.038). We hypothesize that the absolute homogenization effect scales with modality-inherent output entropy: high-entropy modalities start from a higher baseline and have more diversity to lose under the constraint of neighbor consensus. Including peer outputs in the prompt acts as a form of <span id="S5.SS1.p1.1.2" class="ltx_text ltx_font_bold">contextual temperature reduction</span>—narrowing the effective generation distribution by conditioning on consensus information.</p>
+</div>
+<div id="S5.SS1.p2" class="ltx_para ltx_noindent">
+<p id="S5.SS1.p2.1" class="ltx_p">This principle parallels known effects in LM decoding: just as low-temperature sampling produces more homogeneous outputs, conditioning on peer outputs narrows the sampling distribution. The stateless nature of this effect further suggests it operates through the same mechanism as any other prompt feature, rather than through a distinct “social influence” process.</p>
+</div>
+</section>
+<section id="S5.SS2" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">5.2 </span>Implications for Multi-Agent System Design</h3>
+
+<div id="S5.SS2.p1" class="ltx_para ltx_noindent">
+<p id="S5.SS2.p1.1" class="ltx_p">Our findings have several actionable implications for practitioners designing multi-agent LLM systems:</p>
+</div>
+<div id="S5.SS2.p2" class="ltx_para ltx_noindent">
+<ol id="S5.I1" class="ltx_enumerate">
+<li id="S5.I1.i1" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">1.</span> 
+<div id="S5.I1.i1.p1" class="ltx_para ltx_noindent">
+<p id="S5.I1.i1.p1.1" class="ltx_p"><span id="S5.I1.i1.p1.1.1" class="ltx_text ltx_font_bold">Both modalities carry homogenization risk, but absolute magnitude differs.</span> Practitioners should budget for greater diversity loss in visual tasks, since baseline diversity is higher and communication compresses a larger absolute range.</p>
+</div>
+</li>
+<li id="S5.I1.i2" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">2.</span> 
+<div id="S5.I1.i2.p1" class="ltx_para ltx_noindent">
+<p id="S5.I1.i2.p1.1" class="ltx_p"><span id="S5.I1.i2.p1.1.1" class="ltx_text ltx_font_bold">Homogenization is controllable at the prompt level.</span> The stateless nature of coupling means removing peer outputs restores diversity immediately. For applications requiring divergent thinking (brainstorming, creative generation), designers can withhold peer information during ideation phases and enable it during convergence phases.</p>
+</div>
+</li>
+<li id="S5.I1.i3" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">3.</span> 
+<div id="S5.I1.i3.p1" class="ltx_para ltx_noindent">
+<p id="S5.I1.i3.p1.4" class="ltx_p"><span id="S5.I1.i3.p1.4.1" class="ltx_text ltx_font_bold">Group size is a critical design parameter.</span> <math id="S5.I1.i3.p1.1.m1" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> produces homogenization while <math id="S5.I1.i3.p1.2.m2" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math> produces CAF <math id="S5.I1.i3.p1.3.m3" class="ltx_Math" alttext="&gt;" display="inline" intent=":literal"><semantics><mo>&gt;</mo><annotation encoding="application/x-tex">&gt;</annotation></semantics></math> 1.0, implying a critical group size <math id="S5.I1.i3.p1.4.m4" class="ltx_Math" alttext="K^{*}" display="inline" intent=":literal"><semantics><msup><mi>K</mi><mo>∗</mo></msup><annotation encoding="application/x-tex">K^{*}</annotation></semantics></math> at which coupling direction reverses. Systems benefiting from diversity should use small groups; systems requiring consensus may prefer larger groups <cite class="ltx_cite ltx_citemacro_cite">Yang<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib24" title="Understanding agent scaling in LLM-based multi-agent systems via diversity" class="ltx_ref">2025</a>)</cite>.</p>
+</div>
+</li>
+<li id="S5.I1.i4" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">4.</span> 
+<div id="S5.I1.i4.p1" class="ltx_para ltx_noindent">
+<p id="S5.I1.i4.p1.1" class="ltx_p"><span id="S5.I1.i4.p1.1.1" class="ltx_text ltx_font_bold">Model selection matters.</span> The 24<math id="S5.I1.i4.p1.1.m1" class="ltx_Math" alttext="\times" display="inline" intent=":literal"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> variation in CAF across models suggests coupling susceptibility is a model-specific property. GPT-4o retains substantial residual diversity under communication, while other models may collapse more completely. Practitioners should benchmark coupling strength when selecting backbone models for multi-agent deployments.</p>
+</div>
+</li>
+<li id="S5.I1.i5" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">5.</span> 
+<div id="S5.I1.i5.p1" class="ltx_para">
+<p id="S5.I1.i5.p1.1" class="ltx_p"><span id="S5.I1.i5.p1.1.1" class="ltx_text ltx_font_bold">Inter-agent cosine similarity validates the intra-agent metric.</span> Direct pairwise cosine similarity measurements (Supplementary Materials, Section S2) confirm that the CAF-based intra-agent metric captures the same coupling signal: sync conditions yield cosine similarity <math id="S5.I1.i5.p1.1.m1" class="ltx_Math" alttext="&gt;" display="inline" intent=":literal"><semantics><mo>&gt;</mo><annotation encoding="application/x-tex">&gt;</annotation></semantics></math>0.97, while no-sync shows substantially lower inter-agent agreement (0.55–0.81).</p>
+</div>
+</li>
+</ol>
+</div>
+</section>
+<section id="S5.SS3" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">5.3 </span>Practical Guidance for CAF Deployment</h3>
+
+<div id="S5.SS3.p1" class="ltx_para ltx_noindent">
+<p id="S5.SS3.p1.1" class="ltx_p">Based on our empirical experience, we offer operational recommendations for practitioners applying BOUNDARY_SYNC:</p>
+</div>
+<div id="S5.SS3.p2" class="ltx_para ltx_noindent">
+<ol id="S5.I2" class="ltx_enumerate">
+<li id="S5.I2.i1" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">1.</span> 
+<div id="S5.I2.i1.p1" class="ltx_para ltx_noindent">
+<p id="S5.I2.i1.p1.5" class="ltx_p"><span id="S5.I2.i1.p1.5.1" class="ltx_text ltx_font_bold">Sample size planning.</span> At <math id="S5.I2.i1.p1.1.m1" class="ltx_Math" alttext="N=30" display="inline" intent=":literal"><semantics><mrow><mi>N</mi><mo>=</mo><mn>30</mn></mrow><annotation encoding="application/x-tex">N=30</annotation></semantics></math>, the bootstrap 95% CI half-width for CAF is approximately <math id="S5.I2.i1.p1.2.m2" class="ltx_Math" alttext="\pm" display="inline" intent=":literal"><semantics><mo>±</mo><annotation encoding="application/x-tex">\pm</annotation></semantics></math>0.06–0.09 for effects of the magnitude observed here (CAF <math id="S5.I2.i1.p1.3.m3" class="ltx_Math" alttext="\approx" display="inline" intent=":literal"><semantics><mo>≈</mo><annotation encoding="application/x-tex">\approx</annotation></semantics></math> 0.80–0.85). For detecting a CAF difference of 0.10 with 80% power, we recommend <math id="S5.I2.i1.p1.4.m4" class="ltx_Math" alttext="N\geq 30" display="inline" intent=":literal"><semantics><mrow><mi>N</mi><mo>≥</mo><mn>30</mn></mrow><annotation encoding="application/x-tex">N\geq 30</annotation></semantics></math>. Smaller effects require larger <math id="S5.I2.i1.p1.5.m5" class="ltx_Math" alttext="N" display="inline" intent=":literal"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>.</p>
+</div>
+</li>
+<li id="S5.I2.i2" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">2.</span> 
+<div id="S5.I2.i2.p1" class="ltx_para ltx_noindent">
+<p id="S5.I2.i2.p1.1" class="ltx_p"><span id="S5.I2.i2.p1.1.1" class="ltx_text ltx_font_bold">Default blend ratio.</span> Beta(3,2) (expected neighbor-weight 0.4) is a suitable default. Results are insensitive to moderate variation (<math id="S5.I2.i2.p1.1.m1" class="ltx_Math" alttext="\bar{w}\in[0.4,0.5]" display="inline" intent=":literal"><semantics><mrow><mover accent="true"><mi>w</mi><mo>¯</mo></mover><mo>∈</mo><mrow><mo stretchy="false">[</mo><mn>0.4</mn><mo>,</mo><mn>0.5</mn><mo stretchy="false">]</mo></mrow></mrow><annotation encoding="application/x-tex">\bar{w}\in[0.4,0.5]</annotation></semantics></math>).</p>
+</div>
+</li>
+<li id="S5.I2.i3" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">3.</span> 
+<div id="S5.I2.i3.p1" class="ltx_para ltx_noindent">
+<p id="S5.I2.i3.p1.3" class="ltx_p"><span id="S5.I2.i3.p1.3.1" class="ltx_text ltx_font_bold">Group size screening.</span> For initial screening, <math id="S5.I2.i3.p1.1.m1" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> for text and <math id="S5.I2.i3.p1.2.m2" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math> for vision (cost-constrained). For confirmatory comparisons, match <math id="S5.I2.i3.p1.3.m3" class="ltx_Math" alttext="K" display="inline" intent=":literal"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math> across conditions.</p>
+</div>
+</li>
+<li id="S5.I2.i4" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">4.</span> 
+<div id="S5.I2.i4.p1" class="ltx_para ltx_noindent">
+<p id="S5.I2.i4.p1.1" class="ltx_p"><span id="S5.I2.i4.p1.1.1" class="ltx_text ltx_font_bold">Baseline selection.</span> Always include a modality-matched no-communication baseline as the primary CAF denominator. The isolated text C1 baseline is useful for comparing absolute diversity levels but should not be used as the denominator for non-text conditions.</p>
+</div>
+</li>
+<li id="S5.I2.i5" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">5.</span> 
+<div id="S5.I2.i5.p1" class="ltx_para ltx_noindent">
+<p id="S5.I2.i5.p1.9" class="ltx_p"><span id="S5.I2.i5.p1.9.1" class="ltx_text ltx_font_bold">CAF interpretation heuristics.</span> Based on our data: CAF <math id="S5.I2.i5.p1.1.m1" class="ltx_Math" alttext="&lt;" display="inline" intent=":literal"><semantics><mo>&lt;</mo><annotation encoding="application/x-tex">&lt;</annotation></semantics></math> 0.90 (CI upper bound <math id="S5.I2.i5.p1.2.m2" class="ltx_Math" alttext="&lt;" display="inline" intent=":literal"><semantics><mo>&lt;</mo><annotation encoding="application/x-tex">&lt;</annotation></semantics></math> 0.95) <math id="S5.I2.i5.p1.3.m3" class="ltx_Math" alttext="\rightarrow" display="inline" intent=":literal"><semantics><mo stretchy="false">→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> significant homogenization; 0.90 <math id="S5.I2.i5.p1.4.m4" class="ltx_Math" alttext="\leq" display="inline" intent=":literal"><semantics><mo>≤</mo><annotation encoding="application/x-tex">\leq</annotation></semantics></math> CAF <math id="S5.I2.i5.p1.5.m5" class="ltx_Math" alttext="\leq" display="inline" intent=":literal"><semantics><mo>≤</mo><annotation encoding="application/x-tex">\leq</annotation></semantics></math> 1.10 (CI crosses 1.0) <math id="S5.I2.i5.p1.6.m6" class="ltx_Math" alttext="\rightarrow" display="inline" intent=":literal"><semantics><mo stretchy="false">→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> independence / inconclusive; CAF <math id="S5.I2.i5.p1.7.m7" class="ltx_Math" alttext="&gt;" display="inline" intent=":literal"><semantics><mo>&gt;</mo><annotation encoding="application/x-tex">&gt;</annotation></semantics></math> 1.10 (CI lower bound <math id="S5.I2.i5.p1.8.m8" class="ltx_Math" alttext="&gt;" display="inline" intent=":literal"><semantics><mo>&gt;</mo><annotation encoding="application/x-tex">&gt;</annotation></semantics></math> 1.05) <math id="S5.I2.i5.p1.9.m9" class="ltx_Math" alttext="\rightarrow" display="inline" intent=":literal"><semantics><mo stretchy="false">→</mo><annotation encoding="application/x-tex">\rightarrow</annotation></semantics></math> significant diversification.</p>
+</div>
+</li>
+<li id="S5.I2.i6" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">6.</span> 
+<div id="S5.I2.i6.p1" class="ltx_para">
+<p id="S5.I2.i6.p1.1" class="ltx_p"><span id="S5.I2.i6.p1.1.1" class="ltx_text ltx_font_bold">Reporting standards.</span> Report CAF with bootstrap 95% CI (<math id="S5.I2.i6.p1.1.m1" class="ltx_Math" alttext="B\geq 2{,}000" display="inline" intent=":literal"><semantics><mrow><mi>B</mi><mo>≥</mo><mrow><mn>2</mn><mo>,</mo><mn>000</mn></mrow></mrow><annotation encoding="application/x-tex">B\geq 2{,}000</annotation></semantics></math>), raw JSD means and standard deviations, sample sizes, embedding model and bin count, Beta parameters, and a no-communication ablation to establish causality.</p>
+</div>
+</li>
+</ol>
+</div>
+</section>
+<section id="S5.SS4" class="ltx_subsection">
+<h3 class="ltx_title ltx_title_subsection">
+<span class="ltx_tag ltx_tag_subsection">5.4 </span>Connection to Opinion Dynamics</h3>
+
+<div id="S5.SS4.p1" class="ltx_para ltx_noindent">
+<p id="S5.SS4.p1.1" class="ltx_p">Our finding of text homogenization is directionally consistent with classical opinion dynamics models <cite class="ltx_cite ltx_citemacro_cite">DeGroot (<a href="#bib.bib1" title="Reaching a consensus" class="ltx_ref">1974</a>); Hegselmann and Krause (<a href="#bib.bib3" title="Opinion dynamics and bounded confidence: models, analysis and simulation" class="ltx_ref">2002</a>); Hassani<span class="ltx_text ltx_bib_etal"> et al.</span> (<a href="#bib.bib6" title="Classical dynamic consensus and opinion dynamics models: a survey of recent trends and methodologies" class="ltx_ref">2022</a>)</cite>, which predict that weighted averaging leads to reduced variance. However, the per-round dynamics reveal a <span id="S5.SS4.p1.1.1" class="ltx_text ltx_font_bold">qualitative contradiction</span>: the DeGroot model predicts monotonic, cumulative convergence toward a shared equilibrium, whereas we observe stateless coupling that oscillates with the presence or absence of peer information and shows no cumulative drift. The quantitative gap (real CAF=0.803 vs. simulated 0.657) may therefore reflect not merely a difference in coupling <em id="S5.SS4.p1.1.2" class="ltx_emph ltx_font_italic">strength</em> but a difference in coupling <em id="S5.SS4.p1.1.3" class="ltx_emph ltx_font_italic">mechanism</em>: the simulation models persistent internal states, while GPT-4o behaves as a stateless sampler conditioned on the current prompt context.</p>
+</div>
+</section>
+</section>
+<section id="S6" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">6 </span>Limitations</h2>
+
+<div id="S6.p1" class="ltx_para ltx_noindent">
+<p id="S6.p1.1" class="ltx_p">We acknowledge the following limitations of the current study:</p>
+</div>
+<div id="S6.p2" class="ltx_para ltx_noindent">
+<ol id="S6.I1" class="ltx_enumerate">
+<li id="S6.I1.i1" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">1.</span> 
+<div id="S6.I1.i1.p1" class="ltx_para ltx_noindent">
+<p id="S6.I1.i1.p1.1" class="ltx_p"><span id="S6.I1.i1.p1.1.1" class="ltx_text ltx_font_bold">Self-anchoring confound.</span> Protocol messages include each agent’s own prior output plus explicit blending weights, which could reduce JSD through self-anchoring alone (agents becoming more consistent with their own prior) independent of neighbor influence. A “self-only” control (own output plus weighting, without neighbor information) would quantify the self-anchoring contribution to CAF; without it, CAF reductions should be interpreted as an upper bound on social coupling. We commit to this control experiment for the next revision.</p>
+</div>
+</li>
+<li id="S6.I1.i2" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">2.</span> 
+<div id="S6.I1.i2.p1" class="ltx_para ltx_noindent">
+<p id="S6.I1.i2.p1.1" class="ltx_p"><span id="S6.I1.i2.p1.1.1" class="ltx_text ltx_font_bold">Group size and prompt length are confounded.</span> Larger <math id="S6.I1.i2.p1.1.m1" class="ltx_Math" alttext="K" display="inline" intent=":literal"><semantics><mi>K</mi><annotation encoding="application/x-tex">K</annotation></semantics></math> increases the token count of neighbor summaries in the prompt, which may amplify anchoring effects independent of social consensus. Fixed-length neighbor summaries would isolate group size from prompt volume. We commit to this control for the next revision.</p>
+</div>
+</li>
+<li id="S6.I1.i3" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">3.</span> 
+<div id="S6.I1.i3.p1" class="ltx_para ltx_noindent">
+<p id="S6.I1.i3.p1.1" class="ltx_p"><span id="S6.I1.i3.p1.1.1" class="ltx_text ltx_font_bold">Modality and stimulus presence are partially confounded.</span> Text conditions lack an explicit stimulus passage, while image conditions receive visual input. Although within-modality CAF normalizes baseline differences regardless of origin, matched stimulus-presence conditions are needed. Our N=5 stimulus pilot suggests the main experiment’s stimulus-free design is conservative; a full N=30 replication is committed for the next revision.</p>
+</div>
+</li>
+<li id="S6.I1.i4" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">4.</span> 
+<div id="S6.I1.i4.p1" class="ltx_para ltx_noindent">
+<p id="S6.I1.i4.p1.1" class="ltx_p"><span id="S6.I1.i4.p1.1.1" class="ltx_text ltx_font_bold">Persona and temperature heterogeneity.</span> Different agents use different personas and temperatures to prevent artificially low baseline diversity. A uniform-temperature ablation without persona differences is committed for the next revision (N<math id="S6.I1.i4.p1.1.m1" class="ltx_Math" alttext="\geq" display="inline" intent=":literal"><semantics><mo>≥</mo><annotation encoding="application/x-tex">\geq</annotation></semantics></math>10, uniform temperature 0.7, generic “assistant” persona).</p>
+</div>
+</li>
+<li id="S6.I1.i5" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">5.</span> 
+<div id="S6.I1.i5.p1" class="ltx_para ltx_noindent">
+<p id="S6.I1.i5.p1.2" class="ltx_p"><span id="S6.I1.i5.p1.2.1" class="ltx_text ltx_font_bold">Statelessness measurement.</span> The categorical per-round protocol uses 10 categories vs. 5 in the main CAF experiment. A replication with the identical 5-category protocol is committed for the next revision (N=10, <span id="S6.I1.i5.p1.2.2" class="ltx_text ltx_markedasmath ltx_font_typewriter">--log-rounds</span>, <span id="S6.I1.i5.p1.2.3" class="ltx_text ltx_markedasmath ltx_font_typewriter">--toggle-step 1</span>).</p>
+</div>
+</li>
+<li id="S6.I1.i6" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">6.</span> 
+<div id="S6.I1.i6.p1" class="ltx_para ltx_noindent">
+<p id="S6.I1.i6.p1.1" class="ltx_p"><span id="S6.I1.i6.p1.1.1" class="ltx_text ltx_font_bold">Single task domain.</span> All experiments use stereotype-assessment tasks. Coupling dynamics may differ for reasoning, code generation, or creative writing—domains where baseline output entropy and communication effects could diverge substantially.</p>
+</div>
+</li>
+<li id="S6.I1.i7" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">7.</span> 
+<div id="S6.I1.i7.p1" class="ltx_para ltx_noindent">
+<p id="S6.I1.i7.p1.1" class="ltx_p"><span id="S6.I1.i7.p1.1.1" class="ltx_text ltx_font_bold">Cross-model artifacts.</span> DeepSeek results are dominated by format artifacts (constrained JSON, disabled reasoning) and should be interpreted as upper bounds. Matched free-form protocols across all models are needed for reliable cross-model comparison.</p>
+</div>
+</li>
+<li id="S6.I1.i8" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">8.</span> 
+<div id="S6.I1.i8.p1" class="ltx_para ltx_noindent">
+<p id="S6.I1.i8.p1.1" class="ltx_p"><span id="S6.I1.i8.p1.1.1" class="ltx_text ltx_font_bold">CAF ratio bias.</span> Ratio estimator bias is negligible at N=30 (<math id="S6.I1.i8.p1.1.m1" class="ltx_Math" alttext="&lt;" display="inline" intent=":literal"><semantics><mo>&lt;</mo><annotation encoding="application/x-tex">&lt;</annotation></semantics></math>0.003, jackknife-corrected) but may be larger at smaller N (Qwen N=10, stimulus pilot N=5).</p>
+</div>
+</li>
+<li id="S6.I1.i9" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">9.</span> 
+<div id="S6.I1.i9.p1" class="ltx_para">
+<p id="S6.I1.i9.p1.2" class="ltx_p"><span id="S6.I1.i9.p1.2.1" class="ltx_text ltx_font_bold">CAF metric dependency.</span> CAF values depend on the number and definition of output categories. Sensitivity to embedding-based JSD and alternative divergence measures (e.g., total variation distance) is explored in the Supplementary Materials; TVD-based CAF correlates with JSD-based CAF at <math id="S6.I1.i9.p1.1.m1" class="ltx_Math" alttext="r&gt;0.95" display="inline" intent=":literal"><semantics><mrow><mi>r</mi><mo>&gt;</mo><mn>0.95</mn></mrow><annotation encoding="application/x-tex">r&gt;0.95</annotation></semantics></math> (<math id="S6.I1.i9.p1.2.m2" class="ltx_Math" alttext="p&lt;0.001" display="inline" intent=":literal"><semantics><mrow><mi>p</mi><mo>&lt;</mo><mn>0.001</mn></mrow><annotation encoding="application/x-tex">p&lt;0.001</annotation></semantics></math>), confirming metric robustness.</p>
+</div>
+</li>
+</ol>
+</div>
+</section>
+<section id="S7" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">
+<span class="ltx_tag ltx_tag_section">7 </span>Conclusion</h2>
+
+<div id="S7.p1" class="ltx_para ltx_noindent">
+<p id="S7.p1.1" class="ltx_p">We introduced BOUNDARY_SYNC, a measurement protocol for quantifying communication-induced representational coupling in LLM agents, and provided causal evidence from controlled experiments on GPT-4o alongside replications on additional models. Our key findings are:</p>
+</div>
+<div id="S7.p2" class="ltx_para ltx_noindent">
+<ol id="S7.I1" class="ltx_enumerate">
+<li id="S7.I1.i1" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">1.</span> 
+<div id="S7.I1.i1.p1" class="ltx_para ltx_noindent">
+<p id="S7.I1.i1.p1.1" class="ltx_p">Text communication causes significant homogenization (CAF=0.803, <math id="S7.I1.i1.p1.1.m1" class="ltx_Math" alttext="d" display="inline" intent=":literal"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>=1.30), confirmed by no-communication ablation and prompt-perturbation controls confirming social specificity.</p>
+</div>
+</li>
+<li id="S7.I1.i2" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">2.</span> 
+<div id="S7.I1.i2.p1" class="ltx_para ltx_noindent">
+<p id="S7.I1.i2.p1.1" class="ltx_p">Image communication also causes homogenization when evaluated against its own modality baseline (CAF=0.834), with comparable proportional effect to text and larger absolute magnitude due to higher baseline diversity.</p>
+</div>
+</li>
+<li id="S7.I1.i3" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">3.</span> 
+<div id="S7.I1.i3.p1" class="ltx_para ltx_noindent">
+<p id="S7.I1.i3.p1.4" class="ltx_p">Group size moderates coupling <em id="S7.I1.i3.p1.4.1" class="ltx_emph ltx_font_italic">direction</em>: <math id="S7.I1.i3.p1.1.m1" class="ltx_Math" alttext="K=5" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">K=5</annotation></semantics></math> produces homogenization (CAF <math id="S7.I1.i3.p1.2.m2" class="ltx_Math" alttext="&lt;" display="inline" intent=":literal"><semantics><mo>&lt;</mo><annotation encoding="application/x-tex">&lt;</annotation></semantics></math> 1), <math id="S7.I1.i3.p1.3.m3" class="ltx_Math" alttext="K=3" display="inline" intent=":literal"><semantics><mrow><mi>K</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">K=3</annotation></semantics></math> produces CAF <math id="S7.I1.i3.p1.4.m4" class="ltx_Math" alttext="&gt;" display="inline" intent=":literal"><semantics><mo>&gt;</mo><annotation encoding="application/x-tex">&gt;</annotation></semantics></math> 1 in both modalities, revealing a critical design parameter.</p>
+</div>
+</li>
+<li id="S7.I1.i4" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">4.</span> 
+<div id="S7.I1.i4.p1" class="ltx_para ltx_noindent">
+<p id="S7.I1.i4.p1.1" class="ltx_p">Cross-model results show extreme variation (CAF 0.034–0.803), though DeepSeek’s near-zero CAF is dominated by format artifacts.</p>
+</div>
+</li>
+<li id="S7.I1.i5" class="ltx_item" style="list-style-type:none;">
+<span class="ltx_tag ltx_tag_item">5.</span> 
+<div id="S7.I1.i5.p1" class="ltx_para ltx_noindent">
+<p id="S7.I1.i5.p1.1" class="ltx_p">Coupling is stateless—driven by prompt context rather than cumulative updating, with continuous consensus producing monotonic convergence to near-zero JSD. This contradicts classical opinion dynamics predictions and implies coupling is controllable at the prompt level.</p>
+</div>
+</li>
+</ol>
+</div>
+<div id="S7.p3" class="ltx_para ltx_noindent">
+<p id="S7.p3.1" class="ltx_p">These results establish that LLM agent coupling is real, measurable, present across multiple models and modalities, and controllable—with direct implications for the design and evaluation of multi-agent LLM systems.</p>
+</div>
+</section>
+<section id="Sx1" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">Broader Impact Statement</h2>
+
+<div id="Sx1.p1" class="ltx_para ltx_noindent">
+<p id="Sx1.p1.1" class="ltx_p">This work introduces a measurement protocol (BOUNDARY_SYNC) and metric (CAF) for quantifying communication-induced representational coupling in multi-agent LLM systems. The primary intended impact is <span id="Sx1.p1.1.1" class="ltx_text ltx_font_bold">positive</span>: by making coupling measurable, our framework enables practitioners to detect, monitor, and control homogenization in deployed multi-agent systems—supporting the design of systems that preserve beneficial output diversity. Our findings on group size, modality effects, and prompt-level controllability provide concrete design guidance for responsible multi-agent deployment.</p>
+</div>
+<div id="Sx1.p2" class="ltx_para ltx_noindent">
+<p id="Sx1.p2.1" class="ltx_p">We recognize four potential risks, each of which is addressed by design choices or findings in this paper.</p>
+</div>
+<div id="Sx1.p3" class="ltx_para ltx_noindent">
+<p id="Sx1.p3.1" class="ltx_p"><span id="Sx1.p3.1.1" class="ltx_text ltx_font_bold">Risk 1: Intentional homogenization.</span> The finding that coupling is controllable at the prompt level could be exploited to deliberately suppress diversity in deployed multi-agent systems. <span id="Sx1.p3.1.2" class="ltx_text ltx_font_bold">Addressing this risk:</span> Our stateless-coupling result demonstrates that diversity is immediately restored when peer information is removed from the prompt context—homogenization is reversible, not cumulative. Furthermore, the K=3 finding shows that small groups <em id="Sx1.p3.1.3" class="ltx_emph ltx_font_italic">reverse</em> the coupling direction (CAF <math id="Sx1.p3.1.m1" class="ltx_Math" alttext="&gt;" display="inline" intent=":literal"><semantics><mo>&gt;</mo><annotation encoding="application/x-tex">&gt;</annotation></semantics></math> 1.0), providing a concrete configuration that preserves or amplifies diversity. The CAF metric itself serves as a monitoring tool: any attempt at intentional homogenization is detectable and quantifiable. Together, these findings make the framework <em id="Sx1.p3.1.4" class="ltx_emph ltx_font_italic">self-limiting</em>—the same protocol that measures coupling also provides the controls to counteract it.</p>
+</div>
+<div id="Sx1.p4" class="ltx_para ltx_noindent">
+<p id="Sx1.p4.1" class="ltx_p"><span id="Sx1.p4.1.1" class="ltx_text ltx_font_bold">Risk 2: Model-specificity of coupling estimates.</span> Our primary results are obtained with GPT-4o, and coupling magnitudes may differ across models. <span id="Sx1.p4.1.2" class="ltx_text ltx_font_bold">Addressing this risk:</span> We replicate key findings on three models (GPT-4o, DeepSeek V4 Pro, Qwen3.7-Plus), establishing that the BOUNDARY_SYNC protocol is model-agnostic while revealing model-specific coupling profiles. Critically, the protocol itself <em id="Sx1.p4.1.3" class="ltx_emph ltx_font_italic">flags artifactual results</em>: DeepSeek’s near-zero CAF (0.034) is explicitly attributed to format constraints (JSON-only output, disabled reasoning), demonstrating that extreme CAF values can be diagnosed within the framework rather than taken at face value. We report the 24<math id="Sx1.p4.1.m1" class="ltx_Math" alttext="\times" display="inline" intent=":literal"><semantics><mo>×</mo><annotation encoding="application/x-tex">\times</annotation></semantics></math> cross-model range as an upper bound and recommend per-model benchmarking as standard practice (§<a href="#S6" title="6 Limitations ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">6</span></a>, Limitation 6).</p>
+</div>
+<div id="Sx1.p5" class="ltx_para ltx_noindent">
+<p id="Sx1.p5.1" class="ltx_p"><span id="Sx1.p5.1.1" class="ltx_text ltx_font_bold">Risk 3: Synthetic stimuli and structured outputs.</span> Our experiments use synthetic scene images and 5-category probability vectors; coupling in open-ended natural-language generation may differ. <span id="Sx1.p5.1.2" class="ltx_text ltx_font_bold">Addressing this risk:</span> The text conditions (C1, C3) use no explicit stimulus passage, relying on model priors—a design closer to open-ended generation than to constrained prompting. The core findings replicate across both stimulated (image) and prior-based (text) conditions, including the group-size directional shift. The structured output format is a deliberate measurement choice: 5-category probability vectors enable precise, reproducible JSD computation with bootstrap confidence intervals, a level of statistical rigor difficult to achieve with free-text outputs. Extending the protocol to open-ended generation is committed as future work (§<a href="#S6" title="6 Limitations ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">6</span></a>, Limitation 7).</p>
+</div>
+<div id="Sx1.p6" class="ltx_para ltx_noindent">
+<p id="Sx1.p6.1" class="ltx_p"><span id="Sx1.p6.1.1" class="ltx_text ltx_font_bold">Risk 4: Gender-themed task framing.</span> The stimulus domain (gender stereotype assessment) involves socially sensitive content that could be mischaracterized. <span id="Sx1.p6.1.2" class="ltx_text ltx_font_bold">Addressing this risk:</span> Our persona design spans a balanced spectrum of perspectives (activist, traditionalist, data-driven, intersectional, literalist), each with distinct temperature and framing—no single normative position is privileged. The output categories are symmetric (neutral, biased_female, biased_male, stereotype_avoidant, stereotype_reinforcing) and do not encode a preferred outcome. All stimuli, persona prompts, and protocol code are publicly released, enabling independent review of the task framing and its potential biases. The purpose of the task domain is to provide a substantive stimulus that elicits genuine agent responses—the paper’s contribution is the measurement protocol, not claims about gender attitudes.</p>
+</div>
+<div id="Sx1.p7" class="ltx_para ltx_noindent">
+<p id="Sx1.p7.1" class="ltx_p">We believe that these design-level mitigations, combined with the open release of all materials, make the risks manageable and the net impact of this work positive: a standardized, auditable framework for measuring and controlling representational coupling in multi-agent LLM systems.</p>
+</div>
+</section>
+<section id="Sx2" class="ltx_section">
+<h2 class="ltx_title ltx_title_section">Acknowledgements</h2>
+
+<div id="Sx2.p1" class="ltx_para ltx_noindent">
+<p id="Sx2.p1.1" class="ltx_p">We thank the anonymous TMLR reviewers and action editor for constructive feedback that substantially improved this manuscript. All experiments were conducted using the authors’ own API resources.</p>
+</div>
+</section>
+<section id="bib" class="ltx_bibliography">
+<h2 class="ltx_title ltx_title_bibliography">References</h2>
+
+<ul id="bib.L1" class="ltx_biblist">
+<li id="bib.bib16" class="ltx_bibitem ltx_bib_inproceedings">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">R. Baltaji, B. Hemmatian, and L. R. Varshney (2024)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Conformity, confabulation, and impersonation: persona inconstancy in multi-agent LLM collaboration</span>.
+</span>
+<span class="ltx_bibblock">In <span class="ltx_text ltx_bib_inbook">Proceedings of the 2nd Workshop on Cross-Cultural Considerations in NLP (C3NLP)</span>,
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_pages"> pp. 17–31</span>.
+</span>
+<span class="ltx_bibblock">External Links: <span class="ltx_text ltx_bib_links"><a href="https://dx.doi.org/10.18653/v1/2024.c3nlp-1.2" title="" class="ltx_ref doi ltx_bib_external">Document</a></span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S1.p2.1" title="1 Introduction ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§1</span></a>,
+<a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib11" class="ltx_bibitem ltx_bib_inproceedings">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">J. Chen, W. Li, and Y. Zhao (2024)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">ReConcile: round-table conference improves reasoning via consensus among diverse LLMs</span>.
+</span>
+<span class="ltx_bibblock">In <span class="ltx_text ltx_bib_inbook">Proceedings of ACL</span>,
+</span>
+<span class="ltx_bibblock">External Links: <span class="ltx_text ltx_bib_links"><a href="https://dx.doi.org/10.18653/v1/2024.acl-long.381" title="" class="ltx_ref doi ltx_bib_external">Document</a></span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS1.p1.1" title="2.1 Multi-Agent LLM Systems ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.1</span></a>.
+</span>
+</li>
+<li id="bib.bib15" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">Y. Cho, S. C. Guntuku, and L. Ungar (2025)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Herd behavior: investigating peer influence in LLM-based multi-agent systems</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2505.21588</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S1.p2.1" title="1 Introduction ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§1</span></a>,
+<a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib23" class="ltx_bibitem ltx_bib_inproceedings">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">K. Chu, C. Chen, and H. Nakayama (2025)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Exploring and controlling diversity in LLM-agent conversation</span>.
+</span>
+<span class="ltx_bibblock">In <span class="ltx_text ltx_bib_inbook">AAAI Workshop on Multi-Agent AI</span>,
+</span>
+<span class="ltx_bibblock">Note: <span class="ltx_text ltx_bib_note">arXiv:2412.00802</span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS1.p1.1" title="2.1 Multi-Agent LLM Systems ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.1</span></a>.
+</span>
+</li>
+<li id="bib.bib4" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">G. Deffuant, D. Neau, F. Amblard, and G. Weisbuch (2000)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Mixing beliefs among interacting agents</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">Advances in Complex Systems</span> <span class="ltx_text ltx_bib_volume">3</span> (<span class="ltx_text ltx_bib_number">1–4</span>), <span class="ltx_text ltx_bib_pages"> pp. 87–98</span>.
+</span>
+<span class="ltx_bibblock">External Links: <span class="ltx_text ltx_bib_links"><a href="https://dx.doi.org/10.1142/S0219525900000078" title="" class="ltx_ref doi ltx_bib_external">Document</a></span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS3.p1.1" title="2.3 Opinion Dynamics ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.3</span></a>.
+</span>
+</li>
+<li id="bib.bib1" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">M. H. DeGroot (1974)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Reaching a consensus</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">Journal of the American Statistical Association</span> <span class="ltx_text ltx_bib_volume">69</span> (<span class="ltx_text ltx_bib_number">345</span>), <span class="ltx_text ltx_bib_pages"> pp. 118–121</span>.
+</span>
+<span class="ltx_bibblock">External Links: <span class="ltx_text ltx_bib_links"><a href="https://dx.doi.org/10.1080/01621459.1974.10480137" title="" class="ltx_ref doi ltx_bib_external">Document</a></span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS3.p1.1" title="2.3 Opinion Dynamics ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.3</span></a>,
+<a href="#S4.SS6.p4.1" title="4.6 Per-Round Dynamics: Coupling is Stateless ‣ 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§4.6</span></a>,
+<a href="#S5.SS4.p1.1" title="5.4 Connection to Opinion Dynamics ‣ 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§5.4</span></a>.
+</span>
+</li>
+<li id="bib.bib8" class="ltx_bibitem ltx_bib_inproceedings">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">Y. Du, S. Li, A. Torralba, J. B. Tenenbaum, and I. Mordatch (2024)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Improving factuality and reasoning in language models through multiagent debate</span>.
+</span>
+<span class="ltx_bibblock">In <span class="ltx_text ltx_bib_inbook">International Conference on Machine Learning (ICML)</span>,
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S1.p1.1" title="1 Introduction ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§1</span></a>,
+<a href="#S2.SS1.p1.1" title="2.1 Multi-Agent LLM Systems ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.1</span></a>.
+</span>
+</li>
+<li id="bib.bib5" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">A. Flache, M. Mäs, T. Feliciani, E. Chattoe-Brown, G. Deffuant, S. Huet, and J. Lorenz (2017)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Models of social influence: towards the next frontiers</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">Journal of Artificial Societies and Social Simulation</span> <span class="ltx_text ltx_bib_volume">20</span> (<span class="ltx_text ltx_bib_number">4</span>).
+</span>
+<span class="ltx_bibblock">External Links: <span class="ltx_text ltx_bib_links"><a href="https://dx.doi.org/10.18564/jasss.3521" title="" class="ltx_ref doi ltx_bib_external">Document</a></span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS3.p1.1" title="2.3 Opinion Dynamics ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.3</span></a>.
+</span>
+</li>
+<li id="bib.bib2" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">N. E. Friedkin and E. C. Johnsen (1990)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Social influence and opinions</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">Journal of Mathematical Sociology</span> <span class="ltx_text ltx_bib_volume">15</span> (<span class="ltx_text ltx_bib_number">3–4</span>), <span class="ltx_text ltx_bib_pages"> pp. 193–206</span>.
+</span>
+<span class="ltx_bibblock">External Links: <span class="ltx_text ltx_bib_links"><a href="https://dx.doi.org/10.1080/0022250X.1990.9990069" title="" class="ltx_ref doi ltx_bib_external">Document</a></span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS3.p1.1" title="2.3 Opinion Dynamics ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.3</span></a>,
+<a href="#S4.SS6.p4.1" title="4.6 Per-Round Dynamics: Coupling is Stateless ‣ 4 Results ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§4.6</span></a>.
+</span>
+</li>
+<li id="bib.bib6" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">H. Hassani, R. Razavi-Far, M. Saif, F. Chiclana, O. Krejcar, and E. Herrera-Viedma (2022)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Classical dynamic consensus and opinion dynamics models: a survey of recent trends and methodologies</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">Information Fusion</span> <span class="ltx_text ltx_bib_volume">88</span>, <span class="ltx_text ltx_bib_pages"> pp. 22–40</span>.
+</span>
+<span class="ltx_bibblock">External Links: <span class="ltx_text ltx_bib_links"><a href="https://dx.doi.org/10.1016/j.inffus.2022.07.003" title="" class="ltx_ref doi ltx_bib_external">Document</a></span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS3.p1.1" title="2.3 Opinion Dynamics ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.3</span></a>,
+<a href="#S5.SS4.p1.1" title="5.4 Connection to Opinion Dynamics ‣ 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§5.4</span></a>.
+</span>
+</li>
+<li id="bib.bib3" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">R. Hegselmann and U. Krause (2002)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Opinion dynamics and bounded confidence: models, analysis and simulation</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">Journal of Artificial Societies and Social Simulation</span> <span class="ltx_text ltx_bib_volume">5</span> (<span class="ltx_text ltx_bib_number">3</span>).
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS3.p1.1" title="2.3 Opinion Dynamics ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.3</span></a>,
+<a href="#S5.SS4.p1.1" title="5.4 Connection to Opinion Dynamics ‣ 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§5.4</span></a>.
+</span>
+</li>
+<li id="bib.bib17" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">A. Jain and V. Krishnamurthy (2024)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Interacting large language model agents: interpretable models and social learning</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2411.01271</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S1.p2.1" title="1 Introduction ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§1</span></a>,
+<a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib7" class="ltx_bibitem ltx_bib_inproceedings">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">G. Li, H. A. A. K. Hammoud, H. Itani, D. Khizbullin, and B. Ghanem (2023)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">CAMEL: communicative agents for “mind” exploration of large language model society</span>.
+</span>
+<span class="ltx_bibblock">In <span class="ltx_text ltx_bib_inbook">Advances in Neural Information Processing Systems (NeurIPS)</span>,
+</span>
+<span class="ltx_bibblock">Vol. <span class="ltx_text ltx_bib_volume">36</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S1.p1.1" title="1 Introduction ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§1</span></a>,
+<a href="#S2.SS1.p1.1" title="2.1 Multi-Agent LLM Systems ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.1</span></a>.
+</span>
+</li>
+<li id="bib.bib20" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">H. Lin, P. Huang, C. Ku, C. Hsu, P. Shieh, and Y. Kang (2025)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Towards simulating social influence dynamics with LLM-based multi-agents</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2507.22467</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib19" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">A. Mehdizadeh and M. Hilbert (2025)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">When your AI agent succumbs to peer-pressure: studying opinion-change dynamics of LLMs</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2510.19107</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib14" class="ltx_bibitem ltx_bib_inproceedings">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">A. Parfenova, A. Denzler, and J. Pfeffer (2025)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Emergent convergence in multi-agent LLM annotation</span>.
+</span>
+<span class="ltx_bibblock">In <span class="ltx_text ltx_bib_inbook">Proceedings of the BlackboxNLP Workshop at EMNLP</span>,
+</span>
+<span class="ltx_bibblock">Note: <span class="ltx_text ltx_bib_note">arXiv:2512.00047</span>
+</span>
+<span class="ltx_bibblock">External Links: <span class="ltx_text ltx_bib_links"><a href="https://dx.doi.org/10.18653/v1/2025.blackboxnlp-1.12" title="" class="ltx_ref doi ltx_bib_external">Document</a></span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S1.p2.1" title="1 Introduction ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§1</span></a>,
+<a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib9" class="ltx_bibitem ltx_bib_inproceedings">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">J. S. Park, J. C. O’Brien, C. J. Cai, M. R. Morris, P. Liang, and M. S. Bernstein (2023)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Generative agents: interactive simulacra of human behavior</span>.
+</span>
+<span class="ltx_bibblock">In <span class="ltx_text ltx_bib_inbook">Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology (UIST)</span>,
+</span>
+<span class="ltx_bibblock">External Links: <span class="ltx_text ltx_bib_links"><a href="https://dx.doi.org/10.1145/3586183.3606763" title="" class="ltx_ref doi ltx_bib_external">Document</a></span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S1.p1.1" title="1 Introduction ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§1</span></a>,
+<a href="#S2.SS1.p1.1" title="2.1 Multi-Agent LLM Systems ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.1</span></a>.
+</span>
+</li>
+<li id="bib.bib13" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">D. Patel (2026)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Representational collapse in multi-agent LLM committees: measurement and diversity-aware consensus</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2604.03809</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S1.p2.1" title="1 Introduction ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§1</span></a>,
+<a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib18" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">M. Song, T. D. Pala, R. Zhou, W. Jin, A. Zadeh, C. Li, D. Herremans, and S. Poria (2025)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">LLMs Can’t Handle Peer Pressure: Crumbling under Multi-Agent Social Interactions (KAIROS Benchmark)</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2508.18321</span>.
+</span>
+<span class="ltx_bibblock">Note: <span class="ltx_text ltx_bib_note">Accepted at ICLR 2026</span>
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib10" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">Q. Wu, G. Bansal, J. Zhang, Y. Wu, B. Li, E. Zhu, L. Jiang, X. Zhang, S. Zhang, J. Liu, A. H. Awadallah, R. W. White, D. Burger, and C. Wang (2024)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">AutoGen: enabling next-gen LLM applications via multi-agent conversation</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2308.08155</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS1.p1.1" title="2.1 Multi-Agent LLM Systems ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.1</span></a>.
+</span>
+</li>
+<li id="bib.bib12" class="ltx_bibitem ltx_bib_inproceedings">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">Y. Wu and T. Ito (2025)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">The hidden strength of disagreement: unraveling the consensus-diversity tradeoff in adaptive multi-agent systems</span>.
+</span>
+<span class="ltx_bibblock">In <span class="ltx_text ltx_bib_inbook">Proceedings of EMNLP</span>,
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS1.p1.1" title="2.1 Multi-Agent LLM Systems ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.1</span></a>.
+</span>
+</li>
+<li id="bib.bib22" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">A. Wynn, T. Davis, and R. Brown (2025)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Talk isn’t always cheap: understanding failure modes in multi-agent debate</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2509.05396</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib21" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">Y. Xiao, R. Ma, and L. Sun (2026)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">The chameleon’s limit: investigating persona collapse and homogenization in large language models</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2604.24698</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S2.SS2.p1.1" title="2.2 Convergence and Collapse Phenomena ‣ 2 Related Work ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">§2.2</span></a>.
+</span>
+</li>
+<li id="bib.bib24" class="ltx_bibitem ltx_bib_article">
+<span class="ltx_tag ltx_bib_author-year ltx_role_refnum ltx_tag_bibitem">T. Yang, H. Liu, and W. Zhang (2025)</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_title">Understanding agent scaling in LLM-based multi-agent systems via diversity</span>.
+</span>
+<span class="ltx_bibblock"><span class="ltx_text ltx_bib_journal">arXiv preprint arXiv:2602.03794</span>.
+</span>
+<span class="ltx_bibblock ltx_bib_cited">Cited by: <a href="#S5.I1.i3.p1.4" title="In 5.2 Implications for Multi-Agent System Design ‣ 5 Discussion ‣ BOUNDARY_SYNC: Measuring Communication-Induced Representational Coupling in Multi-Agent LLM Systems" class="ltx_ref"><span class="ltx_text ltx_ref_tag">item 3</span></a>.
+</span>
+</li>
+</ul>
+</section>
+</article>
+</div>
+</div>
+<footer class="arxiv-html-footer">
+  <div class="ltx_page_logo">
+    Experimental support, please
+    <a href="./2607.01600v1/__stdout.txt" class="ltx_ref"
+    target="_blank" rel="nofollow">view the build logs</a>
+    for errors. Generated by
+    <a href="https://math.nist.gov/~BMiller/LaTeXML/" target="_blank" class="ltx_ref ltx_LaTeXML_logo">
+      <span style="letter-spacing: -0.2em; margin-right: 0.1em;">
+        L
+        <span style="font-size: 70%; position: relative; bottom: 2.2pt;">A</span>
+        T
+        <span style="position: relative; bottom: -0.4ex;">E</span>
+      </span>
+      <span class="ltx_font_smallcaps">xml</span>
+      <img alt="[LOGO]"
+        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAOCAYAAAD5YeaVAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9wKExQZLWTEaOUAAAAddEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIFRoZSBHSU1Q72QlbgAAAdpJREFUKM9tkL+L2nAARz9fPZNCKFapUn8kyI0e4iRHSR1Kb8ng0lJw6FYHFwv2LwhOpcWxTjeUunYqOmqd6hEoRDhtDWdA8ApRYsSUCDHNt5ul13vz4w0vWCgUnnEc975arX6ORqN3VqtVZbfbTQC4uEHANM3jSqXymFI6yWazP2KxWAXAL9zCUa1Wy2tXVxheKA9YNoR8Pt+aTqe4FVVVvz05O6MBhqUIBGk8Hn8HAOVy+T+XLJfLS4ZhTiRJgqIoVBRFIoric47jPnmeB1mW/9rr9ZpSSn3Lsmir1fJZlqWlUonKsvwWwD8ymc/nXwVBeLjf7xEKhdBut9Hr9WgmkyGEkJwsy5eHG5vN5g0AKIoCAEgkEkin0wQAfN9/cXPdheu6P33fBwB4ngcAcByHJpPJl+fn54mD3Gg0NrquXxeLRQAAwzAYj8cwTZPwPH9/sVg8PXweDAauqqr2cDjEer1GJBLBZDJBs9mE4zjwfZ85lAGg2+06hmGgXq+j3+/DsixYlgVN03a9Xu8jgCNCyIegIAgx13Vfd7vdu+FweG8YRkjXdWy329+dTgeSJD3ieZ7RNO0VAXAPwDEAO5VKndi2fWrb9jWl9Esul6PZbDY9Go1OZ7PZ9z/lyuD3OozU2wAAAABJRU5ErkJggg==">
+    </a>.
+  </div>
+  <div class="keyboard-glossary">
+    <h2>Instructions for reporting errors</h2>
+    <p>We are continuing to improve HTML versions of papers, and your feedback helps enhance accessibility and mobile
+      support. To report errors in the HTML that will help us improve conversion and rendering, choose any of the
+      methods listed below:</p>
+    <ul>
+      <li>Click the "Report Issue" <span class="mobile-only">(<svg role="presentation"
+            style="display: inline-block; vertical-align: middle; fill: var(--text-color);" aria-hidden="true"
+            height="1em" viewBox="0 0 640 640">
+            <path
+              d="M224 160C224 107 267 64 320 64C373 64 416 107 416 160L416 163.6C416 179.3 403.3 192 387.6 192L252.5 192C236.8 192 224.1 179.3 224.1 163.6L224.1 160zM569.6 172.8C580.2 186.9 577.3 207 563.2 217.6L465.4 290.9C470.7 299.8 474.7 309.6 477.2 320L576 320C593.7 320 608 334.3 608 352C608 369.7 593.7 384 576 384L480 384L480 416C480 418.6 479.9 421.3 479.8 423.9L563.2 486.4C577.3 497 580.2 517.1 569.6 531.2C559 545.3 538.9 548.2 524.8 537.6L461.7 490.3C438.5 534.5 395.2 566.5 344 574.2L344 344C344 330.7 333.3 320 320 320C306.7 320 296 330.7 296 344L296 574.2C244.8 566.5 201.5 534.5 178.3 490.3L115.2 537.6C101.1 548.2 81 545.3 70.4 531.2C59.8 517.1 62.7 497 76.8 486.4L160.2 423.9C160.1 421.3 160 418.7 160 416L160 384L64 384C46.3 384 32 369.7 32 352C32 334.3 46.3 320 64 320L162.8 320C165.3 309.6 169.3 299.8 174.6 290.9L76.8 217.6C62.7 207 59.8 186.9 70.4 172.8C81 158.7 101.1 155.8 115.2 166.4L224 248C236.3 242.9 249.8 240 264 240L376 240C390.2 240 403.7 242.8 416 248L524.8 166.4C538.9 155.8 559 158.7 569.6 172.8z" />
+          </svg>)</span> button, located in the page header.</li>
+    </ul>
+    <p><strong>Tip:</strong> You can select the relevant text first, to include it in your report.</p>
+    <p>Our team has already identified <a class="ltx_ref" href="https://github.com/arXiv/html_feedback/issues"
+        target="_blank">the following issues</a>. We appreciate your time reviewing and reporting rendering errors we
+      may not have found yet. Your efforts will help us improve the HTML versions for all readers, because disability
+      should not be a barrier to accessing research. Thank you for your continued support in championing open access for
+      all.</p>
+    <p>Have a free development cycle? Help support accessibility at arXiv! Our collaborators at LaTeXML maintain a <a
+        class="ltx_ref" href="https://github.com/brucemiller/LaTeXML/wiki/Porting-LaTeX-packages-for-LaTeXML"
+        target="_blank">list of packages that need conversion</a>, and welcome <a class="ltx_ref"
+        href="https://github.com/brucemiller/LaTeXML/issues" target="_blank">developer contributions</a>.</p>
+  </div>
+</footer><footer class="ds-site-footer">
+  <div class="ds-site-footer-grid">
+    <div class="ds-site-footer-main">
+      <div class="ds-site-footer-ack">
+        We gratefully acknowledge support from
+        our <strong>major funders</strong>,
+        <a href="https://info.arxiv.org/about/ourmembers.html"><strong>member institutions</strong></a><span class="ack-member-inline" hidden>, <strong></strong></span>,
+        and all contributors.
+      </div>
+      <nav class="ds-site-footer-links" aria-label="Site navigation">
+        <a href="https://info.arxiv.org/about">About</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help">Help</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/contact.html">Contact</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/subscribe">Subscribe</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/license/index.html">Copyright</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/policies/privacy_policy.html">Privacy</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://info.arxiv.org/help/web_accessibility.html">Accessibility</a>
+        <span class="ds-site-footer-sep" aria-hidden="true">&middot;</span>
+        <a href="https://status.arxiv.org" target="_blank" rel="noopener noreferrer">Operational Status<span class="is-sr-only"> (opens in new tab)</span></a>
+      </nav>
+    </div>
+
+    <div class="ds-site-footer-funders" aria-label="Major funders">
+      <div class="ds-site-footer-funders-label">Major funding support from</div>
+      <div class="ds-site-footer-funders-logos">
+        <img class="ds-funder-logo" src="/static/base/1.0.1/images/funders/simons-foundation.png" alt="Simons Foundation">
+        <img class="ds-funder-logo" src="/static/base/1.0.1/images/funders/schmidt-sciences.png" alt="Schmidt Sciences">
+      </div>
+    </div>
+  </div>
+</footer><div id="fixed-buttons-container">
+  <a id="disable-reading-mode-btn" class="header-button" href="javascript:toggleReadingMode();"
+    title="Disable reading mode, show header and footer">
+    <svg role="presentation" height="1.25rem"
+      viewBox="0 0 448 512"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+      <path
+        d="M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z" />
+    </svg>
+  </a>
+</div></body>
+</html>

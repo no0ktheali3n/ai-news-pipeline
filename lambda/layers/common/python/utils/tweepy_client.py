@@ -1,11 +1,15 @@
+import io
 import json
 import boto3
 import os
 import logging
+import requests
+from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
 from tweepy.errors import TooManyRequests
 from datetime import datetime
 from tweepy import Client
+import tweepy as _tweepy_mod
 from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
@@ -41,6 +45,58 @@ def get_twitter_client():
         access_token_secret=os.getenv("TWITTER_ACCESS_SECRET")
     )
 
+# === v1.1 API (media upload) ===
+def get_v1_api():
+    """v1.1 API object for media upload — the v2 Client has no media methods."""
+    _ensure_twitter_creds()
+    auth = _tweepy_mod.OAuth1UserHandler(
+        consumer_key=os.getenv("TWITTER_API_KEY"),
+        consumer_secret=os.getenv("TWITTER_API_SECRET"),
+        access_token=os.getenv("TWITTER_ACCESS_TOKEN"),
+        access_token_secret=os.getenv("TWITTER_ACCESS_SECRET"),
+    )
+    return _tweepy_mod.API(auth)
+
+
+def upload_media(image_bytes, filename, alt_text):
+    """Returns media_id string or None. NEVER raises; alt text is best-effort."""
+    try:
+        api = get_v1_api()
+        media = api.media_upload(filename=filename, file=io.BytesIO(image_bytes))
+        media_id = str(media.media_id)
+    except Exception as e:
+        logger.warning(f"media upload failed: {e}")
+        return None
+    try:
+        api.create_media_metadata(media_id, alt_text=(alt_text or "")[:1000])
+    except Exception as e:
+        logger.warning(f"media alt-text failed (non-fatal): {e}")
+    return media_id
+
+
+def _download_figure(url):
+    """None unless https arxiv.org + 200 + image/* + 10KB..4.9MB.
+
+    The figure URL was validated when figures.py built it, but it travels
+    through an S3 artifact between stages — the poster re-validates as an
+    independent enforcement point and refuses redirects (an allowlisted
+    host must not bounce the fetch elsewhere)."""
+    try:
+        parsed = urlparse(url)
+        host = (parsed.hostname or "").rstrip(".").lower()
+        if parsed.scheme != "https" or not (host == "arxiv.org" or host.endswith(".arxiv.org")):
+            return None
+        r = requests.get(url, timeout=15, headers={"User-Agent": "Mozilla/5.0"},
+                         allow_redirects=False)
+        if r.status_code != 200 or not r.headers.get("Content-Type", "").startswith("image/"):
+            return None
+        if not (10_000 <= len(r.content) <= 4_900_000):
+            return None
+        return r.content
+    except Exception:
+        return None
+
+
 # Hard bound on the follower lookup: a hung Twitter call must never stall
 # post_thread past the ledger write (posted-but-unledgered = repost risk).
 # Module-level so tests can patch it down.
@@ -70,12 +126,15 @@ def get_follower_count() -> "int | None":
         ex.shutdown(wait=False, cancel_futures=True)
 
 
-def post_tweet(text, reply_to_id=None):
+def post_tweet(text, reply_to_id=None, media_ids=None):
     client = get_twitter_client()
     try:
+        extra = {}
+        if media_ids is not None:
+            extra["media_ids"] = media_ids
         tweet = (
-            client.create_tweet(text=text, in_reply_to_tweet_id=reply_to_id)
-            if reply_to_id else client.create_tweet(text=text)
+            client.create_tweet(text=text, in_reply_to_tweet_id=reply_to_id, **extra)
+            if reply_to_id else client.create_tweet(text=text, **extra)
         )
         tweet_id = tweet.data["id"]
         print(f"✅ Tweeted: https://twitter.com/user/status/{tweet_id}")

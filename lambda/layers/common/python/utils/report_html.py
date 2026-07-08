@@ -205,6 +205,34 @@ def _section_runs(runs: dict, n_deltas: int) -> str:
     return "\n".join(parts)
 
 
+def _section_media(media: dict, n_deltas: int) -> str:
+    parts = ["<h2>7. Media Outcomes</h2>"]
+    if not media:
+        parts.append(_placeholder(n_deltas))
+        return "\n".join(parts)
+
+    attempted = media.get("attempted", 0)
+    attached = media.get("attached", 0)
+    skipped = media.get("skipped") or {}
+
+    rows = [
+        f"<tr><td>Attempted</td><td>{attempted}</td></tr>",
+        f"<tr><td>Attached</td><td>{attached}</td></tr>",
+    ]
+    for reason, count in sorted(skipped.items()):
+        rows.append(
+            f"<tr><td>Skipped ({html.escape(str(reason))})</td><td>{count}</td></tr>"
+        )
+
+    header = (
+        "<table><thead><tr>"
+        "<th>Metric</th><th>Value</th>"
+        "</tr></thead><tbody>"
+    )
+    parts.append(header + "\n".join(rows) + "</tbody></table>")
+    return "\n".join(parts)
+
+
 def _section_milestone(milestone: Optional[dict], n_deltas: int) -> str:
     parts = ["<h2>6. Milestone</h2>"]
     if not milestone:
@@ -249,6 +277,7 @@ def render_report(agg: dict, generated_at: str) -> str:
     lanes = agg.get("lanes") or {}
     buzz = agg.get("buzz") or {}
     runs = agg.get("runs") or {}
+    media = agg.get("media") or {}
     milestone = agg.get("milestone") or {}
 
     n_deltas = len(deltas)
@@ -259,6 +288,7 @@ def render_report(agg: dict, generated_at: str) -> str:
         _section_lanes(lanes, n_deltas),
         _section_buzz(buzz, n_deltas),
         _section_runs(runs, n_deltas),
+        _section_media(media, n_deltas),
         _section_milestone(milestone, n_deltas),
     ]
 

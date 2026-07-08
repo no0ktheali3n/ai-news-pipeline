@@ -609,5 +609,35 @@ check("reporter happy path: HTML written + SNS presigned URL + 2 posts", test_re
 check("reporter empty world: 200 + HTML written + digest published", test_reporter_empty_world)
 check("reporter corrupt ledger → 200 + digest still published", test_reporter_corrupt_ledger)
 
+# ---------------------------------------------------------------------------
+# Task 5: media_stats + report media section
+# ---------------------------------------------------------------------------
+print("[9] analytics: media_stats")
+
+AGG_FIXTURE = _FULL_AGG  # alias for the brief's shorthand
+
+
+def test_media_stats_tolerates_old_entries():
+    entries = [
+        {"title": "old"},                                  # pre-media ledger entry
+        {"title": "a", "media": {"attempted": True, "attached": True, "skip_reason": None}},
+        {"title": "b", "media": {"attempted": True, "attached": False, "skip_reason": "license"}},
+    ]
+    s = analytics.media_stats(entries)
+    assert s == {"attempted": 2, "attached": 1, "skipped": {"license": 1}}, f"got {s}"
+
+
+def test_report_renders_media_section():
+    html_out = report_html.render_report(
+        {**AGG_FIXTURE, "media": {"attempted": 2, "attached": 1, "skipped": {"license": 1}}},
+        "2026-07-07",
+    )
+    assert "media" in html_out.lower() and "license" in html_out, \
+        "report must contain media section with skip reason"
+
+
+check("media_stats tolerates old entries (no media key)", test_media_stats_tolerates_old_entries)
+check("report renders media section with skip reasons", test_report_renders_media_section)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

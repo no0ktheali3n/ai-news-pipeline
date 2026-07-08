@@ -152,9 +152,12 @@ FAKE_SNS = FakeSNS()
 
 
 class _HttpResp:
-    def __init__(self, payload=None, status=200):
+    def __init__(self, payload=None, status=200, content=b"", headers=None, text=None):
         self._payload = {} if payload is None else payload
         self.status_code = status
+        self.content = content
+        self.headers = headers or {}
+        self.text = text if text is not None else (content.decode("utf-8", "replace") if content else "")
 
     def raise_for_status(self):
         if self.status_code >= 400:
@@ -163,13 +166,20 @@ class _HttpResp:
     def json(self):
         return self._payload
 
+    def iter_content(self, chunk_size=65536):
+        for i in range(0, len(self.content), chunk_size):
+            yield self.content[i:i + chunk_size]
+
+    def close(self):
+        pass
+
 
 class FakeHttp:
     """Routes fake GET/POST responses by URL substring; records every call.
     Unrouted URLs get an empty 200 JSON (keeps webhook posts harmless)."""
 
     def __init__(self):
-        self.routes = {}   # url substring -> JSON payload | Exception
+        self.routes = {}   # url substring -> JSON payload | _HttpResp | Exception
         self.calls = []    # (method, url)
 
     def _resolve(self, method, url):
@@ -178,6 +188,8 @@ class FakeHttp:
             if frag in url:
                 if isinstance(payload, Exception):
                     raise payload
+                if isinstance(payload, _HttpResp):
+                    return payload
                 return _HttpResp(payload)
         return _HttpResp({})
 
@@ -280,3 +292,32 @@ def install_stubs():
     tweepy.errors = tweepy_errors
     sys.modules["tweepy"] = tweepy
     sys.modules["tweepy.errors"] = tweepy_errors
+
+    # --- v1.1 media upload fakes (for media/figures feature) ---
+    class _FakeOAuth1UserHandler:
+        def __init__(self, *args, **kwargs):
+            self.args = args
+
+    class _FakeV1API:
+        uploads, metadata_calls = [], []
+        fail_upload = False
+
+        def __init__(self, auth=None):
+            self.auth = auth
+
+        @classmethod
+        def reset(cls):
+            cls.uploads, cls.metadata_calls, cls.fail_upload = [], [], False
+
+        def media_upload(self, filename=None, file=None):
+            if _FakeV1API.fail_upload:
+                raise RuntimeError("fake upload failure")
+            data = file.read() if file is not None else b""
+            _FakeV1API.uploads.append((filename, len(data)))
+            return types.SimpleNamespace(media_id="777000")
+
+        def create_media_metadata(self, media_id, alt_text=None):
+            _FakeV1API.metadata_calls.append((media_id, alt_text))
+
+    tweepy.API = _FakeV1API
+    tweepy.OAuth1UserHandler = _FakeOAuth1UserHandler

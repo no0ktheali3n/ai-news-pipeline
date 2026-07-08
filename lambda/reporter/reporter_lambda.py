@@ -18,6 +18,7 @@ from utils.analytics import (  # noqa: E402
     follower_series,
     lane_stats,
     load_entries,
+    media_stats,
     post_deltas,
     run_stats,
 )
@@ -83,6 +84,7 @@ def handler(event, context):
     lanes = lane_stats(entries)
     buzz = buzz_outcome(entries)
     runs = run_stats(n_sidecars, entries)
+    media = media_stats(entries)
     milestone_current = series[-1][1] if series else None
     agg = {
         "series": series,
@@ -90,6 +92,7 @@ def handler(event, context):
         "lanes": lanes,
         "buzz": buzz,
         "runs": runs,
+        "media": media,
         "milestone": {"target": 500, "current": milestone_current},
     }
 

@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 MAX_CANDIDATES = 4
 AR_MIN, AR_MAX = 1.0, 3.0
+IDEAL_AR = 1.78  # X single-image in-feed crop target (~16:9); sort candidates toward it
 MIN_WIDTH = 600
 IMG_READ_CAP = 2_000_000
 FETCH_TIMEOUT_S = 10
@@ -224,6 +225,13 @@ def fetch_figures(arxiv_abs_url):
             figs.append({"index": len(figs), "url": url,
                          "caption": clean_caption(fig),
                          "width": dims[0], "height": dims[1]})
+        # Order by in-feed cropping quality: X previews a single image at ~16:9
+        # (1.78), so a squarer figure renders better than a 2.7 banner. This is a
+        # preference, not a filter (all still passed the gate) — the writer picks
+        # by caption, but sees the best-rendering candidates first.
+        figs.sort(key=lambda f: abs((f["width"] / f["height"]) - IDEAL_AR))
+        for new_index, f in enumerate(figs):
+            f["index"] = new_index
         return {"figures": figs, "license": license_text,
                 "reason": None if figs else "no_candidates"}
     except Exception:

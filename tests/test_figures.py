@@ -312,6 +312,24 @@ def test_fetch_figures_no_html():
     assert out == {"figures": [], "license": None, "reason": "no_html"}
 
 
+def test_figures_ordered_by_crop_quality():
+    # Distinct aspects per candidate → result must be sorted by |ar - IDEAL_AR|
+    # (best-cropping first) and re-indexed 0..n-1.
+    dims_cycle = iter([(600, 600), (1780, 1000), (2900, 400)])  # ar 1.0, 1.78, 7.25(gated)
+    orig = figures._image_ok
+    figures._image_ok = lambda url: next(dims_cycle, (996, 673))
+    try:
+        with monkeypatched_http():
+            out = figures.fetch_figures("https://arxiv.org/abs/2607.02116")
+    finally:
+        figures._image_ok = orig
+    figs = out["figures"]
+    assert [f["index"] for f in figs] == list(range(len(figs)))       # re-indexed
+    dist = [abs(f["width"] / f["height"] - figures.IDEAL_AR) for f in figs]
+    assert dist == sorted(dist)                                       # best crop first
+    assert figs[0]["width"] / figs[0]["height"] == 1.78              # the 16:9 one leads
+
+
 def test_multi_img_and_table_figures_excluded():
     # 02116 fixture contains multi-<img> subfigure grids (audit: 21 across lane)
     # and the candidate filter must yield only single-img Figure-captioned ones.
@@ -331,6 +349,7 @@ check("_image_ok: caps wire read + rejects oversize Content-Length", test_image_
 check("fetch_figures: CC paper end-to-end", test_fetch_figures_end_to_end_cc_paper)
 check("fetch_figures: non-CC gated with reason=license", test_fetch_figures_noncc_gated)
 check("fetch_figures: 404 HTML → reason=no_html", test_fetch_figures_no_html)
+check("figures ordered by crop quality (best aspect first, re-indexed)", test_figures_ordered_by_crop_quality)
 check("candidates: single-img Figure-captioned only, <=4", test_multi_img_and_table_figures_excluded)
 
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")

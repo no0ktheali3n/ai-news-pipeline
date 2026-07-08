@@ -69,22 +69,32 @@ def build_writer_prompt(article, figures=None):
         "to argue with - in plain words a tired scroller gets instantly. NO "
         "metric names or field jargon in the hook. No 'New paper alert', no "
         "thread emojis, no questions-as-hooks.\n"
-        f"- Middle tweets (at most {TWEET_MAX} characters each) follow a story "
-        "arc, not a summary: first the TWIST - the one insight worth stealing, "
-        "stated as a consequence for the reader's own system, never as a "
-        "description of the paper's machinery. Then the PAYOFF - what a builder "
-        "would do differently after reading (numbers earn their place here as "
-        "evidence, not decoration).\n"
+        "- Middle tweets follow a story arc, not a summary: first the one "
+        "insight worth stealing, stated as a consequence for the reader's own "
+        "system, never as a description of the paper's machinery. Then what a "
+        "builder would do differently after reading (numbers earn their place "
+        "here as evidence, not decoration). Do NOT prefix tweets with labels "
+        "like 'The twist:', 'Concrete payoff:', 'Practical upshot:' - just say "
+        "the thing; vary how each tweet opens.\n"
+        "- LENGTH: aim each middle tweet at roughly 150-230 characters and treat "
+        f"{TWEET_MAX} as a hard wall you stay well clear of. A tweet MUST end on "
+        "a finished sentence with real terminal punctuation (. ! ?). NEVER end a "
+        "tweet mid-clause or with a trailing '...' / '…'. If a thought is getting "
+        "long, STOP the sentence early and continue it in the next tweet (you "
+        "have up to 5) - a clean 180-char tweet beats a 275-char one that trails "
+        "off. Before finalizing, check the LAST tweet of every entry ends in "
+        ". ! or ? - if any ends in '…' you have failed, rewrite it shorter.\n"
         "- Jargon rule: assume a smart practitioner OUTSIDE this subfield. "
         "Translate each technical term into its consequence, or gloss it inline "
         "in parentheses (5 words max, e.g. 'hash-chained versions (tamper-"
         "evident history)'). Never let an unexplained term or metric carry the "
         "point; never turn the thread into a glossary - the paper stays the "
         "subject.\n"
-        "- Have a stance: say what impresses you, what you would push back on, "
-        "or what you would steal for your own stack. You may end the LAST "
-        "middle tweet with ONE genuine discussion question if it invites a real "
-        "answer (never in the hook).\n"
+        "- Have a real reaction, not neutral reportage: what genuinely surprised "
+        "you, what you're skeptical of, what you'd steal for your own stack. One "
+        "line of honest opinion beats a paragraph of summary. You may end the "
+        "LAST middle tweet with ONE genuine discussion question if it invites a "
+        "real answer (never in the hook).\n"
         f"- Final tweet: the paper title (shortened if needed) and this exact "
         f"link: {url} - at most {TWEET_MAX} characters.\n"
         '- "summary" is a plain 2-3 sentence summary of the paper (no links, '
@@ -136,6 +146,41 @@ def _split_tweet(text, limit):
     return None
 
 
+def _untrail(text):
+    """Kill a trailing-off ending. Models pack a middle tweet against the limit
+    and end mid-clause with '...'/'…' (2026-07-07: prompt guidance alone left
+    ~3/6 threads doing it). If a tweet ends in an ellipsis, cut back to its last
+    complete sentence; if it has none, at least drop the ellipsis. No-op for a
+    clean tweet."""
+    t = text.rstrip()
+    if t.endswith("…"):
+        t = t[:-1]
+    elif t.endswith("..."):
+        t = t[:-3]
+    else:
+        return text
+    t = t.rstrip(" .,;:-")
+    ends = list(re.finditer(r"[.!?]", t))
+    if ends:
+        return t[: ends[-1].end()]
+    return t
+
+
+def _repack_middles(middles):
+    """Greedily merge adjacent middle tweets that fit within TWEET_MAX, in
+    order. Recovers space wasted by short tweets (incl. ones the de-trail
+    shortened) without splitting sentences or reordering. Never exceeds
+    TWEET_MAX; a single over-long middle is left alone (the length repair
+    handles it)."""
+    packed = []
+    for t in middles:
+        if packed and len(packed[-1]) + 1 + len(t) <= TWEET_MAX:
+            packed[-1] = packed[-1] + " " + t
+        else:
+            packed.append(t)
+    return packed
+
+
 def validate_and_repair(tweets, url):
     """Apply the repair table, then hard-fail anything still in violation.
     Returns a NEW sanitized list; raises ContractError on hard failure."""
@@ -169,6 +214,17 @@ def validate_and_repair(tweets, url):
             else:
                 out[i] = _word_trim(out[i], TWEET_MAX)
         i += 1
+
+    # Complete-thoughts guarantee: no non-final tweet may trail off with an
+    # ellipsis (the final tweet ends in the URL, never an ellipsis).
+    for j in range(len(out) - 1):
+        out[j] = _untrail(out[j])
+
+    # Recover wasted space: repack the MIDDLE tweets (never the hook or the
+    # final link tweet) so short beats — including ones the de-trail shortened —
+    # merge back to full tweets instead of scattering across the thread.
+    if len(out) > 2:
+        out = [out[0]] + _repack_middles(out[1:-1]) + [out[-1]]
 
     if len(out) < MIN_TWEETS:
         raise ContractError(f"{len(out)} tweets (< {MIN_TWEETS})")

@@ -58,7 +58,10 @@ def test_six_tweets_truncates_keeping_final_link():
     t = _valid_thread()
     t = [t[0], "m1", "m2", "m3", "m4", t[2]]  # 6 tweets
     out = tc.validate_and_repair(t, URL)
-    assert len(out) == 5 and URL in out[-1] and out[1] == "m1" and "m4" not in out
+    # capped at MAX (4th middle dropped), link preserved; the tiny surviving
+    # middles then repack together, so assert the guarantees, not exact count
+    assert len(out) <= 5 and URL in out[-1] and "m4" not in "".join(out)
+    assert all(len(x) <= tc.TWEET_MAX for x in out)
 
 
 def test_hard_fails():
@@ -90,8 +93,12 @@ def test_overlong_middle_splits_at_sentence_boundary():
 def test_overlong_middle_trims_when_thread_full():
     tweets = ["hook ok", "x" * 300, "m2", "m3", f"Paper\n{URL}"]  # already MAX_TWEETS
     out = tc.validate_and_repair(tweets, URL)
-    assert len(out) == 5
-    assert len(out[1]) <= 280 and out[1].endswith("…")
+    # the over-long middle is trimmed to <=280 and de-trailed (a word-trim
+    # ellipsis is itself a trailing-off); tiny neighbours may repack, so assert
+    # the guarantees rather than an exact count
+    assert all(len(t) <= tc.TWEET_MAX for t in out)
+    assert not out[1].endswith("…") and not out[1].endswith("...")
+    assert URL in out[-1]
 
 
 def test_overlong_final_trims_but_keeps_url():
@@ -123,6 +130,40 @@ def test_max_tweets_gte_min_tweets():
         f"MAX_TWEETS ({tc.MAX_TWEETS}) must be >= MIN_TWEETS ({tc.MIN_TWEETS})"
 
 
+def test_untrail_cuts_to_last_sentence():
+    assert tc._untrail("A. B is large (d=1.30). Your set is less diverse than you…") \
+        == "A. B is large (d=1.30)."
+    assert tc._untrail("Done properly.") == "Done properly."          # no-op
+    assert tc._untrail("one long clause with no terminator…") \
+        == "one long clause with no terminator"                       # ellipsis at least gone
+    assert tc._untrail("three dots here...") == "three dots here"
+
+
+def test_repair_untrails_nonfinal_tweets():
+    out = tc.validate_and_repair(
+        ["Hook line.", "Middle point one is fine. And this second one trails off into…",
+         f"Paper\n{URL}"], URL)
+    assert not out[1].endswith("…") and not out[1].endswith("...")
+    assert out[1] == "Middle point one is fine."
+    assert URL in out[-1]
+
+
+def test_repack_middles_merges_thin_adjacent():
+    assert tc._repack_middles(["a" * 100, "b" * 100, "c" * 200]) == \
+        ["a" * 100 + " " + "b" * 100, "c" * 200]
+    assert tc._repack_middles(["a" * 200, "b" * 200]) == ["a" * 200, "b" * 200]
+    assert tc._repack_middles([]) == []
+
+
+def test_repair_repacks_thin_middles_keeping_hook_and_link():
+    tweets = ["Hook stays alone.", "Short one.", "Short two.", "Short three.", f"Paper\n{URL}"]
+    out = tc.validate_and_repair(tweets, URL)
+    assert out[0] == "Hook stays alone."          # hook untouched
+    assert URL in out[-1]                          # link tweet untouched
+    assert len(out) < 5                            # thin middles packed together
+    assert all(len(t) <= tc.TWEET_MAX for t in out)
+
+
 def test_writer_prompt_with_figures_and_without():
     art = {"title": "T", "authors": ["A"], "snippet": "S", "url": URL}
     base = tc.build_writer_prompt(art)
@@ -144,6 +185,10 @@ check("hard-fail rows raise ContractError", test_hard_fails)
 check("overlong middle splits at sentence boundary", test_overlong_middle_splits_at_sentence_boundary)
 check("overlong middle trims when thread full", test_overlong_middle_trims_when_thread_full)
 check("overlong final trims but keeps url", test_overlong_final_trims_but_keeps_url)
+check("_untrail cuts to last complete sentence", test_untrail_cuts_to_last_sentence)
+check("repair untrails non-final tweets", test_repair_untrails_nonfinal_tweets)
+check("_repack_middles merges thin adjacent tweets", test_repack_middles_merges_thin_adjacent)
+check("repair repacks thin middles, hook + link untouched", test_repair_repacks_thin_middles_keeping_hook_and_link)
 check("sanitize_tweet preserves newlines", test_sanitize_tweet_preserves_newlines)
 check("writer prompt carries contract", test_writer_prompt_contract_elements)
 

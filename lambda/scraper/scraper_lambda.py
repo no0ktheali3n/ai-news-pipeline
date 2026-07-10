@@ -2,6 +2,7 @@
 # Modified section of scraper_lambda.py
 
 import os
+import random
 import sys
 import json
 import boto3
@@ -32,7 +33,17 @@ LANES = [
     ("agents", ARXIV_SEARCH + "%22LLM+agent%22+OR+%22multi-agent%22+OR+%22tool+use%22+OR+%22agentic%22"),
     ("llm-systems", ARXIV_SEARCH + "%22LLM+serving%22+OR+%22retrieval+augmented%22+OR+%22LLM+evaluation%22+OR+%22inference+optimization%22"),
 ]
-LANE_FETCH_DELAY_S = 1.5
+LANE_FETCH_DELAY_S = 3.0
+# Backoff before lane retry attempts 2 and 3 (+0-3s jitter). 2026-07-09: arXiv
+# throttled all lanes (read timeouts + a 429) and one failed fetch per lane
+# meant a silently skipped daily post; these queries never legitimately return
+# zero results, so an empty scrape is treated as transient and retried.
+LANE_RETRY_DELAYS_S = (8, 20)
+# Hard wall for the whole lane-scrape phase: the pipeline Lambda sits at the
+# 900s platform maximum budgeted as summarizer(<=600) + scraper + poster, so
+# retries must never stack past this. When the budget is spent, remaining
+# lanes get one attempt each and no retries.
+SCRAPE_WALL_BUDGET_S = 150
 
 DEFAULT_URL = "https://arxiv.org/search/?query=artificial+intelligence&searchtype=all&abstracts=show&order=-announced_date_first&size=25&classification-computer_science=y"
 S3_BUCKET = os.getenv("S3_OUTPUT_BUCKET")
@@ -55,14 +66,35 @@ def _id_sort_key(candidate):
         return (0, 0)
 
 
+def _fetch_lane(lane, lane_url, scrape_limit, start_scrape, deadline):
+    """One lane with bounded retries. ScraperClient returns [] on ANY failure
+    (timeout/429/parse) — and these lane queries never legitimately match zero
+    papers — so [] is treated as transient and retried with backoff + jitter.
+    Retries stop once `deadline` (epoch seconds) has passed; the first attempt
+    always runs."""
+    for attempt, delay in enumerate((0,) + LANE_RETRY_DELAYS_S, start=1):
+        if delay:
+            if time.time() + delay >= deadline:
+                logger.warning(f"Lane '{lane}': scrape wall budget spent; not retrying.")
+                return []
+            time.sleep(delay + random.uniform(0, 3))
+        articles = ScraperClient(lane_url, scrape_limit, start_scrape).scrape()
+        if articles:
+            return articles
+        logger.warning(f"Lane '{lane}' attempt {attempt} returned nothing"
+                       f"{'; retrying' if attempt <= len(LANE_RETRY_DELAYS_S) else '; giving up'}.")
+    return []
+
+
 def scrape_lanes(scrape_limit, start_scrape):
     """Scrape every lane, merge by URL (recording each contributing lane in
     query_source), newest-first by numeric arXiv id."""
     merged = {}
+    deadline = time.time() + SCRAPE_WALL_BUDGET_S
     for i, (lane, lane_url) in enumerate(LANES):
         if i:
             time.sleep(LANE_FETCH_DELAY_S)  # be polite between lane fetches
-        for article in ScraperClient(lane_url, scrape_limit, start_scrape).scrape():
+        for article in _fetch_lane(lane, lane_url, scrape_limit, start_scrape, deadline):
             entry = merged.setdefault(article["url"], {**article, "query_source": []})
             entry["query_source"].append(lane)
     ordered = sorted(merged.values(), key=_id_sort_key, reverse=True)
@@ -150,6 +182,20 @@ def handler(event, context):
         all_results = scrape_lanes(scrape_limit, start_scrape)
 
     if not all_results:
+        # A fully-empty scrape is a fetch failure (throttle/outage), never a
+        # quiet day — 2026-07-09 this skipped a post with no alert. Be loud.
+        logger.error("All lanes returned zero articles after retries — "
+                     "likely arXiv rate-limiting or outage.")
+        if ALERT_TOPIC_ARN:
+            try:
+                boto3.client("sns", region_name=AWS_REGION).publish(
+                    TopicArn=ALERT_TOPIC_ARN,
+                    Subject="AI research pipeline: scrape returned ZERO articles",
+                    Message="All arXiv lanes returned zero articles after retries "
+                            "(likely rate-limiting or an arXiv outage). Today's post "
+                            "was skipped. Check /aws/lambda/ai-research-scraper logs.")
+            except Exception as e:
+                logger.error(f"SNS publish failed: {e}")
         return {"statusCode": 500,
                 "body": json.dumps({"error": "Scraper returned no results."})}
 

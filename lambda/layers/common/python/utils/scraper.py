@@ -21,7 +21,10 @@ class ScraperClient:
 
     def scrape(self):
         try:
-            response = requests.get(self.target_url, headers=self.headers, timeout=10)
+            # 2026-07-09: 10s read-timeouts + a 429 across all lanes silently
+            # skipped a daily post — give arXiv more headroom, tunable per env.
+            response = requests.get(self.target_url, headers=self.headers,
+                                    timeout=int(os.getenv("SCRAPE_TIMEOUT_S", "20")))
             response.raise_for_status()
             soup = BeautifulSoup(response.content, "html.parser")
 

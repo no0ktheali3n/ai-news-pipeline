@@ -1353,5 +1353,150 @@ def test_record_posted_persists_media():
 
 check("record_posted persists media key into ledger", test_record_posted_persists_media)
 
+# ---------------------------------------------------------------------------
+# Scraper hardening: lane retries + loud empty-scrape alert (2026-07-09 miss:
+# arXiv throttled all 3 lanes -> 0 candidates -> silent skipped post)
+# ---------------------------------------------------------------------------
+print("\n[17] scraper: throttle hardening")
+
+
+def _patch_lane_sleeps():
+    orig_sleep, orig_uniform = scraper_lambda.time.sleep, scraper_lambda.random.uniform
+    scraper_lambda.time.sleep = lambda *_: None
+    scraper_lambda.random.uniform = lambda a, b: 0
+    return orig_sleep, orig_uniform
+
+
+def _restore_lane_sleeps(orig):
+    scraper_lambda.time.sleep, scraper_lambda.random.uniform = orig
+
+
+def test_lane_retries_transient_empty_then_succeeds():
+    batch = [{"url": "https://arxiv.org/abs/2607.11111", "title": "T", "snippet": "s"}]
+    calls = {"n": 0}
+
+    class FlakyClient:
+        def __init__(self, url, limit, start):
+            pass
+
+        def scrape(self):
+            calls["n"] += 1
+            return list(batch) if calls["n"] % 3 == 0 else []   # 2 failures then success, per lane
+
+    orig_client = scraper_lambda.ScraperClient
+    scraper_lambda.ScraperClient = FlakyClient
+    orig = _patch_lane_sleeps()
+    try:
+        merged = scraper_lambda.scrape_lanes(10, 0)
+    finally:
+        scraper_lambda.ScraperClient = orig_client
+        _restore_lane_sleeps(orig)
+    assert calls["n"] == 9, f"expected 3 attempts x 3 lanes, got {calls['n']}"
+    assert len(merged) == 1
+    assert sorted(merged[0]["query_source"]) == ["agents", "ai-security", "llm-systems"]
+
+
+def test_lane_gives_up_after_max_attempts():
+    calls = {"n": 0}
+
+    class DeadClient:
+        def __init__(self, url, limit, start):
+            pass
+
+        def scrape(self):
+            calls["n"] += 1
+            return []
+
+    orig_client = scraper_lambda.ScraperClient
+    scraper_lambda.ScraperClient = DeadClient
+    orig = _patch_lane_sleeps()
+    try:
+        merged = scraper_lambda.scrape_lanes(10, 0)
+    finally:
+        scraper_lambda.ScraperClient = orig_client
+        _restore_lane_sleeps(orig)
+    assert merged == [] and calls["n"] == 9   # bounded: never retries forever
+
+
+def test_empty_scrape_publishes_alert_and_returns_500():
+    FAKE_SNS.published.clear()
+
+    class DeadClient:
+        def __init__(self, url, limit, start):
+            pass
+
+        def scrape(self):
+            return []
+
+    orig_client = scraper_lambda.ScraperClient
+    scraper_lambda.ScraperClient = DeadClient
+    orig = _patch_lane_sleeps()
+    try:
+        resp = scraper_lambda.handler({"scrape_limit": 10}, None)
+    finally:
+        scraper_lambda.ScraperClient = orig_client
+        _restore_lane_sleeps(orig)
+    assert resp["statusCode"] == 500
+    blobs = [(p.get("Subject", "") + p.get("Message", "")).lower() for p in FAKE_SNS.published]
+    assert any("zero" in b for b in blobs), f"expected empty-scrape SNS alert, got: {FAKE_SNS.published}"
+
+
+def test_scrape_timeout_env_tunable():
+    import utils.scraper as scr
+    captured = {}
+    orig_get = scr.requests.get
+
+    def spy(url, **kw):
+        captured.update(kw)
+        raise Exception("stop here")
+
+    scr.requests.get = spy
+    os.environ["SCRAPE_TIMEOUT_S"] = "33"
+    try:
+        out = scr.ScraperClient("https://arxiv.org/search/x", 1, 0).scrape()
+        assert out == [] and captured.get("timeout") == 33
+    finally:
+        scr.requests.get = orig_get
+        os.environ.pop("SCRAPE_TIMEOUT_S", None)
+
+
+def test_wall_budget_stops_retries():
+    calls = {"n": 0}
+
+    class DeadClient:
+        def __init__(self, url, limit, start):
+            pass
+
+        def scrape(self):
+            calls["n"] += 1
+            return []
+
+    orig_client = scraper_lambda.ScraperClient
+    scraper_lambda.ScraperClient = DeadClient
+    orig = _patch_lane_sleeps()
+    orig_time = scraper_lambda.time.time
+    clock = {"t": 1000.0}
+
+    def fake_time():
+        clock["t"] += 200.0            # each check jumps past the 150s budget
+        return clock["t"]
+
+    scraper_lambda.time.time = fake_time
+    try:
+        merged = scraper_lambda.scrape_lanes(10, 0)
+    finally:
+        scraper_lambda.ScraperClient = orig_client
+        scraper_lambda.time.time = orig_time
+        _restore_lane_sleeps(orig)
+    assert merged == []
+    assert calls["n"] == 3, f"budget spent: 1 attempt per lane, no retries; got {calls['n']}"
+
+
+check("lane retries transient empty then succeeds (3x3 attempts)", test_lane_retries_transient_empty_then_succeeds)
+check("wall budget stops retries (1 attempt/lane when spent)", test_wall_budget_stops_retries)
+check("lane gives up after bounded attempts", test_lane_gives_up_after_max_attempts)
+check("empty scrape publishes SNS alert + returns 500", test_empty_scrape_publishes_alert_and_returns_500)
+check("scrape timeout tunable via SCRAPE_TIMEOUT_S", test_scrape_timeout_env_tunable)
+
 print(f"\n{len(PASSED)} passed, {len(FAILED)} failed")
 sys.exit(1 if FAILED else 0)

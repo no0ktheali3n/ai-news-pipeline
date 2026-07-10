@@ -23,8 +23,9 @@ class ScraperClient:
         try:
             # 2026-07-09: 10s read-timeouts + a 429 across all lanes silently
             # skipped a daily post — give arXiv more headroom, tunable per env.
+            # clamp <=60: the retry wall-budget math assumes attempts are short
             response = requests.get(self.target_url, headers=self.headers,
-                                    timeout=int(os.getenv("SCRAPE_TIMEOUT_S", "20")))
+                                    timeout=min(int(os.getenv("SCRAPE_TIMEOUT_S", "20")), 60))
             response.raise_for_status()
             soup = BeautifulSoup(response.content, "html.parser")
 

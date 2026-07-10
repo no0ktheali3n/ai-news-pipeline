@@ -95,6 +95,25 @@ def handler(event, context):
                     "body": json.dumps({"error": f"Failed to parse scraper result body: {e}"})
                 }
 
+            # A non-200 scraper must abort LOUDLY. 2026-07-09: a throttled
+            # scrape returned 500 with no new_count, which fell through to the
+            # benign "no new articles" branch below — a silently skipped post.
+            if scraper_result.get("statusCode") != 200:
+                reason = f"Scraper failed: {scraper_body.get('error', 'unknown error')}"
+                logger.error(f"❌ Aborting pipeline: {reason}")
+                notify_make_pipeline_status(message=f"⚠️ AI research pipeline aborted: {reason}")
+                topic_arn = os.getenv("ALERT_TOPIC_ARN")
+                if topic_arn:
+                    try:
+                        boto3.client("sns", region_name=AWS_REGION).publish(
+                            TopicArn=topic_arn,
+                            Subject="AI research pipeline failure",
+                            Message=reason[:8000],
+                        )
+                    except Exception as sns_err:
+                        logger.error(f"SNS alert failed: {sns_err}")
+                return {"statusCode": 500, "body": json.dumps({"error": reason})}
+
             scraper_key = scraper_body.get('s3_key')
 
             if not skip_memory:

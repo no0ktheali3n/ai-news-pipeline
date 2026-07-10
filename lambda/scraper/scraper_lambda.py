@@ -27,7 +27,9 @@ logger = get_logger("scraper_lambda")
 ARXIV_SEARCH = ("https://arxiv.org/search/?searchtype=all&abstracts=show"
                 "&order=-announced_date_first&size=25&classification-computer_science=y&query=")
 
-# Fixed, documented lane order (spec §1). Query strings are tunable.
+# Fixed, documented lane order (spec §1). Query strings are tunable — but must
+# stay broad enough to NEVER legitimately match zero papers: _fetch_lane treats
+# an empty result as a transient fetch failure and retries on that assumption.
 LANES = [
     ("ai-security", ARXIV_SEARCH + "%22prompt+injection%22+OR+%22jailbreak%22+OR+%22LLM+security%22+OR+%22agent+safety%22+OR+%22AI+control%22"),
     ("agents", ARXIV_SEARCH + "%22LLM+agent%22+OR+%22multi-agent%22+OR+%22tool+use%22+OR+%22agentic%22"),
@@ -38,11 +40,13 @@ LANE_FETCH_DELAY_S = 3.0
 # throttled all lanes (read timeouts + a 429) and one failed fetch per lane
 # meant a silently skipped daily post; these queries never legitimately return
 # zero results, so an empty scrape is treated as transient and retried.
-LANE_RETRY_DELAYS_S = (8, 20)
-# Hard wall for the whole lane-scrape phase: the pipeline Lambda sits at the
-# 900s platform maximum budgeted as summarizer(<=600) + scraper + poster, so
-# retries must never stack past this. When the budget is spent, remaining
-# lanes get one attempt each and no retries.
+LANE_RETRY_DELAYS_S = (15, 30)  # first retry >= arXiv's 15s crawl-delay ask
+# Deadline for retry SCHEDULING (not a hard wall: an in-flight attempt of up
+# to SCRAPE_TIMEOUT_S may finish past it, so worst case ~= budget + one
+# backoff + one attempt). Real ceilings this must stay well under: the
+# ScraperFunction's own Timeout (300, template.yaml) and the pipeline's
+# boto3 read_timeout=780 on the synchronous invoke. When the budget is
+# spent, remaining lanes get one attempt each and no retries.
 SCRAPE_WALL_BUDGET_S = 150
 
 DEFAULT_URL = "https://arxiv.org/search/?query=artificial+intelligence&searchtype=all&abstracts=show&order=-announced_date_first&size=25&classification-computer_science=y"
@@ -91,12 +95,18 @@ def scrape_lanes(scrape_limit, start_scrape):
     query_source), newest-first by numeric arXiv id."""
     merged = {}
     deadline = time.time() + SCRAPE_WALL_BUDGET_S
+    lanes_alive = 0
     for i, (lane, lane_url) in enumerate(LANES):
         if i:
             time.sleep(LANE_FETCH_DELAY_S)  # be polite between lane fetches
-        for article in _fetch_lane(lane, lane_url, scrape_limit, start_scrape, deadline):
+        articles = _fetch_lane(lane, lane_url, scrape_limit, start_scrape, deadline)
+        lanes_alive += bool(articles)
+        for article in articles:
             entry = merged.setdefault(article["url"], {**article, "query_source": []})
             entry["query_source"].append(lane)
+    if 0 < lanes_alive < len(LANES):
+        logger.warning(f"Partial lane degradation: only {lanes_alive}/{len(LANES)} "
+                       "lanes returned articles — candidate pool is narrower than usual.")
     ordered = sorted(merged.values(), key=_id_sort_key, reverse=True)
     logger.info(f"Lanes produced {len(ordered)} unique candidates.")
     return ordered

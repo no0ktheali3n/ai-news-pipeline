@@ -32,7 +32,7 @@ def check(name, fn):
 # ---------------------------------------------------------------- stubs
 
 sys.path.insert(0, str(Path(__file__).parent))
-from stubs import install_stubs, FAKE_S3, FAKE_BEDROCK, NoSuchKey  # noqa: E402
+from stubs import install_stubs, FAKE_S3, FAKE_BEDROCK, FAKE_SNS, NoSuchKey  # noqa: E402
 
 
 def load_module(name, path):
@@ -191,7 +191,35 @@ def test_pipeline_fails_when_poster_fails():
     assert "Poster failed" in json.loads(resp["body"])["error"]
 
 
+def test_pipeline_aborts_loudly_on_scraper_500():
+    """2026-07-09 regression: a scraper 500 (throttled scrape, body without
+    new_count) fell into the quiet 'no new articles' branch. It must abort
+    with 500 + SNS alert and never invoke downstream stages."""
+    os.environ.setdefault("ALERT_TOPIC_ARN", "arn:fake:alerts")
+    FAKE_SNS.published.clear()
+    calls = []
+
+    def fake_invoke(function_name, payload=None, wait=True):
+        calls.append((function_name, payload))
+        if function_name == "SCRAPER":
+            return {"statusCode": 500,
+                    "body": json.dumps({"error": "Scraper returned no results."})}
+        return {"statusCode": 200, "body": "{}"}
+
+    pipeline.invoke_lambda = fake_invoke
+    pipeline.SCRAPER_FUNCTION_NAME = "SCRAPER"
+    pipeline.SUMMARIZER_FUNCTION_NAME = "SUMMARIZER"
+    pipeline.POSTER_FUNCTION_NAME = "POSTER"
+    pipeline.time.sleep = lambda *_: None
+    resp = pipeline.handler({"scrape_limit": 1, "chunk_size": 1}, None)
+    assert resp["statusCode"] == 500, resp
+    assert not any(n in ("SUMMARIZER", "POSTER") for n, _ in calls), calls
+    blobs = [(p.get("Subject", "") + p.get("Message", "")).lower() for p in FAKE_SNS.published]
+    assert any("scraper failed" in b for b in blobs), FAKE_SNS.published
+
+
 check("aborts on summarizer 500", test_pipeline_aborts_on_summarizer_500)
+check("aborts LOUDLY on scraper 500 (SNS, no downstream)", test_pipeline_aborts_loudly_on_scraper_500)
 check("aborts on empty summaries", test_pipeline_aborts_on_empty_summaries)
 check("passes final_key to poster on success", test_pipeline_passes_final_key_to_poster)
 check("fails loudly when the poster fails", test_pipeline_fails_when_poster_fails)

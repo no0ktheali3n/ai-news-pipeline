@@ -174,6 +174,9 @@ Resources:
       Layers:
         - !Ref CommonUtilsLayer
       Description: Scrapes articles
+      # Explicit ceiling for the lane-retry stack (worst case ~180s; see
+      # SCRAPE_WALL_BUDGET_S) — independent of the Globals default.
+      Timeout: 300
       Policies:
         - AWSLambdaBasicExecutionRole
         - Statement:
@@ -217,6 +220,7 @@ Resources:
           SCORING_W_BUZZ: "0.125"
           BUZZ_HTTP_TIMEOUT_S: "3"
           BUZZ_WALL_BUDGET_S: "20"
+          SCRAPE_TIMEOUT_S: "20"
           SCORING_W_RELEVANCE: !Ref ScoringWRelevance
           SCORING_W_NOVELTY: !Ref ScoringWNovelty
           SCORING_W_HOOK: !Ref ScoringWHook

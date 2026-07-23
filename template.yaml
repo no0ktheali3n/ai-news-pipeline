@@ -470,7 +470,7 @@ Resources:
     Type: AWS::Scheduler::Schedule
     Properties:
       Name: pipeline-daily-run
-      ScheduleExpression: cron(0 16 ? * MON-FRI *) # Once daily on weekdays, 16:00 UTC (noon ET) — arXiv announces Mon-Fri
+      ScheduleExpression: cron(7 16 ? * MON-FRI *) # Weekdays 16:07 UTC — off the top-of-hour peak (arXiv throttled two 16:00 runs in two weeks: 07-09, 07-22)
       FlexibleTimeWindow:
         Mode: "OFF"
       Target:

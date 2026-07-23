@@ -5,6 +5,7 @@
 # hitting Twitter, and the validate/repair table. Anything unrepairable
 # raises ContractError and the caller falls back to the legacy formatter.
 
+import datetime
 import json
 import os
 import re
@@ -25,7 +26,35 @@ class ContractError(Exception):
     """Thread violates the contract in a way repair can't fix."""
 
 
-def build_writer_prompt(article, figures=None):
+# Opener-form rotation (2026-07-23 audit): every v3-era post opened with
+# "Your/You ..." — each run independently greedy-picked the same surface form
+# of "open inside the reader's world", and back-to-back the timeline read as
+# one template. One style per day, rotated deterministically by date, no
+# cross-run state needed. Second-person stays in the rotation but only takes
+# its turn (~1 day in 6).
+HOOK_STYLES = [
+    "Open with the paper's single most striking NUMBER or measurement, stated "
+    "cold before any context. No second person.",
+    "Open with a concrete incident or scene a builder would recognize, told "
+    "like something that just happened in a real system. No second person.",
+    "Open with a bold declarative claim about the field or technique that the "
+    "paper backs up, phrased so a practitioner wants to argue. No second person.",
+    "Open with a sharp contrast: the thing everyone assumes, then what the "
+    "paper actually found. No second person.",
+    "Open by stating the paper's core finding as a flat, surprising fact, like "
+    "a wire headline a researcher texts a colleague. No second person.",
+    "Open inside the reader's world (you/your): the pain they have hit or the "
+    "assumption this paper just broke, in plain words.",
+]
+
+
+def todays_hook_style(d=None):
+    """Deterministic daily rotation through HOOK_STYLES (date ordinal mod N)."""
+    d = d or datetime.date.today()
+    return HOOK_STYLES[d.toordinal() % len(HOOK_STYLES)]
+
+
+def build_writer_prompt(article, figures=None, hook_style=None):
     title = (article.get("title") or "")[:300]
     authors = ", ".join(article.get("authors") or [])[:300]
     snippet = (article.get("snippet") or "")[:4000]
@@ -50,6 +79,12 @@ def build_writer_prompt(article, figures=None):
     else:
         figures_section = ""
         json_shape = '{"tweets": ["...", "..."], "summary": "..."}'
+    # One opener form per day (see HOOK_STYLES); empty when not provided so the
+    # base prompt stays byte-identical for callers/tests that pass nothing.
+    hook_style_line = (
+        f"- TODAY'S OPENER STYLE for tweet 1 (hard requirement): {hook_style}\n"
+        if hook_style else ""
+    )
     return (
         "You are a sharp AI practitioner live-posting a paper find to other "
         "builders, people who ship LLM systems and agents. You have opinions. "
@@ -69,18 +104,19 @@ def build_writer_prompt(article, figures=None):
         # char targets (A/B r1: asked 240 -> got 260-287 on all 8); the gap absorbs it.
         "- Tweet 1 is the hook: ONE punchy sentence of at most 180 characters "
         "(threads with longer hooks are rejected outright - when in doubt, cut "
-        "words), NO links. Open inside the READER'S world: the pain they have "
-        "hit, the assumption this paper just broke, or a claim they will want "
-        "to argue with - in plain words a tired scroller gets instantly. NO "
-        "metric names or field jargon in the hook. No 'New paper alert', no "
-        "thread emojis, no questions-as-hooks.\n"
+        "words), NO links. Make it land instantly for a tired practitioner "
+        "scrolling fast: concrete, plain words, real stakes. NO metric names "
+        "or field jargon in the hook. No 'New paper alert', no thread emojis, "
+        "no questions-as-hooks.\n"
+        + hook_style_line +
         "- Middle tweets follow a story arc, not a summary: first the one "
         "insight worth stealing, stated as a consequence for the reader's own "
         "system, never as a description of the paper's machinery. Then what a "
         "builder would do differently after reading (numbers earn their place "
-        "here as evidence, not decoration). Do NOT prefix tweets with labels "
-        "like 'The twist:', 'Concrete payoff:', 'Practical upshot:' - just say "
-        "the thing; vary how each tweet opens.\n"
+        "here as evidence, not decoration). Do NOT open ANY tweet with a "
+        "connective template - 'The twist:', 'Concrete payoff:', 'Practical "
+        "upshot:', 'The core insight:', 'The fix:', 'The key insight:' are all "
+        "banned - just say the thing; vary how each tweet opens.\n"
         "- LENGTH: aim each middle tweet at roughly 150-230 characters and treat "
         f"{TWEET_MAX} as a hard wall you stay well clear of. A tweet MUST end on "
         "a finished sentence with real terminal punctuation (. ! ?). NEVER end a "

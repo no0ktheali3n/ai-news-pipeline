@@ -9,7 +9,8 @@ import logging
 from datetime import datetime
 from dotenv import load_dotenv
 from utils.llm import complete
-from utils.thread_contract import ContractError, build_writer_prompt, validate_and_repair
+from utils.thread_contract import (ContractError, build_writer_prompt,
+                                   todays_hook_style, validate_and_repair)
 import utils.figures as figures_mod
 
 # Load environment variables
@@ -161,8 +162,11 @@ def write_thread_with_claude(article, figures=None):
     Contract violations demote to summary-only (tweets=None) — the poster's
     legacy formatter handles those. Raises on transport/parse failure so the
     existing retry/abort semantics in summarize_articles apply."""
-    text = complete(build_writer_prompt(article, figures=figures), model=WRITER_MODEL_ID,
-                    max_tokens=1500, temperature=0.4)
+    # hook_style: one opener form per day (deterministic rotation) — the fix
+    # for every post opening "Your/You ..." (2026-07-23 audit).
+    text = complete(build_writer_prompt(article, figures=figures,
+                                        hook_style=todays_hook_style()),
+                    model=WRITER_MODEL_ID, max_tokens=1500, temperature=0.4)
     data = parse_model_json(text)
     summary = str(data.get("summary") or "").strip()
     if not summary:

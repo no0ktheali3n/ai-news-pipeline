@@ -206,6 +206,35 @@ def test_writer_prompt_with_figures_and_without():
     assert "weak pick" in p                                            # null-bias guidance (spec)
 
 
+def test_hook_style_rotation_deterministic():
+    import datetime as _dt
+    base = _dt.date(2026, 7, 23)
+    styles = [tc.todays_hook_style(base + _dt.timedelta(days=i)) for i in range(len(tc.HOOK_STYLES))]
+    assert sorted(styles) == sorted(tc.HOOK_STYLES)        # all styles over a full cycle
+    assert tc.todays_hook_style(base) == tc.todays_hook_style(base)  # same day, same style
+    assert len(tc.HOOK_STYLES) >= 5                        # real variety, not a token list
+    second_person = [s for s in tc.HOOK_STYLES if "your" in s.lower() or "you" in s.lower()]
+    assert len(second_person) <= 2                         # 'Your/You' rationed, not daily
+
+
+def test_writer_prompt_hook_style_injected_and_byte_identical_without():
+    art = {"title": "T", "authors": ["A"], "snippet": "S", "url": URL}
+    base = tc.build_writer_prompt(art)
+    assert base == tc.build_writer_prompt(art, hook_style=None)        # byte-identical
+    styled = tc.build_writer_prompt(art, hook_style=tc.HOOK_STYLES[0])
+    assert "OPENER STYLE" in styled and tc.HOOK_STYLES[0] in styled
+    assert "OPENER STYLE" not in base
+
+
+def test_writer_prompt_bans_middle_crutches():
+    art = {"title": "T", "authors": ["A"], "snippet": "S", "url": URL}
+    p = tc.build_writer_prompt(art)
+    assert "The core" in p and "The fix" in p              # named in the ban list
+
+
+check("hook style rotation deterministic, second-person rationed", test_hook_style_rotation_deterministic)
+check("writer prompt injects hook style; byte-identical without", test_writer_prompt_hook_style_injected_and_byte_identical_without)
+check("writer prompt bans middle-tweet crutch openers", test_writer_prompt_bans_middle_crutches)
 check("MAX_TWEETS >= MIN_TWEETS (clamp guard)", test_max_tweets_gte_min_tweets)
 check("writer prompt byte-identical without figures; figures section injected with figures", test_writer_prompt_with_figures_and_without)
 check("valid thread passes unchanged", test_valid_thread_passes_unchanged)
